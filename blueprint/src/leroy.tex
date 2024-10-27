@@ -1,0 +1,41 @@
+\begin{lemma}[Frame]
+    \label{lem:frame}
+    A Frame can be viewed as a Category. There exists a morphism between $A$ and $B$ iff $A \le B$. 
+\end{lemma}
+
+\begin{definition}[Top -> Frame]
+    \label{def:top_frame_func}
+    \uses{lem:frame}
+    There exists a contravariant Functor from a topological Space to the corresponding Frame Category with open Sets as objects. $f: X \rightarrow O(X)$
+\end{definition}
+
+\begin{definition}[$f^*$ and $f_*$]
+    \label{def:f_star}
+    \uses{def:top_frame_func}
+    For every continuous Function $f : X \rightarrow Y$ between topological Spaces, there exists a pair of functors $(f^*,f_*)$.
+    $$f* = f^{-1} : O(Y) \rightarrow O(X)$$
+    $$f_* : O(X) \rightarrow O(Y) := A \mapsto \bigcup_{f^*(v) \le A} v$$
+\end{definition}
+
+\begin{lemma}[$f^*$ commutes]
+    \label{lem:f_star_comm}
+    \uses{def:f_star}
+    $f^*$ commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open Sets has all small coproducts and all finite Limits. \href{https://ncatlab.org/nlab/show/frame}{nlab}
+\end{lemma}
+
+\begin{lemma}[Homsets]
+    \label{lem:f_star_homsets}
+    \uses{def:f_star}
+    $$Hom_{O(Y)}(f*(V), A) = Hom_{O(x)}(v, f_*(A))$$
+\end{lemma}
+
+\begin{lemma}[$f^* \dashv f_*$]
+    \label{lem:f_star_homsets}
+    $f^*$ is the right adjoint to $f_*$
+    \uses{def:f_star}
+\end{lemma}
+
+\begin{lemma}
+    $f: X \rightarrow Y$ is an embedding, if at least one of the following arguemnts holds:
+    \begin{enumerate}
+        \item 
