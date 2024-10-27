@@ -11,6 +11,12 @@ lean_lib «Leroy» where
 lean_exe "leroy" where
   root := `Main
 
+
+
+require mathlib from git
+  "https://github.com/leanprover-community/mathlib4"
+
+
 require checkdecls from git "https://github.com/PatrickMassot/checkdecls.git"
 
 meta if get_config? env = some "dev" then

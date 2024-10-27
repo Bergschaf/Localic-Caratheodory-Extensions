@@ -143,10 +143,7 @@
   <div class="definition_thmcontent">
   <p>   For every continuous Function \(f : X \rightarrow Y\) between topological Spaces, there exists a pair of functors \((f^*,f_*)\). </p>
 <div class="displaymath" id="a0000000002">
-  \[ f* = f^{-1} : O(Y) \rightarrow O(X) \]
-</div>
-<div class="displaymath" id="a0000000003">
-  \[ f_* : O(X) \rightarrow O(Y) := A \mapsto \bigcup _{f^*(v) \le A} v \]
+  \begin{gather*}  f* = f^{-1} : O(Y) \rightarrow O(X)\\ f_* : O(X) \rightarrow O(Y) \coloneqq A \mapsto \bigcup _{f^*(v) \le A} v\\ \end{gather*}
 </div>
 
   </div>
@@ -234,13 +231,13 @@
   </div>
   <div class="lemma_thmcontent">
   
-<div class="displaymath" id="a0000000004">
+<div class="displaymath" id="a0000000003">
   \[ Hom_{O(Y)}(f*(V), A) = Hom_{O(x)}(v, f_*(A)) \]
 </div>
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="lem:f_star_homsets">
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:f_star_adj">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
@@ -252,7 +249,50 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="index.html#lem:f_star_homsets">#</a>
+    <a class="icon proof" href="index.html#lem:f_star_adj">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:f_star_homsets">Lemma 5</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  \(f^*\) is the right adjoint to \(f_*\)  </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:embedding">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">7</span>
+    <span class="lemma_thmtitle">Embedding</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:embedding">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -279,7 +319,131 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  \(f^*\) is the right adjoint to \(f_*\)  </p>
+  <p> (Leroy Lemme 1)   \(f: X \rightarrow Y\) is an embedding, if at least one of the following arguemnts holds: </p>
+<ol class="enumerate">
+  <li><p>\(f^*\) is surjective </p>
+</li>
+  <li><p>\(f_*\) is injective </p>
+</li>
+  <li><p>\(f^{*}f_* = 1_{O(X)})\) </p>
+</li>
+</ol>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:nucleus">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">8</span>
+    <span class="lemma_thmtitle">Nucleus</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:nucleus">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#def:f_star">Definition 3</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> (Leroy Lemme 3)   Let \(e : O(E) \rightarrow O(E)\) be a continuous map. The following arguemnts are equivalent: </p>
+<ol class="enumerate">
+  <li><p>There is a space \(X\) and a morphism \(f: X \rightarrow E\) such that \(e = f_*f^*\). (The same holds for embeddings ??) </p>
+</li>
+  <li><p>\(e\) is idempotent and for every \(U, V \in O(E)\), \(e(U \cap V) = e(U) \cap e(V)\) and \(U \subset e(U)\) </p>
+</li>
+</ol>
+<p> We call \(e\) a nucleus. (Leroy calls it projector Ch 3) </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:image">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">9</span>
+    <span class="lemma_thmtitle">Image</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:image">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:nucleus">Lemma 8</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> (Leroy CH 3)   A subspace \(Y \subset X\) is defined by a nucleus \(e_Y: O(X) \rightarrow O(X)\), such that \(O(Y) = Im(e_Y) = {U \in O(X) | e_Y(U) = U}\). The corresponding embedding (???) is \(i_X : O(Y) \rightarrow O(X)\). \(i^*_X(V) = e_X(V)\), \((i_X)_*(U) = U\) </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:factorisation">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">10</span>
+    <span class="lemma_thmtitle">factorisation</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:factorisation">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> (Leroy Lemme 2)   Let \(i : X \rightarrow E\) be an embedding and \(f: Y \rightarrow E\) be a morphism of spaces. To have \(f\) factor through \(i\), it is necessary and sufficient that \(i_*i^*(V) \le f_*f^*(V) for all V \in O(E)\). </p>
 
   </div>
 </div>
