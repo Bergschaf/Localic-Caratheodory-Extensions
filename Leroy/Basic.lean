@@ -8,8 +8,13 @@ import Mathlib.CategoryTheory.Functor.Basic
 import Mathlib.CategoryTheory.Category.Preorder
 import Mathlib.Topology.Sets.Opens
 import Mathlib.Order.CompleteBooleanAlgebra
+import Mathlib.CategoryTheory.Adjunction.Basic
+import Mathlib.Data.Set.Lattice
+import Mathlib.Topology.ContinuousMap.Defs
+
 
 open CategoryTheory
+
 universe u
 /-
 variable (X Y : Type*) [Order.Frame X][Order.Frame Y][TopologicalSpace X][TopologicalSpace Y]
@@ -30,7 +35,8 @@ noncomputable def fstern (f: X -> Y)(h : Continuous f): CategoryTheory.Functor Y
   ⟨⟨f.invFun, (by intro y x finv;apply CategoryTheory.homOfLE;)⟩ , sorry, sorry⟩
 --/
 ---------------------------v des darf ich, oder????
-variable (X Y : Type u)[Nonempty X] [TopologicalSpace X] [TopologicalSpace Y]
+variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+--- Geschweifte klammern sind wichtig
 
 /-instance test (x : Type*)[TopologicalSpace x] : Category (TopologicalSpace.Opens x) where
   Hom A B := PLift (A.carrier ⊆ B.carrier)
@@ -42,8 +48,25 @@ abbrev O := TopologicalSpace.Opens -- TODO das ist wahrscheinlich Falsch
 
 --abbrev fstar := TopologicalSpace.Opens.comap
 
-def f_star (f : C(X, Y)) : FrameHom (O X) (O Y) where
-  toFun := fun x ↦ sSup {y : O Y | TopologicalSpace.Opens.comap f y ≤ x}
-  map_inf' a b := (by simp; sorry)
+
+
+def Opens_map (f : C(X, Y)) : FrameHom (O X) (O Y) where
+  toFun x := sSup {y : O Y | TopologicalSpace.Opens.comap f y ≤ x}
+  map_inf' a b := sorry -- (by simp; ext x; apply Iff.intro; simp; intro y h1 h2 h3; apply And.intro; use y; use y; intro h; simp; use (sSup {y | (TopologicalSpace.Opens.comap f) y ≤ a} ⊓ sSup {y | (TopologicalSpace.Opens.comap f) y ≤ b}); simp; apply And.intro; apply And.intro; refine     inf_le_of_left_le ?h.left.left.h; simp; refine inf_le_of_right_le ?h.left.right.h; simp; exact h)
   map_top' := (by simp)
-  map_sSup' s := (by simp_all; ext x; apply Iff.intro; intro h; simp; sorry; sorry)
+  map_sSup' s := (by simp_all; ext x1; apply Iff.intro; sorry; sorry)
+
+#check Opens_map (sorry : C(X,Y))
+#check TopologicalSpace.Opens.comap (sorry : C(X,Y))
+
+-- TopologicalSpace.Opens.map???
+def f_obenstern (f : C(X, Y)) : O Y ⥤ O X where
+  obj := TopologicalSpace.Opens.comap f
+  map := (by intro x y; intro h; apply homOfLE; apply TopologicalSpace.Opens.comap_mono; exact leOfHom h)
+
+def f_untenstern (f : C(X, Y)) : O X ⥤ O Y where
+  obj :=  (Opens_map f)
+  map := sorry
+
+
+--lemma f_adj (f : C(X, Y)) : Adjunction (TopologicalSpace.Opens.comap f) (f_star f)
