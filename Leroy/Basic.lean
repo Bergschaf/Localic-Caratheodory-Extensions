@@ -56,6 +56,11 @@ def Opens_map (f : C(X, Y)) : FrameHom (O X) (O Y) where
   map_top' := (by simp)
   map_sSup' s := (by simp_all; ext x1; apply Iff.intro; sorry; sorry)
 
+
+theorem Opens_map_mono (f : C(X,Y)) {s t : O X} (h : s ≤ t) : Opens_map f s ≤ Opens_map f t :=
+  OrderHomClass.mono (Opens_map f) h
+
+
 #check Opens_map (sorry : C(X,Y))
 #check TopologicalSpace.Opens.comap (sorry : C(X,Y))
 
@@ -66,7 +71,9 @@ def f_obenstern (f : C(X, Y)) : O Y ⥤ O X where
 
 def f_untenstern (f : C(X, Y)) : O X ⥤ O Y where
   obj :=  (Opens_map f)
-  map := sorry
+  map := (by intro x y h; apply homOfLE; apply Opens_map_mono; exact leOfHom h)
 
 
---lemma f_adj (f : C(X, Y)) : Adjunction (TopologicalSpace.Opens.comap f) (f_star f)
+def f_adj (f : C(X, Y)) : Adjunction (f_obenstern f) (f_untenstern f) where
+  unit := sorry
+  counit := sorry
