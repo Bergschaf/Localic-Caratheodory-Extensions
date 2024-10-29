@@ -140,4 +140,11 @@ def f_counit (f: C(X, Y)) : PLift ((f_untenstern f ⋙ f_obenstern f).obj x ≤ 
 
 def f_adj (f : C(X, Y)) :  (f_obenstern f) ⊣ (f_untenstern f) where
   unit := {app := fun x => ⟨f_unit f⟩}
-  counit := {app := fun x => ⟨f_counit f⟩ }
+  counit := {app := fun x => ⟨f_counit f⟩}
+
+def f_surjective_injective (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ Function.Injective (f_obenstern f).obj := by
+  sorry
+
+
+def f_surjective_one (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ (f_obenstern f) ⋙ (f_untenstern f) = 𝟭 (O Y) := by
+  sorry

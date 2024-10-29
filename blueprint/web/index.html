@@ -45,6 +45,8 @@
     <span class="lemma_thmtitle">Frame</span>
     <div class="thm_header_extras">
 
+    
+    ✓
         </div>
     <div class="thm_header_hidden_extras">
 
@@ -55,7 +57,7 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  A Frame can be viewed as a Category. There exists a morphism between \(A\) and \(B\) iff \(A \le B\). </p>
+  <p>  (Already in Mathlib )A Frame can be viewed as a Category. There exists a morphism between \(A\) and \(B\) iff \(A \le B\). </p>
 
   </div>
 </div>
@@ -98,7 +100,7 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   There exists a contravariant Functor from a topological Space to the corresponding Frame Category with open Sets as objects. \(f: X \rightarrow O(X)\) </p>
+  <p>   (Brauchen wir das überhaupt?) There exists a contravariant Functor from a topological Space to the corresponding Frame Category with open Sets as objects. \(f: X \rightarrow O(X)\) </p>
 
   </div>
 </div>
@@ -111,6 +113,8 @@
     <span class="definition_thmtitle">\(f^*\) and \(f_*\)</span>
     <div class="thm_header_extras">
 
+    
+    ✓
         </div>
     <div class="thm_header_hidden_extras">
 
@@ -138,10 +142,29 @@
 
     
     
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_obenstern" class="lean_decl">f_obenstern</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   For every continuous Function \(f : X \rightarrow Y\) between topological Spaces, there exists a pair of functors \((f^*,f_*)\). </p>
+  <p>    For every continuous Function \(f : X \rightarrow Y\) between topological Spaces, there exists a pair of functors \((f^*,f_*)\). </p>
 <div class="displaymath" id="a0000000002">
   \begin{gather*}  f* = f^{-1} : O(Y) \rightarrow O(X)\\ f_* : O(X) \rightarrow O(Y) \coloneqq A \mapsto \bigcup _{f^*(v) \le A} v\\ \end{gather*}
 </div>
@@ -187,7 +210,8 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   \(f^*\) commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open Sets has all small coproducts and all finite Limits. <a href ="https://ncatlab.org/nlab/show/frame">nlab</a> </p>
+  
+<p>\(f^*\) commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open Sets has all small coproducts and all finite Limits. <a href ="https://ncatlab.org/nlab/show/frame">nlab</a> </p>
 
   </div>
 </div>
@@ -200,10 +224,40 @@
     <span class="lemma_thmtitle">Homsets</span>
     <div class="thm_header_extras">
 
+    
+    ✓
         </div>
     <div class="thm_header_hidden_extras">
 
     <a class="icon proof" href="index.html#lem:f_star_homsets">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   (Already in Mathlib) </p>
+<div class="displaymath" id="a0000000003">
+  \[ Hom_{O(Y)}(f*(V), A) = Hom_{O(x)}(v, f_*(A)) \]
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:f_star_adj">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">6</span>
+    <span class="lemma_thmtitle">\(f^* \dashv f_*\)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:f_star_adj">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -227,44 +281,18 @@
 
     
     
-        </div>
-  </div>
-  <div class="lemma_thmcontent">
-  
-<div class="displaymath" id="a0000000003">
-  \[ Hom_{O(Y)}(f*(V), A) = Hom_{O(x)}(v, f_*(A)) \]
-</div>
-
-  </div>
-</div>
-<div class="lemma_thmwrapper theorem-style-plain" id="lem:f_star_adj">
-  <div class="lemma_thmheading">
-    <span class="lemma_thmcaption">
-    Lemma
-    </span>
-    <span class="lemma_thmlabel">6</span>
-    <span class="lemma_thmtitle">\(f^* \dashv f_*\)</span>
-    <div class="thm_header_extras">
-
-        </div>
-    <div class="thm_header_hidden_extras">
-
-    <a class="icon proof" href="index.html#lem:f_star_adj">#</a>
-    
-    
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
+    <button class="modal lean">L∃∀N</button>
         <div class="modal-container">
       <div class="modal-content">
         <header>
-          <h1>Uses</h1>
+          <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
         
         <ul class="uses">
           
-          <li><a href="index.html#lem:f_star_homsets">Lemma 5</a></li>
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_adj" class="lean_decl">f_adj</a></li>
           
         </ul>
     
@@ -272,11 +300,10 @@
     </div>
 
     
-    
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  \(f^*\) is the right adjoint to \(f_*\)  </p>
+  <p>    \(f^*\) is the right adjoint to \(f_*\) </p>
 
   </div>
 </div>
@@ -316,10 +343,29 @@
 
     
     
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_surjective_injective" class="lean_decl">f_surjective_injective</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> (Leroy Lemme 1)   \(f: X \rightarrow Y\) is an embedding, if at least one of the following arguemnts holds: </p>
+  <p> (Leroy Lemme 1)    \(f: X \rightarrow Y\) is an embedding, if at least one of the following arguemnts holds: </p>
 <ol class="enumerate">
   <li><p>\(f^*\) is surjective </p>
 </li>
@@ -438,6 +484,26 @@
 
     <a class="icon proof" href="index.html#lem:factorisation">#</a>
     
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#def:f_star">Definition 3</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
     
     
         </div>
