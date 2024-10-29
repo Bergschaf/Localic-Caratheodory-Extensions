@@ -94,6 +94,74 @@
 
 
     
+    <div class="dep-modal-container" id="def:nucleus_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:nucleus" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">8</span><span class="definition_thmtitle">Nucleus</span></div>
+    <div class="thm_thmcontent"><p>    A nucleus is a map \(e : O(E) \rightarrow O(E)\) with the following three properties: </p>
+<ol class="enumerate">
+  <li><p>\(e\) is idempotent </p>
+</li>
+  <li><p>\(U \le e U\) </p>
+</li>
+  <li><p>\(e(U \cap V) = e(U) \cap e(V)\) </p>
+</li>
+</ol>
+</div>
+
+    <a class="latex_link" href="index.html#def:nucleus">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/Nucleus">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:subframe_inclusion_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:subframe_inclusion" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">11</span><span class="definition_thmtitle">Subframe Inclusion</span></div>
+    <div class="thm_thmcontent"><p> (Stimmt das?)(Leroy Ch 3)   \(X \subset Y\) if \(e_Y \le e_X\) </p>
+</div>
+
+    <a class="latex_link" href="index.html#def:subframe_inclusion">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="def:top_frame_func_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -267,11 +335,47 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">10</span><span class="lemma_thmtitle">factorisation</span></div>
+      <span class="lemma_thmlabel">12</span><span class="lemma_thmtitle">factorisation</span></div>
     <div class="thm_thmcontent"><p> (Leroy Lemme 2)   Let \(i : X \rightarrow E\) be an embedding and \(f: Y \rightarrow E\) be a morphism of spaces. To have \(f\) factor through \(i\), it is necessary and sufficient that \(i_*i^*(V) \le f_*f^*(V) for all V \in O(E)\). </p>
 </div>
 
     <a class="latex_link" href="index.html#lem:factorisation">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:family_of_subspaces_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:family_of_subspaces" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">13</span><span class="lemma_thmtitle">Familiy of subspaces</span></div>
+    <div class="thm_thmcontent"><p> (Leroy CH 4)   Let \(X_i\) be a family of subspaces of \(E\) and \(e_i\) be the corresponding nuclei. For every \(V \in O(E)\), let \(e(V)\) be the onion of all \(W \in O(E)\) which are contained in every \(e_i(V)\). Then <br /></p>
+<ol class="enumerate">
+  <li><p>\(e\) is the corresponding nuclus of a subspace \(X\) of \(E\) </p>
+</li>
+  <li><p>a subspace \(Z\) of \(E\) conatains \(x\) if and only if it containd all \(X_i\) x is thus called the union of \(X_i\) denoted by \(\bigcup _i X_i\) </p>
+</li>
+</ol>
+</div>
+
+    <a class="latex_link" href="index.html#lem:family_of_subspaces">LaTeX</a>
     
     
   
@@ -316,22 +420,22 @@
 
 
     
-    <div class="dep-modal-container" id="lem:image_modal">
+    <div class="dep-modal-container" id="lem:nucleus_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="lem:image" style="display: none">
+  <div class="thm" id="lem:nucleus" style="display: none">
     <div class="thm_thmheading">
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">9</span><span class="lemma_thmtitle">Image</span></div>
-    <div class="thm_thmcontent"><p> (Leroy CH 3)   A subspace \(Y \subset X\) is defined by a nucleus \(e_Y: O(X) \rightarrow O(X)\), such that \(O(Y) = Im(e_Y) = {U \in O(X) | e_Y(U) = U}\). The corresponding embedding (???) is \(i_X : O(Y) \rightarrow O(X)\). \(i^*_X(V) = e_X(V)\), \((i_X)_*(U) = U\) </p>
+      <span class="lemma_thmlabel">9</span><span class="lemma_thmtitle">Nucleus</span></div>
+    <div class="thm_thmcontent"><p> (Leroy Lemme 3)   Let \(e : O(E) \rightarrow O(E)\) be a nucleus. Then there is a space \(X\) and a morphism \(f: X \rightarrow E\) such that \(e = f_*f^*\). (The same holds for embeddings ??) </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:image">LaTeX</a>
+    <a class="latex_link" href="index.html#lem:nucleus">LaTeX</a>
     
     
   
@@ -346,29 +450,22 @@
 
 
     
-    <div class="dep-modal-container" id="lem:nucleus_modal">
+    <div class="dep-modal-container" id="lem:subframe_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="lem:nucleus" style="display: none">
+  <div class="thm" id="lem:subframe" style="display: none">
     <div class="thm_thmheading">
-      <span class="lemma_thmcaption">
-      Lemma
+      <span class="definition_thmcaption">
+      Definition
       </span>
-      <span class="lemma_thmlabel">8</span><span class="lemma_thmtitle">Nucleus</span></div>
-    <div class="thm_thmcontent"><p> (Leroy Lemme 3)   Let \(e : O(E) \rightarrow O(E)\) be a continuous map. The following arguemnts are equivalent: </p>
-<ol class="enumerate">
-  <li><p>There is a space \(X\) and a morphism \(f: X \rightarrow E\) such that \(e = f_*f^*\). (The same holds for embeddings ??) </p>
-</li>
-  <li><p>\(e\) is idempotent and for every \(U, V \in O(E)\), \(e(U \cap V) = e(U) \cap e(V)\) and \(U \subset e(U)\) </p>
-</li>
-</ol>
-<p> We call \(e\) a nucleus. (Leroy calls it projector Ch 3) </p>
+      <span class="definition_thmlabel">10</span><span class="definition_thmtitle">Subframe</span></div>
+    <div class="thm_thmcontent"><p> (Leroy CH 3)   A subspace \(Y \subset X\) is defined by a nucleus \(e_Y: O(X) \rightarrow O(X)\), such that \(O(Y) = Im(e_Y) = \{ U \in O(X) | e_Y(U) = U\} \). The corresponding embedding (???) is \(i_X : O(Y) \rightarrow O(X)\). \(i^*_X(V) = e_X(V)\), \((i_X)_*(U) = U\) </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:nucleus">LaTeX</a>
+    <a class="latex_link" href="index.html#lem:subframe">LaTeX</a>
     
     
   
@@ -399,7 +496,7 @@ graphContainer.graphviz({useWorker: true})
     .width(width)
     .height(height)
     .fit(true)
-    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"lem:f_star_comm"	[color=blue,		label=f_star_comm,		shape=ellipse];	"lem:f_star_homsets"	[color=green,		label=f_star_homsets,		shape=ellipse];	"lem:frame"	[color=green,		label=frame,		shape=ellipse];	"def:top_frame_func"	[color=blue,		fillcolor="#A3D6FF",		label=top_frame_func,		shape=box,		style=filled];	"lem:frame" -> "def:top_frame_func"	[style=dashed];	"def:f_star"	[color=green,		fillcolor="#B0ECA3",		label=f_star,		shape=box,		style=filled];	"def:top_frame_func" -> "def:f_star"	[style=dashed];	"def:f_star" -> "lem:f_star_comm"	[style=dashed];	"lem:factorisation"	[color=blue,		label=factorisation,		shape=ellipse];	"def:f_star" -> "lem:factorisation"	[style=dashed];	"lem:f_star_adj"	[color=green,		label=f_star_adj,		shape=ellipse];	"def:f_star" -> "lem:f_star_adj"	[style=dashed];	"lem:embedding"	[color=blue,		label=embedding,		shape=ellipse];	"def:f_star" -> "lem:embedding"	[style=dashed];	"lem:nucleus"	[color=blue,		label=nucleus,		shape=ellipse];	"def:f_star" -> "lem:nucleus"	[style=dashed];	"lem:image"	[label=image,		shape=ellipse];	"lem:nucleus" -> "lem:image"	[style=dashed];}`)
+    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"def:top_frame_func"	[color=blue,		fillcolor="#A3D6FF",		label=top_frame_func,		shape=box,		style=filled];	"def:f_star"	[color=green,		fillcolor="#B0ECA3",		label=f_star,		shape=box,		style=filled];	"def:top_frame_func" -> "def:f_star"	[style=dashed];	"lem:nucleus"	[color=blue,		label=nucleus,		shape=ellipse];	"def:f_star" -> "lem:nucleus"	[style=dashed];	"lem:f_star_comm"	[color=blue,		label=f_star_comm,		shape=ellipse];	"def:f_star" -> "lem:f_star_comm"	[style=dashed];	"lem:f_star_adj"	[color=green,		label=f_star_adj,		shape=ellipse];	"def:f_star" -> "lem:f_star_adj"	[style=dashed];	"lem:embedding"	[color=blue,		label=embedding,		shape=ellipse];	"def:f_star" -> "lem:embedding"	[style=dashed];	"lem:factorisation"	[color=blue,		label=factorisation,		shape=ellipse];	"def:f_star" -> "lem:factorisation"	[style=dashed];	"lem:subframe"	[label=subframe,		shape=box];	"lem:nucleus" -> "lem:subframe"	[style=dashed];	"lem:family_of_subspaces"	[label=family_of_subspaces,		shape=ellipse];	"lem:nucleus" -> "lem:family_of_subspaces"	[style=dashed];	"lem:f_star_homsets"	[color=green,		label=f_star_homsets,		shape=ellipse];	"lem:f_star_adj" -> "lem:f_star_homsets"	[style=dashed];	"def:nucleus"	[color=green,		fillcolor="#B0ECA3",		label=nucleus,		shape=box,		style=filled];	"def:nucleus" -> "lem:nucleus"	[style=dashed];	"def:subframe_inclusion"	[label=subframe_inclusion,		shape=box];	"lem:subframe" -> "def:subframe_inclusion"	[style=dashed];	"lem:frame"	[color=green,		label=frame,		shape=ellipse];	"lem:frame" -> "def:top_frame_func"	[style=dashed];	"lem:frame" -> "def:nucleus"	[style=dashed];}`)
     .on("end", interactive);
 
 latexLabelEscaper = function(label) {

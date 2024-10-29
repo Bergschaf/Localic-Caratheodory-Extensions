@@ -1,17 +1,11 @@
 import Mathlib.CategoryTheory.Category.Basic
 import Mathlib.Order.CompleteBooleanAlgebra
-import Mathlib.CategoryTheory.Limits.Creates
-import Mathlib.CategoryTheory.Limits.Shapes.FiniteLimits
-import Mathlib.CategoryTheory.Limits.Constructions.LimitsOfProductsAndEqualizers
-import Mathlib.Topology.Defs.Basic
 import Mathlib.CategoryTheory.Functor.Basic
 import Mathlib.CategoryTheory.Category.Preorder
 import Mathlib.Topology.Sets.Opens
 import Mathlib.Order.CompleteBooleanAlgebra
-import Mathlib.CategoryTheory.Adjunction.Basic
-import Mathlib.Data.Set.Lattice
 import Mathlib.Topology.ContinuousMap.Defs
-
+import Mathlib.CategoryTheory.Adjunction.Basic
 
 open CategoryTheory
 
@@ -23,6 +17,7 @@ abbrev O := TopologicalSpace.Opens
 
 def comap (f : C(X, Y)) := TopologicalSpace.Opens.comap f
 
+/--
 lemma map_map_inf (f: C(X, Y)) :  (fun x => sSup {y | (comap f) y ≤ x}) (a ⊓ b) =
   (fun x => sSup {y | (comap f) y ≤ x}) a ⊓ (fun x => sSup {y | (comap f) y ≤ x}) b := by
   simp
@@ -80,7 +75,7 @@ def map (f : C(X, Y)) : FrameHom (O X) (O Y) where
 
 
 theorem map_mono (f : C(X,Y)) {s t : O X} (h : s ≤ t) : map f s ≤ map f t :=
-  OrderHomClass.mono (map f) h
+  OrderHomClass.mono (map f) h-/
 
 
 def f_obenstern (f : C(X, Y)) : O Y ⥤ O X where
@@ -116,7 +111,7 @@ def f_unit (f : C(X ,Y)) : PLift ((𝟭 (O Y)).obj x ≤ (f_obenstern f ⋙ f_un
   simp
   refine { down := ?down }
   rw [f_untenstern, f_obenstern]
-  simp [map, TopologicalSpace.Opens.comap, comap]
+  simp [ TopologicalSpace.Opens.comap, comap]
   intro a a_1
   simp_all only [SetLike.mem_coe, TopologicalSpace.Opens.coe_sSup, Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
   apply Exists.intro
@@ -129,7 +124,7 @@ def f_unit (f : C(X ,Y)) : PLift ((𝟭 (O Y)).obj x ≤ (f_obenstern f ⋙ f_un
 def f_counit (f: C(X, Y)) : PLift ((f_untenstern f ⋙ f_obenstern f).obj x ≤ (𝟭 (O X)).obj x) := by
   simp
   apply PLift.up
-  simp [f_obenstern,f_untenstern, map, TopologicalSpace.Opens.comap, comap]
+  simp [f_obenstern,f_untenstern, TopologicalSpace.Opens.comap, comap]
   intro a a_1
   simp_all only [TopologicalSpace.Opens.coe_mk, Set.mem_iUnion, Set.mem_preimage, SetLike.mem_coe, exists_prop]
   obtain ⟨w, h⟩ := a_1

@@ -232,6 +232,26 @@
     <a class="icon proof" href="index.html#lem:f_star_homsets">#</a>
     
     
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:f_star_adj">Lemma 6</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
     
         </div>
   </div>
@@ -377,12 +397,84 @@
 
   </div>
 </div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:nucleus">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">8</span>
+    <span class="definition_thmtitle">Nucleus</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:nucleus">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:frame">Lemma 1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/Nucleus" class="lean_decl">Nucleus</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    A nucleus is a map \(e : O(E) \rightarrow O(E)\) with the following three properties: </p>
+<ol class="enumerate">
+  <li><p>\(e\) is idempotent </p>
+</li>
+  <li><p>\(U \le e U\) </p>
+</li>
+  <li><p>\(e(U \cap V) = e(U) \cap e(V)\) </p>
+</li>
+</ol>
+
+  </div>
+</div>
 <div class="lemma_thmwrapper theorem-style-plain" id="lem:nucleus">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">8</span>
+    <span class="lemma_thmlabel">9</span>
     <span class="lemma_thmtitle">Nucleus</span>
     <div class="thm_header_extras">
 
@@ -406,6 +498,8 @@
           
           <li><a href="index.html#def:f_star">Definition 3</a></li>
           
+          <li><a href="index.html#def:nucleus">Definition 8</a></li>
+          
         </ul>
     
       </div>
@@ -416,30 +510,23 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> (Leroy Lemme 3)   Let \(e : O(E) \rightarrow O(E)\) be a continuous map. The following arguemnts are equivalent: </p>
-<ol class="enumerate">
-  <li><p>There is a space \(X\) and a morphism \(f: X \rightarrow E\) such that \(e = f_*f^*\). (The same holds for embeddings ??) </p>
-</li>
-  <li><p>\(e\) is idempotent and for every \(U, V \in O(E)\), \(e(U \cap V) = e(U) \cap e(V)\) and \(U \subset e(U)\) </p>
-</li>
-</ol>
-<p> We call \(e\) a nucleus. (Leroy calls it projector Ch 3) </p>
+  <p> (Leroy Lemme 3)   Let \(e : O(E) \rightarrow O(E)\) be a nucleus. Then there is a space \(X\) and a morphism \(f: X \rightarrow E\) such that \(e = f_*f^*\). (The same holds for embeddings ??) </p>
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="lem:image">
-  <div class="lemma_thmheading">
-    <span class="lemma_thmcaption">
-    Lemma
+<div class="definition_thmwrapper theorem-style-definition" id="lem:subframe">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
     </span>
-    <span class="lemma_thmlabel">9</span>
-    <span class="lemma_thmtitle">Image</span>
+    <span class="definition_thmlabel">10</span>
+    <span class="definition_thmtitle">Subframe</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="index.html#lem:image">#</a>
+    <a class="icon proof" href="index.html#lem:subframe">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -454,7 +541,7 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#lem:nucleus">Lemma 8</a></li>
+          <li><a href="index.html#lem:nucleus">Lemma 9</a></li>
           
         </ul>
     
@@ -465,8 +552,51 @@
     
         </div>
   </div>
-  <div class="lemma_thmcontent">
-  <p> (Leroy CH 3)   A subspace \(Y \subset X\) is defined by a nucleus \(e_Y: O(X) \rightarrow O(X)\), such that \(O(Y) = Im(e_Y) = {U \in O(X) | e_Y(U) = U}\). The corresponding embedding (???) is \(i_X : O(Y) \rightarrow O(X)\). \(i^*_X(V) = e_X(V)\), \((i_X)_*(U) = U\) </p>
+  <div class="definition_thmcontent">
+  <p> (Leroy CH 3)   A subspace \(Y \subset X\) is defined by a nucleus \(e_Y: O(X) \rightarrow O(X)\), such that \(O(Y) = Im(e_Y) = \{ U \in O(X) | e_Y(U) = U\} \). The corresponding embedding (???) is \(i_X : O(Y) \rightarrow O(X)\). \(i^*_X(V) = e_X(V)\), \((i_X)_*(U) = U\) </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:subframe_inclusion">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">11</span>
+    <span class="definition_thmtitle">Subframe Inclusion</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:subframe_inclusion">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:subframe">Definition 10</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> (Stimmt das?)(Leroy Ch 3)   \(X \subset Y\) if \(e_Y \le e_X\) </p>
 
   </div>
 </div>
@@ -475,7 +605,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">10</span>
+    <span class="lemma_thmlabel">12</span>
     <span class="lemma_thmtitle">factorisation</span>
     <div class="thm_header_extras">
 
@@ -510,6 +640,55 @@
   </div>
   <div class="lemma_thmcontent">
   <p> (Leroy Lemme 2)   Let \(i : X \rightarrow E\) be an embedding and \(f: Y \rightarrow E\) be a morphism of spaces. To have \(f\) factor through \(i\), it is necessary and sufficient that \(i_*i^*(V) \le f_*f^*(V) for all V \in O(E)\). </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:family_of_subspaces">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">13</span>
+    <span class="lemma_thmtitle">Familiy of subspaces</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:family_of_subspaces">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:nucleus">Lemma 9</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> (Leroy CH 4)   Let \(X_i\) be a family of subspaces of \(E\) and \(e_i\) be the corresponding nuclei. For every \(V \in O(E)\), let \(e(V)\) be the onion of all \(W \in O(E)\) which are contained in every \(e_i(V)\). Then <br /></p>
+<ol class="enumerate">
+  <li><p>\(e\) is the corresponding nuclus of a subspace \(X\) of \(E\) </p>
+</li>
+  <li><p>a subspace \(Z\) of \(E\) conatains \(x\) if and only if it containd all \(X_i\) x is thus called the union of \(X_i\) denoted by \(\bigcup _i X_i\) </p>
+</li>
+</ol>
 
   </div>
 </div>
