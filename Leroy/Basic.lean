@@ -23,7 +23,7 @@ abbrev O := TopologicalSpace.Opens
 
 def comap (f : C(X, Y)) := TopologicalSpace.Opens.comap f
 
-def map_map_inf (f: C(X, Y)) :  (fun x => sSup {y | (comap f) y ≤ x}) (a ⊓ b) =
+lemma map_map_inf (f: C(X, Y)) :  (fun x => sSup {y | (comap f) y ≤ x}) (a ⊓ b) =
   (fun x => sSup {y | (comap f) y ≤ x}) a ⊓ (fun x => sSup {y | (comap f) y ≤ x}) b := by
   simp
   ext x1
@@ -47,12 +47,36 @@ def map_map_inf (f: C(X, Y)) :  (fun x => sSup {y | (comap f) y ≤ x}) (a ⊓ b
     . exact h2
     . use x3
 
+lemma map_map_sSup (f  : C(X, Y)) : sSup {y | (comap f) y ≤ sSup s} = sSup ((fun a => sSup {y | (comap f) y ≤ a}) '' s) := by
+  apply TopologicalSpace.Opens.ext
+  simp
+  refine Set.eq_of_forall_subset_iff ?h.h
+  simp
+  intro x
+  apply Iff.intro
+  . intro h1 h2 h3 x2 h4
+    apply h1
+    have h5 : h2 ≤ sSup s:= by
+      exact CompleteLattice.le_sSup s h2 h3
+    exact fun ⦃a⦄ a_1 => h5 (h4 a_1)
+  . intro h x1 h2
+
+
+    sorry
+
+    /--
+    apply h (sSup s) _ x1
+    exact h2
+    rw?-/
+
+
+
 
 def map (f : C(X, Y)) : FrameHom (O X) (O Y) where
   toFun x := sSup {y : O Y | comap f y ≤ x}
   map_inf' a b := map_map_inf f
   map_top' := (by simp)
-  map_sSup' s :=   (by simp_all; apply TopologicalSpace.Opens.ext; simp; ext x1; simp;sorry)
+  map_sSup' s :=  (by simp_all; exact map_map_sSup f)
 
 
 theorem map_mono (f : C(X,Y)) {s t : O X} (h : s ≤ t) : map f s ≤ map f t :=
@@ -63,16 +87,30 @@ def f_obenstern (f : C(X, Y)) : O Y ⥤ O X where
   obj := TopologicalSpace.Opens.comap f
   map := (by intro x y; intro h; apply homOfLE; apply TopologicalSpace.Opens.comap_mono; exact leOfHom h)
 
-def f_untenstern (f : C(X, Y)) : O X ⥤ O Y where
+/--def f_untenstern (f : C(X, Y)) : O X ⥤ O Y where
   obj :=  (map f)
   map := (by intro x y h; apply homOfLE; apply map_mono; exact leOfHom h)
+-/
+
+def f_untenstern_map (f: C(X,Y)) : {X_1 Y_1 : O X} → (X_1 ⟶ Y_1) → ((fun x => sSup {y | (comap f) y ≤ x}) X_1 ⟶ (fun x => sSup {y | (comap f) y ≤ x}) Y_1) := by
+  intro x1 x2 h
+  simp
+  apply homOfLE
+  simp_all
+  intro y h1
+  intro a a_1
+  simp_all only [SetLike.mem_coe, TopologicalSpace.Opens.coe_sSup, Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
+  use y
+  apply And.intro
+  . rcases h with ⟨h2⟩
+    apply PLift.down at h2
+    apply le_trans h1 h2
+  . exact a_1
 
 
-
-
---def f_hom_equiv (f : C(X, Y)): (y : O Y) → (x : O X) → ((f_obenstern f).obj y ⟶ x) ≃ (y ⟶ (f_untenstern f).obj x) := by
---  intro y x
-
+def f_untenstern (f: C(X, Y)) : O X ⥤ O Y where
+  obj x := sSup {y : O Y | comap f y ≤ x}
+  map := f_untenstern_map f
 
 def f_unit (f : C(X ,Y)) : PLift ((𝟭 (O Y)).obj x ≤ (f_obenstern f ⋙ f_untenstern f).obj x) := by
   simp
