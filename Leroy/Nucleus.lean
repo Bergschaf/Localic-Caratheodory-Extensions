@@ -4,7 +4,7 @@ open CategoryTheory
 
 variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 
-structure Nucleus (e : O X ⥤ O X) where
+class Nucleus (e : O X ⥤ O X) where
   idempotent (x : O X) : e.obj (e.obj x) = x
   increasing (x : O X) : x ⟶ e.obj x
   preserves_inf (x y : O X) : e.obj (x ⊓ y) = e.obj x ⊓ e.obj y
@@ -19,3 +19,6 @@ instance : LE (Subframe X) where
 
 def Image (s : Subframe X) : Set (O X) :=
   {v : O X | s.func.obj v = v}
+
+
+-- können wir Embedding einfach verwenden?
