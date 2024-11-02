@@ -6,6 +6,8 @@ import Mathlib.Topology.Sets.Opens
 import Mathlib.Order.CompleteBooleanAlgebra
 import Mathlib.Topology.ContinuousMap.Defs
 import Mathlib.CategoryTheory.Adjunction.Basic
+import Mathlib.Topology.MetricSpace.Pseudo.Defs
+import Mathlib.Data.Real.Basic
 
 open CategoryTheory
 
@@ -117,8 +119,7 @@ def f_unit (f : C(X ,Y)) : PLift ((𝟭 (O Y)).obj x ≤ (f_obenstern f ⋙ f_un
   apply Exists.intro
   · apply And.intro
     intro a_2 a_3
-    on_goal 2 => {exact a_1
-    }
+    on_goal 2 => {exact a_1}
     simp_all only [TopologicalSpace.Opens.coe_mk, Set.mem_preimage, SetLike.mem_coe]
 
 def f_counit (f: C(X, Y)) : PLift ((f_untenstern f ⋙ f_obenstern f).obj x ≤ (𝟭 (O X)).obj x) := by
@@ -133,10 +134,22 @@ def f_counit (f: C(X, Y)) : PLift ((f_untenstern f ⋙ f_obenstern f).obj x ≤ 
   simp_all only [TopologicalSpace.Opens.coe_mk, Set.mem_preimage, SetLike.mem_coe]
 
 
-def f_adj (f : C(X, Y)) :  (f_obenstern f) ⊣ (f_untenstern f) where
+def f_adj (f : C(X, Y)) : (f_obenstern f) ⊣ (f_untenstern f) where
   unit := {app := fun x => ⟨f_unit f⟩}
   counit := {app := fun x => ⟨f_counit f⟩}
 
+def ball := Metric.ball (1 : Real) 1
+
+def ball2 := Metric.ball (0 : Real) 1
+
+def funktion (x : ball) : ball := x
+
+def f_continuous : C(ball, ball) := ⟨funktion, (by exact { isOpen_preimage := fun s a => a })⟩
+
+#check (f_adj f_continuous).homEquiv
+
+
+-- Aussage 3: linksadjungierte ist fully faithfull (unit ist iso)
 def f_surjective_injective (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ Function.Injective (f_obenstern f).obj := by
   sorry
 

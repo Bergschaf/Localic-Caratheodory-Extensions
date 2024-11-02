@@ -1,9 +1,9 @@
-\begin{lemma}[Frame]
+\begin{definition}[Frame]
     \label{lem:frame}
     (Already in Mathlib )A Frame can be viewed as a Category.
     There exists a morphism between $A$ and $B$ iff $A \le B$.
     \leanok
-\end{lemma}
+\end{definition}
 
 \begin{definition}[Top -> Frame]
     \label{def:top_frame_func}
@@ -75,7 +75,7 @@
 \begin{lemma}[Nucleus]
 (Leroy Lemme 3)
     \label{lem:nucleus}
-    \uses{def:f_star,def:nucleus}
+    \uses{def:f_star,def:nucleus,lem:embedding}
     Let $e : O(E) \rightarrow O(E)$ be a nucleus. Then there is a space $X$ and a morphism $f: X \rightarrow E$ such that $e = f_*f^*$. (The same holds for embeddings ??)
 \end{lemma}
 
@@ -97,7 +97,7 @@
 \begin{lemma}[factorisation]
 (Leroy Lemme 2)
     \label{lem:factorisation}
-    \uses{def:f_star}
+    \uses{def:f_star, lem:embedding}
     Let $i : X \rightarrow E$ be an embedding and $f: Y \rightarrow E$ be a morphism of spaces. To have $f$ factor through $i$, it is necessary and sufficient that $i_*i^*(V) \le f_*f^*(V) for all V \in O(E)$.
 \end{lemma}
 
