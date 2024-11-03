@@ -146,7 +146,10 @@ def funktion (x : ball) : ball := x
 
 def f_continuous : C(ball, ball) := ⟨funktion, (by exact { isOpen_preimage := fun s a => a })⟩
 
-#check (f_adj f_continuous).homEquiv
+#check (f_adj f_continuous).left_triangle_components
+
+def triangle_one (f : C(X, Y)) : (f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f) = (f_obenstern f) := by
+  sorry
 
 
 -- Aussage 3: linksadjungierte ist fully faithfull (unit ist iso)
@@ -154,5 +157,5 @@ def f_surjective_injective (f: C(X, Y)) : Function.Surjective (f_obenstern f).ob
   sorry
 
 
-def f_surjective_one (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ (f_obenstern f) ⋙ (f_untenstern f) = 𝟭 (O Y) := by
+def f_surjective_one (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) := by
   sorry
