@@ -10,7 +10,7 @@ class Nucleus (e : O X ⥤ O X) where
 
 --- obacht leroy hat entwender E oder X vertauscht oder f_untenstern und f_obenstern
 lemma nucleus_properties (e : O E ⥤ O E) [Nucleus e] : ∃ (X : Type (u + 1)),∃ (h : TopologicalSpace X), ∃ f : C(X, E), e = (f_obenstern f) ⋙ (f_untenstern f) := by
-
+  sorry
 
 structure Subframe (X : Type*) [TopologicalSpace X] where
   e : O X ⥤ O X
