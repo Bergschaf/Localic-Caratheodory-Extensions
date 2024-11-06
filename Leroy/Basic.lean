@@ -148,8 +148,48 @@ def f_continuous : C(ball, ball) := ⟨funktion, (by exact { isOpen_preimage := 
 
 #check (f_adj f_continuous).left_triangle_components
 
-def triangle_one (f : C(X, Y)) : (f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f) = (f_obenstern f) := by
-  sorry
+
+
+def triangle_one_obj (f : C(X, Y)) (y : O Y): ((f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f)).obj y = (f_obenstern f).obj y := by
+  let h : (f_obenstern f) ⟶ (f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f) :=
+    ⟨fun x ↦ (f_obenstern f).map ((f_adj f).unit.app x), (by aesop_cat)⟩
+
+  let h2 : (f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f) ⟶  (f_obenstern f) :=
+    ⟨fun x ↦ (f_adj f).counit.app ((f_obenstern f).obj x), (by aesop_cat)⟩
+
+  apply le_antisymm
+  apply leOfHom
+  exact h2.app y
+  apply leOfHom
+  exact h.app y
+
+def triangle_one (f : C(X, Y)) : ((f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f)) = (f_obenstern f) := by
+  refine CategoryTheory.Functor.ext ?h_obj ?h_map
+  exact fun X_1 => triangle_one_obj f X_1
+  intro X_1 Y_1 f_1
+  simp_all only [Functor.comp_obj, Functor.comp_map]
+  rfl
+
+def triangle_two_obj (f: C(X, Y)) (x : O X): ((f_untenstern f) ⋙ (f_obenstern f) ⋙ (f_untenstern f)).obj x = (f_untenstern f).obj x := by
+  let f1 : (f_untenstern f) ⟶ ((f_untenstern f) ⋙ (f_obenstern f) ⋙ (f_untenstern f)):=
+    ⟨fun x ↦(f_adj f).unit.app ((f_untenstern f).obj x), (by aesop_cat)⟩
+
+  let f2 : ((f_untenstern f) ⋙ (f_obenstern f) ⋙ (f_untenstern f)) ⟶ (f_untenstern f) :=
+    ⟨fun x ↦ (f_untenstern f).map ((f_adj f).counit.app x), (by aesop_cat)⟩
+
+  apply le_antisymm
+  apply leOfHom
+  exact f2.app x
+  apply leOfHom
+  exact f1.app x
+
+
+def triangle_two (f: C(X, Y)): ((f_untenstern f) ⋙ (f_obenstern f) ⋙ (f_untenstern f)) = (f_untenstern f):= by
+  refine CategoryTheory.Functor.ext ?h_obj ?h_map
+  exact fun X_1 => triangle_two_obj f X_1
+  intro X_1 Y_1 f_1
+  simp_all only [Functor.comp_obj, Functor.comp_map]
+  rfl
 
 
 -- Aussage 3: linksadjungierte ist fully faithfull (unit ist iso)

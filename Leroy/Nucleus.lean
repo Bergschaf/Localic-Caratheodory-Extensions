@@ -20,8 +20,8 @@ structure Subframe (X : Type*) [TopologicalSpace X] where
 instance : LE (Subframe X) where
   le x y := ∀ v : O X, y.e.obj v ≤ x.e.obj v
 
-def Image (s : Subframe X) : Set (O X) :=
-  {v : O X | s.e.obj v = v}
+def Image (e : O X ⥤ O X) [Nucleus e] : Set (O X) :=
+  {v : O X | e.obj v = v}
 
 
 
