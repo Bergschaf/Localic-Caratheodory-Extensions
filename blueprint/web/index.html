@@ -279,6 +279,9 @@
 
     <a class="icon proof" href="index.html#lem:f_star_adj">#</a>
     
+    <a class="icon proof" href="index.html#a0000000004"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -327,12 +330,89 @@
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="lem:embedding">
+<div class="proof_wrapper" id="a0000000004">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:triangle">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">7</span>
+    <span class="lemma_thmtitle">triangle</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:triangle">#</a>
+    
+    <a class="icon proof" href="index.html#a0000000005"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/triangle_one" class="lean_decl">triangle_one</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> (Mclane p. 485) </p>
+<p>The triangular identities reduce to the following equalities: </p>
+<div class="displaymath" id="a0000000006">
+  \[ f^*f_*f^* = f^* \quad \text{and} \quad f_*f^*f_* = f_* \]
+</div>
+
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000005">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  
+<p>This follows from the triangular identities of the adjunction. </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:embedding">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">8</span>
     <span class="lemma_thmtitle">Embedding</span>
     <div class="thm_header_extras">
 
@@ -340,6 +420,9 @@
     <div class="thm_header_hidden_extras">
 
     <a class="icon proof" href="index.html#lem:embedding">#</a>
+    
+    <a class="icon proof" href="index.html#a0000000007"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -355,6 +438,8 @@
         <ul class="uses">
           
           <li><a href="index.html#def:f_star">Definition 3</a></li>
+          
+          <li><a href="index.html#lem:triangle">Lemma 7</a></li>
           
         </ul>
     
@@ -374,7 +459,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_surjective_injective" class="lean_decl">f_surjective_injective</a></li>
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_injective_surjective" class="lean_decl">f_injective_surjective</a></li>
           
         </ul>
     
@@ -385,7 +470,7 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> (Leroy Lemme 1)    \(f: X \rightarrow Y\) is an embedding, if at least one of the following arguemnts holds: </p>
+  <p> (Leroy Lemme 1)    The following arguments are equivalent: </p>
 <ol class="enumerate">
   <li><p>\(f^*\) is surjective </p>
 </li>
@@ -397,12 +482,88 @@
 
   </div>
 </div>
+<div class="proof_wrapper" id="a0000000007">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>This follows from the triangular identities. </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:embedding">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">9</span>
+    <span class="definition_thmtitle">Embedding</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:embedding">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#lem:embedding">Lemma 8</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://Bergschaf.github.io/leroy/docs/find/#doc/Leroy_Embedding" class="lean_decl">Leroy_Embedding</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   An embedding is a morphism that satisfies the conditions of ??lem:embedding  </p>
+
+  </div>
+</div>
 <div class="definition_thmwrapper theorem-style-definition" id="def:nucleus">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">8</span>
+    <span class="definition_thmlabel">10</span>
     <span class="definition_thmtitle">Nucleus</span>
     <div class="thm_header_extras">
 
@@ -474,7 +635,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">9</span>
+    <span class="lemma_thmlabel">11</span>
     <span class="lemma_thmtitle">Nucleus</span>
     <div class="thm_header_extras">
 
@@ -498,9 +659,9 @@
           
           <li><a href="index.html#def:f_star">Definition 3</a></li>
           
-          <li><a href="index.html#def:nucleus">Definition 8</a></li>
+          <li><a href="index.html#def:nucleus">Definition 10</a></li>
           
-          <li><a href="index.html#lem:embedding">Lemma 7</a></li>
+          <li><a href="index.html#def:embedding">Definition 9</a></li>
           
         </ul>
     
@@ -521,7 +682,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">10</span>
+    <span class="definition_thmlabel">12</span>
     <span class="definition_thmtitle">Subframe</span>
     <div class="thm_header_extras">
 
@@ -543,7 +704,7 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#lem:nucleus">Lemma 9</a></li>
+          <li><a href="index.html#lem:nucleus">Lemma 11</a></li>
           
         </ul>
     
@@ -564,7 +725,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">11</span>
+    <span class="definition_thmlabel">13</span>
     <span class="definition_thmtitle">Subframe Inclusion</span>
     <div class="thm_header_extras">
 
@@ -586,7 +747,7 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#lem:subframe">Definition 10</a></li>
+          <li><a href="index.html#lem:subframe">Definition 12</a></li>
           
         </ul>
     
@@ -607,7 +768,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">12</span>
+    <span class="lemma_thmlabel">14</span>
     <span class="lemma_thmtitle">factorisation</span>
     <div class="thm_header_extras">
 
@@ -631,7 +792,7 @@
           
           <li><a href="index.html#def:f_star">Definition 3</a></li>
           
-          <li><a href="index.html#lem:embedding">Lemma 7</a></li>
+          <li><a href="index.html#lem:embedding">Lemma 8</a></li>
           
         </ul>
     
@@ -652,7 +813,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">13</span>
+    <span class="lemma_thmlabel">15</span>
     <span class="lemma_thmtitle">Familiy of subspaces</span>
     <div class="thm_header_extras">
 
@@ -674,7 +835,7 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#lem:nucleus">Lemma 9</a></li>
+          <li><a href="index.html#lem:nucleus">Lemma 11</a></li>
           
         </ul>
     
