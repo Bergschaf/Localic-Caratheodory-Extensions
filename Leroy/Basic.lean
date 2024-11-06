@@ -19,75 +19,11 @@ abbrev O := TopologicalSpace.Opens
 
 def comap (f : C(X, Y)) := TopologicalSpace.Opens.comap f
 
-/--
-lemma map_map_inf (f: C(X, Y)) :  (fun x => sSup {y | (comap f) y ≤ x}) (a ⊓ b) =
-  (fun x => sSup {y | (comap f) y ≤ x}) a ⊓ (fun x => sSup {y | (comap f) y ≤ x}) b := by
-  simp
-  ext x1
-  apply Iff.intro
-  simp
-  intro x2 h1 h2 h3
-  apply And.intro
-  . use x2
-  . use x2
-  simp
-  intro x2 h1 h2 x3 h3 h4
-  use (sSup {y | (comap f) y ≤ a} ⊓ sSup {y | (comap f) y ≤ b})
-  apply And.intro
-  . apply And.intro
-    . simp  [inf_le_of_left_le]
-    . simp [inf_le_of_right_le]
-  . rw [@sSup_inf_sSup]
-    simp
-    use x2
-    apply And.intro
-    . exact h2
-    . use x3
-
-lemma map_map_sSup (f  : C(X, Y)) : sSup {y | (comap f) y ≤ sSup s} = sSup ((fun a => sSup {y | (comap f) y ≤ a}) '' s) := by
-  apply TopologicalSpace.Opens.ext
-  simp
-  refine Set.eq_of_forall_subset_iff ?h.h
-  simp
-  intro x
-  apply Iff.intro
-  . intro h1 h2 h3 x2 h4
-    apply h1
-    have h5 : h2 ≤ sSup s:= by
-      exact CompleteLattice.le_sSup s h2 h3
-    exact fun ⦃a⦄ a_1 => h5 (h4 a_1)
-  . intro h x1 h2
-
-
-    sorry
-
-    /--
-    apply h (sSup s) _ x1
-    exact h2
-    rw?-/
-
-
-
-
-def map (f : C(X, Y)) : FrameHom (O X) (O Y) where
-  toFun x := sSup {y : O Y | comap f y ≤ x}
-  map_inf' a b := map_map_inf f
-  map_top' := (by simp)
-  map_sSup' s :=  (by simp_all; exact map_map_sSup f)
-
-
-theorem map_mono (f : C(X,Y)) {s t : O X} (h : s ≤ t) : map f s ≤ map f t :=
-  OrderHomClass.mono (map f) h-/
-
-
 def f_obenstern (f : C(X, Y)) : O Y ⥤ O X where
   obj := TopologicalSpace.Opens.comap f
   map := (by intro x y; intro h; apply homOfLE; apply TopologicalSpace.Opens.comap_mono; exact leOfHom h)
 
-/--def f_untenstern (f : C(X, Y)) : O X ⥤ O Y where
-  obj :=  (map f)
-  map := (by intro x y h; apply homOfLE; apply map_mono; exact leOfHom h)
--/
+--postfix:max ""
 
 def f_untenstern_map (f: C(X,Y)) : {X_1 Y_1 : O X} → (X_1 ⟶ Y_1) → ((fun x => sSup {y | (comap f) y ≤ x}) X_1 ⟶ (fun x => sSup {y | (comap f) y ≤ x}) Y_1) := by
   intro x1 x2 h
@@ -193,9 +129,65 @@ def triangle_two (f: C(X, Y)): ((f_untenstern f) ⋙ (f_obenstern f) ⋙ (f_unte
 
 
 -- Aussage 3: linksadjungierte ist fully faithfull (unit ist iso)
-def f_surjective_injective (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ Function.Injective (f_obenstern f).obj := by
-  sorry
+
+def f_injective_one (f: C(X, Y)) : Function.Injective (f_untenstern f).obj → (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) := by
+  intro h1
+  refine CategoryTheory.Functor.ext ?h_obj ?h_map
+  intro x1
+  simp
+  apply_fun (f_untenstern f).obj
+  apply triangle_two_obj f x1
+  intro X_1 Y_1 f_1
+  simp_all only [Functor.comp_obj, Functor.comp_map, Functor.id_obj, Functor.id_map]
+  rfl
+
+def f_injective_surjective (f: C(X, Y)) : Function.Injective (f_untenstern f).obj → Function.Surjective (f_obenstern f).obj := by
+  intro a b
+  use (f_untenstern f).obj b
+  have h: (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) := by
+    apply f_injective_one f a
+
+  apply_fun (fun x ↦ x.obj) at h
+  rw [← @Functor.comp_obj]
+  rw [h]
+  simp
+
+def f_one_surjective (f: C(X, Y)) : (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) → Function.Surjective (f_obenstern f).obj := by
+  intro h1
+  rw [Function.Surjective]
+  intro a1
+  use (f_untenstern f).obj a1
+  rw [← @Functor.comp_obj]
+  rw [h1]
+  simp
 
 
-def f_surjective_one (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj ↔ (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) := by
-  sorry
+def f_surjective_one (f: C(X, Y)) : Function.Surjective (f_obenstern f).obj → (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) := by
+  intro h1
+  refine CategoryTheory.Functor.ext ?h_obj ?h_map
+  intro x1
+  simp
+  have h (y : O Y): ((f_obenstern f) ⋙ (f_untenstern f) ⋙ (f_obenstern f)).obj y = (f_obenstern f).obj y := by
+    exact triangle_one_obj f y
+
+  simp at h
+  let inv := Function.surjInv h1
+  have h := h (inv x1)
+  simp [inv, Function.surjInv_eq] at h
+  exact h
+  intro X_1 Y_1 f_1
+  simp_all only [Functor.comp_obj, Functor.comp_map, Functor.id_obj, Functor.id_map]
+  rfl
+
+def f_one_injective (f: C(X, Y)) :  (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X) → Function.Injective (f_untenstern f).obj := by
+  intro h
+  apply_fun (fun x ↦ x.obj) at h
+  have h4 (x : O X) : ((f_untenstern f) ⋙ (f_obenstern f)).obj x= x := by
+    exact congrFun h x
+  have h6 : Function.HasLeftInverse (f_untenstern f).obj :=
+    ⟨(f_obenstern f).obj, (by exact h4)⟩
+  exact Function.HasLeftInverse.injective h6
+
+
+class Leroy_Embedding (f : C(X, Y)) where
+  comp_id := (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X)
