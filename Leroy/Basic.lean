@@ -11,7 +11,7 @@ import Mathlib.Data.Real.Basic
 
 open CategoryTheory
 
-variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+variable {X Y E: Type*} [TopologicalSpace X] [TopologicalSpace Y] [TopologicalSpace E]
 --- Geschweifte klammern sind wichtig
 
 
@@ -191,3 +191,5 @@ def f_one_injective (f: C(X, Y)) :  (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 
 
 class Leroy_Embedding (f : C(X, Y)) where
   comp_id := (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X)
+
+-------
