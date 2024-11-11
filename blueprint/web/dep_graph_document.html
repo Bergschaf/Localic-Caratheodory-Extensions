@@ -61,6 +61,70 @@
 <div id="statements">
 
     
+    <div class="dep-modal-container" id="def:direct_images_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:direct_images" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">16</span><span class="definition_thmtitle">Direct Images</span></div>
+    <div class="thm_thmcontent"><p>   Let \(f : E \rightarrow F\) be a morphism of spaces. The map \(f_*f^* : O(F) \to O(F)\) is the nucleus of the subspace \(Im(f)\) of \(F\). By (lemma 2), \(Im(F)\) is the smallest subspace of \(F\) through which \(f\) can be factored. For any subspace \(X\) of \(E\), we define the direct image as </p>
+<div class="displaymath" id="a0000000013">
+  \[ f(x) = Im(fi_x) \]
+</div>
+<p> Where \(i_X\) is the inclusion of \(X\) into \(E\). </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:direct_images">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:e_U_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:e_U" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">20</span><span class="definition_thmtitle">\(e_U\)</span></div>
+    <div class="thm_thmcontent"><p> TODO bessere benennung   Let \(E\) be a space with \(U, H \in O(E)\). We donote by \(e_U\) the largest \(W \in O(E)\) such that \(W \cap U \subset H\). We verify that \(e_U\) is the nucleus of a subspace, which we will temporarily denote by \([U]\). </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:e_U">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="def:embedding_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -76,7 +140,7 @@
     <div class="thm_thmcontent"><p>   An embedding is a morphism that satisfies the conditions of ??lem:embedding  </p>
 </div>
 
-    <a class="latex_link" href="index.html#def:embedding">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#def:embedding">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/Leroy_Embedding">Lean</a>
@@ -104,15 +168,48 @@
       </span>
       <span class="definition_thmlabel">3</span><span class="definition_thmtitle">\(f^*\) and \(f_*\)</span></div>
     <div class="thm_thmcontent"><p>    For every continuous Function \(f : X \rightarrow Y\) between topological Spaces, there exists a pair of functors \((f^*,f_*)\). </p>
-<div class="displaymath" id="a0000000002">
-  \begin{gather*}  f* = f^{-1} : O(Y) \rightarrow O(X)\\ f_* : O(X) \rightarrow O(Y) \coloneqq A \mapsto \bigcup _{f^*(v) \le A} v\\ \end{gather*}
+<div class="displaymath" id="a0000000004">
+  \begin{gather*}  f* = f^{-1} : O(Y) \rightarrow O(X)\\ f_* : O(X) \rightarrow O(Y) := A \mapsto \bigcup _{f^*(v) \le A} v\\ \end{gather*}
 </div>
 </div>
 
-    <a class="latex_link" href="index.html#def:f_star">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#def:f_star">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_obenstern">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:inverse_images_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:inverse_images" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">19</span><span class="definition_thmtitle">Inverse Images</span></div>
+    <div class="thm_thmcontent"><p>   We have a morphism of spaces \(f : E \rightarrow F\) and a subspace \(Y\) of \(F\). The inverse image \(f^{-1}(Y)\) is the biggest subspace \(X\) of \(E\) such that \(f(X) \subset Y\). <br />More generally for a morphism \(h : A \rightarrow E\), the necessary and sufficient condition for \(h\) to factor through \(f^{-1}\) is that \(fh\) factors through \(Y\). </p>
+<div class="displaymath" id="a0000000017">
+  \[ Im h \subset f^{-1}(Y)\iff f(Im h) \subset Y \iff Im(fh) \subset Y  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:inverse_images">LaTeX</a>
+    
+    
+  
     
     
   
@@ -147,7 +244,7 @@
 </ol>
 </div>
 
-    <a class="latex_link" href="index.html#def:nucleus">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#def:nucleus">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/Nucleus">Lean</a>
@@ -177,7 +274,7 @@
     <div class="thm_thmcontent"><p> (Stimmt das?)(Leroy Ch 3)   \(X \subset Y\) if \(e_Y \le e_X\) </p>
 </div>
 
-    <a class="latex_link" href="index.html#def:subframe_inclusion">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#def:subframe_inclusion">LaTeX</a>
     
     
   
@@ -207,7 +304,73 @@
     <div class="thm_thmcontent"><p>   (Brauchen wir das überhaupt?) There exists a contravariant Functor from a topological Space to the corresponding Frame Category with open Sets as objects. \(f: X \rightarrow O(X)\) </p>
 </div>
 
-    <a class="latex_link" href="index.html#def:top_frame_func">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#def:top_frame_func">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:direct_images_families_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:direct_images_families" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">18</span><span class="lemma_thmtitle">(5) Direct Images Families</span></div>
+    <div class="thm_thmcontent"><p> (Leroy Lemme 5)   For all morphisms \(f: E \rightarrow F\) and a family \((X_i)\) of subspaces of \(E\), the following holds: </p>
+<div class="displaymath" id="a0000000015">
+  \[ f(\cup _i X_i) = \cup _i f(X_i) \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0001.html#lem:direct_images_families">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:direct_images_transitive_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:direct_images_transitive" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">17</span><span class="lemma_thmtitle">(4) Direct Images Transitive</span></div>
+    <div class="thm_thmcontent"><p> (Leroy Lemme 4)   Given two morphisms \(f : E \rightarrow F\) and \(g : F \rightarrow G\) and a subspace \(X\) of \(E\), we have </p>
+<div class="displaymath" id="a0000000014">
+  \[ (gf)(X) = g(f(X)) \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0001.html#lem:direct_images_transitive">LaTeX</a>
     
     
   
@@ -245,7 +408,7 @@
 </ol>
 </div>
 
-    <a class="latex_link" href="index.html#lem:embedding">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:embedding">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_injective_surjective">Lean</a>
@@ -275,7 +438,7 @@
     <div class="thm_thmcontent"><p>    \(f^*\) is the right adjoint to \(f_*\) </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:f_star_adj">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:f_star_adj">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/f_adj">Lean</a>
@@ -306,7 +469,7 @@
 <p>\(f^*\) commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open Sets has all small coproducts and all finite Limits. <a href ="https://ncatlab.org/nlab/show/frame">nlab</a> </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:f_star_comm">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:f_star_comm">LaTeX</a>
     
     
   
@@ -334,12 +497,12 @@
       </span>
       <span class="lemma_thmlabel">5</span><span class="lemma_thmtitle">Homsets</span></div>
     <div class="thm_thmcontent"><p>   (Already in Mathlib) </p>
-<div class="displaymath" id="a0000000003">
+<div class="displaymath" id="a0000000005">
   \[ Hom_{O(Y)}(f*(V), A) = Hom_{O(x)}(v, f_*(A)) \]
 </div>
 </div>
 
-    <a class="latex_link" href="index.html#lem:f_star_homsets">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:f_star_homsets">LaTeX</a>
     
     
   
@@ -369,7 +532,7 @@
     <div class="thm_thmcontent"><p> (Leroy Lemme 2)   Let \(i : X \rightarrow E\) be an embedding and \(f: Y \rightarrow E\) be a morphism of spaces. To have \(f\) factor through \(i\), it is necessary and sufficient that \(i_*i^*(V) \le f_*f^*(V) for all V \in O(E)\). </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:factorisation">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:factorisation">LaTeX</a>
     
     
   
@@ -398,14 +561,14 @@
       <span class="lemma_thmlabel">15</span><span class="lemma_thmtitle">Familiy of subspaces</span></div>
     <div class="thm_thmcontent"><p> (Leroy CH 4)   Let \(X_i\) be a family of subspaces of \(E\) and \(e_i\) be the corresponding nuclei. For every \(V \in O(E)\), let \(e(V)\) be the onion of all \(W \in O(E)\) which are contained in every \(e_i(V)\). Then <br /></p>
 <ol class="enumerate">
-  <li><p>\(e\) is the corresponding nuclus of a subspace \(X\) of \(E\) </p>
+  <li><p>\(e\) is the corresponding nucleus of a subspace \(X\) of \(E\) </p>
 </li>
-  <li><p>a subspace \(Z\) of \(E\) conatains \(x\) if and only if it containd all \(X_i\) x is thus called the union of \(X_i\) denoted by \(\bigcup _i X_i\) </p>
+  <li><p>a subspace \(Z\) of \(E\) contains \(x\) if and only if it contains all \(X_i\) x is thus called the union of \(X_i\) denoted by \(\bigcup _i X_i\) </p>
 </li>
 </ol>
 </div>
 
-    <a class="latex_link" href="index.html#lem:family_of_subspaces">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:family_of_subspaces">LaTeX</a>
     
     
   
@@ -435,7 +598,7 @@
     <div class="thm_thmcontent"><p>  (Already in Mathlib )A Frame can be viewed as a Category. There exists a morphism between \(A\) and \(B\) iff \(A \le B\). </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:frame">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:frame">LaTeX</a>
     
     
   
@@ -465,7 +628,37 @@
     <div class="thm_thmcontent"><p> (Leroy Lemme 3)   Let \(e : O(E) \rightarrow O(E)\) be a nucleus. Then there is a space \(X\) and a morphism \(f: X \rightarrow E\) such that \(e = f_*f^*\). (The same holds for embeddings ??) </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:nucleus">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:nucleus">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:open_subspaces_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:open_subspaces" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">21</span><span class="lemma_thmtitle">(6) Open subspaces</span></div>
+    <div class="thm_thmcontent"><p> (Leroy Lemma 6)   For all subspaces \(X\) of \(E\) and any \(U \in O(E)\): TODO </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#lem:open_subspaces">LaTeX</a>
     
     
   
@@ -495,7 +688,7 @@
     <div class="thm_thmcontent"><p> (Leroy CH 3)   A subspace \(Y \subset X\) is defined by a nucleus \(e_Y: O(X) \rightarrow O(X)\), such that \(O(Y) = Im(e_Y) = \{ U \in O(X) | e_Y(U) = U\} \). The corresponding embedding (???) is \(i_X : O(Y) \rightarrow O(X)\). \(i^*_X(V) = e_X(V)\), \((i_X)_*(U) = U\) </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:subframe">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:subframe">LaTeX</a>
     
     
   
@@ -524,13 +717,13 @@
       <span class="lemma_thmlabel">7</span><span class="lemma_thmtitle">triangle</span></div>
     <div class="thm_thmcontent"><p> (Mclane p. 485) </p>
 <p>The triangular identities reduce to the following equalities: </p>
-<div class="displaymath" id="a0000000006">
+<div class="displaymath" id="a0000000008">
   \[ f^*f_*f^* = f^* \quad \text{and} \quad f_*f^*f_* = f_* \]
 </div>
 
 </div>
 
-    <a class="latex_link" href="index.html#lem:triangle">LaTeX</a>
+    <a class="latex_link" href="sect0001.html#lem:triangle">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://Bergschaf.github.io/leroy/docs/find/#doc/triangle_one">Lean</a>
@@ -561,7 +754,7 @@ graphContainer.graphviz({useWorker: true})
     .width(width)
     .height(height)
     .fit(true)
-    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"lem:frame"	[color=green,		fillcolor="#B0ECA3",		label=frame,		shape=box,		style=filled];	"def:top_frame_func"	[color=blue,		fillcolor="#A3D6FF",		label=top_frame_func,		shape=box,		style=filled];	"lem:frame" -> "def:top_frame_func"	[style=dashed];	"def:nucleus"	[color=green,		fillcolor="#B0ECA3",		label=nucleus,		shape=box,		style=filled];	"lem:frame" -> "def:nucleus"	[style=dashed];	"def:f_star"	[color=green,		fillcolor="#B0ECA3",		label=f_star,		shape=box,		style=filled];	"def:top_frame_func" -> "def:f_star"	[style=dashed];	"lem:nucleus"	[color=blue,		label=nucleus,		shape=ellipse];	"def:nucleus" -> "lem:nucleus"	[style=dashed];	"lem:f_star_comm"	[color=blue,		label=f_star_comm,		shape=ellipse];	"def:f_star" -> "lem:f_star_comm"	[style=dashed];	"lem:f_star_adj"	[color=green,		fillcolor="#1CAC78",		label=f_star_adj,		shape=ellipse,		style=filled];	"def:f_star" -> "lem:f_star_adj"	[style=dashed];	"lem:subframe"	[label=subframe,		shape=box];	"lem:nucleus" -> "lem:subframe"	[style=dashed];	"lem:family_of_subspaces"	[label=family_of_subspaces,		shape=ellipse];	"lem:nucleus" -> "lem:family_of_subspaces"	[style=dashed];	"lem:f_star_homsets"	[color=green,		label=f_star_homsets,		shape=ellipse];	"lem:f_star_adj" -> "lem:f_star_homsets"	[style=dashed];	"lem:triangle"	[color=green,		fillcolor="#1CAC78",		label=triangle,		shape=ellipse,		style=filled];	"lem:f_star_adj" -> "lem:triangle";	"def:embedding"	[color=green,		fillcolor="#B0ECA3",		label=embedding,		shape=box,		style=filled];	"def:embedding" -> "lem:nucleus"	[style=dashed];	"def:subframe_inclusion"	[label=subframe_inclusion,		shape=box];	"lem:subframe" -> "def:subframe_inclusion"	[style=dashed];	"lem:embedding"	[color=blue,		fillcolor="#1CAC78",		label=embedding,		shape=ellipse,		style=filled];	"lem:triangle" -> "lem:embedding"	[style=dashed];	"lem:embedding" -> "def:embedding"	[style=dashed];	"lem:factorisation"	[label=factorisation,		shape=ellipse];	"lem:embedding" -> "lem:factorisation"	[style=dashed];}`)
+    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"def:nucleus"	[color=green,		fillcolor="#B0ECA3",		label=nucleus,		shape=box,		style=filled];	"def:e_U"	[color=blue,		fillcolor="#A3D6FF",		label=e_U,		shape=box,		style=filled];	"def:nucleus" -> "def:e_U"	[style=dashed];	"lem:nucleus"	[color=blue,		label=nucleus,		shape=ellipse];	"def:nucleus" -> "lem:nucleus"	[style=dashed];	"lem:open_subspaces"	[label=open_subspaces,		shape=ellipse];	"def:e_U" -> "lem:open_subspaces"	[style=dashed];	"lem:family_of_subspaces"	[label=family_of_subspaces,		shape=ellipse];	"lem:nucleus" -> "lem:family_of_subspaces"	[style=dashed];	"lem:subframe"	[label=subframe,		shape=box];	"lem:nucleus" -> "lem:subframe"	[style=dashed];	"def:subframe_inclusion"	[label=subframe_inclusion,		shape=box];	"lem:subframe" -> "def:subframe_inclusion"	[style=dashed];	"def:direct_images"	[label=direct_images,		shape=box];	"lem:subframe" -> "def:direct_images"	[style=dashed];	"lem:direct_images_families"	[label=direct_images_families,		shape=ellipse];	"lem:frame"	[color=green,		fillcolor="#B0ECA3",		label=frame,		shape=box,		style=filled];	"lem:frame" -> "def:nucleus"	[style=dashed];	"def:top_frame_func"	[color=blue,		fillcolor="#A3D6FF",		label=top_frame_func,		shape=box,		style=filled];	"lem:frame" -> "def:top_frame_func"	[style=dashed];	"def:f_star"	[color=green,		fillcolor="#B0ECA3",		label=f_star,		shape=box,		style=filled];	"def:top_frame_func" -> "def:f_star"	[style=dashed];	"lem:f_star_adj"	[color=green,		fillcolor="#1CAC78",		label=f_star_adj,		shape=ellipse,		style=filled];	"def:f_star" -> "lem:f_star_adj"	[style=dashed];	"lem:f_star_comm"	[color=blue,		label=f_star_comm,		shape=ellipse];	"def:f_star" -> "lem:f_star_comm"	[style=dashed];	"lem:triangle"	[color=green,		fillcolor="#1CAC78",		label=triangle,		shape=ellipse,		style=filled];	"lem:f_star_adj" -> "lem:triangle";	"lem:f_star_homsets"	[color=green,		label=f_star_homsets,		shape=ellipse];	"lem:f_star_adj" -> "lem:f_star_homsets"	[style=dashed];	"lem:embedding"	[color=blue,		fillcolor="#1CAC78",		label=embedding,		shape=ellipse,		style=filled];	"lem:triangle" -> "lem:embedding"	[style=dashed];	"def:embedding"	[color=green,		fillcolor="#B0ECA3",		label=embedding,		shape=box,		style=filled];	"lem:embedding" -> "def:embedding"	[style=dashed];	"def:embedding" -> "lem:nucleus"	[style=dashed];	"lem:factorisation"	[color=blue,		label=factorisation,		shape=ellipse];	"def:embedding" -> "lem:factorisation"	[style=dashed];	"def:direct_images" -> "lem:direct_images_families"	[style=dashed];	"lem:direct_images_transitive"	[label=direct_images_transitive,		shape=ellipse];	"def:direct_images" -> "lem:direct_images_transitive"	[style=dashed];	"def:inverse_images"	[label=inverse_images,		shape=box];	"lem:direct_images_transitive" -> "def:inverse_images"	[style=dashed];}`)
     .on("end", interactive);
 
 latexLabelEscaper = function(label) {

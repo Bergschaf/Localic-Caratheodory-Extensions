@@ -13,7 +13,6 @@ class Nucleus (e : O X ⥤ O X) where
 def Image (e : O X ⥤ O X) [Nucleus e] : Set (O X) :=
   {v : O X | e.obj v = v}
 
---- obacht leroy hat entwender E oder X vertauscht oder f_untenstern und f_obenstern
 --lemma nucleus_properties (e : O E ⥤ O E) [Nucleus e] : ∃ (X : Type*),∃ (h : TopologicalSpace X), ∃ f : C(X, E), e = (f_obenstern f) ⋙ (f_untenstern f) := by
 --  let img  := {v : (O E) // e.obj v = v}
 --  let top : TopologicalSpace.IsTopologicalBasis img := by sorry
