@@ -1,3 +1,8 @@
+\chapter{Leroy}
+
+
+\section{F star}
+
 \begin{definition}[Frame]
     \label{lem:frame}
     (Already in Mathlib )A Frame can be viewed as a Category.
@@ -19,7 +24,7 @@
     For every continuous Function $f : X \rightarrow Y$ between topological Spaces, there exists a pair of functors $(f^*,f_*)$.
     \begin{gather*}
         f* = f^{-1} : O(Y) \rightarrow O(X)\\
-        f_* : O(X) \rightarrow O(Y) \coloneqq A \mapsto \bigcup_{f^*(v) \le A} v\\
+        f_* : O(X) \rightarrow O(Y) := A \mapsto \bigcup_{f^*(v) \le A} v\\
     \end{gather*}
 \end{definition}
 
@@ -47,7 +52,7 @@
 \end{lemma}
 \begin{proof}
     \leanok
-    \end{proof}
+\end{proof}
 
 \begin{lemma}[triangle]
 (Mclane p. 485)
@@ -59,11 +64,14 @@
     \label{lem:triangle}
 \end{lemma}
 \begin{proof}
-        \uses{lem:f_star_adj}
+    \uses{lem:f_star_adj}
 
     This follows from the triangular identities of the adjunction.
     \leanok
 \end{proof}
+
+
+\section{Embedding}
 
 \begin{lemma}[Embedding]
 (Leroy Lemme 1)
@@ -88,6 +96,9 @@
     \lean{Leroy_Embedding}
     \leanok
 \end{definition}
+
+
+\section{Subspaces}
 
 \begin{definition}[Nucleus]
     \label{def:nucleus}
@@ -138,7 +149,99 @@
     \uses{lem:nucleus}
     Let $X_i$ be a family of subspaces of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let $e(V)$ be the onion of all $W \in O(E)$ which are contained in every $e_i(V)$. Then \\
     \begin{enumerate}
-        \item $e$ is the corresponding nuclus of a subspace $X$ of $E$
-        \item a subspace $Z$ of $E$ conatains $x$ if and only if it containd all $X_i$ x is thus called the union of $X_i$ denoted by $\bigcup_i X_i$
+        \item $e$ is the corresponding nucleus of a subspace $X$ of $E$
+        \item a subspace $Z$ of $E$ contains $x$ if and only if it contains all $X_i$ x is thus called the union of $X_i$ denoted by $\bigcup_i X_i$
     \end{enumerate}
 \end{lemma}
+
+\subsection{Direct Images}
+\begin{definition}[Direct Images]
+    \uses{lem:subframe}
+    \label{def:direct_images}
+    Let $f : E \rightarrow F$ be a morphism of spaces. The map $f_*f^* : O(F) \to O(F)$ is the nucleus of the subspace $Im(f)$ of $F$. By (lemma 2), $Im(F)$ is the smallest subspace of $F$ through which $f$ can be factored. For any subspace $X$ of $E$, we define the direct image as
+    \[f(x) = Im(fi_x)\]
+    Where $i_X$ is the inclusion of $X$ into $E$.
+\end{definition}
+
+\begin{lemma}[(4) Direct Images Transitive]
+(Leroy Lemme 4)
+    \label{lem:direct_images_transitive}
+    \uses{def:direct_images}
+    Given two morphisms $f : E \rightarrow F$ and $g : F \rightarrow G$ and a subspace $X$ of $E$, we have
+    \[(gf)(X) = g(f(X))\]
+\end{lemma}
+
+\begin{lemma}[(5) Direct Images Families]
+(Leroy Lemme 5)
+    \label{lem:direct_images_families}
+    \uses{def:direct_images}
+    For all morphisms $f: E \rightarrow F$ and a family $(X_i)$ of subspaces of $E$, the following holds:
+    \[f(\cup_i X_i) = \cup_i f(X_i)\]
+\end{lemma}
+
+\subsection{Inverse Images}
+\begin{definition}[Inverse Images]
+    \label{def:inverse_images}
+    \uses{lem:direct_images_transitive}
+    We have a morphism of spaces $f : E \rightarrow F$ and a subspace $Y$ of $F$. The inverse image $f^{-1}(Y)$ is the biggest subspace $X$ of $E$ such that $f(X) \subset Y$. \\
+    More generally for a morphism $h : A \rightarrow E$, the necessary and sufficient condition for $h$ to factor through $f^{-1}$ is that $fh$ factors through $Y$.
+    \[Im h \subset f^{-1}(Y)\iff f(Im h) \subset Y \iff Im(fh) \subset Y \] \
+\end{definition}
+
+\subsection{Open subspaces}
+\begin{definition}[$e_U$]
+    TODO bessere benennung
+    \label{def:e_U}
+    \uses{def:nucleus}
+    Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
+\end{definition}
+
+\begin{lemma}[(6a) Open subspaces]
+(Leroy Lemma 6a)
+    \label{lem:open_subspaces_a}
+    \uses{def:e_U}
+    For all subspaces $X$ of $E$ and any $U \in O(E)$:
+    \[X \subset [U] \iff e_X(U) = 1_E\]
+\end{lemma}
+\begin{proof}
+
+\end{proof}
+
+\begin{lemma}[(6b) Open subspaces]
+(Leroy Lemma 6b)
+    For all $U, V \in O(E)$, we have:
+    \[[U \cap V] = [U] \cap [V]\]
+    \[e_{U \cap V} = e_Ue_V=e_Ve_U\]
+    \[U \subset V \iff [U] \subset [V]\]
+    \label{lem:open_subspaces_b}
+    \uses{def:e_U}
+\end{lemma}
+\begin{proof}
+\end{proof}
+
+\begin{lemma}[(6c) Open subspaces]
+    For all families $V_i$ of elements of $O(E)$, we have:
+    \[\cup_i[V_i] = [\cup_iV_i]\]
+
+    \label{lem:open_subspaces_c}
+    \uses{def:e_U}
+\end{lemma}
+
+\begin{lemma}[(6d) Open subspaces]
+    For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
+        \[f^{-1}([V])] = [f^*(V)]\]
+    \label{lem:open_subspaces_d}
+    \uses{def:e_U}
+\end{lemma}
+
+\begin{lemma}[(7) Open subspaces]
+    Let $X$ be a subspace of $E$ and $U \in O(E)$. For all $V \in O(E)$, we have:
+    \[V \subset e_X(U) \iff [V] \cap X \subset [U]\]
+    \label{lem:open_subspaces_7}
+    \uses{def:e_U}
+\end{lemma}
+
+
+
+
+
