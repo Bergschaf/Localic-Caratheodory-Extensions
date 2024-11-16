@@ -13,12 +13,7 @@ class Nucleus (e : X ⥤ X) where
 def Image (e : X ⥤ X) [Nucleus e] : Set (X) :=
   {v : X | e.obj v = v}
 
---lemma nucleus_properties (e : O E ⥤ O E) [Nucleus e] : ∃ (X : Type*),∃ (h : TopologicalSpace X), ∃ f : C(X, E), e = (f_obenstern f) ⋙ (f_untenstern f) := by
---  let img  := {v : (O E) // e.obj v = v}
---  let top : TopologicalSpace.IsTopologicalBasis img := by sorry
 
-
-  -- make the open sets -> topological basis -> generate topological space
 
 structure Subframe (X : Type*) [Order.Frame X] where
   e : X ⥤ X

@@ -117,13 +117,20 @@
 (Leroy Lemme 3)
     \label{lem:nucleus}
     \uses{def:f_star,def:nucleus,def:embedding}
-    Let $e : O(E) \rightarrow O(E)$ be a nucleus. Then there is a space $X$ and a morphism $f: X \rightarrow E$ such that $e = f_*f^*$. (The same holds for embeddings ??)
+    Let $e : O(E) \rightarrow O(E)$ be monotonic. The following are equivalent:
+    \begin{enumerate}
+        \item $e$ is a nucleus
+        \item There is a locale $X$ and a morphism $f: X \rightarrow E$ such that $e = f_*f^*$.
+        \item Then there is a locale $X$ and a embedding $f: X \rightarrow E$ such that $e = f_*f^*$.
+    \end{enumerate}
 \end{lemma}
 
 \begin{definition}[Subframe]
 (Leroy CH 3)
-    \label{lem:subframe}
+    \label{def:subframe}
     \uses{lem:nucleus}
+    \lean{Subframe}
+    \leanok
     A subspace $Y \subset X$ is defined by a nucleus $e_Y: O(X) \rightarrow O(X)$, such that $O(Y) = Im(e_Y) = \{U \in O(X) | e_Y(U) = U\}$.
     The corresponding embedding (???) is $i_X : O(Y) \rightarrow O(X)$. $i^*_X(V) = e_X(V)$, $(i_X)_*(U) = U$
 
@@ -133,7 +140,7 @@
 \begin{definition}[Subframe Inclusion]
 (Stimmt das?)(Leroy Ch 3)
     \label{def:subframe_inclusion}
-    \uses{lem:subframe}
+    \uses{def:subframe}
     $X \subset Y$ if $e_Y \le e_X$
 \end{definition}
 
@@ -158,7 +165,7 @@
 
 \subsection{Direct Images}
 \begin{definition}[Direct Images]
-    \uses{lem:subframe}
+    \uses{def:subframe}
     \label{def:direct_images}
     Let $f : E \rightarrow F$ be a morphism of spaces. The map $f_*f^* : O(F) \to O(F)$ is the nucleus of the subspace $Im(f)$ of $F$. By (lemma 2), $Im(F)$ is the smallest subspace of $F$ through which $f$ can be factored. For any subspace $X$ of $E$, we define the direct image as
     \[f(x) = Im(fi_x)\]
@@ -194,7 +201,9 @@
 \begin{definition}[$e_U$]
     TODO bessere benennung
     \label{def:e_U}
-    \uses{def:nucleus,lem:subframe}
+    \uses{def:nucleus,def:subframe}
+    \lean{e_U}
+    \leanok
     Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
 \end{definition}
 
@@ -489,7 +498,7 @@
 
 \begin{proposition}[reductive]
     \label{prop:reductive}  (Proposition 3.3.1)
-    \uses{lem:subframe, prop:elementary_properties_of_caratheodory_extensions}
+    \uses{def:subframe, prop:elementary_properties_of_caratheodory_extensions}
     For any measure on a local $X$, the caratheodory extension is
     reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
 \end{proposition}
