@@ -194,7 +194,7 @@
 \begin{definition}[$e_U$]
     TODO bessere benennung
     \label{def:e_U}
-    \uses{def:nucleus}
+    \uses{def:nucleus,lem:subframe}
     Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
 \end{definition}
 
@@ -206,49 +206,30 @@
     (+Senf: stimmt das mit dem üblichen überein???)
 \end{definition}
 
-\begin{lemma}[(6a) Open subspaces]
-(Leroy Lemma 6a)
-    \label{lem:open_subspaces_a}
+
+\begin{lemma}[(6,7) Open subspaces]
+(Leroy Lemma 6,7)
+    \label{lem:open_subspaces}
     \uses{def:e_U}
-    For all subspaces $X$ of $E$ and any $U \in O(E)$:
-    \[X \subset [U] \iff e_X(U) = 1_E\]
-\end{lemma}
-\begin{proof}
+    \begin{enumerate}
+        \item For all subspaces $X$ of $E$ and any $U \in O(E)$:
+        \[X \subset [U] \iff e_X(U) = 1_E\]
 
-\end{proof}
+        \item For all $U, V \in O(E)$, we have:
+        \[[U \cap V] = [U] \cap [V]\]
+        \[e_{U \cap V} = e_Ue_V=e_Ve_U\]
+        \[U \subset V \iff [U] \subset [V]\]
+        \item
+        For all families $V_i$ of elements of $O(E)$, we have:
+        \[\cup_i[V_i] = [\cup_iV_i]\]
 
-\begin{lemma}[(6b) Open subspaces]
-(Leroy Lemma 6b)
-    For all $U, V \in O(E)$, we have:
-    \[[U \cap V] = [U] \cap [V]\]
-    \[e_{U \cap V} = e_Ue_V=e_Ve_U\]
-    \[U \subset V \iff [U] \subset [V]\]
-    \label{lem:open_subspaces_b}
-    \uses{def:e_U}
-\end{lemma}
-\begin{proof}
-\end{proof}
-
-\begin{lemma}[(6c) Open subspaces]
-    For all families $V_i$ of elements of $O(E)$, we have:
-    \[\cup_i[V_i] = [\cup_iV_i]\]
-
-    \label{lem:open_subspaces_c}
-    \uses{def:e_U}
-\end{lemma}
-
-\begin{lemma}[(6d) Open subspaces]
-    For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
-    \[f^{-1}([V])] = [f^*(V)]\]
-    \label{lem:open_subspaces_d}
-    \uses{def:e_U}
-\end{lemma}
-
-\begin{lemma}[(7) Open subspaces]
-    Let $X$ be a subspace of $E$ and $U \in O(E)$. For all $V \in O(E)$, we have:
-    \[V \subset e_X(U) \iff [V] \cap X \subset [U]\]
-    \label{lem:open_subspaces_7}
-    \uses{def:e_U}
+        \item
+        For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
+        \[f^{-1}([V])] = [f^*(V)]\]
+        \item
+        Let $X$ be a subspace of $E$ and $U \in O(E)$. For all $V \in O(E)$, we have:
+        \[V \subset e_X(U) \iff [V] \cap X \subset [U]\]
+    \end{enumerate}
 \end{lemma}
 
 
@@ -370,7 +351,7 @@
 \begin{theorem}[Preimage commutes with unions]
 (Leroy resultat principal)
     \label{thm:preimage_commutes_with_unions}
-    \uses{lem:union_of_intersections}
+    \uses{lem:union_of_intersections,def:inverse_images}
     For any morphism $f$ of locals, we have:
     \[f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B)\]
 \end{theorem}
@@ -379,11 +360,23 @@
 \chapter{Leroy Chapter III}\label{sec:leroy-chapter-iii}
 \begin{definition}[Measure on Locals]
     \label{def:measure_on_locals}
+    \uses{def:open_sublocal}
+    A measure on a local $X$ is a map $\mu : O(X) \to [0,\infty)$ such that:
+    \begin{enumerate}
+        \item $\mu(\emptyset) = 0$
+        \item $U \subset V \implies \mu(U) \le \mu(V)$
+        \item $\mu(U \cup V) = \mu(U) + \mu(V) - \mu(V \cap V)$
+        \item For any increasingly filtered family $V_i$ of open sublocals of $X$, we have:
+        \[\mu(\bigcup V_i) = \sup_i \mu(V_i)\]
+    \end{enumerate}
     (Leroy III.1.)
 \end{definition}
 
 \begin{definition}[Caratheodory]
     \label{def:caratheodory}
+    \uses{def:measure_on_locals}
+    For any measure on a local $X$, the caratheodory extension is:
+    \[\mu(A) = \inf \{\mu(U) | A \subset U \in O(X)\}\]
 \end{definition}
 
 \begin{lemma}[Proptery 0 (Commutes with sup)]
@@ -569,7 +562,8 @@
     \uses{lem:nucleus_and_intersection}
     For an open subspace $U$ of $E$ and a subspace $X$ of $E$, we have:
     \begin{gather*}
-        [U \cap X] = [U] \cap [X]\\
+    [U \cap X]
+        = [U] \cap [X]\\
         F = E \setminus U\\
         [F] = [E] \\ [U]\\
         X \cap F] = [X] \cap [F]\\
