@@ -126,6 +126,8 @@
     \uses{lem:nucleus}
     A subspace $Y \subset X$ is defined by a nucleus $e_Y: O(X) \rightarrow O(X)$, such that $O(Y) = Im(e_Y) = \{U \in O(X) | e_Y(U) = U\}$.
     The corresponding embedding (???) is $i_X : O(Y) \rightarrow O(X)$. $i^*_X(V) = e_X(V)$, $(i_X)_*(U) = U$
+
+    And every nucleus $e$ on $O(X)$ defines a subspace $Y$ of $X$ by $O(Y) = Im(e)$
 \end{definition}
 
 \begin{definition}[Subframe Inclusion]
@@ -229,7 +231,7 @@
 
 \begin{lemma}[(6d) Open subspaces]
     For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
-        \[f^{-1}([V])] = [f^*(V)]\]
+    \[f^{-1}([V])] = [f^*(V)]\]
     \label{lem:open_subspaces_d}
     \uses{def:e_U}
 \end{lemma}
@@ -241,6 +243,240 @@
     \uses{def:e_U}
 \end{lemma}
 
+
+\section{Leroy Chapter II}\label{sec:leroy-chapter-ii}
+
+\begin{lemma}[Union of Intersections]
+(Leroy Lemme 2.4)
+    \label{lem:union_of_intersections}
+    \uses{def:intersection}
+    For any family $B_i$ of sublocals of a local $E$ and a sublocal $A$, we have:
+    \[A \cup (\bigcap_i B_i) = \bigcap_i (A \cap B_i)\]
+    (TODO hier weitermachen)
+\end{lemma}
+
+
+\section{Leroy Chapter III}\label{sec:leroy-chapter-iii}
+\begin{definition}[Measure on Locals]
+    \label{def:measure_on_locals}
+    (Leroy III.1.)
+\end{definition}
+
+\begin{definition}[Caratheodory]
+    \label{def:caratheodory}
+\end{definition}
+
+\begin{lemma}[Proptery 0 (Commutes with sup)]
+(Leroy lemme 3.1)
+    \label{lem:commutes_with_sup}
+    \uses{def:measure_on_locals,def:caratheodory}
+    The caratheodory extension of a measure on a local commutes with unions of increasing families.
+    (Senf von noa: commutes with filtered colimits)
+\end{lemma}
+
+
+
+\begin{definition}[Regular Local]
+    \label{def:regular_local}
+\end{definition}
+
+\begin{definition}[Open sublocal]
+    \label{def:open_sublocal}
+
+\end{definition}
+
+\begin{definition}[Neighborhood]
+    \label{def:neighborhood}
+    \uses{def:open_sublocal}
+    A neighborhood of a sublocal $A$ of $X$ is an open sublocal $V$ of $X$ such that $A \le V$.
+\end{definition}
+
+\begin{lemma}[Regularity of Sublocals]
+(Leroy lemme 3.2)
+    \label{lem:regularity_of_sublocals}
+    \uses{def:regular_local, def:neighborhood}
+    In a regular local, any sublocal is regular, meaning that it is the intersection of all open neighborhoods.
+\end{lemma}
+
+\begin{definition}[Complement]
+    \label{def:complement}
+    \uses{def:open_sublocal}
+    The complement of an open sublocal $U$ of $X$ is the sublocal $X \setminus U$.
+    (Leroy p. 12) (+ Senf brauchen wir das allgemein??)
+\end{definition}
+
+\begin{lemma}[Property 1]
+(Leroy Lemme 3.3)
+    \label{lem:property_1}
+    \uses{def:complement, lem:commutes_with_sup, lem:regularity_of_sublocals}
+    For any open sublocal $U$ of a local $X$, the caratheodory extension of a measure on $X$ satisfies \[\mu(U) + \mu(X \setminus U) = \mu(X)\]
+\end{lemma}
+
+\begin{definition}[Intersection]
+    \label{def:intersection}
+    The intersection of any Family $A_i$ of sublocals of a local $E$ is defined as ........ (+ Senf pullback)
+\end{definition}
+
+\begin{proposition}[Sublocals structure]
+    Obacht TODO
+    \label{prop:sublocals_structure}
+    \uses{def:intersection,def:complement,lem:union_of_intersections}
+    The sublocals of a local $E$ form a complete (distributive vlt.) lattice with the operations of intersection and complement.
+\end{proposition}
+
+
+\begin{lemma}[Property 2]
+(Leroy Lemm 3.4)
+    \label{lem:property_2}
+    \uses{def:complement,def:intersection,lem:property_1}
+    For any open sublocal $U$ and any sublocal $A$ of a local $E$, the caratheodory extension of a measure on $X$ satisfies \[\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))\]
+\end{lemma}
+
+\begin{lemma}[Property 3]
+(Leroy Lemm 3.5)
+    \label{lem:property_3}
+    \uses{lem:property_2,lem:commutes_with_sup}
+    For a increasing family $V_{\alpha}$ of open sublocals of $E$ and any sublocal $A$, we have:
+    \[\mu(A \cap(\bigcup V_{\alpha})) = \sup_\alpha \mu(A\cap V_\alpha)\]
+\end{lemma}
+
+
+\begin{lemma}[Commutes with inf opens]
+(Leroy Lemme 3.6)
+    \label{lem:commutes_with_inf_opens}
+    \uses{lem:property_1,prop:sublocals_structure}
+    For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
+\end{lemma}
+
+\begin{lemma}[Caratheodory Extensions are monotonic]
+    \label{lem:monotonic}
+    \uses{def:measure_on_locals,def:caratheodory} TODO uses inlcusion of sublocals
+    The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
+\end{lemma}
+
+\begin{proposition}[Elementary Properties of Caratheodory Extensions]
+(Leroy lemme 3.3, 3.4, Corollary 3.1, Lemme 3.5)
+    \label{prop:elementary_properties_of_caratheodory_extensions}
+    \uses{lem:property_1,lem:property_2,lem:commutes_with_sup, lem:property_3, lem:commutes_with_inf_opens,lem:monotonic}
+    For any measure on a local $X$, the caratheodory extension satisfies the following properties:
+    \begin{enumerate}
+        \item It is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
+        \item Commutes with unions of increasing families
+        \item $\mu(U) + \mu(X \setminus U) = \mu(X)$
+        \item $\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))$
+        \item For a increasing family $V_{\alpha}$ of open sublocals of $E$ and any sublocal $A$, we have:
+        \[\mu(A \cap(\bigcup V_{\alpha})) = \sup_\alpha \mu(A\cap V_\alpha)\]
+        \item For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
+    \end{enumerate}
+    In particular, for two open sublocals $U$ and $V$ of $X$ and any sublocal $A$ of $X$, we have
+    \[\mu(A \cap (U \cup V)) = \mu(A\cap U) + \mu(A\cap V) - \mu(A \cap U \cap V)\]
+\end{proposition}
+
+
+
+\begin{proposition}[strictly additve]
+(Leroy theorem 3.3.1)
+    \label{prop:strictly_additive}
+    \uses{prop:commutes_with_inf,lem:regularity_of_sublocals}
+    For any measure on a local $X$, the caratheodory extension is
+    strictly additive i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$
+\end{proposition}
+
+
+\begin{proposition}[reductive]
+    \label{prop:reductive}  (Proposition 3.3.1)
+    \uses{lem:subframe, prop:elementary_properties_of_caratheodory_extensions}
+    For any measure on a local $X$, the caratheodory extension is
+    reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
+\end{proposition}
+
+
+\begin{proposition}[Commutes with inf]
+(Leroy lemme 3.7 et principal)
+    \label{prop:commutes_with_inf}
+    \uses{prop:reductive,lem:commutes_with_inf_opens,lem:regularity_of_sublocals,prop:elementary_properties_of_caratheodory_extensions}
+    For any measure on a local $X$, the caratheodory extension is
+    regular $\mu (\inf A_i) = \inf \mu(A_i)$. For decreasing families $A_i$
+\end{proposition}
+
+\begin{theorem}[Main Theorem (very important)]
+    \label{thm:main}
+    \uses{prop:strictly_additive,prop:commutes_with_inf,prop:reductive}
+    For any measure on a local $X$, the caratheodory extension is
+    \begin{enumerate}
+        \item strictly additive i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$
+        \item commutes with inf $\mu (\inf A_i) = \inf \mu(A_i)$
+        \item reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
+    \end{enumerate}
+\end{theorem}
+
+
+\section{Leroy Chapter V}\label{sec:leroy-chapter-v}
+
+\begin{lemma}[Opens]
+(Leroy V.1 Remarque 2)
+    \label{lem:opens_correspond}
+    \uses{def:open_sublocal}
+    The Open subsets of any good enough topological space correspond precisely to the open sublocals of the corresponding local.
+\end{lemma}
+
+\begin{lemma}[Subset Sublocal]
+(leroy V.1 Remarque 3)
+    \label{lem:subset_sublocal}
+    \uses{def:good_enough_topological_space}
+    Any subset $X$ of a good enough topological space $E$ induces a sublocal $[X]$ of the corresponding local. This is an order preserving embedding.
+\end{lemma}
+
+\begin{definition}[Good enough topological space]
+    \label{def:good_enough_topological_space}
+    blackbox to mathlib???? )
+\end{definition}
+
+\begin{lemma}[Subset to sublocal Part 1]
+(Leroy Proposition 5.1.1)
+    \label{lem:subset_to_sublocal_part_1}
+    \uses{lem:opens_correspond,lem:subset_sublocal,def:good_enough_topological_space}
+
+    For two subspaces $X$ and $Y$ of $E$ and an open subspaces $U$ of $E$, we have:
+    \begin{enumerate}
+        \item $X \subset Y \implues [X] \subset [Y]$
+        \item $X \subset U \iff [X] \subset [U]$
+        \item If $E$ is a good enough topological space, then \[X \subset Y \iff [X] \subset [Y]\]
+    \end{enumerate}
+\end{lemma}
+
+\begin{lemma}[Subset to sublocal Part 2]
+(Leroy Proposition 5.1.2)
+    \label{lem:subset_to_sublocal_part_2}
+    \uses obacht
+    For an open subspace $U$ of $E$ and a subspace $X$ of $E$, we have:
+    \[[U \cap X] = [U] \cap [X]\]
+\end{lemma}
+
+\begin{proposition}[Subset to sublocal preserves structure]
+    \label{prop:subset_to_sublocal_structure}
+    \uses{lem:subset_to_sublocal_part_1,lem:subset_to_sublocal_part_2}
+    For two subspaces $X$ and $Y$ of $E$ and an open subspaces $U$ of $E$, we have:
+    \begin{enumerate}
+        \item $X \subset Y \implues [X] \subset [Y]$
+        \item $X \subset U \iff [X] \subset [U]$
+        \item If $E$ is a good enough topological space, then \[X \subset Y \iff [X] \subset [Y]\]
+        \item \[[U \cap X] = [U] \cap [X]\]
+    \end{enumerate}
+
+\end{proposition}
+
+\begin{theorem}[Measure top to loc]
+    \label{thm:measure_top_to_loc}
+    \uses{lem:opens_correspond,lem:subset_sublocal}
+    Any measure on a good enough topological space $X$ induces a measure on the corresponding local. Furthermore, the classical caratheodory extension onto $\mathcal{P}(X)$ agrees with the restriction of the caratheodory extension of the induced measure on the local.
+\end{theorem}
+
+\begin{corollary}[Goal]
+    \label{cor:goal}
+    \uses{thm:measure_top_to_loc,thm:main}
+    One can interpret any classical borel measure as a measure on locals and their life is good :)
+\end{corollary}
 
 
 
