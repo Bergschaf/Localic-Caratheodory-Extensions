@@ -1,4 +1,4 @@
-\chapter{Leroy}
+\chapter{Leroy Chapter I}
 
 
 \section{F star}
@@ -198,6 +198,14 @@
     Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
 \end{definition}
 
+
+\begin{definition}[Open sublocal]
+    \label{def:open_sublocal}
+    \uses{def:e_U}
+    For any $U \in O(E)$, the sublocal $[U]$ is called an open sublocal of $E$.
+    (+Senf: stimmt das mit dem üblichen überein???)
+\end{definition}
+
 \begin{lemma}[(6a) Open subspaces]
 (Leroy Lemma 6a)
     \label{lem:open_subspaces_a}
@@ -244,19 +252,131 @@
 \end{lemma}
 
 
-\section{Leroy Chapter II}\label{sec:leroy-chapter-ii}
+\begin{definition}[Complement]
+    \label{def:complement}
+    \uses{def:open_sublocal}
+    The complement of an open sublocal $U$ of $X$ is the sublocal $X \setminus U$.
+    (Leroy p. 12) (+ Senf brauchen wir das allgemein??)
+\end{definition}
+
+\begin{lemma}[(1.8) Properties of Complements]
+    \label{lem:properties_of_complements}
+    \uses{def:complement}
+    For any any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
+    \[V \cup X = E \iff E \setminus V subset X\]
+    \[V \cap X = \emptyset \iff X \subset E \setminus V\]
+    And thereby:
+    \[(E - U = E - V) \implies U = V\]
+\end{lemma}
+
+\begin{lemma}[(1.9) Preimage of complements]
+    \label{lem:preimage_of_complements}
+    \uses{def:complement,lem:properties_of_complements}
+    For any morphism of spaces $g: A \to E$ and any open sublocal $V$ of $F$, we have:
+    \[g^{-1}(E - V) = A - g^{-1}(V)\]
+\end{lemma}
+
+\begin{lemma}[(1.8bis) Properties of Complements Part 2]
+    \label{lem:properties_of_complements_part_2}
+    \uses{def:complement, lem:preimage_of_complements}
+    For any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
+    \[V \cup (E - V) = E \iff V \subset X \]
+    \[V \cap (E - V) = \emptyset X \subset V\]
+\end{lemma}
+
+
+\begin{lemma}[(1.10) Nucleus and Intersection]
+    \label{lem:nucleus_and_intersection}
+    \uses{def:nucleus,def:e_U}
+    For any $U \in O(E)$, and sub local $X$ of $E$ we have:
+    \[e_{U \cap X} = e_Ue_X\]
+    And for a closed $F$
+    \[e_{X \cap F} = e_Xe_F\]
+\end{lemma}
+
+\begin{lemma}[(1.11) Distribution of Intersections over Unions]
+    \label{lem:distribution_of_intersections_over_unions}
+    \uses{lem:nucleus_and_intersection}
+    Let $X, Y, L$ be three sub locals of $E$. If $L$ is open or closed, we have:
+    \[L \cap (X \cap Y) = (L \cap X) \cup (L \cap Y)\]
+\end{lemma}
+
+\begin{definition}[Further Topology]
+    \label{def:further_topology}
+    \begin{enumerate}
+        \item $Int X$ is the largest open sublocal contained in $X$
+        \item $Ext X$ is the largest open sublocal contained in $E \setminus X$
+        \item $\bar{X}$ is the smallest closed sublocal containing $X$
+        \item $\partial X = \bar{X} \cap (E - Int X)$
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[gamma]
+    \label{def:gamma}
+    $\gamma(E)$ is the minimal element of all dense sublocals of $E$.
+\end{definition}
+
+
+\chapter{Leroy Chapter II}\label{sec:leroy-chapter-ii}
+\begin{definition}[Induced boolean algebra]
+    \label{def:induced_boolean_algebra}
+    Define $At(U_1,\dots,U_n)$ as the collection of all finite nonempty intersections of opens $U_i$ or their complements. \\
+    Define $b(U_1,\dots,U_n)$ as all unions of elements of $At(U_1,\dots,U_n)$\\
+    Define $b(X)$ as the union of all $b(U_1,\dots,U_n)$ for finite collections of opens $U_i$.
+\end{definition}
+
+\begin{lemma}[(2.1) Sublocals and decompositions]
+    \label{lem:sublocals_and_decompositions}
+    \uses{def:induced_boolean_algebra,lem:preimage_of_complements,lem:distribution_of_intersections_over_unions}
+    For any open $U$ the natural morphism $p : U \sqcup (E \setminus U)$ induces a bijection of sublocals.
+\end{lemma}
+
+\begin{lemma}[(2.2) Induced morphism of boolean algebras]
+    \label{lem:induced_morphism_of_boolean_algebras}
+    \uses{def:induced_boolean_algebra,lem:preimage_of_complements}
+    For all $H \in B(U_1,\dots,U_n)$ we have $f^{-1}(H) \in b(f^{-1}(U-1),\dots,f^{-1}(U_n))$ and \[H \mapsto f^{-1}(H)    \]
+    Is a morphism of boolean algebras
+\end{lemma}
+
+\begin{proposition}[Boolean algebra]
+(Leroy Proposition II.1)
+    \label{prop:boolean_algebra}
+    \uses{lem:induced_morphism_of_boolean_algebras}
+    \begin{enumerate}
+        \item $b(X)$ is the generated boolean algebra of the open and closed sublocals of $X$.
+        \item For all $H \in b(X)$, we have $f^{-1}(H) \in b(Y)$ and the map $H \to f^{-1}(H)$ is a homomorphism of boolean algebras $b(X) \to b(Y)$
+        \item For two sublocals $A, B$ of $X$ and any $H \in b(X)$, we have: \[H \cap (A \cup B ) = (H \cap A) \cup (H \cap B)\]
+    \end{enumerate}
+\end{proposition}
+
+\begin{lemma}[$b(X)$ generates sublocals]
+    Every sublocal $X$ is an intersection of elements of $b(X)$.
+    \label{lem:b_X_generates_sublocals}
+    \uses{def:induced_boolean_algebra}
+\end{lemma}
+
 
 \begin{lemma}[Union of Intersections]
 (Leroy Lemme 2.4)
     \label{lem:union_of_intersections}
-    \uses{def:intersection}
+    \uses{def:intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
     For any family $B_i$ of sublocals of a local $E$ and a sublocal $A$, we have:
     \[A \cup (\bigcap_i B_i) = \bigcap_i (A \cap B_i)\]
-    (TODO hier weitermachen)
+    This implies if $A_i$ and $B_j$ are families of sublocals of $X$, we have:
+    \[(\bigcap_i A_i)\cup(\bigcap_j B_j) =  \bigcap_{ij}(A_i \cup B_j)\]
 \end{lemma}
 
 
-\section{Leroy Chapter III}\label{sec:leroy-chapter-iii}
+\begin{theorem}[Preimage commutes with unions]
+(Leroy resultat principal)
+    \label{thm:preimage_commutes_with_unions}
+    \uses{lem:union_of_intersections}
+    For any morphism $f$ of locals, we have:
+    \[f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B)\]
+\end{theorem}
+
+
+\chapter{Leroy Chapter III}\label{sec:leroy-chapter-iii}
 \begin{definition}[Measure on Locals]
     \label{def:measure_on_locals}
     (Leroy III.1.)
@@ -280,10 +400,7 @@
     \label{def:regular_local}
 \end{definition}
 
-\begin{definition}[Open sublocal]
-    \label{def:open_sublocal}
 
-\end{definition}
 
 \begin{definition}[Neighborhood]
     \label{def:neighborhood}
@@ -298,12 +415,6 @@
     In a regular local, any sublocal is regular, meaning that it is the intersection of all open neighborhoods.
 \end{lemma}
 
-\begin{definition}[Complement]
-    \label{def:complement}
-    \uses{def:open_sublocal}
-    The complement of an open sublocal $U$ of $X$ is the sublocal $X \setminus U$.
-    (Leroy p. 12) (+ Senf brauchen wir das allgemein??)
-\end{definition}
 
 \begin{lemma}[Property 1]
 (Leroy Lemme 3.3)
@@ -411,7 +522,14 @@
 \end{theorem}
 
 
-\section{Leroy Chapter V}\label{sec:leroy-chapter-v}
+\chapter{Leroy Chapter V}\label{sec:leroy-chapter-v}
+
+
+\begin{lemma}[Regular Top to regular local]
+    \label{lem:regular_top_to_regular_local}
+    \uses{def:good_enough_topological_space, def:regular_local}
+    Any regular topological space induces a regular local.
+\end{lemma}
 
 \begin{lemma}[Opens]
 (Leroy V.1 Remarque 2)
@@ -439,44 +557,72 @@
 
     For two subspaces $X$ and $Y$ of $E$ and an open subspaces $U$ of $E$, we have:
     \begin{enumerate}
-        \item $X \subset Y \implues [X] \subset [Y]$
+        \item $X \subset Y \implies [X] \subset [Y]$
         \item $X \subset U \iff [X] \subset [U]$
         \item If $E$ is a good enough topological space, then \[X \subset Y \iff [X] \subset [Y]\]
     \end{enumerate}
 \end{lemma}
 
 \begin{lemma}[Subset to sublocal Part 2]
-(Leroy Proposition 5.1.2)
+(Leroy Proposition 5.1.2, 5.1.3)
     \label{lem:subset_to_sublocal_part_2}
-    \uses obacht
+    \uses{lem:nucleus_and_intersection}
     For an open subspace $U$ of $E$ and a subspace $X$ of $E$, we have:
-    \[[U \cap X] = [U] \cap [X]\]
+    \begin{gather*}
+        [U \cap X] = [U] \cap [X]\\
+        F = E \setminus U\\
+        [F] = [E] \\ [U]\\
+        X \cap F] = [X] \cap [F]\\
+    \end{gather*}
+
 \end{lemma}
+
+\begin{lemma}[(Prop 4) Unions of subspaces]
+(Leroy Proposition 5.1.4)
+    \label{lem:unions_of_subspaces}
+    For a family $X_i$ of subspaces of $E$, we have:
+    \[\bigcup_i [X_i] = [\bigcup_i X_i]\]
+\end{lemma}
+
+\begin{lemma}[Part 3]
+    \label{lem:subspaces_part_3}
+    \uses{lem:nucleus_and_intersection,lem:subset_to_sublocal_part_2,def:further_topology}
+    For any subspaces $X$ of E, we have:
+    \begin{enumerate}
+        \item \[Ext[X] = [Ext X]\]
+        \item \[\bar{[X]} = [\bar{X}]\]
+        \item \[[Int X] \subset Int[X]\]
+        \item \[\partial[X] \subset [Fr(X)]\]
+    \end{enumerate}
+    For a good enough topological space $E$, we have equality in 3 and 4.
+\end{lemma}
+
 
 \begin{proposition}[Subset to sublocal preserves structure]
     \label{prop:subset_to_sublocal_structure}
-    \uses{lem:subset_to_sublocal_part_1,lem:subset_to_sublocal_part_2}
+    \uses{lem:subset_to_sublocal_part_1,lem:subset_to_sublocal_part_2,lem:subspaces_part_3}
     For two subspaces $X$ and $Y$ of $E$ and an open subspaces $U$ of $E$, we have:
     \begin{enumerate}
-        \item $X \subset Y \implues [X] \subset [Y]$
+        \item $X \subset Y \implies [X] \subset [Y]$
         \item $X \subset U \iff [X] \subset [U]$
         \item If $E$ is a good enough topological space, then \[X \subset Y \iff [X] \subset [Y]\]
         \item \[[U \cap X] = [U] \cap [X]\]
+        \item $\dots$
     \end{enumerate}
 
 \end{proposition}
 
 \begin{theorem}[Measure top to loc]
     \label{thm:measure_top_to_loc}
-    \uses{lem:opens_correspond,lem:subset_sublocal}
+    \uses{lem:opens_correspond,lem:subset_sublocal,prop:subset_to_sublocal_structure,lem:regular_top_to_regular_local}
     Any measure on a good enough topological space $X$ induces a measure on the corresponding local. Furthermore, the classical caratheodory extension onto $\mathcal{P}(X)$ agrees with the restriction of the caratheodory extension of the induced measure on the local.
 \end{theorem}
 
-\begin{corollary}[Goal]
-    \label{cor:goal}
+\begin{theorem}[Goal]
+    \label{thm:goal}
     \uses{thm:measure_top_to_loc,thm:main}
     One can interpret any classical borel measure as a measure on locals and their life is good :)
-\end{corollary}
+\end{theorem}
 
 
 
