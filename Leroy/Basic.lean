@@ -193,3 +193,4 @@ class Leroy_Embedding (f : C(X, Y)) where
   comp_id := (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 (O X)
 
 -------
+4
