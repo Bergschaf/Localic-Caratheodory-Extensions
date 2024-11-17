@@ -1,5 +1,6 @@
 import Leroy.Basic
 import Mathlib.Topology.Bases
+import Mathlib.Order.CompleteSublattice
 open CategoryTheory
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
@@ -10,7 +11,7 @@ class Nucleus (e : X ⥤ X) where
   preserves_inf (x y : X) : e.obj (x ⊓ y) = e.obj x ⊓ e.obj y
 
 
-def Image (e : X ⥤ X) [Nucleus e] : Set (X) :=
+def Image (e : X ⥤ X) [Nucleus e] : Set X:=
   {v : X | e.obj v = v}
 
 
@@ -22,6 +23,45 @@ structure Subframe (X : Type*) [Order.Frame X] where
 -- Leroy CH 3
 instance : LE (Subframe X) where
   le x y := ∀ v : X, y.e.obj v ≤ x.e.obj v
+
+
+lemma nucleus_equiv_subframe (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃ (X : Type*),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ k : Leroy_Embedding f, true)  := by
+  intro h
+  rcases h with ⟨n⟩
+  let img := Image e
+
+  have aux1:  ∀ ⦃s : Set E⦄, s ⊆ img → sSup s ∈ img := by
+    intro s h
+    simp [img, Image] at *
+    apply le_antisymm_iff.mpr
+    apply And.intro
+    . refine CompleteLattice.le_sSup s (e.obj (sSup s)) ?left.a
+
+      sorry
+    . apply (leOfHom (n.increasing (sSup s)))
+
+
+  have aux2: ∀ ⦃s : Set E⦄, s ⊆ img → sInf s ∈ img := by
+    intro s h
+    simp [img, Image] at *
+    rw [@Set.subset_setOf] at h
+    apply le_antisymm_iff.mpr
+    apply And.intro
+    . sorry
+
+
+    . sorry
+
+
+
+  --let lattice : Sublattice E := ⟨img, (by sorry), sorry⟩
+  let completelattice : CompleteSublattice E:= CompleteSublattice.mk' img aux1 aux2
+
+  have L : CompleteLattice img := completelattice.instCompleteLattice
+
+  let frame : Order.Frame img := Order.Frame.ofMinimalAxioms ⟨(by sorry)⟩
+
+
 
 
 
