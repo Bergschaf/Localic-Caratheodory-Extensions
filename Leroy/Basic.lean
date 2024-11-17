@@ -25,6 +25,9 @@ def f_obenstern (f : FrameHom Y X) : Y ⥤ X where
   obj x := f x
   map := frameHom_monotone f
 
+lemma f_obenstern_eq_f (f : FrameHom X Y): (f_obenstern f).obj = f := by
+  rfl
+
 def f_untenstern_map (f_o: FrameHom Y X) : {X_1 Y_1 : X} → (X_1 ⟶ Y_1) → (sSup {y | f_o y ≤ X_1} ⟶ sSup {y | f_o y ≤ Y_1}) := by
   intro x1 x2 h
   apply homOfLE
@@ -38,6 +41,39 @@ def f_untenstern_map (f_o: FrameHom Y X) : {X_1 Y_1 : X} → (X_1 ⟶ Y_1) → (
 def f_untenstern (f_o: FrameHom Y X) : X ⥤ Y where
   obj x := sSup {y :  Y | f_o y ≤ x}
   map := f_untenstern_map f_o
+
+
+def ig_obenstern (i : FrameHom E X) (g : FrameHom X Y) : (f_obenstern i) ⋙ (f_obenstern g) = (f_obenstern (FrameHom.comp g i)) := by
+  rfl
+
+def ig_untenstern (i : FrameHom E X) (g : FrameHom X Y) :  (f_untenstern i).obj  ∘ (f_untenstern g).obj = (f_untenstern (FrameHom.comp g i)).obj := by
+  simp [f_untenstern]
+  rw [Function.comp_def]
+  have h3:∀ x : Y,  sSup {y | i y ≤ sSup {y | g y ≤ x}} = sSup {y | g (i y) ≤ x} := by
+    intro x
+    apply le_antisymm_iff.mpr
+    apply And.intro
+    . simp
+      intro b h
+      apply le_sSup
+      simp
+      have h1 : g  (sSup {y | g y ≤ x}) ≤ x := by
+        simp [g.map_sSup']
+      let h2 := frameHom_monotone g (homOfLE h)
+      let h2 := leOfHom h2
+      exact Preorder.le_trans (g (i b)) ((fun x => g x) (sSup {y | g y ≤ x})) x h2 h1
+
+    . simp
+      intro b h
+      simp [le_sSup, h]
+
+  exact
+    (Set.eqOn_univ (fun x => sSup {y | i y ≤ sSup {y | g y ≤ x}}) fun x =>
+          sSup {y | g (i y) ≤ x}).mp
+      fun ⦃x⦄ a => h3 x
+
+
+
 
 def f_unit (f : FrameHom Y X) : PLift ((𝟭 Y).obj x ≤ (f_obenstern f ⋙ f_untenstern f).obj x):= by
   simp
@@ -163,6 +199,8 @@ def f_one_injective (f: FrameHom Y X) :  (f_untenstern f) ⋙ (f_obenstern f) = 
 
 
 class Leroy_Embedding (f : FrameHom Y X) where
-  comp_id := (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 X
+  comp_id : (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 X
+
+
 
 -------
