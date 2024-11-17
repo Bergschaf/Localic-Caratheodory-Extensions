@@ -25,43 +25,264 @@ instance : LE (Subframe X) where
   le x y := ∀ v : X, y.e.obj v ≤ x.e.obj v
 
 
-lemma nucleus_equiv_subframe (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃ (X : Type*),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ k : Leroy_Embedding f, true)  := by
+
+lemma nucleus_equiv_subframe (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃ (X : Type u),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ k : Leroy_Embedding f, true)  := by
   intro h
   rcases h with ⟨n⟩
   let img := Image e
 
-  have aux1:  ∀ ⦃s : Set E⦄, s ⊆ img → sSup s ∈ img := by
-    intro s h
-    simp [img, Image] at *
-    apply le_antisymm_iff.mpr
-    apply And.intro
-    . refine CompleteLattice.le_sSup s (e.obj (sSup s)) ?left.a
+  let e_schlange : E → img := Set.codRestrict e.obj img (by intro x; simp [img, Image]; apply n.idempotent)
 
-      sorry
-    . apply (leOfHom (n.increasing (sSup s)))
+  let embedding : img → E := fun x ↦ x
+
+  let sup : Sup img := ⟨fun x y ↦ e_schlange (x ⊔ y)⟩
+  let inf : Inf img := ⟨fun x y ↦ e_schlange (x ⊓ y)⟩
+
+  have inf_ (a b : img) :e_schlange (a ⊓ b)  = a ⊓ b  := by
+    simp [inf]
+
+  let supSet : SupSet img := ⟨fun x ↦ e_schlange (sSup x)⟩
+  let infSet : InfSet img := ⟨fun x ↦ e_schlange (sInf x)⟩
+  let top : Top img := ⟨e_schlange ⊤⟩
+  let bot : Bot img := ⟨e_schlange ⊥⟩
+
+  have h_e (a : img) :  a = e_schlange a := by
+    apply Eq.symm
+    simp [img, Image, e_schlange]
+    simp_all only
+    obtain ⟨val, property⟩ := a
+    simp_all only [img]
+    ext : 1
+    simp_all only [Set.mem_setOf_eq, Set.val_codRestrict_apply]
+    simp_all only [img]
+    exact property
+
+  have e_schlange_monotone : Monotone e_schlange := by
+      simp [e_schlange, Monotone, img, Image, Set.codRestrict]
+      intro a b h
+      let h5 := homOfLE h
+      let h6 := e.map h5
+      apply leOfHom h6
 
 
-  have aux2: ∀ ⦃s : Set E⦄, s ⊆ img → sInf s ∈ img := by
-    intro s h
-    simp [img, Image] at *
-    rw [@Set.subset_setOf] at h
-    apply le_antisymm_iff.mpr
-    apply And.intro
-    . sorry
+  have aux1 : ∀ (a b : ↑img), a ≤ a ⊔ b := by
+    intro a b
+    simp [sup]
+    have h_2 (c d : E) : c ≤ c ⊔ d := by exact SemilatticeSup.le_sup_left c d
+    let h3 := h_2 a b
+
+    let h8 := le_of_eq (h_e a)
+    apply_fun (e_schlange) at h3
+    apply le_trans h8 h3
+    exact e_schlange_monotone
+
+  have sup_comm : ∀ (a b : ↑img), a ⊔ b = b ⊔ a := by
+    intro a b
+    simp only [sup]
+    rw [sup_comm]
 
 
-    . sorry
+  have aux2 : ∀ (a b : ↑img), b ≤ a ⊔ b := by
+    intro a b
+    rw [sup_comm]
+    apply aux1
 
 
+  have aux3 : ∀ (a b c : ↑img), a ≤ c → b ≤ c → a ⊔ b ≤ c := by
+    intro a b c h1 h2
+    simp [sup]
+    let h3 := sup_le h1 h2
+    rw [h_e c]
+    apply_fun e_schlange at h3
+    exact h3
+    exact e_schlange_monotone
 
-  --let lattice : Sublattice E := ⟨img, (by sorry), sorry⟩
-  let completelattice : CompleteSublattice E:= CompleteSublattice.mk' img aux1 aux2
+  have aux4 : ∀ (a b : ↑img), a ⊓ b ≤ a := by
+    intro a b
+    simp [inf]
+    have h_2 (c d : E) : c ⊓ d ≤ c := by exact inf_le_left
+    let h3 := h_2 a b
 
-  have L : CompleteLattice img := completelattice.instCompleteLattice
+    let h8 := le_of_eq (h_e a)
+    apply_fun (e_schlange) at h3
+    apply le_trans h3
+    rw [← h_e]
+    exact e_schlange_monotone
 
+  have inf_comm : ∀ (a b : ↑img), a ⊓ b = b ⊓ a := by
+    intro a b
+    simp only [inf]
+    rw [inf_comm]
+
+
+  have aux5 : ∀ (a b : ↑img), a ⊓ b ≤ b := by
+    intro a b
+    rw [inf_comm]
+    apply aux4
+
+  have aux6 : ∀ (a b c : ↑img), a ≤ b → a ≤ c → a ≤ b ⊓ c := by
+    intro a b c h1 h2
+    simp [inf]
+    let h3 := le_inf h1 h2
+    rw [h_e c]
+    apply_fun e_schlange at h3
+    rw [← h_e]
+    rw [← h_e] at h3
+    exact h3
+    exact e_schlange_monotone
+
+  have aux7 : ∀ (s : Set ↑img), ∀ a ∈ s, a ≤ sSup s := by
+    intro s a h
+    simp [sSup]
+    rw [h_e a]
+    let s1 : Set E := s
+    let a1 : E := a
+    have h1 : a1 ∈ s1 := by
+      simp [s1,a1,h]
+    let h2 := le_sSup h1
+    apply_fun e_schlange at h2
+    exact h2
+    apply e_schlange_monotone
+
+  have aux8 : ∀ (s : Set ↑img) (a : ↑img), (∀ b ∈ s, b ≤ a) → sSup s ≤ a := by
+    intro s a h
+    simp only [sSup]
+    let s1 : Set E := s
+    let a1 : E := a
+    have h1 : ∀ b ∈ s1, b ≤ a1 := by
+      simp [s1, a1]
+      intro b x h2
+      let h3 := h ⟨b, x⟩
+      let h4 := h3 h2
+      apply h4
+
+    let h2 := sSup_le h1
+    apply_fun e_schlange at h2
+    rw [h_e a]
+    simp [h2]
+    exact e_schlange_monotone
+
+  have aux9 : ∀ (s : Set ↑img), ∀ a ∈ s, sInf s ≤ a := by
+    sorry
+  let semilatticesup : SemilatticeSup img := ⟨aux1, aux2, aux3⟩
+  let lattice : Lattice img := ⟨aux4, aux5, aux6⟩
+  let completelattice : CompleteLattice img := ⟨aux7, aux8, aux9, sorry, sorry, sorry⟩
   let frame : Order.Frame img := Order.Frame.ofMinimalAxioms ⟨(by sorry)⟩
 
+  have h1 (a b : img) : (a : E) ⊓ (b : E) = a ⊓ b:= by
+    have h2 : (a : E) ⊓ (b : E) ∈ img := by
+      simp only [Image, Set.mem_setOf_eq, img]
+      rw [h_e a,h_e b]
+      rw [n.preserves_inf]
+      simp only [Set.val_codRestrict_apply, e_schlange]
+      repeat rw [n.idempotent]
+    simp [img, Image] at h2
+    simp [inf, e_schlange, h2]
 
+  have aux42 : ∀ (a b : E), e_schlange (a ⊓ b) = e_schlange a ⊓ e_schlange b := by
+    intro a b
+    let h2 := n.preserves_inf a b
+    have h3 : e_schlange (a ⊓ b) = e.obj (a ⊓ b) := by
+      simp [e_schlange]
+    let h4 := Eq.trans h3 h2
+    let h5 := h1 (e_schlange a) (e_schlange b)
+    let h6 := Eq.trans h4 h5
+    exact SetCoe.ext h6
+
+  have aux43 : ∀ (s : Set E), e_schlange (sSup s) = sSup ((fun a => e_schlange a) '' s) := by
+    intro s
+    apply le_antisymm_iff.mpr
+    apply And.intro
+    . simp [sSup]
+      have h0 : ∀ x ∈ s, x ≤ e_schlange x := by
+        intro x h
+        simp [e_schlange]
+        apply (leOfHom (n.increasing x))
+      have h1 : sSup s ≤ sSup (Subtype.val '' ((fun a => e_schlange a) '' s)) := by
+        apply sSup_le
+        intro b h
+        have h2 : e_schlange b ≤ sSup (Subtype.val '' ((fun a => e_schlange a) '' s))  := by
+          apply le_sSup
+          simp
+          use b
+        apply le_trans (h0 b h) h2
+      apply_fun e_schlange at h1
+      exact h1
+      apply e_schlange_monotone
+
+    . have h0 :∀ x ∈ s,x ≤  sSup s := by
+        exact fun x a => CompleteLattice.le_sSup s x a
+      have h1 : ∀ x ∈ s, e_schlange x ≤ e_schlange (sSup s) := by
+        intro x h
+        let h0 := h0 x h
+        apply_fun e_schlange at h0
+        exact h0
+        exact e_schlange_monotone
+      apply sSup_le
+      intro b h
+      simp at h
+      rcases h with ⟨x, ⟨h2, h3⟩⟩
+      let h1 := h1 x h2
+      rw [← h3]
+      exact h1
+
+
+
+
+
+  let imgtype := ↑img
+  use imgtype
+  use frame
+
+  let frameHom : FrameHom E imgtype := ⟨⟨⟨e_schlange, aux42⟩, (by simp[e_schlange,top];exact rfl)⟩, aux43⟩
+  use frameHom
+  apply And.intro
+  . have h : ∀ x : img, (f_untenstern frameHom).obj x = x := by
+      simp [f_untenstern, frameHom, e_schlange]
+      intro a h
+      apply le_antisymm
+      . simp
+        intro b h1
+        simp [img, Image] at h
+        have h2 : b ≤ Set.codRestrict e.obj img (fun x => Nucleus.idempotent x : ∀ (x : E), e.obj (e.obj x) = e.obj x) b := by
+          simp
+          apply (leOfHom (n.increasing b))
+        apply le_trans h2
+        apply h1
+      . apply le_sSup
+        simp [img, Image] at h
+        simp
+        have h2 : Set.codRestrict e.obj img (fun x => Nucleus.idempotent x : ∀ (x : E), e.obj (e.obj x) = e.obj x) a = a := by
+          simp [h]
+
+        have h3 : Set.codRestrict e.obj img (fun x => Nucleus.idempotent x : ∀ (x : E), e.obj (e.obj x) = e.obj x) a = ⟨a ,h⟩ := by
+          exact SetCoe.ext h
+
+        rw [h3]
+    rw [f_obenstern, f_untenstern]
+
+    apply CategoryTheory.Functor.ext
+    simp
+    intro x y f
+    exact rfl
+    intro x
+    simp
+    simp [f_untenstern] at h
+    let h2 := h (e.obj x)
+    simp [img, Image] at h2
+    apply Eq.symm
+    apply h2
+
+
+  . have h : Function.Surjective (f_obenstern frameHom).obj := by
+      simp [Function.Surjective, frameHom]
+      intro a h
+      simp[imgtype,img,Image] at h
+      use a
+      simp [f_obenstern, e_schlange]
+      exact SetCoe.ext h
+    let embedding : Leroy_Embedding frameHom := ⟨f_surjective_one frameHom h⟩
+    use embedding
 
 
 
