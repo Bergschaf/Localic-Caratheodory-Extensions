@@ -14,6 +14,10 @@ class Nucleus (e : X ⥤ X) where
 def Image (e : X ⥤ X) [Nucleus e] : Set X:=
   {v : X | e.obj v = v}
 
+def e_top : E ⥤ E := ⟨⟨fun x ↦ ⊤, (by intro a b c; apply homOfLE; simp)⟩, (by simp), (by simp)⟩
+#check e_top
+def e_top_n : Nucleus (@e_top E _) := ⟨(by simp[e_top]), (by simp[e_top]; intro x; apply homOfLE; simp), (by simp [e_top])⟩
+
 
 
 structure Subframe (X : Type*) [Order.Frame X] where
@@ -332,20 +336,19 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
     exact SetCoe.ext h6
 
   have h_e_bot : e.obj ⊥ = ⊥ := by
-    let h1 := n.preserves_inf ⊥
-    simp at h1
-    apply eq_bot_of_minimal
-    intro b
-    have h (y : E) : ∃ x, e.obj x = y := by
-      sorry
-    let h := h b
-    rcases h with ⟨x, h⟩
-    subst h
-    let h1 := h1 x
-    apply not_lt_of_ge
-    exact h1
+    have h1 (a : E): e.obj ⊥ ⊓ a ≤ e.obj ⊥ ⊓ e.obj a := by
+      apply inf_le_inf
+      . rfl
+      . apply leOfHom (n.increasing _)
+    let h1 := h1 ⊥
+    rw [← n.preserves_inf] at h1
+    rw [inf_bot_eq] at h1
+    rw [inf_bot_eq] at h1
+    sorry
 
-
+    -- e(⊥) ⊓ a ≤ e(⊥) ⊓ e(a) = e(⊥ ⊓ a) = e(⊥) versteh ich
+    -- aber wie wird dadraus
+    --  e(⊥) ⊓ a = e(⊥) bzw e(⊥) ⊓ ⊥ = e(⊥)
 
 
 
@@ -496,12 +499,6 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
           use hnull
           simp at hP
 
-
-          have h_bot : ↑↑(e_schlange ⊥) = (⊥ : E) := by
-            apply h_e_image1
-            simp [img, Image]
-            sorry
-
           have h : {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = ∅ := by
             ext x
             simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and,
@@ -516,8 +513,10 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
               not_and]
             intro h
           rw [h1]
-          simp [e_schlange]
+          simp
           sorry
+
+          --exact h_e_bot_e_schlange
 
 
 
