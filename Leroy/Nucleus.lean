@@ -335,16 +335,6 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
     let h6 := Eq.trans h4 h5
     exact SetCoe.ext h6
 
-  have h_e_bot : e.obj ⊥ = ⊥ := by
-    have h1 (a : E): e.obj ⊥ ⊓ a ≤ e.obj ⊥ ⊓ e.obj a := by
-      apply inf_le_inf
-      . rfl
-      . apply leOfHom (n.increasing _)
-    let h1 := h1 ⊥
-    rw [← n.preserves_inf] at h1
-    rw [inf_bot_eq] at h1
-    rw [inf_bot_eq] at h1
-    sorry
 
     -- e(⊥) ⊓ a ≤ e(⊥) ⊓ e(a) = e(⊥ ⊓ a) = e(⊥) versteh ich
     -- aber wie wird dadraus
@@ -372,10 +362,23 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
   have h_e_image1 (x : E) : x ∈ img -> e_schlange ↑x = x := by
     exact fun a => h_e_image img x (h_e_image img x a)
 
+  have h_e_image2 (x : ↑img) : e_schlange x = x := by
+    exact Eq.symm (SetCoe.ext (congrArg Subtype.val (h_e x)))
+
+  have h_e_image3 (x : E) : (h : x ∈ img) -> e_schlange x = ⟨x, h⟩ := by
+    exact fun h => SetCoe.ext (h_e_image img x (h_e_image img x h))
+
+
   have aux13 : ∀ (a : ↑img) (s : Set ↑img), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
     intro a s
+
     rw [leroy_aux1]
+
     rw [inf_sSup_eq]
+    by_cases hP : s = ∅
+    . simp [hP]
+      exact rfl
+
     simp [iSup, inf, sSup]
 
     have a_inf_b_mem : ∀ (b : ↑img), ↑a ⊓ ↑b ∈ img := by
@@ -410,8 +413,123 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
 
 
 
+
     have h14 : ((Set.range fun b => sSup (Set.range fun (h : b ∈ Subtype.val '' s) => ↑a ⊓ b))) ≤ ((Subtype.val '' Set.range fun b => e_schlange (sSup (Subtype.val '' Set.range fun (h : b∈ s) => e_schlange (↑a ⊓ ↑b))))) := by
-        rw [subtype_val_preserved]
+        simp only [Set.range]
+        simp only [Set.mem_image]
+        simp--only [Subtype.exists, exists_and_right, exists_eq_right, exists_prop, Set.le_eq_subset, Set.setOf_subset_setOf]--, forall_exists_index, forall_apply_eq_imp_iff]
+
+        by_cases hP :{x | ∃ y, sSup {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = x}= ∅
+        . rw [hP]
+          apply Set.empty_subset
+        rw [@Set.setOf_subset]
+        intro x h
+        simp
+        rcases h with ⟨y, h1⟩
+
+
+
+        /-- ___ = nix (wenn y ∉ s) oder a ⊓ y (wenn y ∈ s)
+        by_cases hP : ((∃ (hx : y ∈ img),true))
+        . rcases hP with ⟨hx,_⟩
+          use y
+          use hx
+          have h1_eq : (Subtype.val '' {x | ⟨y, hx⟩ ∈ s ∧ e_schlange (↑a ⊓ y) = x}) =  {x | (∃ (x : y ∈ img), ⟨y, hx⟩ ∈ s) ∧ ↑a ⊓ y = x} := by
+            simp only [exists_prop]
+            have a_y_mem_img : (↑a ⊓ y) ∈ img := by
+              let y1 : img := ⟨y, hx⟩
+              have hy1 : y1 = y := by
+                rfl
+              rw [← hy1]
+              apply a_inf_b_mem
+            rw [@Subtype.coe_image]
+            simp only [Set.mem_setOf_eq, exists_and_left, exists_eq_subtype_mk_iff]
+            rw [h_e_image1]
+            ext x
+            simp only [Set.mem_setOf_eq, and_congr_left_iff, iff_and_self]
+            exact fun a a => h_e_image img y (h_e_image img y hx)
+            exact a_y_mem_img
+
+          apply_fun (fun (x : Set E) ↦ sSup x) at h1_eq
+          rw [h1_eq]
+          rw [h1]
+          have h : x ∈ img := by
+            subst x
+            simp only [Image, Set.mem_setOf_eq, img]
+            by_cases hP1 : ⟨y, hx⟩ ∈ s
+            . apply le_antisymm_iff.mpr
+              apply And.intro
+              . apply le_sSup
+                simp only [Set.mem_setOf_eq]
+                apply And.intro
+                . simp [img, Image] at hx
+                  use hx
+                . have h (x : E) : sSup {x} = x := by
+                    exact sSup_singleton
+                  have h1 : {x | (∃ (h : e.obj y = y), ⟨y, hx⟩ ∈ s) ∧ ↑a ⊓ y = x} = {↑a ⊓ y} := by
+                    ext x
+                    simp only [exists_prop, Set.mem_setOf_eq, Set.mem_singleton_iff]
+                    apply Iff.intro
+                    . intro ⟨h1, h2⟩
+                      exact id (Eq.symm h2)
+                    . intro h
+                      apply And.intro
+                      . exact ⟨h_e_image img y (h_e_image img y hx), hP1⟩
+                      . exact id (Eq.symm h)
+                  rw [h1]
+                  rw [h]
+                  have h : ↑a ⊓ y ∈ img := by
+                    let y1 : img := ⟨y, hx⟩
+                    have hy1 : y1 = y := by
+                      rfl
+                    rw [← hy1]
+                    apply a_inf_b_mem
+                  simp [img, Image] at h
+                  exact id (Eq.symm h)
+
+              . apply (leOfHom (n.increasing _))
+            . have h : {x | (∃ (h : e.obj y = y), ⟨y, h⟩ ∈ s) ∧ ↑a ⊓ y = x} = ∅ := by
+                ext x
+                simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and,
+                  forall_exists_index]
+                intro x1 h1
+                contradiction
+              rw [h]
+              simp only [sSup_empty]
+              sorry
+
+
+          exact h_e_image img x (h_e_image img x h)
+
+
+        . use ↑(e_schlange ⊥)
+          have hnull : ↑(e_schlange ⊥) ∈ img := by
+            simp [e_schlange, img, Image]
+            exact Nucleus.idempotent ⊥
+          use hnull
+          simp at hP
+
+          have h : {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = ∅ := by
+            ext x
+            simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and,
+                  forall_exists_index]
+            intro x1 h1
+            contradiction
+
+          rw [h]
+          have h1 : {x | ⟨↑(e_schlange ⊥), hnull⟩ ∈ s ∧ e_schlange (↑a ⊓ ↑(e_schlange ⊥)) = x} = ∅ := by
+            ext x
+            simp only [Subtype.coe_eta, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false,
+              not_and]
+            intro h
+          rw [h1]
+          simp
+          sorry
+
+
+
+
+        /-
         simp only [Set.le_eq_subset]
         rw [Set.subset_def]
         intro x h1
@@ -516,7 +634,7 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
           simp
           sorry
 
-          --exact h_e_bot_e_schlange
+          --exact h_e_bot_e_schlange-/
 
 
 
@@ -529,6 +647,18 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
     exact sSup_le_sSup h
 
 
+
+
+
+
+
+
+
+
+
+  let x : ↑img := sorry
+  let test := aux13 x ∅
+  simp only [sSup_empty] at test
 
 
   let frame : Order.Frame img := Order.Frame.ofMinimalAxioms ⟨aux13⟩
