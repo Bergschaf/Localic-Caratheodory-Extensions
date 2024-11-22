@@ -417,18 +417,41 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
     have h14 : ((Set.range fun b => sSup (Set.range fun (h : b ∈ Subtype.val '' s) => ↑a ⊓ b))) ≤ ((Subtype.val '' Set.range fun b => e_schlange (sSup (Subtype.val '' Set.range fun (h : b∈ s) => e_schlange (↑a ⊓ ↑b))))) := by
         simp only [Set.range]
         simp only [Set.mem_image]
-        simp--only [Subtype.exists, exists_and_right, exists_eq_right, exists_prop, Set.le_eq_subset, Set.setOf_subset_setOf]--, forall_exists_index, forall_apply_eq_imp_iff]
-
-        by_cases hP :{x | ∃ y, sSup {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = x}= ∅
-        . rw [hP]
-          apply Set.empty_subset
-        rw [@Set.setOf_subset]
-        intro x h
         simp
-        rcases h with ⟨y, h1⟩
+        by_cases hP :{x | ∃ y, sSup {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = x}= ∅
+        . --- eigentlich quatsch, des kann nie eintreten, des ganze ist mindestens {⊥}
+          rw [hP]
+          apply Set.empty_subset
+        -- hier müsste man eigentlich ausschließen, dass des ganze = {⊥} ist
+
+        rw [@Set.setOf_subset]
+        intro x h4
+        simp
+        rcases h4 with ⟨y, h1⟩
         by_cases hP1 : x = ⊥
         . rw [hP1] at h1
-          simp at hP
+          have hP_ : Nonempty {x | ∃ y, sSup {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = x} := by
+            exact Set.nonempty_iff_ne_empty'.mpr hP
+          simp at hP_
+          rcases hP_ with ⟨x1, y1, hP_⟩
+          let h3 := sSup_eq_bot'.mp h1
+          cases hC : h3
+          sorry
+          sorry
+
+
+
+
+
+
+
+
+
+
+
+
+          ---
+
           -- was wenn {x | (∃ (x : y ∈ img), ⟨y, ⋯⟩ ∈ s) ∧ ↑a ⊓ y = x} = {⊥}
           --- vlt über hPt, dass s nicht lehr ist (damit ist image auch nich leer)
 
@@ -452,11 +475,31 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
               simp at h_nonempty
               exact h_nonempty
               exact id (Eq.symm h)
+          have h_help : ↑a ⊓ y = x → (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x := by
+            intro h
+            apply And.intro
+            have h_nonempty : Nonempty {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} := by
+                by_cases hC : {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = ∅
+                . rw [hC] at h1
+                  simp at h1
+                  exact False.elim (hP1 (id (Eq.symm h1)))
+                . exact Set.nonempty_iff_ne_empty'.mpr hC
+            simp at h_nonempty
+            exact h_nonempty
+            exact h
+
+
           let h1_save := h1
           rw [h] at h1
           simp at h1
           have h_img : x ∈ img := by
-            sorry
+            let h2 := h_help h1
+            rcases h2 with ⟨⟨a1, a2⟩, b1⟩
+            rw [← h1]
+            have h3 : ↑(⟨y, a1⟩ : img) = y := by
+              rfl
+            rw [← h3]
+            apply a_inf_b_mem
 
           use h_img
 
