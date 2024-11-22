@@ -120,8 +120,8 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
 
   let embedding : img → E := fun x ↦ x
 
-  let sup : Sup img := ⟨fun x y ↦ e_schlange (x ⊔ y)⟩
-  let inf : Inf img := ⟨fun x y ↦ e_schlange (x ⊓ y)⟩
+  let sup : Max img := ⟨fun x y ↦ e_schlange (x ⊔ y)⟩
+  let inf : Min img := ⟨fun x y ↦ e_schlange (x ⊓ y)⟩
 
   have inf_ (a b : img) :e_schlange (a ⊓ b)  = a ⊓ b  := by
     simp [inf]
@@ -320,8 +320,8 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
 
 
 
-  let semilatticesup : SemilatticeSup img := ⟨aux1, aux2, aux3⟩
-  let lattice : Lattice img := ⟨aux4, aux5, aux6⟩
+  let semilatticesup : SemilatticeSup img := ⟨sup.max, aux1, aux2, aux3⟩
+  let lattice : Lattice img := ⟨inf.min, aux4, aux5, aux6⟩
   let completelattice : CompleteLattice img := ⟨aux7, aux8, aux9, aux10, aux11, aux12⟩
 
 
@@ -455,7 +455,7 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
           -- was wenn {x | (∃ (x : y ∈ img), ⟨y, ⋯⟩ ∈ s) ∧ ↑a ⊓ y = x} = {⊥}
           --- vlt über hPt, dass s nicht lehr ist (damit ist image auch nich leer)
 
-          sorry
+
           --- contradiciton mit h1 und hP
 
         . have h : {x | (∃ (x : y ∈ img), ⟨y, x⟩ ∈ s) ∧ ↑a ⊓ y = x} = {↑a ⊓ y} := by
@@ -508,12 +508,11 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
             use hC1
             by_cases hC2 : ⟨y, hC1⟩ ∈ s
             .
-              have h : (Subtype.val '' {x | ⟨y, x⟩ ∈ s ∧ e_schlange (↑a ⊓ y) = x}) = {(↑a : E) ⊓ y}  := by
+              have h : (Subtype.val '' {x | ⟨y, hC1⟩ ∈ s ∧ e_schlange (↑a ⊓ y) = x}) = {(↑a : E) ⊓ y}  := by
                 ext x
                 simp only [Set.mem_image, Set.mem_setOf_eq, Subtype.exists, exists_and_right,
                   exists_and_left, exists_eq_subtype_mk_iff, exists_eq_right, Set.mem_singleton_iff]
-                apply And.intro
-                . use hC2
+                sorry--apply Iff.intro
 
 
               rw [h]
