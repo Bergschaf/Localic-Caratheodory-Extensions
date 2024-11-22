@@ -512,8 +512,23 @@ lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃
                 ext x
                 simp only [Set.mem_image, Set.mem_setOf_eq, Subtype.exists, exists_and_right,
                   exists_and_left, exists_eq_subtype_mk_iff, exists_eq_right, Set.mem_singleton_iff]
-                sorry--apply Iff.intro
-
+                apply Iff.intro
+                . rintro ⟨h1, h2⟩
+                  have h : ↑(⟨y, hC1⟩ : img) = y := by
+                    rfl
+                  rw [← h2]
+                  rw [← h]
+                  rw [h_e_image3]
+                  apply a_inf_b_mem
+                . intro h1
+                  apply And.intro
+                  . exact hC2
+                  . have h : ↑(⟨y, hC1⟩ : img) = y := by
+                      rfl
+                    rw [h1]
+                    rw [← h]
+                    rw [h_e_image3]
+                    apply a_inf_b_mem
 
               rw [h]
               simp only [csSup_singleton]
