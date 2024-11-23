@@ -127,7 +127,7 @@
     \end{enumerate}
 \end{lemma}
 \begin{proof}
-\leanok
+    \leanok
 \end{proof}
 
 \begin{definition}[Subframe]
@@ -146,6 +146,8 @@
 (Stimmt das?)(Leroy Ch 3)
     \label{def:subframe_inclusion}
     \uses{def:subframe}
+    \lean{subframe_inclusion}
+    \leanok
     $X \subset Y$ if $e_Y \le e_X$
 \end{definition}
 
@@ -161,23 +163,42 @@
     \leanok
 \end{proof}
 
+\begin{definition}[Union of a family of Subframes]
+(Leroy CH 1.4)
+    \label{def:union_of_a_family_of_subframes}
+    \uses{def:subframe_inclusion,lem:nucleus}
+    Let $(X_i)_i$ be a family of subframes of $E$ and $(e_i)_i$ the corresponding nuclei.
+    For all $V \in O(E)$, let $e(V)$ be the union of all $W \in O(E)$ which are contained in all $e_i(V)$.
+\end{definition}
 
-\begin{lemma}[Familiy of subspaces]
+\begin{lemma}[Familiy of Subframes]
 (Leroy CH 4)
-    \label{lem:family_of_subspaces}
-    \uses{lem:nucleus}
-    Let $X_i$ be a family of subspaces of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let $e(V)$ be the onion of all $W \in O(E)$ which are contained in every $e_i(V)$. Then \\
+    \label{lem:family_of_subframes}
+    \uses{lem:nucleus, def:union_of_a_family_of_subframes}
+    Let $X_i$ be a family of subframes of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let
+    $e(V)$ be the union of all $W \in O(E)$ which are contained in every (TODO wieso every) $e_i(V)$. Then \\
     \begin{enumerate}
-        \item $e$ is the corresponding nucleus of a subspace $X$ of $E$
-        \item a subspace $Z$ of $E$ contains $x$ if and only if it contains all $X_i$ x is thus called the union of $X_i$ denoted by $\bigcup_i X_i$
+        \item $e$ is the corresponding nucleus of a subframe $X$ of $E$
+        \item a subframe $Z$ of $E$ contains $x$ if and only if it contains all $X_i$. $X$ is thus called the union of
+        $X_i$ denoted by $\bigcup_i X_i$
     \end{enumerate}
 \end{lemma}
 
-\subsection{Direct Images}
+\begin{definition}[Subframe intersection]
+    \label{def:subframe_intersection}
+    \uses{def:subframe_inclusion,lem:nucleus}
+    Let $(X_i)_i$ be a family of subframes of $E$ and $(e_i)_i$ the corresponding nuclei.
+    For all $V \in O(E)$, the intersection $\bigcap X_i$ of all.... (was???)
+
+\end{definition}
+
+\subsection{(1.5) Direct Images}
+
 \begin{definition}[Direct Images]
     \uses{def:subframe}
-    \label{def:direct_images}
-    Let $f : E \rightarrow F$ be a morphism of spaces. The map $f_*f^* : O(F) \to O(F)$ is the nucleus of the subspace $Im(f)$ of $F$. By (lemma 2), $Im(F)$ is the smallest subspace of $F$ through which $f$ can be factored. For any subspace $X$ of $E$, we define the direct image as
+    \label{def:direct_images,lem:factorisation, def:subframe_intersection}
+    Let $f : E \rightarrow F$ be a morphism of Frames. The map $f_*f^* : O(F) \to O(F)$ is the nucleus of the subframe
+    $Im(f)$ of $F$. By (lemma 2), $Im(F)$ is the smallest subframe of $F$ through which $f$ can be factored. For any subframe $X$ of $E$, we define the direct image as
     \[f(x) = Im(fi_x)\]
     Where $i_X$ is the inclusion of $X$ into $E$.
 \end{definition}
@@ -193,12 +214,12 @@
 \begin{lemma}[(5) Direct Images Families]
 (Leroy Lemme 5)
     \label{lem:direct_images_families}
-    \uses{def:direct_images}
+    \uses{def:direct_images, lem:family_of_subframes}
     For all morphisms $f: E \rightarrow F$ and a family $(X_i)$ of subspaces of $E$, the following holds:
     \[f(\cup_i X_i) = \cup_i f(X_i)\]
 \end{lemma}
 
-\subsection{Inverse Images}
+\subsection{(6) Inverse Images}
 \begin{definition}[Inverse Images]
     \label{def:inverse_images}
     \uses{lem:direct_images_transitive}
@@ -207,9 +228,8 @@
     \[Im h \subset f^{-1}(Y)\iff f(Im h) \subset Y \iff Im(fh) \subset Y \] \
 \end{definition}
 
-\subsection{Open subspaces}
+\subsection{(7) Open subspaces}
 \begin{definition}[$e_U$]
-    TODO bessere benennung
     \label{def:e_U}
     \uses{def:nucleus,def:subframe}
     \lean{e_U}
@@ -229,7 +249,7 @@
 \begin{lemma}[(6,7) Open subspaces]
 (Leroy Lemma 6,7)
     \label{lem:open_subspaces}
-    \uses{def:e_U}
+    \uses{def:e_U,lem:family_of_subframes}
     \begin{enumerate}
         \item For all subspaces $X$ of $E$ and any $U \in O(E)$:
         \[X \subset [U] \iff e_X(U) = 1_E\]
@@ -359,7 +379,7 @@
 \begin{lemma}[Union of Intersections]
 (Leroy Lemme 2.4)
     \label{lem:union_of_intersections}
-    \uses{def:intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
+    \uses{def:subframe_intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
     For any family $B_i$ of sublocals of a local $E$ and a sublocal $A$, we have:
     \[A \cup (\bigcap_i B_i) = \bigcap_i (A \cap B_i)\]
     This implies if $A_i$ and $B_j$ are families of sublocals of $X$, we have:
@@ -435,15 +455,12 @@
     For any open sublocal $U$ of a local $X$, the caratheodory extension of a measure on $X$ satisfies \[\mu(U) + \mu(X \setminus U) = \mu(X)\]
 \end{lemma}
 
-\begin{definition}[Intersection]
-    \label{def:intersection}
-    The intersection of any Family $A_i$ of sublocals of a local $E$ is defined as ........ (+ Senf pullback)
-\end{definition}
+
 
 \begin{proposition}[Sublocals structure]
     Obacht TODO
     \label{prop:sublocals_structure}
-    \uses{def:intersection,def:complement,lem:union_of_intersections}
+    \uses{def:subframe_intersection,def:complement,lem:union_of_intersections}
     The sublocals of a local $E$ form a complete (distributive vlt.) lattice with the operations of intersection and complement.
 \end{proposition}
 
@@ -451,7 +468,7 @@
 \begin{lemma}[Property 2]
 (Leroy Lemm 3.4)
     \label{lem:property_2}
-    \uses{def:complement,def:intersection,lem:property_1}
+    \uses{def:complement,def:subframe_intersection,lem:property_1}
     For any open sublocal $U$ and any sublocal $A$ of a local $E$, the caratheodory extension of a measure on $X$ satisfies \[\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))\]
 \end{lemma}
 
