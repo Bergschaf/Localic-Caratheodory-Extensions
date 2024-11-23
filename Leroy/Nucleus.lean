@@ -27,7 +27,7 @@ instance : LE (Subframe X) where
   le x y := ∀ v : X, y.e.obj v ≤ x.e.obj v
 
 
-lemma nucleus_equiv_subframe_1 (e : E ⥤ E ) : (∃ (X : Type u),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ k : Leroy_Embedding f, true) → (∃ (X : Type u),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f)) := by
+lemma nucleus_equiv_subframe_1 (e : E ⥤ E ) : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ _ : Leroy_Embedding f, true) → (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f)) := by
   intro a
   simp_all only
   obtain ⟨w, h⟩ := a
@@ -42,7 +42,7 @@ lemma nucleus_equiv_subframe_1 (e : E ⥤ E ) : (∃ (X : Type u),∃ h : Order.
     · apply Exists.intro
       · rfl
 
-lemma nucleus_equiv_subframe_2 (e : E ⥤ E) : (∃ (X : Type u),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f)) →  (∃  n : Nucleus e,true) := by
+lemma nucleus_equiv_subframe_2 (e : E ⥤ E) : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f)) →  (∃ _ : Nucleus e,true) := by
   intro h
   rcases h with ⟨X, h, f, h1⟩
   have n_1 :  ∀ (x : E), e.obj (e.obj x) = e.obj x := by
@@ -109,7 +109,7 @@ lemma nucleus_equiv_subframe_2 (e : E ⥤ E) : (∃ (X : Type u),∃ h : Order.F
 
 
 
-lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  n : Nucleus e,true) → (∃ (X : Type u),∃ h : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ k : Leroy_Embedding f, true)  := by
+lemma nucleus_equiv_subframe_3 (e : E ⥤ E) :(∃  _ : Nucleus e,true) → (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ _ : Leroy_Embedding f, true)  := by
   intro h
   rcases h with ⟨n⟩
   let img := Image e
