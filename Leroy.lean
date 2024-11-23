@@ -2,3 +2,4 @@
 -- Import modules here that should be built as part of the library.
 import Leroy.Basic
 import Leroy.Nucleus
+import Leroy.Factorisation
