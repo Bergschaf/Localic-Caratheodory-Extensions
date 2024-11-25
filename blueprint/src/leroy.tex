@@ -78,6 +78,7 @@
     \label{lem:embedding}
     \uses{def:f_star,lem:triangle}
     \lean{f_injective_surjective}
+    \leanok
     The following arguments are equivalent:
     \begin{enumerate}
         \item $f^*$ is surjective
@@ -241,6 +242,8 @@
 \begin{definition}[Open sublocal]
     \label{def:open_sublocal}
     \uses{def:e_U}
+        \lean{is_open}
+    \leanok
     For any $U \in O(E)$, the sublocal $[U]$ is called an open sublocal of $E$.
     (+Senf: stimmt das mit dem üblichen überein???)
 \end{definition}
@@ -400,18 +403,23 @@
 \begin{definition}[Measure on Locals]
     \label{def:measure_on_locals}
     \uses{def:open_sublocal}
+    \lean{Measure}
+    \leanok
     A measure on a local $X$ is a map $\mu : O(X) \to [0,\infty)$ such that:
     \begin{enumerate}
         \item $\mu(\emptyset) = 0$
         \item $U \subset V \implies \mu(U) \le \mu(V)$
         \item $\mu(U \cup V) = \mu(U) + \mu(V) - \mu(V \cap V)$
         \item For any increasingly filtered family $V_i$ of open sublocals of $X$, we have:
-        \[\mu(\bigcup V_i) = \sup_i \mu(V_i)\]
+        \[\mu(\bigcup V_i) = \sup_i \mu(V_i)\] this means:
+        For all $i$ and $j$ there exists a $k$ such that $V_i \cup V_j \subset V_k$ bzw. $V_i \subset V_k$ and $V_j \subset V_k$.
     \end{enumerate}
     (Leroy III.1.)
 \end{definition}
 
 \begin{definition}[Caratheodory]
+    \lean{caratheodory}
+    \leanok
     \label{def:caratheodory}
     \uses{def:measure_on_locals}
     For any measure on a local $X$, the caratheodory extension is:
@@ -437,6 +445,7 @@
 \begin{definition}[Neighborhood]
     \label{def:neighborhood}
     \uses{def:open_sublocal}
+
     A neighborhood of a sublocal $A$ of $X$ is an open sublocal $V$ of $X$ such that $A \le V$.
 \end{definition}
 

@@ -12,16 +12,47 @@ structure Subframe (X : Type u) [Order.Frame X] where
   nucleus : Nucleus e
 --  carrier : Set X := Image e
 
+-- TODO subframes als kategorie
+
+-- TODO
+--def subframe_embedding (s : Subframe X) : f : FrameHom ... [Embedding ...]
+
+-- def embedding_subframe (f: FrameHom ...) : Subframe ...
+
+-- def subframe_frame
+
+
+/-- Nlab : ein nucleus ist ein quotient frame (-> sublocal)
+
+
+
+gamma??:
+
+he double negation sublocale of L, denoted L ¬¬, is given by
+j ¬¬(U)≔¬¬U.
+
+This is always a dense subspace; in fact, it is the smallest dense sublocale of L. (As such, even when L is topological, L ¬¬ is rarely topological; in fact, its only points are the isolated points of L.)
+
+--Nuclei -> https://www.sciencedirect.com/science/article/abs/pii/S0022404919301604
+
+-/
 instance : Coe (Subframe X) (Set X) where
   coe x := Image x.e
 
 def subframe_to_subtype (s : Subframe X) : Type u := (s : Set X)
 
-
-
 -- Leroy CH 3
-instance : LE (Subframe X) where
+instance le : LE (Subframe X) where
   le x y := ∀ v : X, y.e.obj v ≤ x.e.obj v
+
+
+/--
+instance : Order.Frame (Subframe X) where
+  le x y := x ≤ y
+  le_refl := (by intro a; simp [le])
+  le_trans := (by intro a b c d e; simp_all[le]; exact fun v =>
+    Preorder.le_trans (c.e.obj v) (b.e.obj v) (a.e.obj v) (e v) (d v))
+  le_antisymm := (by intro a b c d; simp_all [le];)  -/
 
 
 --instance toFrame (U : Subframe X) : Order.Frame (U : Set X) := sorry
@@ -181,7 +212,6 @@ def e_V_nucleus (X_i : Set (Subframe E)) : Nucleus (e_V_functor X_i) where
   preserves_inf := e_V_preserves_inf
 
 
-instance : Order.Frame (Subframe X) := sorry
-
 instance : SupSet (Subframe X) := ⟨fun X_i ↦ ⟨e_V_functor X_i, e_V_nucleus X_i⟩⟩
--- instane : InfSet (Subframe X) ....
+
+instance : InfSet (Subframe X) := ⟨fun X_i ↦ sSup {w : Subframe X | ∀ x_i ∈ X_i, w ≤ x_i}⟩

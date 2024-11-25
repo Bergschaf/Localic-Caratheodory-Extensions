@@ -82,10 +82,15 @@ def e_U_preserves_inf (U: E) (H : E) (J : E) : e_U U (H ⊓ J) = e_U U H ⊓ e_U
 def eckig (U : E) : Subframe E :=
   ⟨⟨⟨e_U U, (by intro X Y h; simp [e_U]; apply homOfLE; simp_all only [sSup_le_iff, Set.mem_setOf_eq]; intro b a; apply le_sSup; simp [le_trans a (leOfHom h)])⟩, (by aesop_cat), (by aesop_cat)⟩, ⟨(by simp [e_U_idempotent]), (by exact fun x => e_U_increasing U x), (by exact  fun x y => e_U_preserves_inf U x y)⟩⟩
 
+def is_open (e : Subframe E) : Prop :=
+  ∃ u : E, eckig u = e
+-- TODO typeclass
+
+
 --instance subframe_frame : Order.Frame (Subframe E) := ⟨sorry, sorry, sorry⟩
 
 -- Leroy Lemme 6
---lemma test (X : Subframe E) (U : E) : X ≤ eckig U ↔ e_U X = sorry := sorry
+--lemma test (X : Subframe E) (U : E) : X ≤ eckig U ↔ e_U (nicht e_u sondern der nukleus hier) X = 1 meint top := sorry
 
 
 --lemma eckig_preserves_inf (U V : E) : eckig (e ⊓ v) = eckig U ⊓ eckig V := by
