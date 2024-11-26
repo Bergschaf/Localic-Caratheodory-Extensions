@@ -14,5 +14,7 @@ structure Measure where
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set X), increasingly_filtered s → toFun (sSup s) = iSup (fun (x : s) ↦ toFun x)
 
-noncomputable def caratheodory (m : @Measure X h) (a : X) : NNReal :=
+
+-- subframes???
+noncomputable def caratheodory (m : @Measure X h) (a : Subframe X) : NNReal :=
   sInf (m.toFun '' {u : X | a ≤ u})
