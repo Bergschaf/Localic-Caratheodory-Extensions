@@ -86,11 +86,10 @@ def is_open (e : Subframe E) : Prop :=
   ∃ u : E, eckig u = e
 -- TODO typeclass
 
-
+def Opens (E : Type*) [Order.Frame E] := {e : Subframe E | is_open e}
+#check Opens
 --instance subframe_frame : Order.Frame (Subframe E) := ⟨sorry, sorry, sorry⟩
 
 -- Leroy Lemme 6
---lemma test (X : Subframe E) (U : E) : X ≤ eckig U ↔ e_U (nicht e_u sondern der nukleus hier) X = 1 meint top := sorry
-
-
+lemma test (x : Subframe E) (U : E) : x ≤ eckig U ↔ (x.e.obj U = ⊤) := sorry
 --lemma eckig_preserves_inf (U V : E) : eckig (e ⊓ v) = eckig U ⊓ eckig V := by
