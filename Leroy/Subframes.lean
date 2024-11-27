@@ -215,3 +215,11 @@ def e_V_nucleus (X_i : Set (Subframe E)) : Nucleus (e_V_functor X_i) where
 instance : SupSet (Subframe X) := ⟨fun X_i ↦ ⟨e_V_functor X_i, e_V_nucleus X_i⟩⟩
 
 instance : InfSet (Subframe X) := ⟨fun X_i ↦ sSup {w : Subframe X | ∀ x_i ∈ X_i, w ≤ x_i}⟩
+
+instance bot : Bot (Subframe E) := sorry
+instance top : Top (Subframe E) := sorry
+instance : PartialOrder (Subframe E) := sorry
+instance : SemilatticeSup (Subframe E) := ⟨sorry,sorry, sorry, sorry⟩
+instance : Lattice (Subframe E) := ⟨sorry, sorry, sorry, sorry⟩
+instance : CompleteLattice (Subframe E) := ⟨sorry, sorry, sorry, sorry, sorry, sorry⟩
+instance subframe_frame : Order.Frame (Subframe E) := Order.Frame.ofMinimalAxioms sorry

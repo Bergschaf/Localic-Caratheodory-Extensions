@@ -87,9 +87,27 @@ def is_open (e : Subframe E) : Prop :=
 -- TODO typeclass
 
 def Opens (E : Type*) [Order.Frame E] := {e : Subframe E | is_open e}
-#check Opens
---instance subframe_frame : Order.Frame (Subframe E) := ⟨sorry, sorry, sorry⟩
+
+
+
+instance opens_frame : Order.Frame (Opens E) := sorry
 
 -- Leroy Lemme 6
-lemma test (x : Subframe E) (U : E) : x ≤ eckig U ↔ (x.e.obj U = ⊤) := sorry
+
+
+
+
+lemma leroy_6a (x : Subframe E) (U : E) : x ≤ eckig U ↔ (x.e.obj U = ⊤) := by
+  apply Iff.intro
+  . intro h
+    simp[le] at h
+    let h1 := h U
+    have h2 : (eckig U).e.obj U = ⊤ := by
+      simp [eckig, e_U]
+    exact eq_top_mono (h U) h2
+  . intro h
+    sorry
+
+
+
 --lemma eckig_preserves_inf (U V : E) : eckig (e ⊓ v) = eckig U ⊓ eckig V := by

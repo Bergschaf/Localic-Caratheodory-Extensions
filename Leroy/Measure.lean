@@ -8,7 +8,7 @@ variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 def increasingly_filtered (s : Set X) : Prop :=
   ∀ (u v : s), ∃ (w : s), u ≤ w ∧ v ≤ w
 
-/-
+
 structure Measure where
   toFun : (Opens X) → NNReal
   empty : toFun ⊥ = 0
@@ -19,4 +19,4 @@ structure Measure where
 
 -- subframes???
 noncomputable def caratheodory (m : @Measure X h) (a : Subframe X) : NNReal :=
-  sInf (m.toFun '' {u : X | a ≤ u})-/
+  sInf (m.toFun '' {u : X | a ≤ u})
