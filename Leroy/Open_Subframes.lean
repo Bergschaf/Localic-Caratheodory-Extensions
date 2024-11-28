@@ -42,11 +42,8 @@ lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) = e_U U H := by
       simp
     apply le_trans h h2
 
-def e_U_increasing (U : E) (H : E) : H ⟶ e_U U H := by
-  apply homOfLE
-  simp [e_U]
-  apply le_sSup
-  simp
+def e_U_increasing (U : E) (H : E) : H ≤ e_U U H := by
+  simp only [e_U, Set.mem_setOf_eq, inf_le_left, le_sSup]
 
 
 def e_U_preserves_inf (U: E) (H : E) (J : E) : e_U U (H ⊓ J) = e_U U H ⊓ e_U U J := by
@@ -79,35 +76,49 @@ def e_U_preserves_inf (U: E) (H : E) (J : E) : e_U U (H ⊓ J) = e_U U H ⊓ e_U
         exact inf_le_left
       apply le_trans h3 h2
 
-def eckig (U : E) : Subframe E :=
-  ⟨⟨⟨e_U U, (by intro X Y h; simp [e_U]; apply homOfLE; simp_all only [sSup_le_iff, Set.mem_setOf_eq]; intro b a; apply le_sSup; simp [le_trans a (leOfHom h)])⟩, (by aesop_cat), (by aesop_cat)⟩, ⟨(by simp [e_U_idempotent]), (by exact fun x => e_U_increasing U x), (by exact  fun x y => e_U_preserves_inf U x y)⟩⟩
+def eckig (U : E) : Nucleus E where
+  toFun := e_U U
+  idempotent := e_U_idempotent U
+  increasing := e_U_increasing U
+  preserves_inf := e_U_preserves_inf U
 
-def is_open (e : Subframe E) : Prop :=
+def is_open (e : Nucleus E) : Prop :=
   ∃ u : E, eckig u = e
 -- TODO typeclass
+--class Open extends Subframe E where
+--  is_open : ∃ u : E, eckig u = e
 
-def Opens (E : Type*) [Order.Frame E] := {e : Subframe E | is_open e}
 
+def Opens (E : Type*) [Order.Frame E] := {e : Nucleus E // is_open e}
 
+instance : Coe (Opens E) (Nucleus E) where
+  coe x := Subtype.val x
 
-instance opens_frame : Order.Frame (Opens E) := sorry
+instance : Coe (Set (Opens E)) (Set (Nucleus E)) where
+  coe x := Subtype.val '' x
 
 -- Leroy Lemme 6
 
 
-
-
-lemma leroy_6a (x : Subframe E) (U : E) : x ≤ eckig U ↔ (x.e.obj U = ⊤) := by
+lemma leroy_6a (x : Nucleus E) (U : E) : x ≤ eckig U ↔ (x.toFun U = ⊤) := by
   apply Iff.intro
   . intro h
     simp[le] at h
     let h1 := h U
-    have h2 : (eckig U).e.obj U = ⊤ := by
+    have h2 : (eckig U).toFun U = ⊤ := by
       simp [eckig, e_U]
     exact eq_top_mono (h U) h2
   . intro h
-    sorry
+    simp [eckig, le]
+    intro v
+    simp [e_U]
+    intro b h1
+    apply_fun x.toFun at h1
+    rw [x.preserves_inf] at h1
+    rw [h] at h1
+    simp at h1
+    apply le_trans (x.increasing b) h1
+    exact Nucleus.monotone x
 
-
-
---lemma eckig_preserves_inf (U V : E) : eckig (e ⊓ v) = eckig U ⊓ eckig V := by
+lemma eckig_preserves_inf (U V : E) : eckig (e ⊓ v) = eckig U ⊓ eckig V := by
+  simp [eckig, min, sInf, sSup]

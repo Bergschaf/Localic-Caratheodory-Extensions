@@ -23,13 +23,13 @@ instance : Coe (Nucleus X) (X → X) where
 /--
 A Nucleus preserves ⊤
 -/
-lemma nucleus_preserves_top (n : Nucleus X) : n.toFun ⊤ = ⊤ :=
+lemma Nucleus.preserves_top (n : Nucleus X) : n.toFun ⊤ = ⊤ :=
    top_le_iff.mp (n.increasing ⊤)
 
 /--
 A Nucleus is montone
 -/
-lemma nucleus_monotone (n : Nucleus X) : Monotone n.toFun := by
+lemma Nucleus.monotone (n : Nucleus X) : Monotone n.toFun := by
   rw [Monotone]
   intro a b h
   have h1 : a ⊓ b = a := inf_eq_left.mpr h
@@ -40,9 +40,13 @@ lemma nucleus_monotone (n : Nucleus X) : Monotone n.toFun := by
 def Image (e : X → X) : Set X :=
   {v : X | e v = v}
 
+instance : FunLike (Nucleus X) X X where
+  coe := Nucleus.toFun
+  coe_injective' f g h := (by sorry)
+
 instance : Coe (Nucleus X) (Set X) where
   coe x := Image x
-
+-- TODO ggf le sSup und so als instance definieren
 def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
   let img := Image n.toFun
 
@@ -74,7 +78,7 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
   have e_schlange_monotone : Monotone e_schlange := by
       simp only [Monotone, Set.codRestrict, Subtype.mk_le_mk, e_schlange]
       rw [← Monotone]
-      exact nucleus_monotone n
+      exact Nucleus.monotone n
 
 
 
@@ -263,15 +267,6 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
     let h6 := Eq.trans h4 h5
     exact SetCoe.ext h6
 
-
-    -- e(⊥) ⊓ a ≤ e(⊥) ⊓ e(a) = e(⊥ ⊓ a) = e(⊥) versteh ich
-    -- aber wie wird dadraus
-    --  e(⊥) ⊓ a = e(⊥) bzw e(⊥) ⊓ ⊥ = e(⊥)
-
-
-
-
-
   have e_schlange_idempotent : ∀ (a : E), e_schlange (e_schlange a) = e_schlange a := by
     exact fun a => Eq.symm (SetCoe.ext (congrArg Subtype.val (h_e (e_schlange a))))
 
@@ -393,57 +388,7 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.
   have e_schlange_monotone : Monotone e_schlange := by
       simp only [Monotone, Set.codRestrict, Subtype.mk_le_mk, e_schlange]
       rw [← Monotone]
-      exact nucleus_monotone n
-
-
-
-  have aux1 : ∀ (a b : ↑img), a ≤ a ⊔ b := by
-    intro a b
-    simp [sup]
-    have h_2 (c d : E) : c ≤ c ⊔ d := by exact SemilatticeSup.le_sup_left c d
-    let h3 := h_2 a b
-
-    let h8 := le_of_eq (h_e a)
-    apply_fun (e_schlange) at h3
-    apply le_trans h8 h3
-    exact e_schlange_monotone
-
-  have sup_comm : ∀ (a b : ↑img), a ⊔ b = b ⊔ a := by
-    intro a b
-    simp only [sup]
-    rw [sup_comm]
-
-
-  have aux2 : ∀ (a b : ↑img), b ≤ a ⊔ b := by
-    intro a b
-    rw [sup_comm]
-    apply aux1
-
-
-
-
-  have aux4 : ∀ (a b : ↑img), a ⊓ b ≤ a := by
-    intro a b
-    simp [inf]
-    have h_2 (c d : E) : c ⊓ d ≤ c := by exact inf_le_left
-    let h3 := h_2 a b
-
-    let h8 := le_of_eq (h_e a)
-    apply_fun (e_schlange) at h3
-    apply le_trans h3
-    rw [← h_e]
-    exact e_schlange_monotone
-
-  have inf_comm : ∀ (a b : ↑img), a ⊓ b = b ⊓ a := by
-    intro a b
-    simp only [inf]
-    rw [inf_comm]
-
-
-  have aux5 : ∀ (a b : ↑img), a ⊓ b ≤ b := by
-    intro a b
-    rw [inf_comm]
-    apply aux4
+      exact Nucleus.monotone n
 
   have h1 (a b : ↑img) : (a : E) ⊓ (b : E) = a ⊓ b:= by
     have h2 : (a : E) ⊓ (b : E) ∈ img := by
@@ -459,7 +404,6 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.
     exact Subtype.coe_prop (sSup s)
 
 
-
   have e_schlange_preserves_inf : ∀ (a b : E), e_schlange (a ⊓ b) = e_schlange a ⊓ e_schlange b := by
     intro a b
     let h2 := n.preserves_inf a b
@@ -471,11 +415,8 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.
     exact SetCoe.ext h6
 
 
-
-
   have e_schlange_idempotent : ∀ (a : E), e_schlange (e_schlange a) = e_schlange a := by
     exact fun a => Eq.symm (SetCoe.ext (congrArg Subtype.val (h_e (e_schlange a))))
-
 
 
   have aux43 : ∀ (s : Set E), e_schlange (sSup s) = sSup ((fun a => e_schlange a) '' s) := by
