@@ -18,18 +18,47 @@ structure Nucleus (X : Type*) [Order.Frame X] where
   /-- A Nucleus preserves infima.-/
   preserves_inf (x y : X) : toFun (x ⊓ y) = toFun x ⊓ toFun y
 
-instance : Coe (Nucleus X) (X → X) where
-  coe x := x.toFun
+
+
+instance : FunLike (Nucleus X) X X where
+  coe := Nucleus.toFun
+  coe_injective' f g h := by cases f; cases g; congr
+
+@[ext]
+lemma Nucleus.ext {n m : Nucleus X} (h: ∀ a, n a = m.toFun a) : n = m :=
+  DFunLike.ext n m h
+
+@[simp]
+lemma Nucleus.toFun_eq_coe (n : Nucleus X) : n.toFun = n := rfl
+
+@[simp]
+lemma Nucleus.toFun_eq_coe' {f : E → E} {g :∀ x, f (f x) = f x} {h : ∀ x, x ≤ f x} {i : ∀ x y, f (x ⊓ y) = f x ⊓ f y}: ↑({toFun := f, idempotent := g, increasing := h, preserves_inf := i} : Nucleus E) = f := by
+  rfl
+
+lemma Nucleus.idempotent' (n : Nucleus X) {x : X} : n (n x) = n x := by
+  rw [← n.toFun_eq_coe]
+  exact n.idempotent x
+
+lemma Nucleus.increasing' (n : Nucleus X) {x : X} : x ≤ n x := by
+  rw [← n.toFun_eq_coe]
+  exact n.increasing x
+
+lemma Nucleus.preserves_inf' (n : Nucleus X) {x y : X} : n (x ⊓ y) = n x ⊓ n y := by
+  rw [← n.toFun_eq_coe]
+  exact n.preserves_inf x y
+
+
+
 /--
 A Nucleus preserves ⊤
 -/
-lemma Nucleus.preserves_top (n : Nucleus X) : n.toFun ⊤ = ⊤ :=
+lemma Nucleus.preserves_top (n : Nucleus X) : n ⊤ = ⊤ :=
    top_le_iff.mp (n.increasing ⊤)
 
 /--
 A Nucleus is montone
 -/
-lemma Nucleus.monotone (n : Nucleus X) : Monotone n.toFun := by
+lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
   rw [Monotone]
   intro a b h
   have h1 : a ⊓ b = a := inf_eq_left.mpr h
@@ -37,18 +66,16 @@ lemma Nucleus.monotone (n : Nucleus X) : Monotone n.toFun := by
   rw [h1] at h2
   exact left_eq_inf.mp h2
 
-def Image (e : X → X) : Set X :=
+def Image (e : Nucleus X) : Set X :=
   {v : X | e v = v}
 
-instance : FunLike (Nucleus X) X X where
-  coe := Nucleus.toFun
-  coe_injective' f g h := (by sorry)
+
 
 instance : Coe (Nucleus X) (Set X) where
   coe x := Image x
 -- TODO ggf le sSup und so als instance definieren
-def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
-  let img := Image n.toFun
+def image_frame (n : Nucleus E) : Order.Frame (Image n) := by
+  let img := Image n
 
   let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; apply n.idempotent)
 
@@ -238,17 +265,14 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
     have h2 : (a : E) ⊓ (b : E) ∈ img := by
       simp only [Image, Set.mem_setOf_eq, img]
       rw [h_e a,h_e b]
-      rw [n.preserves_inf]
+      simp [n.preserves_inf']
       simp only [Set.val_codRestrict_apply, e_schlange]
-      repeat rw [n.idempotent]
+      repeat rw [n.idempotent']
+
     simp [img, Image] at h2
     simp [inf, e_schlange, h2]
-
   have h_test (s : Set ↑img) : ↑(sSup s) ∈ img := by
     exact Subtype.coe_prop (sSup s)
-
-
-
 
 
 
@@ -260,7 +284,7 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
   have e_schlange_preserves_inf : ∀ (a b : E), e_schlange (a ⊓ b) = e_schlange a ⊓ e_schlange b := by
     intro a b
     let h2 := n.preserves_inf a b
-    have h3 : e_schlange (a ⊓ b) = n.toFun (a ⊓ b) := by
+    have h3 : e_schlange (a ⊓ b) = n (a ⊓ b) := by
       simp [e_schlange]
     let h4 := Eq.trans h3 h2
     let h5 := h1 (e_schlange a) (e_schlange b)
@@ -304,9 +328,9 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
       rw [h_e ↑a]
       rw [h_e ↑b]
       simp [e_schlange]
-      rw [n.preserves_inf]
-      rw [n.idempotent]
-      rw [n.idempotent]
+      rw [n.preserves_inf']
+      rw [n.idempotent']
+      rw [n.idempotent']
 
     have h14 : sSup ((Set.range fun b => sSup (Set.range fun (h : b ∈ Subtype.val '' s) => ↑a ⊓ b))) ≤ sSup ((Subtype.val '' Set.range fun b => e_schlange (sSup (Subtype.val '' Set.range fun (h : b∈ s) => e_schlange (↑a ⊓ ↑b))))) := by
         simp only [Set.range]
@@ -346,19 +370,19 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n.toFun) := by
         exact h_e_image3 (↑a ⊓ ↑(⟨a1, ha1⟩ : img)) ((Iff.of_eq (Eq.refl (↑a ⊓ a1 ∈ img))).mpr h)
         exact
           h_e_image img (↑(a ⊓ ⟨a1, ha1⟩))
-            (h_e_image1 (↑(a ⊓ ⟨a1, ha1⟩)) (congrArg n.toFun (a_inf_b_mem ⟨a1, ha1⟩)))
+            (h_e_image1 (↑(a ⊓ ⟨a1, ha1⟩)) (congrArg n (a_inf_b_mem ⟨a1, ha1⟩)))
 
     apply_fun e_schlange at h14
     exact h14
     exact e_schlange_monotone
 
-  let frame : Order.Frame ↑(Image n.toFun) := Order.Frame.ofMinimalAxioms ⟨aux13⟩
+  let frame : Order.Frame ↑(Image n) := Order.Frame.ofMinimalAxioms ⟨aux13⟩
   exact frame
 
-instance inst_frame (n : Nucleus E): Order.Frame (Image n.toFun) := image_frame n
+instance inst_frame (n : Nucleus E): Order.Frame (Image n) := image_frame n
 
-lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.toFun = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ k : Leroy_Embedding f, true) :=  by
-  let img := Image n.toFun
+lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) :=  by
+  let img := Image n
 
   let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; apply n.idempotent)
 
@@ -394,9 +418,9 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.
     have h2 : (a : E) ⊓ (b : E) ∈ img := by
       simp only [Image, Set.mem_setOf_eq, img]
       rw [h_e a,h_e b]
-      rw [n.preserves_inf]
+      rw [n.preserves_inf']
       simp only [Set.val_codRestrict_apply, e_schlange]
-      repeat rw [n.idempotent]
+      repeat rw [n.idempotent']
     simp [img, Image] at h2
     simp [inf, e_schlange, h2]
 
@@ -407,7 +431,7 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.
   have e_schlange_preserves_inf : ∀ (a b : E), e_schlange (a ⊓ b) = e_schlange a ⊓ e_schlange b := by
     intro a b
     let h2 := n.preserves_inf a b
-    have h3 : e_schlange (a ⊓ b) = n.toFun (a ⊓ b) := by
+    have h3 : e_schlange (a ⊓ b) = n (a ⊓ b) := by
       simp [e_schlange]
     let h4 := Eq.trans h3 h2
     let h5 := h1 (e_schlange a) (e_schlange b)
@@ -472,15 +496,15 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n.toFun), n.
         simp only [Subtype.coe_le_coe, imp_self, implies_true]
       apply h
       simp
-      rw  [n.idempotent]
+      rw  [n.idempotent']
     . apply sSup_le
       simp
       intro b h
       apply_fun (fun (x : ↑img) ↦ (x : E)) at h
       simp at h
-      have h1: b ≤ n.toFun b := by
+      have h1: b ≤ n b := by
         exact n.increasing b
-      exact Preorder.le_trans b (n.toFun b) (n.toFun x) h1 h
+      exact Preorder.le_trans b (n b) (n x) h1 h
       exact fun ⦃a b⦄ a => a
   . have h : Function.Surjective (f_obenstern frameHom).obj := by
       simp [Function.Surjective, frameHom]
