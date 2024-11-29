@@ -10,7 +10,8 @@ variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 instance le : LE (Nucleus X) where
   le x y := ∀ v : X, y.toFun v ≤ x.toFun v
 
-
+@[simp]
+lemma Nucleus.le_iff {n m : Nucleus X} : n ≤ m ↔ ∀ v : X, m.toFun v ≤ n.toFun v := by rfl
 
 def Nucleus_to_subtype (s : Nucleus X) : Type u := (s : Set X)
 
@@ -159,6 +160,15 @@ instance Nucleus_min : Min (Nucleus X) where
 
 instance Nucleus_max : Max (Nucleus X) where
   max x y := sSup {x, y}
+
+
+
+
+instance : PartialOrder (Nucleus X) where
+  le_refl := (by simp [le])
+  le_trans := (by simp [le]; exact fun a b c a_1 a_2 v =>
+    Preorder.le_trans (c v) (b v) (a v) (a_2 v) (a_1 v))
+  le_antisymm := (by intro a b h i; simp only [le, Nucleus.toFun_eq_coe] at *; ext x; simp only [Nucleus.toFun_eq_coe]; apply le_antisymm; exact i x; exact h x )
 
 
 --instance bot : Bot (Nucleus E) := sorry
