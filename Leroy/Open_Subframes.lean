@@ -92,6 +92,12 @@ def is_open (e : Nucleus E) : Prop :=
 
 def Opens (E : Type*) [Order.Frame E] := {e : Nucleus E // is_open e}
 
+instance : LE (Opens E) where
+  le x y := x.val ≤ y.val
+
+instance : Bot (Opens E) where
+  bot := ⟨⊥, (by simp[is_open];use ⊥; simp[eckig];ext x;simp[e_U, Nucleus_bot, sSup, e_V_nucleus, e_V];)⟩
+
 instance : Coe (Opens E) (Nucleus E) where
   coe x := Subtype.val x
 
@@ -122,12 +128,6 @@ lemma leroy_6a (x : Nucleus E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
     simp at h1
     apply le_trans (x.increasing b) h1
     exact Nucleus.monotone x
-
-
-
-
-
-
 
 
 lemma leroy_6b {U V : E} : e_U (U ⊓ V) = e_U U ∘ e_U V := by
@@ -291,3 +291,100 @@ lemma opens_inf_closed (U V : Opens X) : is_open (U.val ⊓ V.val) := by
 
 instance : Min (Opens X) where
   min U V := ⟨U ⊓ V, opens_inf_closed U V⟩
+
+lemma eckig_preserves_sup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i) := by
+  ext x
+  simp [eckig, sSup, e_V_nucleus, e_V, e_U]
+  apply le_antisymm
+  . apply sSup_le_sSup
+    simp only [Set.setOf_subset_setOf]
+    intro a h
+    have h1 : a ≤ sSup {W | W ⊓ sSup U_i ≤ x} := by
+      apply le_sSup
+      simp only [Set.mem_setOf_eq]
+      rw [inf_sSup_eq]
+      simp only [iSup_le_iff]
+      intro i h1
+      let h2 := h i h1
+      apply_fun (fun x ↦ x ⊓ i) at h2
+      dsimp at h2
+      have h3 :sSup {W | W ⊓ i ≤ x} ⊓ i ≤ x := by
+        rw [sSup_inf_eq]
+        simp only [Set.mem_setOf_eq, iSup_le_iff, imp_self, implies_true]
+      exact Preorder.le_trans (a ⊓ i) (sSup {W | W ⊓ i ≤ x} ⊓ i) x h2 h3
+      rw [Monotone]
+      exact fun ⦃a b⦄ a_1 => inf_le_inf_right i a_1
+    apply_fun (fun x ↦ x ⊓ sSup U_i) at h1
+    dsimp at h1
+    have h2 : sSup {W | W ⊓ sSup U_i ≤ x} ⊓ sSup U_i ≤ x := by
+      rw [sSup_inf_sSup]
+      simp only [Set.mem_prod, Set.mem_setOf_eq, iSup_le_iff, and_imp, Prod.forall]
+      intro b c h2 h3
+      have h4 : b ⊓ c ≤ b ⊓ sSup U_i := by
+        simp only [le_inf_iff, inf_le_left, true_and]
+        refine inf_le_of_right_le ?h
+        apply le_sSup
+        exact h3
+      exact Preorder.le_trans (b ⊓ c) (b ⊓ sSup U_i) x h4 h2
+    exact Preorder.le_trans (a ⊓ sSup U_i) (sSup {W | W ⊓ sSup U_i ≤ x} ⊓ sSup U_i) x h1 h2
+    rw [Monotone]
+    exact fun ⦃a b⦄ a_1 => inf_le_inf_right (sSup U_i) a_1
+
+  . apply sSup_le_sSup
+    simp only [Set.setOf_subset_setOf]
+    intro a h a1 h1
+    apply le_sSup
+    simp only [Set.mem_setOf_eq]
+    have h2 : a ⊓ a1 ≤ a ⊓ sSup U_i := by
+      simp
+      refine inf_le_of_right_le ?h
+      apply le_sSup
+      exact h1
+    exact Preorder.le_trans (a ⊓ a1) (a ⊓ sSup U_i) x h2 h
+
+
+
+lemma opens_sSup_closed {U_i : Set (Opens X)} : is_open (sSup (Subtype.val '' U_i)) := by
+  rw [is_open]
+  have h1 : ∀ u_i ∈ U_i, is_open u_i.val := by
+    intro u_i h
+    exact u_i.2
+  have h2 : ∃ U_i', (Subtype.val '' U_i) = eckig '' U_i' := by
+    simp [is_open] at h1
+    let h2 (u_i : Opens X) : X := by
+      let h := u_i.prop
+      simp [is_open] at h
+      use Classical.choose h
+    let h4 (u_i : Opens X) : eckig (h2 u_i) = u_i := by
+      simp [h2]
+      exact Set.apply_rangeSplitting eckig u_i
+    use h2 '' U_i
+    have h3 := fun (x : Opens X) ↦ h4 x
+    simp_all only [implies_true, h2, h4]
+    ext x : 1
+    simp_all only [Set.mem_image, Subtype.exists, exists_and_right, exists_eq_right, exists_exists_and_eq_and, h4]
+    apply Iff.intro
+    · intro a
+      obtain ⟨w, h⟩ := a
+      apply Exists.intro
+      · apply And.intro
+        · exact h
+        · simp_all only
+    · intro a
+      obtain ⟨w, h⟩ := a
+      obtain ⟨left, right⟩ := h
+      subst right
+      simp_all only [Subtype.coe_eta, exists_prop, and_true]
+      apply h1
+      simp_all only
+
+  rcases h2 with ⟨U_i', h2⟩
+  rw [h2]
+  use sSup U_i'
+  exact Eq.symm (eckig_preserves_sup U_i')
+
+instance : SupSet (Opens X) where
+  sSup U_i := ⟨sSup (Subtype.val '' U_i), opens_sSup_closed⟩
+
+instance : Max (Opens X) where
+  max U V := sSup {U, V}

@@ -155,6 +155,10 @@ instance : SupSet (Nucleus X) where
 instance : InfSet (Nucleus X) where
   sInf := fun X_i ↦ sSup {w : Nucleus X | ∀ x_i ∈ X_i, w ≤ x_i}
 
+-- TODO stimmt das??
+instance Nucleus_bot : Bot (Nucleus X) where
+  bot := sSup ∅
+
 instance Nucleus_min : Min (Nucleus X) where
   min x y := sInf {x, y}
 
