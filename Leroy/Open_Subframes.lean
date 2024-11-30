@@ -222,58 +222,72 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
 
 lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := by
   apply le_antisymm
-  . sorry
-  . rw [leroy_6a]
+  . simp [eckig]
+    simp only [min, sInf, sSup, e_V_nucleus, Set.mem_insert_iff, Set.mem_singleton_iff,
+      Nucleus.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, Nucleus.toFun_eq_coe', forall_eq, e_V,
+      Set.mem_setOf_eq, and_imp, Function.comp_apply, sSup_le_iff]
+    intro v b h
+    have h_help : SemilatticeInf.inf U V = U ⊓ V := by
+      rfl
+    have h2 : (∀ (v : E), e_U U v ≤ (eckig (SemilatticeInf.inf U V)) v) := by
+      simp [e_U, eckig]
+      intro v b h1
+      apply le_sSup
+      simp
+      have h :  b ⊓ SemilatticeInf.inf U V ≤ b ⊓ U := by
+        rw [h_help]
+        simp [← inf_assoc]
+        apply And.intro
+        · refine inf_le_of_left_le ?left.h
+          exact inf_le_left
+        · rw [inf_comm b U]
+          apply inf_le_of_left_le
+          exact inf_le_left
+      apply Preorder.le_trans (b ⊓ SemilatticeInf.inf U V) (b ⊓ U) v h h1
 
+    have h3 : (∀ (v : E), e_U V v ≤ (eckig (SemilatticeInf.inf U V)) v)  := by
+      simp [e_U, eckig]
+      intro v b h1
+      apply le_sSup
+      simp
+      rw [h_help]
+      have h : b ⊓ (U ⊓ V) ≤ b ⊓ V := by
+        simp only [le_inf_iff, inf_le_left, true_and]
+        rw [inf_comm U V]
+        rw [← inf_assoc]
+        apply inf_le_of_left_le
+        exact inf_le_right
+      exact Preorder.le_trans (b ⊓ (U ⊓ V)) (b ⊓ V) v h h1
+    let h1 := h (eckig (SemilatticeInf.inf U V)) h2 h3
 
-
-    simp [eckig, min, sInf, sSup, e_V_nucleus, e_V]
-    apply eq_top_iff.mpr
+    simp [eckig] at h1
+    exact h1
+  . simp only [Nucleus_min, sInf, sSup, e_V_nucleus, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Nucleus.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, forall_eq, eckig, Nucleus.toFun_eq_coe',
+    e_U, sSup_le_iff, Set.mem_setOf_eq, e_V, and_imp]
+    intro v b h1
     apply le_sSup
-    simp only [Set.mem_setOf_eq, top_le_iff]
-    intro x_i h1 h2
-    apply (leroy_6a x_i (SemilatticeInf.inf U V)).mp
-    simp [eckig, e_U]
-    intro v b h3
-    sorry
+    simp only [Set.mem_setOf_eq]
+    intro x_i h2 h3
+    have h1_ : b ⊓ V ⊓ U ≤ v := by
+      rw [inf_comm U V] at h1
+      rw [← inf_assoc] at h1
+      exact h1
+    let h4 := h2 (v) (b ⊓ V) h1_
+    let h5 := h3 (x_i v) (b) h4
+    rw [Nucleus.idempotent'] at h5
+    exact h5
 
+lemma opens_inf_closed (U V : Opens X) : is_open (U.val ⊓ V.val) := by
+  rw [is_open]
+  let h1 := U.2
+  let h2 := V.2
+  simp [is_open] at h1 h2
+  rcases h1 with ⟨u, h1⟩
+  rcases h2 with ⟨v, h2⟩
+  rw [← h1, ← h2]
+  use u ⊓ v
+  exact eckig_preserves_inf u v
 
-
-
-
-
-
-
-/-
-  simp [eckig, leroy_6b, min, sInf, sSup, e_V_nucleus, e_V]
-  ext x
-  simp [e_U, eckig, min, sInf, sSup, e_V_nucleus, e_V]
-  apply le_antisymm
-  . apply sSup_le_sSup
-    simp only [Set.setOf_subset_setOf]
-    intro b h x_i h1 h2
-    simp [le, e_U] at h1 h2
-
-    apply le_sSup
-    simp
-    intro n h1 h2
-    simp [le, e_U] at h1 h2
-    have h3 := h1 (sSup {W | SemilatticeInf.inf W V ≤ x}) b h
-    apply_fun (fun x ↦ x ⊓ V) at h3
-    dsimp at h3
-    have h4 := h2 (n (sSup {W | SemilatticeInf.inf W V ≤ x}) ⊓ V) b h3
-    have h5 : n (n (sSup {W | SemilatticeInf.inf W V ≤ x}) ⊓ V) ≤ n x := by
-      have h6 : (n (sSup {W | SemilatticeInf.inf W V ≤ x}) ⊓ V) ≤ x := by
-        sorry
-      apply_fun (fun x ↦ n x) at h6
-      simp at h6
-      exact h6
-      exact n.monotone
-    exact
-      Preorder.le_trans b (n (n (sSup {W | SemilatticeInf.inf W V ≤ x}) ⊓ V)) (n x)
-        (h2 (n (sSup {W | SemilatticeInf.inf W V ≤ x}) ⊓ V) b h3) h5
--/
-
-
---instance : Min (Opens X) where
---  min U V :=
+instance : Min (Opens X) where
+  min U V := ⟨U ⊓ V, opens_inf_closed U V⟩
