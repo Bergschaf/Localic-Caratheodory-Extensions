@@ -344,6 +344,7 @@ lemma eckig_preserves_sup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i)
 
 
 
+
 lemma opens_sSup_closed {U_i : Set (Opens X)} : is_open (sSup (Subtype.val '' U_i)) := by
   rw [is_open]
   have h1 : ∀ u_i ∈ U_i, is_open u_i.val := by
@@ -388,3 +389,7 @@ instance : SupSet (Opens X) where
 
 instance : Max (Opens X) where
   max U V := sSup {U, V}
+
+lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
+  apply iff_iff_implies_and_implies.mpr
+  sorry

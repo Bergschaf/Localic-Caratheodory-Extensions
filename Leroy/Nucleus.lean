@@ -69,6 +69,7 @@ lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
 def Image (e : Nucleus X) : Set X :=
   {v : X | e v = v}
 
+--def Nucleus.embedding {n : Nucleus E} : Nucleus E → X :=
 
 
 instance : Coe (Nucleus X) (Set X) where
@@ -519,7 +520,7 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_
 
 
 
-lemma nucleus_equiv_subframe_1 (e : E ⥤ E ) : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f) ∧ ∃ _ : Leroy_Embedding f, true) → (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f)) := by
+lemma nucleus_equiv_subframe_1 : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) → (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =((f_obenstern f) ⋙ (f_untenstern f)).obj) := by
   intro a
   simp_all only
   obtain ⟨w, h⟩ := a
@@ -534,11 +535,11 @@ lemma nucleus_equiv_subframe_1 (e : E ⥤ E ) : (∃ (X : Type u),∃ _ : Order.
     · apply Exists.intro
       · rfl
 
-/-
-lemma nucleus_equiv_subframe_2 : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =(f_obenstern f) ⋙ (f_untenstern f)) →  (∃ _ : Nucleus e,true) := by
+
+lemma frameHom_nucleus : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =((f_obenstern f) ⋙ (f_untenstern f)).obj) →  (∃ n : Nucleus E,e = n) := by
   intro h
   rcases h with ⟨X, h, f, h1⟩
-  have n_1 :  ∀ (x : E), e.obj (e.obj x) = e.obj x := by
+  have n_1 :  ∀ (x : E), e (e x) = e x := by
     intro x
     subst h1
     simp_all [f_untenstern, f_obenstern]
@@ -560,15 +561,14 @@ lemma nucleus_equiv_subframe_2 : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f 
         use x
       exact Preorder.le_trans (f a) (f x) (sSup (⇑f '' {y | f y ≤ f x})) h h2
 
-  have n_2 : (x : E) → x ⟶ e.obj x := by
+  have n_2 : (x : E) → x ≤ e x := by
     intro x
-    apply homOfLE
     subst h1
     simp [f_untenstern, f_obenstern]
     apply le_sSup
     simp only [Set.mem_setOf_eq, le_refl]
 
-  have n_3 :  ∀ (x y : E), e.obj (x ⊓ y) = e.obj x ⊓ e.obj y := by
+  have n_3 :  ∀ (x y : E), e (x ⊓ y) = e x ⊓ e y := by
     intro x y
     subst h1
     simp [f_untenstern, f_obenstern]
@@ -597,4 +597,5 @@ lemma nucleus_equiv_subframe_2 : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f 
       . intro a b x1 h1 h2 x2 h3 h4
         subst h2 h4
         exact inf_le_of_right_le h3
-  use ⟨n_1, n_2, n_3⟩-/
+  use ⟨e, n_1, n_2, n_3⟩
+  simp only [Nucleus.toFun_eq_coe']
