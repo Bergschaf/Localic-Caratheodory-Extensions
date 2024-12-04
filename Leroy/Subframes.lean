@@ -159,6 +159,15 @@ instance : InfSet (Nucleus X) where
 instance Nucleus_bot : Bot (Nucleus X) where
   bot := sSup ∅
 
+instance Nucleus_top : Top (Nucleus X) where
+  top := ⟨fun x ↦ x, (by simp only [implies_true]), (by simp only [le_refl, implies_true]), (by simp only [implies_true])⟩
+
+lemma all_le_top : ∀ (x : Nucleus X), x ≤ ⊤ := by
+  intro x
+  simp [Nucleus_top]
+  intro v
+  exact Nucleus.increasing' x
+
 instance Nucleus_min : Min (Nucleus X) where
   min x y := sInf {x, y}
 

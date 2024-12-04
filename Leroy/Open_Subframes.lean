@@ -92,11 +92,21 @@ def is_open (e : Nucleus E) : Prop :=
 
 def Opens (E : Type*) [Order.Frame E] := {e : Nucleus E // is_open e}
 
-instance : LE (Opens E) where
+instance Opens_le : LE (Opens E) where
   le x y := x.val ≤ y.val
 
 instance : Bot (Opens E) where
   bot := ⟨⊥, (by simp[is_open];use ⊥; simp[eckig];ext x;simp[e_U, Nucleus_bot, sSup, e_V_nucleus, e_V];)⟩
+
+instance Opens_top : Top (Opens E) where
+  top := ⟨⊤, (by simp[is_open,Nucleus_top, eckig]; use ⊤; ext x; simp [e_U]; apply le_antisymm; apply sSup_le; simp only [Set.mem_setOf_eq, imp_self, implies_true]; apply le_sSup;simp)⟩
+
+lemma opens_le_top : ∀ (U : Opens E), U ≤ ⊤ := by
+  intro u
+  simp_rw [Opens_top, Opens_le, Nucleus_top]
+  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe]
+  intro v
+  apply Nucleus.increasing'
 
 instance : Coe (Opens E) (Nucleus E) where
   coe x := Subtype.val x
@@ -390,6 +400,6 @@ instance : SupSet (Opens X) where
 instance : Max (Opens X) where
   max U V := sSup {U, V}
 
-lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
-  apply iff_iff_implies_and_implies.mpr
-  sorry
+--lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
+--  apply iff_iff_implies_and_implies.mpr
+--  sorry

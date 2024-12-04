@@ -30,17 +30,48 @@ def increasing (s :  ℕ → Nucleus X) : Prop :=
 
 variable (m : @Measure X h)(X_n : ℕ → Nucleus X)
 #check m.caratheodory
-#check X_n
+#check true
+
+lemma Measure.all_le_top {m : @Measure X h} : ∀ a : Opens X, m.toFun a ≤ m.toFun ⊤ := by
+  intro a
+  apply m.mono
+  exact opens_le_top a
+
 
 lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x = m.toFun x := by
   simp [Measure.caratheodory]
   intro x
   simp [Neighbourhood]
   apply le_antisymm
-  sorry
-  sorry
+  . apply csInf_le'
+    simp only [Set.mem_image, Set.mem_setOf_eq]
+    use x
+  . rw [le_csInf_iff]
+    simp
+    intro a h
+    exact m.mono x a h
+    exact OrderBot.bddBelow (m.toFun '' {v | x ≤ v})
+    simp [Set.Nonempty]
+    use m.toFun x
+    use x
 
-lemma Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Neighbourhood x) := by sorry
+theorem test : ∀ (r : ℝ),r > 0 →  r / 2 ≤ r := by
+  intro r h
+  simp
+  exact le_of_lt h
+
+lemma Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Neighbourhood x) := by
+  simp [Set.Nonempty]
+  use ⊤
+  rw [Neighbourhood]
+  simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq]
+  simp_rw [Opens_top]
+  apply all_le_top
+
+lemma Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Neighbourhood x := by
+  rw [Neighbourhood]
+  simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Opens_top]
+  exact all_le_top x
 
 lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   simp [Measure.caratheodory]
@@ -64,13 +95,38 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
     simp [Measure.caratheodory]
     exact h_epsilon'
 
-  have h_1 : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + ε > m.caratheodory neighbour := by
-    by_cases hC : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + ε > m.caratheodory neighbour
+  have h_1 : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + e_n n > m.caratheodory neighbour := by
+    by_cases hC : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + e_n n > m.caratheodory neighbour
     . exact fun n => hC n
     . simp [Caratheodory_opens] at hC
-      simp [Measure.caratheodory] at hC
       rcases hC with ⟨n, hC⟩
+
+      have h3 : ∃ x : Neighbourhood (X_n n), m.caratheodory (X_n n) ≥  m.toFun x := by
+        simp only [Measure.caratheodory, Subtype.exists, exists_prop]
+        rw [@sInf_image']
+        rw [← @Set.exists_mem_image]
+
+        use (m.caratheodory (X_n n))
+        simp only [Set.mem_image, ge_iff_le]
+        -- das ist schwierig
+        sorry
+
+
+
+
+
+      rcases h3 with ⟨x, h3⟩
+      let hC1 := hC x x.prop
+      simp at hC1
+      sorry -- des klappt
+
+
+
+
+
+
       sorry
+
 
   let V_n (n : ℕ) := Classical.choose (h_1 n)
   sorry
