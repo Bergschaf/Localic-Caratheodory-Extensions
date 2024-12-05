@@ -400,6 +400,9 @@ instance : SupSet (Opens X) where
 instance : Max (Opens X) where
   max U V := sSup {U, V}
 
+instance : InfSet (Opens X) where
+  sInf U_i := sSup {U : Opens X | ∀ u_i ∈ U_i, U ≤ u_i}
+
 --lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
 --  apply iff_iff_implies_and_implies.mpr
 --  sorry
