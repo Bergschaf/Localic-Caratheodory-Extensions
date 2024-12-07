@@ -4,7 +4,7 @@ import Mathlib.Order.CompleteSublattice
 import Leroy.Subframes
 open CategoryTheory
 
-variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
+variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E] [Order.Frame F]
 
 
 def e_U (U : E) (H : E) : E :=
@@ -400,6 +400,21 @@ instance : SupSet (Opens X) where
 instance : Max (Opens X) where
   max U V := sSup {U, V}
 
---lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
---  apply iff_iff_implies_and_implies.mpr
---  sorry
+--lemma leroy_6d {f : FrameHom E F} {V : F} : f⁻¹ (eckig v) = eckig ((f_obenstern f).obj v) := by sorry
+
+
+lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
+  let i := nucleus_frameHom X.val
+  rw [i.prop.left]
+  have h : (f_obenstern i.val ⋙ f_untenstern i.val).obj = (f_untenstern i.val).obj ∘ (f_obenstern i.val).obj := by
+    exact rfl
+
+  rw [h]
+
+  ---
+  have h1 :  V ≤ ((f_untenstern i.val).obj ∘ (f_obenstern i.val).obj) U ↔ (f_obenstern i.val).obj V ≤ (f_obenstern i.val).obj U := by
+    apply Iff.intro
+    . intro h
+      apply_fun (f_untenstern i.val).obj at h
+
+  apply Iff.trans h1

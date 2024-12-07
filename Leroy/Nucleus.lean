@@ -382,7 +382,7 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n) := by
 
 instance inst_frame (n : Nucleus E): Order.Frame (Image n) := image_frame n
 
-lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) :=  by
+lemma nucleus_frameHom_exists (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) :=  by
   let img := Image n
 
   let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; apply n.idempotent)
@@ -518,6 +518,18 @@ lemma nucleus_frameHom (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_
     use embedding
 
 
+noncomputable def nucleus_frameHom (n : Nucleus E) : {f : FrameHom E (Image n) // n = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ Fact (Leroy_Embedding f)} := by
+  let f := Classical.choose (nucleus_frameHom_exists n)
+  let p := Classical.choose_spec (nucleus_frameHom_exists n)
+  let p1 := p.right
+  let p2 := Classical.choose p1
+  let pl := p.left
+  let pr := p.right
+  refine ⟨?val, ?property⟩
+  exact f
+  apply And.intro
+  . rw [pl]
+  . exact { out := p2 }
 
 
 lemma nucleus_equiv_subframe_1 : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) → (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =((f_obenstern f) ⋙ (f_untenstern f)).obj) := by
