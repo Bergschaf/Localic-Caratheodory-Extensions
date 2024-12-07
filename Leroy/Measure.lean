@@ -99,53 +99,24 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
     simp [Measure.caratheodory]
     exact h_epsilon'
 
-  have h_1 : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + e_n n > m.caratheodory neighbour := by
-    contrapose h_e_n
-    simp at h_e_n
-    rcases h_e_n with ⟨x, h⟩
-    simp
-    use x
-    sorry
-
+  have h_1 : ∀ n : ℕ, ∃ neighbour ∈ Neighbourhood (X_n n), m.toFun neighbour - m.caratheodory (X_n n) < e_n n :=  by
     intro n
-    simp [Caratheodory_opens]
-    have h :  ∃ a ∈ Neighbourhood (X_n n), m.toFun a ≤ m.caratheodory (X_n n) := by
-      sorry
-
-
-
-
-    by_cases hC : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + e_n n > m.caratheodory neighbour
-    . sorry
-    . simp [Caratheodory_opens] at hC
-      rcases hC with ⟨n, hC⟩
-
-      have h3 : ∃ x : Neighbourhood (X_n n), m.caratheodory (X_n n) ≥  m.toFun x := by
-        simp only [Measure.caratheodory, Subtype.exists, exists_prop]
-        have h : ∃ x : Neighbourhood (X_n n),∀ y : Neighbourhood (X_n n), m.toFun x ≤ m.toFun y := by
-          simp
-          sorry
-        rcases h with ⟨x, h⟩
-        use x
-        use x.prop
-        simp[h]
-        sorry --geht
-
-
-
-
-      rcases h3 with ⟨x, h3⟩
-      let hC1 := hC x x.prop
-      simp at hC1
-      sorry -- des klappt
-
-
-
-
-
-
-      sorry
+    simp [Measure.caratheodory]
+    sorry
 
 
   let V_n (n : ℕ) := Classical.choose (h_1 n)
+
+  let W_n (n : ℕ) := iSup (fun (x : Fin n) ↦ V_n x)
+
+  let W := iSup (W_n)
+
+  have h_2 : W = iSup (V_n) := by
+    simp [W, W_n]
+    sorry
+
+  have h_3 : ∀ n : ℕ, m.toFun (W_n n) - m.caratheodory (X_n n) ≤ ∑ i ∈ Finset.range (n), e_n i := by sorry
+
+  have h_4 : m.toFun (W) ≤ ε + iSup (fun n ↦ (m.caratheodory (X_n n))) := by sorry
+
   sorry
