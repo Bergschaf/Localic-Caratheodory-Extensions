@@ -413,14 +413,48 @@ lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ ecki
 
   ---
   have h1 :  V ≤ ((f_untenstern i.val).obj ∘ (f_obenstern i.val).obj) U ↔ (f_obenstern i.val).obj V ≤ (f_obenstern i.val).obj U := by
-    apply Iff.intro
-    . intro h
-      apply_fun (f_untenstern i.val).obj at h
+    have h (U V : E) {f : E → E}:  V ≤ f U ↔ (f_obenstern i.val).obj V ≤ (f_obenstern i.val).obj (f U) := by
+      have h1 : Monotone (f_obenstern i.val).obj := by
+        simp [Monotone, f_obenstern]
+        exact fun ⦃a b⦄ a_1 => OrderHomClass.GCongr.mono (i.val) a_1
+      have h2 : ∀ a b,(f_obenstern i.val).obj a ≤ (f_obenstern i.val).obj b → a ≤ b := by
+        have h : ∀ a, (f_untenstern i.val).obj ((f_obenstern i.val).obj a) = a := by
+          intro a
+          simp [f_obenstern, f_untenstern]
+          apply le_antisymm
+          apply sSup_le
+          simp
+          intro b h
+          sorry -- TODO i a ≤ i b → a ≤ b
+          apply le_sSup
+          simp
+
+        intro a b h1
+        apply_fun (f_untenstern i.val).obj at h1
+        simp [h] at h1
+        exact h1
+        simp [Monotone, f_untenstern]
+        intro a ha b hb h1 e h2
+        apply le_sSup
+        simp only [Set.mem_setOf_eq]
+        have h : (⟨a, ha⟩ : Image X) ≤ ⟨b, hb⟩ := by
+          exact h1
+        sorry -- basst
+
+
+      rw [Monotone] at h1
+      exact { mp := @h1 V (f U), mpr := h2 V (f U) }
+
+    apply Iff.trans (h U V)
+    simp
+    have h1 : (f_obenstern i.val).obj ((f_untenstern i.val).obj ((f_obenstern i.val).obj U)) = (f_obenstern i.val).obj U := by
+      let x := triangle_one_obj i.val U
+      simp at x
+      exact x
+    rw [h1]
 
   apply Iff.trans h1
+
+
 instance : InfSet (Opens X) where
   sInf U_i := sSup {U : Opens X | ∀ u_i ∈ U_i, U ≤ u_i}
-
---lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
---  apply iff_iff_implies_and_implies.mpr
---  sorry
