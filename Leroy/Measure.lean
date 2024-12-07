@@ -55,10 +55,6 @@ lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x 
     use m.toFun x
     use x
 
-theorem test : ∀ (r : ℝ),r > 0 →  r / 2 ≤ r := by
-  intro r h
-  simp
-  exact le_of_lt h
 
 lemma Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Neighbourhood x) := by
   simp [Set.Nonempty]
@@ -73,6 +69,8 @@ lemma Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Neighbourhood x := by
   simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Opens_top]
   exact all_le_top x
 
+
+
 lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   simp [Measure.caratheodory]
   have h_epsilon : ∃ r : NNReal, r > 0 := by
@@ -82,51 +80,43 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
   have h_epsilon' : ε > 0 := by
     simp [ε]
     apply Classical.choose_spec
-  have h_epsilon_n :  ∃ (e_n : ℕ → NNReal),∀ n : ℕ, ∑ i ∈ Finset.range n, e_n i <  ε := by
+  have h_epsilon_n :  ∃ (e_n : ℕ → NNReal),∀ n : ℕ,( ∑ i ∈ Finset.range n, e_n i < ε) ∧ 0 < e_n n := by
     let d (n : ℕ) := (0.5 * ε) / (2 ^ n)
     use d
     intro n
     simp [d]
     sorry
   let e_n := Classical.choose h_epsilon_n
+  have h_e_n : ∀ n : ℕ, 0 < e_n n := by
+    intro n
+    simp [e_n]
+    let x := Classical.choose_spec h_epsilon_n n
+    exact x.right
+
   let N := Neighbourhood ∘ X_n
   have h_0 : ∀ n : ℕ,  m.caratheodory (X_n n) + ε >  sInf (m.toFun '' Neighbourhood (X_n n)) := by
     intro n
     simp [Measure.caratheodory]
     exact h_epsilon'
 
-  have h_1 : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + e_n n > m.caratheodory neighbour := by
-    by_cases hC : ∀ n : ℕ, ∃ neighbour : Neighbourhood (X_n n), m.caratheodory (X_n n) + e_n n > m.caratheodory neighbour
-    . exact fun n => hC n
-    . simp [Caratheodory_opens] at hC
-      rcases hC with ⟨n, hC⟩
-
-      have h3 : ∃ x : Neighbourhood (X_n n), m.caratheodory (X_n n) ≥  m.toFun x := by
-        simp only [Measure.caratheodory, Subtype.exists, exists_prop]
-        rw [@sInf_image']
-        rw [← @Set.exists_mem_image]
-
-        use (m.caratheodory (X_n n))
-        simp only [Set.mem_image, ge_iff_le]
-        -- das ist schwierig
-        sorry
-
-
-
-
-
-      rcases h3 with ⟨x, h3⟩
-      let hC1 := hC x x.prop
-      simp at hC1
-      sorry -- des klappt
-
-
-
-
-
-
-      sorry
+  have h_1 : ∀ n : ℕ, ∃ neighbour ∈ Neighbourhood (X_n n), m.toFun neighbour - m.caratheodory (X_n n) < e_n n :=  by
+    intro n
+    simp [Measure.caratheodory]
+    sorry
 
 
   let V_n (n : ℕ) := Classical.choose (h_1 n)
+
+  let W_n (n : ℕ) := iSup (fun (x : Fin n) ↦ V_n x)
+
+  let W := iSup (W_n)
+
+  have h_2 : W = iSup (V_n) := by
+    simp [W, W_n]
+    sorry
+
+  have h_3 : ∀ n : ℕ, m.toFun (W_n n) - m.caratheodory (X_n n) ≤ ∑ i ∈ Finset.range (n), e_n i := by sorry
+
+  have h_4 : m.toFun (W) ≤ ε + iSup (fun n ↦ (m.caratheodory (X_n n))) := by sorry
+
   sorry
