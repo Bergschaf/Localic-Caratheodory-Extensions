@@ -13,7 +13,7 @@ def increasingly_filtered' (s : Set (Opens X)) : Prop :=
 
 
 structure Measure where
-  toFun : (Opens X) → NNReal
+  toFun : (Opens X) → NNReal -- Evtl ENNReal (brauchen wir ⊤)
   empty : toFun ⊥ = 0
   mono : ∀ (U V : Opens X), U ≤ V → toFun U ≤ toFun V
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
@@ -102,6 +102,8 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
   have h_1 : ∀ n : ℕ, ∃ neighbour ∈ Neighbourhood (X_n n), m.toFun neighbour - m.caratheodory (X_n n) < e_n n :=  by
     intro n
     simp [Measure.caratheodory]
+    -- TODO noa fragen
+    --- ggf sInf kommutiert mit measure
     sorry
 
 
@@ -119,4 +121,29 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
 
   have h_4 : m.toFun (W) ≤ ε + iSup (fun n ↦ (m.caratheodory (X_n n))) := by sorry
 
+
+  have h_trivial : ∀ n : ℕ, iSup (m.caratheodory ∘ X_n) ≤ m.caratheodory (iSup X_n) := by
+    intro n
+
+    apply ciSup_le
+    intro x
+    simp [Measure.caratheodory]
+    apply csInf_le_csInf'
+    simp
+    let x := Neighbourhood_nonempty (iSup  X_n)
+    apply @Set.nonempty_of_nonempty_subtype _ _
+    --
+    refine Set.image_mono ?H.h.h
+    simp [Neighbourhood]
+    intro a h v
+    have h := h v
+    sorry -- sieht schlecht auss
+
   sorry
+
+
+-- TODO
+def dach (e : Nucleus X) := sorry
+
+def regular : Prop :=
+  ∀ (U : Opens E), U ≤ sSup {V : Opens E | dach V ≤ U}

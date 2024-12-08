@@ -400,9 +400,12 @@ instance : SupSet (Opens X) where
 instance : Max (Opens X) where
   max U V := sSup {U, V}
 
---lemma leroy_6d {f : FrameHom E F} {V : F} : f⁻¹ (eckig v) = eckig ((f_obenstern f).obj v) := by sorry
+
+-- Ist hier das Inverse Image gemeint?
+--lemma leroy_6d {f : FrameHom E F} {V : F} : f (eckig v) = eckig ((f_obenstern f).obj v) := by
 
 
+/-
 lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
   let i := nucleus_frameHom X.val
   rw [i.prop.left]
@@ -425,6 +428,7 @@ lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ ecki
           apply sSup_le
           simp
           intro b h
+
           sorry -- TODO i a ≤ i b → a ≤ b
           apply le_sSup
           simp
@@ -439,8 +443,7 @@ lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ ecki
         simp only [Set.mem_setOf_eq]
         have h : (⟨a, ha⟩ : Image X) ≤ ⟨b, hb⟩ := by
           exact h1
-        sorry -- basst
-
+        exact Preorder.le_trans (i.val e) ⟨a, ha⟩ ⟨b, hb⟩ h2 h1
 
       rw [Monotone] at h1
       exact { mp := @h1 V (f U), mpr := h2 V (f U) }
@@ -456,5 +459,9 @@ lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ ecki
   apply Iff.trans h1
 
 
+
+
+
 instance : InfSet (Opens X) where
   sInf U_i := sSup {U : Opens X | ∀ u_i ∈ U_i, U ≤ u_i}
+-/
