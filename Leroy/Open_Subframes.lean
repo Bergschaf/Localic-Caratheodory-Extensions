@@ -85,6 +85,9 @@ def eckig (U : E) : Nucleus E where
 
 def is_open (e : Nucleus E) : Prop :=
   ∃ u : E, eckig u = e
+
+noncomputable def open_to_E (e : Nucleus E) (h : is_open e) : E :=
+  Classical.choose h
 -- TODO typeclass
 --class Open extends Subframe E where
 --  is_open : ∃ u : E, eckig u = e
