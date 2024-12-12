@@ -86,14 +86,16 @@ def eckig (U : E) : Nucleus E where
 def is_open (e : Nucleus E) : Prop :=
   ∃ u : E, eckig u = e
 
-noncomputable def open_to_E (e : Nucleus E) (h : is_open e) : E :=
-  Classical.choose h
+
 -- TODO typeclass
 --class Open extends Subframe E where
 --  is_open : ∃ u : E, eckig u = e
 
 
 def Opens (E : Type*) [Order.Frame E] := {e : Nucleus E // is_open e}
+
+noncomputable def open_to_E (e : Opens E) : E :=
+  Classical.choose e.prop
 
 instance Opens_le : LE (Opens E) where
   le x y := x.val ≤ y.val
@@ -396,6 +398,38 @@ lemma opens_sSup_closed {U_i : Set (Opens X)} : is_open (sSup (Subtype.val '' U_
   rw [h2]
   use sSup U_i'
   exact Eq.symm (eckig_preserves_sup U_i')
+
+lemma eckig_preserves_max (U V : X) : eckig (U ⊔ V) = (eckig U ⊔ eckig V) := by
+  simp [Nucleus_max]
+  have h : U ⊔ V = sSup {U, V} := by
+    exact Eq.symm sSup_pair
+  let x := eckig_preserves_sup {U, V}
+  simp at x
+  rw [← x]
+  simp [Set.image]
+  have h1 : {x | eckig U = x ∨ eckig V = x} = {eckig U, eckig V} := by
+    ext x
+    simp
+    simp_all only [sSup_insert, csSup_singleton]
+    apply Iff.intro
+    · intro a
+      cases a with
+      | inl h =>
+        subst h
+        simp_all only [true_or]
+      | inr h_1 =>
+        subst h_1
+        simp_all only [or_true]
+    · intro a
+      cases a with
+      | inl h =>
+        subst h
+        simp_all only [true_or]
+      | inr h_1 =>
+        subst h_1
+        simp_all only [or_true]
+  rw [h1]
+
 
 instance : SupSet (Opens X) where
   sSup U_i := ⟨sSup (Subtype.val '' U_i), opens_sSup_closed⟩

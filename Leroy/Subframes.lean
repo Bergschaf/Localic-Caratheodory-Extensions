@@ -157,7 +157,7 @@ instance : InfSet (Nucleus X) where
 
 -- TODO stimmt das??
 instance Nucleus_bot : Bot (Nucleus X) where
-  bot := sSup ∅
+  bot := ⟨fun x ↦ ⊤, (by simp), (by simp), (by simp)⟩
 
 instance Nucleus_top : Top (Nucleus X) where
   top := ⟨fun x ↦ x, (by simp only [implies_true]), (by simp only [le_refl, implies_true]), (by simp only [implies_true])⟩
