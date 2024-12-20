@@ -4,7 +4,7 @@ import Mathlib.Order.CompleteSublattice
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
 
-
+-- TODO define opens and closeds in terms of elements of e, macht alles besser!!!!!!!!
 lemma union_pointwise_le {U V : Nucleus E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x := by
   intro x
   simp [max, sSup, e_V_nucleus, e_V]
@@ -69,7 +69,6 @@ lemma inf_complement (X : Opens E) : X.val ⊓ (complement X) = ⊥ := by
   . simp [Nucleus_bot]
 
 
-
 lemma sup_comp_eq_top (X : Opens E)  : X.val ⊔ (complement X) = ⊤ := by
   ext y
   simp [Nucleus_top]
@@ -93,3 +92,10 @@ lemma sup_comp_eq_top (X : Opens E)  : X.val ⊔ (complement X) = ⊤ := by
     simp only [Set.mem_setOf_eq, iSup_le_iff, imp_self, implies_true]
 
   . exact Nucleus.increasing' (↑X ⊔ complement X)
+
+def is_closed (x : Nucleus X) := ∃ a, complement a = x
+def Closeds := {x : Nucleus X // is_closed x}
+
+lemma sInf_closeds_closed (x : Set (Nucleus X)) (h : ∀ y ∈ x, is_closed y) : is_closed (sInf x) := by sorry
+
+def Nucleus.closure (x : Nucleus X) := sInf {w : Nucleus X | is_closed w ∧ x ≤ w}

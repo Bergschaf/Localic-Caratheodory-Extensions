@@ -4,7 +4,7 @@ import Mathlib.Order.CompleteSublattice
 import Leroy.Subframes
 open CategoryTheory
 
-variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E] [Order.Frame F]
+variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [Order.Frame F]
 
 
 def e_U (U : E) (H : E) : E :=
@@ -441,6 +441,17 @@ instance : SupSet (Opens X) where
 
 instance : Max (Opens X) where
   max U V := sSup {U, V}
+
+lemma eckig_injective : Function.Injective (@eckig E e_frm)  := by
+  rw [Function.Injective]
+  . intro a1 a2 h
+    rw [le_antisymm_iff] at h
+    rcases h with ⟨h1, h2⟩
+    apply le_antisymm
+    . exact eckig_preserves_inclusion.mpr h1
+    . exact eckig_preserves_inclusion.mpr h2
+
+
 
 
 -- Ist hier das Inverse Image gemeint?
