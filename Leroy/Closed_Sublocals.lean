@@ -3,6 +3,14 @@ import Mathlib.Order.CompleteSublattice
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
+
+
+lemma union_pointwise_le {U V : Nucleus E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x := by
+  intro x
+  simp [max, sSup, e_V_nucleus, e_V]
+  intro b h1 h2
+  exact h1
+
 -- complement..
 
 noncomputable def complement (e : Opens E) : Nucleus E where
@@ -13,9 +21,6 @@ noncomputable def complement (e : Opens E) : Nucleus E where
 
 
 
-
-
-
 --https://www.mat.uc.pt/preprints/ps/p1639.pdf
 
 
@@ -23,70 +28,68 @@ noncomputable def complement (e : Opens E) : Nucleus E where
 
 
 lemma inf_complement (X : Opens E) : X.val ⊓ (complement X) = ⊥ := by
-  simp [complement, Nucleus_min, sInf, sSup, e_V_nucleus,Nucleus_bot]
+  apply le_antisymm
+  . simp only [Nucleus_min, sInf]
+    apply sSup_le
+    intro b h
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_setOf_eq] at h
+    rcases h with ⟨h1, h2⟩
+    simp [Nucleus_bot]
+    intro v
+    rw [← Nucleus.idempotent']
+    refine eq_top_iff.mpr ?_
+    have h : X.val (b v) ≤ b (b v) := by
+      simp at h1
+      exact h1 (b v)
 
+    have h2 : X.val (complement X v) ≤ X.val (b v) := by
+      simp at h2
+      simp at h
+      let h2 := h2 v
+      apply_fun X.val.toFun at h2
+      simp at h2
+      exact h2
+      simp [Nucleus.monotone]
 
+    apply le_trans ?_ h
+    apply le_trans ?_ h2
+    let u := Classical.choose X.prop
+    have hu : open_to_E X = u := by
+      exact rfl
 
-  ext x
-  simp [e_V, Nucleus_bot]
-  refine sup_eq_top_of_top_mem ?h.h
-  simp only [Set.mem_setOf_eq, top_le_iff]
-  intro xi h1 h2
+    simp [complement]
+    rw [hu]
+    have hu1 : eckig u = X := by
+      exact Set.apply_rangeSplitting eckig X
+    rw [← hu1]
+    simp [eckig, e_U]
+    refine sup_eq_top_of_top_mem ?_
+    simp only [Set.mem_setOf_eq, le_top, inf_of_le_right, le_sup_left]
 
-  refine (leroy_6a xi x).mp ?h.h.a
-  simp
-  intro v
-
-  let h2 := h2 v
-  rcases h2 with ⟨h3, h4⟩
-
-
-
+  . simp [Nucleus_bot]
 
 
 
 lemma sup_comp_eq_top (X : Opens E)  : X.val ⊔ (complement X) = ⊤ := by
-  simp [complement]
-  ext x
-  simp [max, sSup, Nucleus_top, e_V_nucleus, e_V]
+  ext y
+  simp [Nucleus_top]
 
   apply le_antisymm
-  . apply sSup_le
-    simp
-    intro Y h1 h2
-    simp [open_to_E] at h2
-    let ch := Classical.choose_spec X.prop
-    rw [@Nucleus.ext_iff] at ch
-    simp at ch
-    let ch_ := ch x
+  .
+    apply le_trans (union_pointwise_le y)
+    simp [complement]
+    rw [@inf_sup_left]
+    simp only [sup_le_iff, inf_le_right, and_true]
+    let x := Classical.choose X.prop
+    let hx := Classical.choose_spec X.prop
+    have h : open_to_E X = x := by
+      simp [open_to_E]
+    rw [h]
+    have h1 : eckig x = X := by
+      exact hx
+    rw [← h1]
+    simp [eckig, e_U]
+    rw [@sSup_inf_eq]
+    simp only [Set.mem_setOf_eq, iSup_le_iff, imp_self, implies_true]
 
-
-    have h2_ : Y ≤ (Classical.choose X.prop) ⊔ x := by
-      exact h2
-    --rw [eckig_preserves_inclusion]
-    rw [eckig_preserves_inclusion] at h2_
-    rw [←ch] at h1
-    rw [eckig_preserves_max] at h2_
-    rw [@Nucleus.le_iff] at h2_
-    simp at h2_
-    simp [eckig, e_U] at h1
-    have help : x ∈ upperBounds {W | W ⊓ Classical.choose X.prop ≤ x}  := by
-      simp [upperBounds]
-      intro a h
-      sorry
-
-    let h1_ := le_sSup_iff.mp h1 x help
-    simp at h1_
-    exact h1_
-
-
-
-
-
-
-
-  . apply le_sSup
-    simp
-    apply And.intro
-    . exact Nucleus.increasing' X.val
-    . exact SemilatticeSup.le_sup_right (↑(open_to_E X)) x
+  . exact Nucleus.increasing' (↑X ⊔ complement X)

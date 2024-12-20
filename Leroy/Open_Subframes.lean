@@ -97,6 +97,11 @@ def Opens (E : Type*) [Order.Frame E] := {e : Nucleus E // is_open e}
 noncomputable def open_to_E (e : Opens E) : E :=
   Classical.choose e.prop
 
+lemma eckig_open_to_E {e : Opens E} : (eckig (open_to_E e)) = e.val := by
+  simp [open_to_E]
+  let h := Classical.choose_spec e.prop
+  exact h
+
 instance Opens_le : LE (Opens E) where
   le x y := x.val ≤ y.val
 

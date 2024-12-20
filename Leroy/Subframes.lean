@@ -181,6 +181,28 @@ instance : PartialOrder (Nucleus X) where
     Preorder.le_trans (c v) (b v) (a v) (a_2 v) (a_1 v))
   le_antisymm := (by intro a b h i; simp only [le, Nucleus.toFun_eq_coe] at *; ext x; simp only [Nucleus.toFun_eq_coe]; apply le_antisymm; exact i x; exact h x )
 
+lemma Nucleus_le_sSup (s : Set (Nucleus E)) (a : Nucleus E) : a ∈ s → a ≤ sSup s := by
+  simp [sSup, e_V_nucleus]
+  intro h v
+  simp [e_V]
+  intro b h1
+  exact h1 a h
+
+lemma Nucleus_sSup_le  (s : Set (Nucleus E)) (a : Nucleus E) : (∀ b ∈ s, b ≤ a) → sSup s ≤ a := by
+  intro h
+  simp [sSup, e_V_nucleus, e_V]
+  intro v
+  apply le_sSup
+  simp
+  intro xi hxi
+  let h1 := h xi hxi
+  simp at h1
+  exact h xi hxi v
+
+instance : CompleteSemilatticeSup (Nucleus E) where
+  le_sSup := Nucleus_le_sSup
+  sSup_le := Nucleus_sSup_le
+
 
 --instance bot : Bot (Nucleus E) := sorry
 --instance top : Top (Nucleus E) := sorry
