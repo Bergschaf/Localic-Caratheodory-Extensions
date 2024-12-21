@@ -1,6 +1,7 @@
 import Mathlib.Data.Real.Basic
 import Leroy.Basic
 import Leroy.Open_Subframes
+import Leroy.Closed_Sublocals
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
@@ -19,11 +20,12 @@ structure Measure where
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set (Opens X)), increasingly_filtered' s → toFun (sSup s) = iSup (fun (x : s) ↦ toFun x)
 
-def Neighbourhood (u : Nucleus X) : Set (Opens X) := {v : Opens X | u ≤ v}
+def Open_Neighbourhood (u : Nucleus X) : Set (Opens X) := {v : Opens X | u ≤ v}
 
+def Neighbourhood (u : Nucleus X) : Set (Nucleus X) := {v | ∃ w ∈ Open_Neighbourhood u, w ≤ v}
 -- subframes???
 noncomputable def Measure.caratheodory {m : @Measure X h} (a : Nucleus X) : NNReal :=
-  sInf (m.toFun '' Neighbourhood a)
+  sInf (m.toFun '' Open_Neighbourhood a)
 
 def increasing (s :  ℕ → Nucleus X) : Prop :=
   ∀ (n : ℕ), s n ≤ s (n + 1)
@@ -41,7 +43,7 @@ lemma Measure.all_le_top {m : @Measure X h} : ∀ a : Opens X, m.toFun a ≤ m.t
 lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x = m.toFun x := by
   simp [Measure.caratheodory]
   intro x
-  simp [Neighbourhood]
+  simp [Open_Neighbourhood]
   apply le_antisymm
   . apply csInf_le'
     simp only [Set.mem_image, Set.mem_setOf_eq]
@@ -56,16 +58,16 @@ lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x 
     use x
 
 
-lemma Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Neighbourhood x) := by
+lemma Open_Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Open_Neighbourhood x) := by
   simp [Set.Nonempty]
   use ⊤
-  rw [Neighbourhood]
+  rw [Open_Neighbourhood]
   simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq]
   simp_rw [Opens_top]
   apply all_le_top
 
-lemma Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Neighbourhood x := by
-  rw [Neighbourhood]
+lemma Open_Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Open_Neighbourhood x := by
+  rw [Open_Neighbourhood]
   simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Opens_top]
   exact all_le_top x
 
@@ -93,13 +95,13 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
     let x := Classical.choose_spec h_epsilon_n n
     exact x.right
 
-  let N := Neighbourhood ∘ X_n
-  have h_0 : ∀ n : ℕ,  m.caratheodory (X_n n) + ε >  sInf (m.toFun '' Neighbourhood (X_n n)) := by
+  let N := Open_Neighbourhood ∘ X_n
+  have h_0 : ∀ n : ℕ,  m.caratheodory (X_n n) + ε >  sInf (m.toFun '' Open_Neighbourhood (X_n n)) := by
     intro n
     simp [Measure.caratheodory]
     exact h_epsilon'
 
-  have h_1 : ∀ n : ℕ, ∃ neighbour ∈ Neighbourhood (X_n n), m.toFun neighbour - m.caratheodory (X_n n) < e_n n :=  by
+  have h_1 : ∀ n : ℕ, ∃ neighbour ∈ Open_Neighbourhood (X_n n), m.toFun neighbour - m.caratheodory (X_n n) < e_n n :=  by
     intro n
     simp [Measure.caratheodory]
     -- TODO noa fragen
@@ -130,11 +132,11 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
     simp [Measure.caratheodory]
     apply csInf_le_csInf'
     simp
-    let x := Neighbourhood_nonempty (iSup  X_n)
+    let x := Open_Neighbourhood_nonempty (iSup  X_n)
     apply @Set.nonempty_of_nonempty_subtype _ _
     --
     refine Set.image_mono ?H.h.h
-    simp [Neighbourhood]
+    simp [Open_Neighbourhood]
     intro a h v
     have h := h v
     sorry -- sieht schlecht auss
@@ -143,7 +145,33 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
 
 
 -- TODO
-def dach (e : Nucleus X) := sorry
 
-def regular : Prop :=
-  ∀ (U : Opens E), U ≤ sSup {V : Opens E | dach V ≤ U}
+def regular (E : Type*)  [Order.Frame E]: Prop :=
+  ∀ (U : Opens E), U = sSup {V : Opens E | V.val.closure.val ≤ U}
+
+
+
+variable {E : Type*} [e_frm : Order.Frame E] [Fact (regular E)]
+
+
+lemma sublocal_intersection_of_neighbours (x : Nucleus E) : x = sInf (Neighbourhood x) := by
+  apply le_antisymm
+  . simp [Neighbourhood]
+    sorry
+  . simp
+    intro v
+    let k := x v
+    let V (W : Opens E) := W.val.closure.val ⊔ eckig v
+
+    have h1 (W : Opens E) (h : W.val.closure.val ≤ eckig k) : ((complement_closeds (W.val.closure)) ⊔ ⟨(eckig v), (by simp [is_open])⟩)
+         ∈ Open_Neighbourhood x := by
+      simp [Open_Neighbourhood]
+      intro v1
+      sorry
+
+    --- ...
+    have h2 (W : Opens E) : W ≤ V W := by sorry
+    sorry
+
+lemma Measure.add_complement {m : @Measure E e_frm} {U : Opens E} : m.caratheodory U + m.caratheodory (complement U) = m.caratheodory ⊤ := by
+  sorry

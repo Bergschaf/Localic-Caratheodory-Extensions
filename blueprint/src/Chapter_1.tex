@@ -231,6 +231,8 @@
 \begin{lemma}[(6,7) Open subspaces]
 (Leroy Lemma 6,7)
     \label{lem:sublocal_properties}
+    \lean{eckig_preserves_inf}
+    \leanok
     \uses{def:e_U,def:open_sublocal}
     \begin{enumerate}
         \item For all subspaces $X$ of $E$ and any $U \in O(E)$:
@@ -257,6 +259,8 @@
 \begin{definition}[Complement]
     \label{def:complement}
     \uses{def:open_sublocal}
+    \lean{complement}
+    \leanok
     The complement of an open sublocal $U$ of $X$ is the sublocal $X \setminus U$.
     (Leroy p. 12) (+ Senf brauchen wir das allgemein??)
 \end{definition}
@@ -305,7 +309,9 @@
 
 \begin{definition}[Further Topology]
     \label{def:further_topology}
-    \uses{def:open_sublocal}
+    \uses{def:open_sublocal,def:complement}
+    \lean{Nucleus.closure}
+    \leanok
     \begin{enumerate}
         \item $Int X$ is the largest open sublocal contained in $X$
         \item $Ext X$ is the largest open sublocal contained in $E \setminus X$
@@ -313,6 +319,8 @@
         \item $\partial X = \bar{X} \cap (E - Int X)$
     \end{enumerate}
 \end{definition}
+
+
 
 %\begin{definition}[gamma]
 %    \label{def:gamma}

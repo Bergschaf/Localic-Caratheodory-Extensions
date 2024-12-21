@@ -246,7 +246,6 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
     simp only [min, sInf, sSup, e_V_nucleus, Set.mem_insert_iff, Set.mem_singleton_iff,
       Nucleus.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, Nucleus.toFun_eq_coe', forall_eq, e_V,
       Set.mem_setOf_eq, and_imp, Function.comp_apply, sSup_le_iff]
-    intro v b h
     have h_help : SemilatticeInf.inf U V = U ⊓ V := by
       rfl
     have h2 : (∀ (v : E), e_U U v ≤ (eckig (SemilatticeInf.inf U V)) v) := by
@@ -278,10 +277,11 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
         apply inf_le_of_left_le
         exact inf_le_right
       exact Preorder.le_trans (b ⊓ (U ⊓ V)) (b ⊓ V) v h h1
-    let h1 := h (eckig (SemilatticeInf.inf U V)) h2 h3
+    --let h1 := h (eckig (SemilatticeInf.inf U V)) h2 h3
 
-    simp [eckig] at h1
-    exact h1
+    --simp [eckig] at h1
+    exact ⟨h2, h3⟩
+
   . simp only [Nucleus_min, sInf, sSup, e_V_nucleus, Set.mem_insert_iff, Set.mem_singleton_iff,
     Nucleus.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, forall_eq, eckig, Nucleus.toFun_eq_coe',
     e_U, sSup_le_iff, Set.mem_setOf_eq, e_V, and_imp]

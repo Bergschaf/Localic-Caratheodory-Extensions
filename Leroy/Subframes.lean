@@ -204,6 +204,36 @@ instance : CompleteSemilatticeSup (Nucleus E) where
   sSup_le := Nucleus_sSup_le
 
 
+lemma sublocal_union_pointwise (X_i : Set (Nucleus E)) : ∀ (v : E), sSup {x v | x ∈ X_i} ≤ (sInf X_i) v := by
+  intro v
+  apply sSup_le
+  intro b h
+  simp at h
+  simp only [sInf, sSup, e_V_nucleus, Nucleus.le_iff, Nucleus.toFun_eq_coe, Nucleus.toFun_eq_coe',
+    e_V, Set.mem_setOf_eq]
+  apply le_sSup
+  simp only [Set.mem_setOf_eq]
+  intro xi h1
+  rcases h with ⟨a,⟨h2, h3⟩⟩
+  let h1 := h1 a h2 v
+  rw [h3] at h1
+  exact h1
+
+-- todo später allgemein vlt
+lemma union_pointwise_le {U V : Nucleus E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x := by
+  intro x
+  simp [max, sSup, e_V_nucleus, e_V]
+  intro b h1 h2
+  exact h1
+
+
+-- obacht
+instance : SemilatticeInf (Nucleus E) where
+  inf a b := a ⊓ b
+  inf_le_left := (by intro a b; simp [Nucleus_min, sInf]; exact fun b_1 a a_1 v => a v)
+  inf_le_right := (by intro a b; simp [Nucleus_min, sInf])
+  le_inf := (by simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Nucleus_min, sInf,Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq];sorry)
+instance : Order.Frame (Nucleus E) := sorry
 --instance bot : Bot (Nucleus E) := sorry
 --instance top : Top (Nucleus E) := sorry
 --instance : PartialOrder (Nucleus E) := sorry

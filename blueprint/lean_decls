@@ -12,5 +12,10 @@ Nucleus_max
 Nucleus_min
 e_U
 is_open
+eckig_preserves_inf
+complement
+Nucleus.closure
 Measure
 caratheodory
+regular
+Neighborhood
