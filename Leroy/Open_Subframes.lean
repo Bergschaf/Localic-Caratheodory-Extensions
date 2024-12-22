@@ -459,6 +459,16 @@ lemma Open.le_sup_right : ∀ (a b : Open E), b ≤ a ⊔ b := by
     rw [Open.Max_eq]
     exact _root_.le_sup_right
 
+/--
+Leroy Lemme 10
+-/
+
+def Nucleus_comp (a b : Nucleus E) : Nucleus E where
+  toFun := a ∘ b
+  idempotent := (by aesop;
+lemma Open.inf_any {X : Nucleus E} {U : Open E} : X ⊓ U = U.nucleus ∘ X := by
+
+
 
 /-
 instance : CompleteLattice (Open E) where

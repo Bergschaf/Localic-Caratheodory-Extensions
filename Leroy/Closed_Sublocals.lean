@@ -24,6 +24,11 @@ def complement_injective : Function.Injective (@complement E e_frm)  := by
   simp at h2
   exact h2
 
+def complement_surjective : Function.Surjective (@complement E e_frm) := by
+  simp [Function.Surjective, complement]
+  intro b
+
+
 
 lemma inf_complement (X : Open E) : X.nucleus ⊓ (complement X) = ⊥ := by
   apply le_antisymm
@@ -108,7 +113,8 @@ instance Closed_sSup : PartialOrder (Closed E) where
   le_trans x y z := (by simp[le];exact fun a a_1 v => Preorder.le_trans (z.nucleus v) (y.nucleus v) (x.nucleus v) (a_1 v) (a v))
   le_antisymm  := le_antisymm'
 
-def Nucleus.closure (x : Nucleus X) : Closeds X := ⟨sInf {w : Nucleus X | is_closed w ∧ x ≤ w}, (by sorry)⟩
+def Open.complement (x : Open E) : Closed E where
+  element := x.element
 
-noncomputable def complement_closeds (x : Closeds X ) : Opens X :=
-  Classical.choose x.prop
+def Closed.complement (x : Closed E) : Open E where
+  element := x.element
