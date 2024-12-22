@@ -237,13 +237,18 @@ lemma union_pointwise_le {U V : Nucleus E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x :
 
 -- TODO in die mathlib rein
 variable {X : Type*}
+/- Macht weirde sachen
 instance CompleteSemilatticeSup_to_SemilatticeSup [CompleteSemilatticeSup X] : SemilatticeSup X where
   sup x y := sSup {x, y}
   le_sup_left := (by simp; intro a b; apply le_sSup;simp only [Set.mem_insert_iff,Set.mem_singleton_iff, true_or])
   le_sup_right := (by simp; intro a b; apply le_sSup; simp only [Set.mem_insert_iff,   Set.mem_singleton_iff, or_true])
-  sup_le := (by intro a b c h1 h2; simp; exact ⟨h1, h2⟩)
+  sup_le := (by intro a b c h1 h2; simp; exact ⟨h1, h2⟩)-/
 
 instance : Lattice (Nucleus E) where
+  sup x y := sSup {x, y}
+  le_sup_left := (by simp only; intro a b; apply le_sSup;simp only [Set.mem_insert_iff,Set.mem_singleton_iff, true_or])
+  le_sup_right := (by simp only ; intro a b; apply le_sSup; simp only [Set.mem_insert_iff,   Set.mem_singleton_iff, or_true])
+  sup_le := (by intro a b c h1 h2; simp; exact ⟨h1, h2⟩)
   inf a b := a ⊓ b
   inf_le_left := (by intro a b; simp [Nucleus_min, sInf]; exact fun b_1 a a_1 v => a v)
   inf_le_right := (by intro a b; simp [Nucleus_min, sInf])

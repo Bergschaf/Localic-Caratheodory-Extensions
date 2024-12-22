@@ -8,7 +8,7 @@ variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 /--
 The Type of Nuclei on a Frame.
 -/
-structure Nucleus (X : Type*) [Order.Frame X] where
+structure Nucleus (X : Type*) [SemilatticeInf X] where
   /-- The function of the nucleus.-/
   toFun : X → X
   /-- A Nucleus is idempotent.-/

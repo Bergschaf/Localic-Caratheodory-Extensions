@@ -87,6 +87,7 @@ def eckig (U : E) : Nucleus E where
 -- TODO typeclass
 --class Open extends Subframe E where
 --  is_open : ∃ u : E, eckig u = e
+@[ext]
 structure Open (E : Type*) [Order.Frame E] where
   element : E
 
@@ -407,3 +408,70 @@ lemma eckig_injective : Function.Injective (@eckig E e_frm)  := by
     apply le_antisymm
     . exact eckig_preserves_inclusion.mpr h1
     . exact eckig_preserves_inclusion.mpr h2
+
+
+instance : PartialOrder (Open E) where
+  le_refl := (by simp[Open.le])
+  le_trans := (by simp[Open.le];exact fun a b c a_1 a_2 v =>  Preorder.le_trans (c.nucleus v) (b.nucleus v) (a.nucleus v) (a_2 v) (a_1 v))
+  le_antisymm := (by simp[Open.le,Open.le_iff,Open.ext_iff];intro a b h1 h2; apply le_antisymm;exact h1;exact h2)
+
+
+lemma Open.nucleus_injective : Function.Injective (@Open.nucleus E e_frm) := by
+    rw [Function.Injective]
+    simp [Open.nucleus]
+    intro a1 a2 h
+    rw [le_antisymm_iff] at h
+    rcases h with ⟨h1, h2⟩
+    ext
+    apply le_antisymm
+    . exact le_iff.mp h1
+    . exact le_iff.mp h2
+
+
+
+
+lemma Open.ext_nucleus (a b : Open E) : a = b ↔ a.nucleus = b.nucleus := by
+  simp [Open.nucleus]
+  apply Iff.trans Open.ext_iff
+  apply Iff.intro
+  · intro a_1
+    simp_all only
+  · intro a_1
+    rw [le_antisymm_iff] at *
+    apply And.intro
+    . apply eckig_preserves_inclusion.mpr a_1.left
+    . apply eckig_preserves_inclusion.mpr a_1.right
+
+
+lemma Open.le_iff_nucleus {a b : Open E} : a ≤ b ↔ a.nucleus ≤ b.nucleus := by
+  exact ge_iff_le
+
+
+lemma Open.le_sup_left : ∀ (a b : Open E), a ≤ a ⊔ b := by
+  intro a b
+  apply Open.le_iff_nucleus.mpr
+  rw [Open.Max_eq]
+  exact _root_.le_sup_left
+
+lemma Open.le_sup_right : ∀ (a b : Open E), b ≤ a ⊔ b := by
+    intro a b
+    apply Open.le_iff_nucleus.mpr
+    rw [Open.Max_eq]
+    exact _root_.le_sup_right
+
+
+/-
+instance : CompleteLattice (Open E) where
+  sup x y := x ⊔ y
+  le_sup_left := Open.le_sup_left
+  le_sup_right := Open.le_sup_right
+  sup_le := sorry
+  inf x y := x ⊓ y
+  inf_le_left := sorry
+  inf_le_right := sorry
+  le_inf := sorry
+  le_sSup := sorry
+  sSup_le := sorry
+  sInf := sorry
+  sInf_le :=
+-/
