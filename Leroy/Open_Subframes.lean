@@ -83,48 +83,27 @@ def eckig (U : E) : Nucleus E where
 
 
 
-def is_open (e : Nucleus E) : Prop :=
-  ∃ u : E, eckig u = e
-
 
 -- TODO typeclass
 --class Open extends Subframe E where
 --  is_open : ∃ u : E, eckig u = e
+structure Open (E : Type*) [Order.Frame E] where
+  element : E
+
+def Open.nucleus (x : Open E) :=  eckig x.element
+
+instance : Coe (Open E) E where
+  coe x := x.element
+
+instance : Coe (Open E) (Nucleus E) where
+  coe x := x.nucleus
+
+def is_open (e : Nucleus E) : Prop :=
+  ∃ u : E, eckig u = e
 
 
-def Opens (E : Type*) [Order.Frame E] := {e : Nucleus E // is_open e}
-
-noncomputable def open_to_E (e : Opens E) : E :=
-  Classical.choose e.prop
-
-lemma eckig_open_to_E {e : Opens E} : (eckig (open_to_E e)) = e.val := by
-  simp [open_to_E]
-  let h := Classical.choose_spec e.prop
-  exact h
-
-instance Opens_le : LE (Opens E) where
-  le x y := x.val ≤ y.val
-
-instance : Bot (Opens E) where
-  bot := ⟨⊥, (by simp[is_open];use ⊥; simp[eckig];ext x;simp[e_U, Nucleus_bot, sSup, e_V_nucleus, e_V];)⟩
-
-instance Opens_top : Top (Opens E) where
-  top := ⟨⊤, (by simp[is_open,Nucleus_top, eckig]; use ⊤; ext x; simp [e_U]; apply le_antisymm; apply sSup_le; simp only [Set.mem_setOf_eq, imp_self, implies_true]; apply le_sSup;simp)⟩
-
-lemma opens_le_top : ∀ (U : Opens E), U ≤ ⊤ := by
-  intro u
-  simp_rw [Opens_top, Opens_le, Nucleus_top]
-  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe]
-  intro v
-  apply Nucleus.increasing'
-
-instance : Coe (Opens E) (Nucleus E) where
-  coe x := Subtype.val x
-
-instance : Coe (Set (Opens E)) (Set (Nucleus E)) where
-  coe x := Subtype.val '' x
-
-
+noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
+  ⟨Classical.choose h⟩
 -- Leroy Lemme 6
 
 
@@ -297,22 +276,8 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
     let h5 := h3 (x_i v) (b) h4
     rw [Nucleus.idempotent'] at h5
     exact h5
-
-lemma opens_inf_closed (U V : Opens X) : is_open (U.val ⊓ V.val) := by
-  rw [is_open]
-  let h1 := U.2
-  let h2 := V.2
-  simp [is_open] at h1 h2
-  rcases h1 with ⟨u, h1⟩
-  rcases h2 with ⟨v, h2⟩
-  rw [← h1, ← h2]
-  use u ⊓ v
-  exact eckig_preserves_inf u v
-
-instance : Min (Opens X) where
-  min U V := ⟨U ⊓ V, opens_inf_closed U V⟩
-
-lemma eckig_preserves_sup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i) := by
+------------
+lemma eckig_preserves_sSup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i) := by
   ext x
   simp [eckig, sSup, e_V_nucleus, e_V, e_U]
   apply le_antisymm
@@ -364,83 +329,75 @@ lemma eckig_preserves_sup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i)
 
 
 
+lemma eckig_preserves_top : eckig (⊤ : E) = ⊤ := by
+  ext x
+  simp [eckig, e_U,Nucleus.top_eq]
+  refine IsLUB.sSup_eq ?_
+  rw [IsLUB, IsLeast]
+  simp only [upperBounds, Set.mem_setOf_eq, imp_self, implies_true, lowerBounds, true_and]
+  intro a h
+  exact le_of_forall_le h
 
-lemma opens_sSup_closed {U_i : Set (Opens X)} : is_open (sSup (Subtype.val '' U_i)) := by
-  rw [is_open]
-  have h1 : ∀ u_i ∈ U_i, is_open u_i.val := by
-    intro u_i h
-    exact u_i.2
-  have h2 : ∃ U_i', (Subtype.val '' U_i) = eckig '' U_i' := by
-    simp [is_open] at h1
-    let h2 (u_i : Opens X) : X := by
-      let h := u_i.prop
-      simp [is_open] at h
-      use Classical.choose h
-    let h4 (u_i : Opens X) : eckig (h2 u_i) = u_i := by
-      simp [h2]
-      exact Set.apply_rangeSplitting eckig u_i
-    use h2 '' U_i
-    have h3 := fun (x : Opens X) ↦ h4 x
-    simp_all only [implies_true, h2, h4]
-    ext x : 1
-    simp_all only [Set.mem_image, Subtype.exists, exists_and_right, exists_eq_right, exists_exists_and_eq_and, h4]
-    apply Iff.intro
-    · intro a
-      obtain ⟨w, h⟩ := a
-      apply Exists.intro
-      · apply And.intro
-        · exact h
-        · simp_all only
-    · intro a
-      obtain ⟨w, h⟩ := a
-      obtain ⟨left, right⟩ := h
-      subst right
-      simp_all only [Subtype.coe_eta, exists_prop, and_true]
-      apply h1
-      simp_all only
+def FrameHom_eckig : FrameHom E (Nucleus E) :=
+  ⟨⟨⟨eckig, eckig_preserves_inf⟩, eckig_preserves_top⟩, (by simp;exact fun s =>Eq.symm (eckig_preserves_sSup s))⟩
 
-  rcases h2 with ⟨U_i', h2⟩
-  rw [h2]
-  use sSup U_i'
-  exact Eq.symm (eckig_preserves_sup U_i')
+instance Open.le : LE (Open E) where
+  le x y := (x : Nucleus E) ≤ y
 
-lemma eckig_preserves_max (U V : X) : eckig (U ⊔ V) = (eckig U ⊔ eckig V) := by
-  simp [Nucleus_max]
-  have h : U ⊔ V = sSup {U, V} := by
-    exact Eq.symm sSup_pair
-  let x := eckig_preserves_sup {U, V}
-  simp at x
-  rw [← x]
-  simp [Set.image]
-  have h1 : {x | eckig U = x ∨ eckig V = x} = {eckig U, eckig V} := by
-    ext x
-    simp
-    simp_all only [sSup_insert, csSup_singleton]
-    apply Iff.intro
-    · intro a
-      cases a with
-      | inl h =>
-        subst h
-        simp_all only [true_or]
-      | inr h_1 =>
-        subst h_1
-        simp_all only [or_true]
-    · intro a
-      cases a with
-      | inl h =>
-        subst h
-        simp_all only [true_or]
-      | inr h_1 =>
-        subst h_1
-        simp_all only [or_true]
-  rw [h1]
+def Open.le_iff {U V : Open E} : U ≤ V ↔ U.element ≤ V.element := by
+  simp_rw [Open.le, Open.nucleus]
+  exact Iff.symm eckig_preserves_inclusion
 
 
-instance : SupSet (Opens X) where
-  sSup U_i := ⟨sSup (Subtype.val '' U_i), opens_sSup_closed⟩
+instance Open.top : Top (Open E) where
+  top := ⟨⊤⟩
 
-instance : Max (Opens X) where
+instance : OrderTop (Open E) where
+  le_top a := (by simp[Open.le_iff, Open.top])
+
+--lemma Open.inf_corresponds {U V : Open X} : U.nucleus ⊓ V.nucleus = eckig (U.element ⊔ V.element) := by
+instance Open_sSup: SupSet (Open E) where
+  sSup x := ⟨sSup (Open.element '' x)⟩
+
+
+instance Open_max : Max (Open X) where
   max U V := sSup {U, V}
+
+instance : Min (Open X) where
+  min U V := ⟨(U : X) ⊓ V⟩
+
+
+lemma Open.sSup_eq {U_i : Set (Open X)} : (sSup U_i).nucleus = sSup (Open.nucleus '' U_i) := by
+  simp [Open.nucleus, Open_sSup]
+  rw [← eckig_preserves_sSup]
+  rw [Set.image_image]
+
+lemma Open.Min_eq {U V : Open X} : (U ⊓ V).nucleus = U.nucleus ⊓ V.nucleus := by
+  simp [Open.nucleus]
+  rw [← eckig_preserves_inf]
+  rfl
+
+lemma Open.Max_eq {U V : Open X} : (U ⊔ V).nucleus = U.nucleus ⊔ V.nucleus := by
+  let x := @Open.sSup_eq _ _ {U, V}
+  simp [Open_max]
+  rw [x]
+  simp_rw [Nucleus_max]
+  rw [Set.image_pair]
+
+
+lemma open_inf_closed (U V : Open X) : is_open (U.nucleus ⊓ V) := by
+  rw [is_open]
+  use U ⊓ V
+  rw [eckig_preserves_inf]
+  rfl
+
+lemma opens_sSup_closed {U_i : Set (Open X)} : is_open (sSup (Open.nucleus '' U_i)) := by
+  rw [is_open]
+  use (sSup (Open.element '' U_i))
+  rw [← eckig_preserves_sSup]
+  simp [Open.nucleus]
+  rw [Set.image_image]
+
 
 lemma eckig_injective : Function.Injective (@eckig E e_frm)  := by
   rw [Function.Injective]
@@ -450,71 +407,3 @@ lemma eckig_injective : Function.Injective (@eckig E e_frm)  := by
     apply le_antisymm
     . exact eckig_preserves_inclusion.mpr h1
     . exact eckig_preserves_inclusion.mpr h2
-
-
-
-
--- Ist hier das Inverse Image gemeint?
---lemma leroy_6d {f : FrameHom E F} {V : F} : f (eckig v) = eckig ((f_obenstern f).obj v) := by
-
-
-/-
-lemma leroy_7 {X : Opens E} {U V : E} : V ≤ X.val U ↔ eckig V ⊓ X ≤ eckig U := by
-  let i := nucleus_frameHom X.val
-  rw [i.prop.left]
-  have h : (f_obenstern i.val ⋙ f_untenstern i.val).obj = (f_untenstern i.val).obj ∘ (f_obenstern i.val).obj := by
-    exact rfl
-
-  rw [h]
-
-  ---
-  have h1 :  V ≤ ((f_untenstern i.val).obj ∘ (f_obenstern i.val).obj) U ↔ (f_obenstern i.val).obj V ≤ (f_obenstern i.val).obj U := by
-    have h (U V : E) {f : E → E}:  V ≤ f U ↔ (f_obenstern i.val).obj V ≤ (f_obenstern i.val).obj (f U) := by
-      have h1 : Monotone (f_obenstern i.val).obj := by
-        simp [Monotone, f_obenstern]
-        exact fun ⦃a b⦄ a_1 => OrderHomClass.GCongr.mono (i.val) a_1
-      have h2 : ∀ a b,(f_obenstern i.val).obj a ≤ (f_obenstern i.val).obj b → a ≤ b := by
-        have h : ∀ a, (f_untenstern i.val).obj ((f_obenstern i.val).obj a) = a := by
-          intro a
-          simp [f_obenstern, f_untenstern]
-          apply le_antisymm
-          apply sSup_le
-          simp
-          intro b h
-
-          sorry -- TODO i a ≤ i b → a ≤ b
-          apply le_sSup
-          simp
-
-        intro a b h1
-        apply_fun (f_untenstern i.val).obj at h1
-        simp [h] at h1
-        exact h1
-        simp [Monotone, f_untenstern]
-        intro a ha b hb h1 e h2
-        apply le_sSup
-        simp only [Set.mem_setOf_eq]
-        have h : (⟨a, ha⟩ : Image X) ≤ ⟨b, hb⟩ := by
-          exact h1
-        exact Preorder.le_trans (i.val e) ⟨a, ha⟩ ⟨b, hb⟩ h2 h1
-
-      rw [Monotone] at h1
-      exact { mp := @h1 V (f U), mpr := h2 V (f U) }
-
-    apply Iff.trans (h U V)
-    simp
-    have h1 : (f_obenstern i.val).obj ((f_untenstern i.val).obj ((f_obenstern i.val).obj U)) = (f_obenstern i.val).obj U := by
-      let x := triangle_one_obj i.val U
-      simp at x
-      exact x
-    rw [h1]
-
-  apply Iff.trans h1
-
-
-
-
-
-instance : InfSet (Opens X) where
-  sInf U_i := sSup {U : Opens X | ∀ u_i ∈ U_i, U ≤ u_i}
--/

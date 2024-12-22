@@ -203,6 +203,15 @@ instance : CompleteSemilatticeSup (Nucleus E) where
   le_sSup := Nucleus_le_sSup
   sSup_le := Nucleus_sSup_le
 
+lemma Nucleus_le_inf :  ∀ (a b c : Nucleus E), a ≤ b → a ≤ c → a ≤ (fun a b => a ⊓ b) b c := by
+  simp
+  intro a b c h1 h2
+  simp only [min, sInf, sSup, e_V_nucleus, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Nucleus.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, forall_eq, Nucleus.toFun_eq_coe', e_V,
+    Set.mem_setOf_eq, and_imp, sSup_le_iff]
+  intro v b1 h
+  let h3 := h a h1 h2
+  exact h a h1 h2
 
 lemma sublocal_union_pointwise (X_i : Set (Nucleus E)) : ∀ (v : E), sSup {x v | x ∈ X_i} ≤ (sInf X_i) v := by
   intro v
@@ -226,45 +235,102 @@ lemma union_pointwise_le {U V : Nucleus E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x :
   intro b h1 h2
   exact h1
 
+-- TODO in die mathlib rein
+variable {X : Type*}
+instance CompleteSemilatticeSup_to_SemilatticeSup [CompleteSemilatticeSup X] : SemilatticeSup X where
+  sup x y := sSup {x, y}
+  le_sup_left := (by simp; intro a b; apply le_sSup;simp only [Set.mem_insert_iff,Set.mem_singleton_iff, true_or])
+  le_sup_right := (by simp; intro a b; apply le_sSup; simp only [Set.mem_insert_iff,   Set.mem_singleton_iff, or_true])
+  sup_le := (by intro a b c h1 h2; simp; exact ⟨h1, h2⟩)
 
--- obacht
-instance : SemilatticeInf (Nucleus E) where
+instance : Lattice (Nucleus E) where
   inf a b := a ⊓ b
   inf_le_left := (by intro a b; simp [Nucleus_min, sInf]; exact fun b_1 a a_1 v => a v)
   inf_le_right := (by intro a b; simp [Nucleus_min, sInf])
-  le_inf := (by simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Nucleus_min, sInf,Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq];sorry)
-instance : Order.Frame (Nucleus E) := sorry
---instance bot : Bot (Nucleus E) := sorry
---instance top : Top (Nucleus E) := sorry
---instance : PartialOrder (Nucleus E) := sorry
---instance : SemilatticeSup (Nucleus E) := ⟨sorry,sorry, sorry, sorry⟩
---instance : Lattice (Nucleus E) := ⟨sorry, sorry, sorry, sorry⟩
---instance : CompleteLattice (Nucleus E) := ⟨sorry, sorry, sorry, sorry, sorry, sorry⟩
---instance Nucleus_frame : Order.Frame (Nucleus E) := Order.Frame.ofMinimalAxioms sorry
+  le_inf := Nucleus_le_inf
+
+lemma Nucleus_le_sInf :  ∀ (s : Set (Nucleus E)) (a : Nucleus E), (∀ b ∈ s, a ≤ b) → a ≤ sInf s := by
+  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, sInf]
+  intro s a h v
+  simp only [sSup, e_V_nucleus, Nucleus.toFun_eq_coe', e_V, Set.mem_setOf_eq, Nucleus.toFun_eq_coe,
+    sSup_le_iff]
+  intro b h1
+  let h2 := h1 a h
+  exact h2
 
 
---  carrier : Set X := Image e
-
--- TODO subframes als kategorie
-
--- TODO
---def subframe_embedding (s : Subframe X) : f : FrameHom ... [Embedding ...]
-
--- def embedding_subframe (f: FrameHom ...) : Subframe ...
-
--- def subframe_frame
+instance : CompleteLattice (Nucleus E) where
+  le_sSup := (by exact fun s a a_1 => Nucleus_le_sSup s a a_1)
+  sSup_le := (by exact fun s a a_1 => Nucleus_sSup_le s a a_1)
+  sInf_le := (by simp[sInf]; exact fun s a a_1 b a_2 v => a_2 a a_1 v)
+  le_sInf := Nucleus_le_sInf
+  le_top := all_le_top
+  bot_le := (by simp only [Nucleus_bot, Nucleus.le_iff, Nucleus.toFun_eq_coe, le_top, implies_true])
 
 
-/- Nlab : ein nucleus ist ein quotient frame (-> sublocal)
+lemma Nucleus.top_eq : (⊤ : Nucleus E) = ⟨fun x ↦ x, (by simp only [implies_true]), (by simp only [le_refl, implies_true]), (by simp only [implies_true])⟩:= by
+  rfl
+
+--lemma Nucleus.bot_eq : (⊥)
+
+lemma Nucleus_Frame_minimal_axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
+  intro a s
+  apply le_iSup_iff.mpr
+  intro b h
+  simp at h
+  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe]
+  intro v
+  simp_rw [Nucleus_min, sInf, sSup, e_V_nucleus] at *
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Nucleus.le_iff, Nucleus.toFun_eq_coe,
+    forall_eq_or_imp, forall_eq, Nucleus.toFun_eq_coe', e_V, Set.mem_setOf_eq, and_imp,
+    sSup_le_iff] at *
+  have h1 : ∀ (v : E), b v ≤ sInf { sSup {w | ∀ (x_i : Nucleus E), (∀ (v : E), a v ≤ x_i v) → (∀ (v : E), i v ≤ x_i v) → w ≤ x_i v} | i ∈ s} := by
+    intro v
+    apply le_sInf
+    intro b1 h1
+    simp at h1
+    rcases h1 with ⟨i, hi, h1⟩
+    let h:= h i hi v
+    rw [← h1]
+    apply h
+
+  have h2 :  sInf {x | ∃ i ∈ s, sSup {w | ∀ (x_i : Nucleus E), (∀ (v : E), a v ≤ x_i v) → (∀ (v : E), i v ≤ x_i v) → w ≤ x_i v} = x} ≤ sSup
+    {w | ∀ (x_i : Nucleus E), (∀ (v : E), a v ≤ x_i v) → (∀ (v b : E), (∀ x_i ∈ s, b ≤ x_i v) → b ≤ x_i v) → w ≤ x_i v} := by
+      apply le_sSup_iff.mpr
+      simp_rw [upperBounds]
+      intro b hb
+      simp only [Set.mem_setOf_eq] at hb
+      apply sInf_le_iff.mpr
+      intro b1 hb1
+      simp only [lowerBounds, Set.mem_setOf_eq, forall_exists_index, and_imp,
+        forall_apply_eq_imp_iff₂] at hb1
+      apply hb
+      intro xi h1 h2
+      apply h2
+      intro x1 hx1
+      let h3 := hb1 x1 hx1
+      have h4 : sSup {w | ∀ (x_i : Nucleus E), (∀ (v : E), a v ≤ x_i v) → (∀ (v : E), x1 v ≤ x_i v) → w ≤ x_i v} ≤ x1 v := by
+        sorry
+      sorry
+
+  exact
+    Preorder.le_trans (b v)
+      (sInf
+        {x |
+          ∃ i ∈ s,
+            sSup
+                {w |
+                  ∀ (x_i : Nucleus E),
+                    (∀ (v : E), a v ≤ x_i v) → (∀ (v : E), i v ≤ x_i v) → w ≤ x_i v} =
+              x})
+      (sSup
+        {w |
+          ∀ (x_i : Nucleus E),
+            (∀ (v : E), a v ≤ x_i v) →
+              (∀ (v b : E), (∀ x_i ∈ s, b ≤ x_i v) → b ≤ x_i v) → w ≤ x_i v})
+      (h1 v) h2
 
 
 
-gamma??:
 
-he double negation sublocale of L, denoted L ¬¬, is given by
-j ¬¬(U)≔¬¬U.
-
-This is always a dense subspace; in fact, it is the smallest dense sublocale of L. (As such, even when L is topological, L ¬¬ is rarely topological; in fact, its only points are the isolated points of L.)
-
---Nuclei -> https://www.sciencedirect.com/science/article/abs/pii/S0022404919301604
--/
+instance : Order.Frame (Nucleus E) := Order.Frame.ofMinimalAxioms ⟨Nucleus_Frame_minimal_axioms⟩
