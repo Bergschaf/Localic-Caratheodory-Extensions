@@ -1,7 +1,7 @@
 import Mathlib.Data.Real.Basic
 import Leroy.Basic
 import Leroy.Open_Subframes
-import Leroy.Closed_Sublocals
+import Leroy.Further_Topology
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
@@ -9,38 +9,37 @@ variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 def increasingly_filtered (s : Set (Nucleus X)) : Prop :=
   ∀ (u v : s), ∃ (w : s), u ≤ w ∧ v ≤ w
 
-def increasingly_filtered' (s : Set (Opens X)) : Prop :=
+def increasingly_filtered' (s : Set (Open X)) : Prop :=
   ∀ (u v : s), ∃ (w : s), u ≤ w ∧ v ≤ w
 
 
 structure Measure where
-  toFun : (Opens X) → NNReal -- Evtl ENNReal (brauchen wir ⊤)
+  toFun : (Open X) → NNReal -- Evtl ENNReal (brauchen wir ⊤)
   empty : toFun ⊥ = 0
-  mono : ∀ (U V : Opens X), U ≤ V → toFun U ≤ toFun V
+  mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
-  filtered : ∀ (s : Set (Opens X)), increasingly_filtered' s → toFun (sSup s) = iSup (fun (x : s) ↦ toFun x)
+  filtered : ∀ (s : Set (Open X)), increasingly_filtered' s → toFun (sSup s) = iSup (fun (x : s) ↦ toFun x)
 
-def Open_Neighbourhood (u : Nucleus X) : Set (Opens X) := {v : Opens X | u ≤ v}
+def Open_Neighbourhood (u : Nucleus X) : Set (Open X) := {v : Open X | u ≤ v}
 
 def Neighbourhood (u : Nucleus X) : Set (Nucleus X) := {v | ∃ w ∈ Open_Neighbourhood u, w ≤ v}
--- subframes???
+
+
 noncomputable def Measure.caratheodory {m : @Measure X h} (a : Nucleus X) : NNReal :=
   sInf (m.toFun '' Open_Neighbourhood a)
 
 def increasing (s :  ℕ → Nucleus X) : Prop :=
   ∀ (n : ℕ), s n ≤ s (n + 1)
 
-variable (m : @Measure X h)(X_n : ℕ → Nucleus X)
-#check m.caratheodory
-#check true
+variable {m : @Measure X h}(X_n : ℕ → Nucleus X)
 
-lemma Measure.all_le_top {m : @Measure X h} : ∀ a : Opens X, m.toFun a ≤ m.toFun ⊤ := by
+lemma Measure.all_le_top {m : @Measure X h} : ∀ a : Open X, m.toFun a ≤ m.toFun ⊤ := by
   intro a
   apply m.mono
-  exact opens_le_top a
+  exact OrderTop.le_top a
 
 
-lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x = m.toFun x := by
+lemma Caratheodory_opens {m : @Measure X h} : ∀ x : Open X, m.caratheodory x = m.toFun x := by
   simp [Measure.caratheodory]
   intro x
   simp [Open_Neighbourhood]
@@ -48,6 +47,7 @@ lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x 
   . apply csInf_le'
     simp only [Set.mem_image, Set.mem_setOf_eq]
     use x
+    simp only [le_refl, implies_true, and_self]
   . rw [le_csInf_iff]
     simp
     intro a h
@@ -56,19 +56,19 @@ lemma Caratheodory_opens (m : @Measure X h) : ∀ x : Opens X, m.caratheodory x 
     simp [Set.Nonempty]
     use m.toFun x
     use x
+    simp only [le_refl, implies_true, and_self]
 
 
 lemma Open_Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Open_Neighbourhood x) := by
   simp [Set.Nonempty]
   use ⊤
   rw [Open_Neighbourhood]
-  simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq]
-  simp_rw [Opens_top]
-  apply all_le_top
+  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_nucleus]
+  exact fun v => Nucleus.increasing' x
 
 lemma Open_Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Open_Neighbourhood x := by
   rw [Open_Neighbourhood]
-  simp only [Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Opens_top]
+  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_nucleus]
   exact all_le_top x
 
 
@@ -138,7 +138,6 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
     refine Set.image_mono ?H.h.h
     simp [Open_Neighbourhood]
     intro a h v
-    have h := h v
     sorry -- sieht schlecht auss
 
   sorry
@@ -147,31 +146,64 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
 -- TODO
 
 def regular (E : Type*)  [Order.Frame E]: Prop :=
-  ∀ (U : Opens E), U = sSup {V : Opens E | V.val.closure.val ≤ U}
-
+  ∀ (U : Open E), U = sSup {V : Open E | V.nucleus.closure.nucleus ≤ U}
 
 
 variable {E : Type*} [e_frm : Order.Frame E] [Fact (regular E)]
+set_option maxHeartbeats 0
+
+/--
+Leroy Lemme 2.2
+-/
+lemma sublocal_intersection_of_neighbours {x : Nucleus E} : x = sInf (Neighbourhood x) := by
+  have h :(∀ h, x h = ⨆ V ∈ Neighbourhood x, V h) → x = sInf (Neighbourhood x) := by
+    intro h1
+    ext y
+    rw [h1 y]
+    sorry
+
+  apply h
+  intro h
 
 
-lemma sublocal_intersection_of_neighbours (x : Nucleus E) : x = sInf (Neighbourhood x) := by
   apply le_antisymm
-  . simp [Neighbourhood]
-    sorry
-  . simp
-    intro v
-    let k := x v
-    let V (W : Opens E) := W.val.closure.val ⊔ eckig v
+  . apply le_sInf_iff.mpr
+    simp [Neighbourhood]
+    intro b e h1 h2 v
+    let h3 := h2 v
+    apply le_trans h3
+    simp [Open_Neighbourhood] at h1
+    exact h1 v
+  . simp [sInf]
+    intro b h v
 
-    have h1 (W : Opens E) (h : W.val.closure.val ≤ eckig k) : ((complement_closeds (W.val.closure)) ⊔ ⟨(eckig v), (by simp [is_open])⟩)
-         ∈ Open_Neighbourhood x := by
-      simp [Open_Neighbourhood]
-      intro v1
+
+
+    -- we have to construct an element of Neighbourhood x which is ≤ x
+    sorry
+
+
+
+
+
+
+lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodory U + m.caratheodory (complement U) = m.caratheodory (⊤ : Open E) := by
+  rw [Caratheodory_opens]
+  rw [Caratheodory_opens]
+
+  apply le_antisymm
+  . let V_a := Neighbourhood (complement U)
+    let W_a := (Nucleus.exterior '' V_a)
+    have h : increasingly_filtered' W_a := by
+      simp [increasingly_filtered']
+      intro a h1 b h2
       sorry
-
-    --- ...
-    have h2 (W : Opens E) : W ≤ V W := by sorry
+    have h1 : sSup W_a = U := by sorry
+    have h2 : m.toFun U = ⨆ x : W_a, m.toFun x := by
+      rw [← h1]
+      let h3 := m.filtered W_a h
+      rw [h3]
     sorry
 
-lemma Measure.add_complement {m : @Measure E e_frm} {U : Opens E} : m.caratheodory U + m.caratheodory (complement U) = m.caratheodory ⊤ := by
-  sorry
+
+  . sorry --trival anscheinend

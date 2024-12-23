@@ -356,6 +356,17 @@ instance Open.top : Top (Open E) where
 instance : OrderTop (Open E) where
   le_top a := (by simp[Open.le_iff, Open.top])
 
+@[simp]
+lemma Open.top_nucleus : (⊤ : Open E).nucleus = ⊤ := by
+  simp [nucleus, Open.top]
+  exact eckig_preserves_top
+
+instance Open.bot : Bot (Open E) where
+  bot := ⟨⊥⟩
+
+instance : OrderBot (Open E) where
+  bot_le a := (by simp[Open.le_iff, Open.bot])
+
 --lemma Open.inf_corresponds {U V : Open X} : U.nucleus ⊓ V.nucleus = eckig (U.element ⊔ V.element) := by
 instance Open_sSup: SupSet (Open E) where
   sSup x := ⟨sSup (Open.element '' x)⟩
@@ -459,14 +470,10 @@ lemma Open.le_sup_right : ∀ (a b : Open E), b ≤ a ⊔ b := by
     rw [Open.Max_eq]
     exact _root_.le_sup_right
 
-/--
+/-
 Leroy Lemme 10
 -/
 
-def Nucleus_comp (a b : Nucleus E) : Nucleus E where
-  toFun := a ∘ b
-  idempotent := (by aesop;
-lemma Open.inf_any {X : Nucleus E} {U : Open E} : X ⊓ U = U.nucleus ∘ X := by
 
 
 

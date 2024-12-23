@@ -14,11 +14,12 @@
     \end{gather*}
 \end{definition}
 
-\begin{lemma}[$f^*$ commutes]
-    \label{lem:f_star_comm}
-    \uses{def:f_star}
-    $f^*$ commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open Sets has all small coproducts and all finite Limits. \href{https://ncatlab.org/nlab/show/frame}{nlab}
-\end{lemma}
+%\begin{lemma}[$f^*$ commutes]
+%    \label{lem:f_star_comm}
+%    \uses{def:f_star}
+%    $f^*$ commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open
+%%Sets has all small coproducts and all finite Limits. \href{https://ncatlab.org/nlab/show/frame}{nlab}
+%\end{lemma}
 
 
 \begin{lemma}[$f^* \dashv f_*$]
@@ -78,7 +79,6 @@
 \section{Sublocals}
 \begin{definition}[Nucleus]
     \label{def:nucleus}
-    \uses{lem:frame}
     \lean{Nucleus}
     \leanok
     A nucleus is a map $e : O(E) \rightarrow O(E)$ with the following three properties:
@@ -106,25 +106,24 @@
     \leanok
 \end{proof}
 
-\begin{definition}[Subframe]
+\begin{definition}[Sublocal]
 (Leroy CH 3)
-    \label{def:subframe}
+    \label{def:sublocal}
     \uses{lem:nucleus}
-    \lean{Subframe}
+    \lean{nucleus_frameHom}
     \leanok
     A sublocal $Y \subset X$ is defined by a nucleus $e_Y: O(X) \rightarrow O(X)$, such that $O(Y) = Im(e_Y) = \{U \in O(X) | e_Y(U) = U\}$.
-    The corresponding embedding (???) is $i_X : O(Y) \rightarrow O(X)$. $i^*_X(V) = e_X(V)$, $(i_X)_*(U) = U$
-
+    The corresponding embedding is $i_X : O(Y) \rightarrow O(X)$. $i^*_X(V) = e_X(V)$, $(i_X)_*(U) = U$
     And every nucleus $e$ on $O(X)$ defines a sublocal $Y$ of $X$ by $O(Y) = Im(e)$
 \end{definition}
 
-\begin{definition}[Subframe Inclusion]
+\begin{definition}[Sublocal Inclusion]
 (Stimmt das?)(Leroy Ch 3)
-    \label{def:subframe_inclusion}
-    \uses{def:subframe}
-    \lean{subframe_inclusion}
+    \label{def:sublocal_inclusion}
+    \uses{def:sublocal}
+    \lean{sublocal_inclusion}
     \leanok
-    $X \subset Y$ if $e_Y \le e_X$
+    $X \subset Y$ if $e_Y(u) \le e_X(u)$ for all $u$
 \end{definition}
 
 \begin{lemma}[factorisation]
@@ -139,21 +138,22 @@
     \leanok
 \end{proof}
 
-\subsection{(1.4) Subframe Union and Intersection}
-\begin{definition}[Subframe Union]
+\subsection{(1.4) Sublocal Union and Intersection}
+
+\begin{definition}[Union of Sublocals]
 (Leroy CH 1.4)
-    \label{def:subframe_union}
-    \uses{def:subframe_inclusion,lem:nucleus}
-    \lean{Nucleus_max}
+    \label{def:sublocal_union}
+    \uses{def:sublocal_inclusion,lem:nucleus}
+    \lean{e_V_nucleus}
     \leanok
-    Let $(X_i)_i$ be a family of subframes of $E$ and $(e_i)_i$ the corresponding nuclei.
+    Let $(X_i)_i$ be a family of sublocals of $E$ and $(e_i)_i$ the corresponding nuclei.
     For all $V \in O(E)$, let $e(V)$ be the union of all $W \in O(E)$ which are contained in all $e_i(V)$.
 \end{definition}
 
-\begin{lemma}[Familiy of Subframes]
+\begin{lemma}[Union of Sublocals]
 (Leroy CH 4)
-    \label{lem:family_of_subframes}
-    \uses{lem:nucleus, def:subframe_union}
+    \label{lem:sublocal_union}
+    \uses{lem:nucleus, def:sublocal_union}
     Let $X_i$ be a family of subframes of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let
     $e(V)$ be the union of all $W \in O(E)$ which are contained in every (TODO wieso every) $e_i(V)$. Then \\
     \begin{enumerate}
@@ -162,21 +162,27 @@
         $X_i$ denoted by $\bigcup_i X_i$
     \end{enumerate}
 \end{lemma}
+\begin{proof}
+    The properties of the nucleus (idempotent, increasing, preserving intersection) can be verified by unfolding the
+    definition of $e(V)$.
+    \leanok
+\end{proof}
 
-\begin{definition}[Subframe intersection]
-    \label{def:subframe_intersection}
-    \uses{def:subframe_union,lem:nucleus}
+
+\begin{definition}[Intersection of Sublocals]
+    \label{def:sublocal_intersection}
+    \uses{lem:sublocal_union,lem:nucleus}
     \lean{Nucleus_min}
     \leanok
-    Let $(X_i)_i$ be a family of subframes of $E$ and $(e_i)_i$ the corresponding nuclei.
-    For all $V \in O(E)$, the intersection $\bigcap X_i$ of all.
+    Let $(X_i)_i$ be a family of sublocal of $E$ and $(e_i)_i$ the corresponding nuclei.
+    For all $V \in O(E)$, the intersection $\bigcap X_i$ is the Union of all Nuclei $w$ such that $w \le x_i $ for all $x_i \in X_i $
 \end{definition}
 
 \subsection{(1.5) Direct Images}
 
 \begin{definition}[Direct Images]
-    \uses{def:subframe}
-    \label{def:direct_images,lem:factorisation, def:subframe_intersection}
+    \uses{def:sublocal,,lem:factorisation, def:sublocal_intersection}
+    \label{def:direct_images}
     Let $f : E \rightarrow F$ be a morphism of Frames. The map $f_*f^* : O(F) \to O(F)$ is the nucleus of the subframe
     $Im(f)$ of $F$. By (lemma 2), $Im(F)$ is the smallest subframe of $F$ through which $f$ can be factored. For any subframe $X$ of $E$, we define the direct image as
     \[f(x) = Im(fi_x)\]
@@ -194,7 +200,7 @@
 \begin{lemma}[(5) Direct Images Families]
 (Leroy Lemme 5)
     \label{lem:direct_images_families}
-    \uses{def:direct_images, lem:family_of_subframes}
+    \uses{def:direct_images, lem:sublocal_union}
     For all morphisms $f: E \rightarrow F$ and a family $(X_i)$ of subspaces of $E$, the following holds:
     \[f(\cup_i X_i) = \cup_i f(X_i)\]
 \end{lemma}
@@ -209,26 +215,38 @@
 \end{definition}
 
 \subsection{(7) Open Sublocals}
+
 \begin{definition}[$e_U$]
     \label{def:e_U}
-    \uses{def:nucleus,def:subframe,def:subframe_union, def:subframe_intersection}
+    \uses{def:nucleus,def:sublocal,lem:sublocal_union, def:sublocal_intersection}
     \lean{e_U}
     \leanok
     Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
 \end{definition}
 
+\begin{lemma}[$e_U$ is a nucleus]
+    \label{lem:e_U_nucleus}
+    \uses{def:e_U}
+    \lean{eckig}
+    \leanok
+    The map $e_U$ is a nucleus.
+\end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
+
 
 \begin{definition}[Open sublocal]
     \label{def:open_sublocal}
-    \uses{def:e_U}
-        \lean{is_open}
+    \uses{def:e_U,lem:e_U_nucleus}
+    \lean{Open}
     \leanok
     For any $U \in O(E)$, the sublocal $[U]$ is called an open sublocal of $E$.
-    (+Senf: stimmt das mit dem üblichen überein???)
+   % (+Senf: stimmt das mit dem üblichen überein???)
 \end{definition}
 
 
-\begin{lemma}[(6,7) Open subspaces]
+\begin{lemma}[(6,7) Open Sublocal Properties]
 (Leroy Lemma 6,7)
     \label{lem:sublocal_properties}
     \lean{eckig_preserves_inf}
@@ -247,13 +265,17 @@
         \[\cup_i[V_i] = [\cup_iV_i]\]
 
         \item
-        For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
-        \[f^{-1}([V])] = [f^*(V)]\]
-        \item
-        Let $X$ be a subspace of $E$ and $U \in O(E)$. For all $V \in O(E)$, we have:
-        \[V \subset e_X(U) \iff [V] \cap X \subset [U]\]
+ %       For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
+ %       \[f^{-1}([V])] = [f^*(V)]\]
+ %       \item
+ %       Let $X$ be a subspace of $E$ and $U \in O(E)$. For all $V \in O(E)$, we have:
+ %       \[V \subset e_X(U) \iff [V] \cap X \subset [U]\]
     \end{enumerate}
 \end{lemma}
+\begin{proof}
+    % Fast fertig
+    \leanok
+\end{proof}
 
 
 \begin{definition}[Complement]
@@ -265,10 +287,43 @@
     (Leroy p. 12) (+ Senf brauchen wir das allgemein??)
 \end{definition}
 
+\begin{lemma}[Complement Injective]
+    \label{lem:complement_injective}
+    \uses{def:complement}
+    \lean{complement_injective}
+    \leanok
+    The complement is injective.
+\end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
+
+\begin{definition}[Closed Sublocal]
+    \label{def:closed_sublocal}
+    \uses{def:complement}
+    \lean{Closed}
+    \leanok
+    A sublocal $X$ of $E$ is called closed if $X = E \setminus U$ for some open sublocal $U$ of $E$.
+\end{definition}
+
+\begin{lemma}[Intersection of Closed Sublocals]
+    \label{def:closed_intersection}
+    \uses{def:closed_sublocal}
+    \lean{Closed_sInf_le}
+    \leanok
+    For any family $X_i$ of closed sublocals of $E$, the intersection $\bigcap X_i$ is closed (it can be computed by
+    taking the complment of the union of the complements).
+\end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
+
+
 \begin{lemma}[(1.8) Properties of Complements]
     \label{lem:properties_of_complements}
+    % benutzt vlt complement_injective
     \uses{def:complement}
-    For any any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
+    For any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
     \[V \cup X = E \iff E \setminus V subset X\]
     \[V \cap X = \emptyset \iff X \subset E \setminus V\]
     And thereby:
@@ -291,10 +346,10 @@
 \end{lemma}
 
 
-\begin{lemma}[(1.10) Nucleus and Intersection]
-    \label{lem:nucleus_and_intersection}
+\begin{lemma}[(1.10) Intersection of Open and Closed Sublocals]
+    \label{lem:open_closed_intersection}
     \uses{def:nucleus,def:e_U}
-    For any $U \in O(E)$, and sub local $X$ of $E$ we have:
+    For any $U \in O(E)$, and sublocal $X$ of $E$ we have:
     \[e_{U \cap X} = e_Ue_X\]
     And for a closed $F$
     \[e_{X \cap F} = e_Xe_F\]
@@ -302,14 +357,14 @@
 
 \begin{lemma}[(1.11) Distribution of Intersections over Unions]
     \label{lem:distribution_of_intersections_over_unions}
-    \uses{lem:nucleus_and_intersection}
+    \uses{lem:open_closed_intersection}
     Let $X, Y, L$ be three sub locals of $E$. If $L$ is open or closed, we have:
     \[L \cap (X \cap Y) = (L \cap X) \cup (L \cap Y)\]
 \end{lemma}
 
 \begin{definition}[Further Topology]
     \label{def:further_topology}
-    \uses{def:open_sublocal,def:complement}
+    \uses{def:open_sublocal,def:closed_sublocal, def:complement, lem:closed_intersection}
     \lean{Nucleus.closure}
     \leanok
     \begin{enumerate}
@@ -319,7 +374,6 @@
         \item $\partial X = \bar{X} \cap (E - Int X)$
     \end{enumerate}
 \end{definition}
-
 
 
 %\begin{definition}[gamma]

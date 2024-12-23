@@ -1,10 +1,10 @@
 import Leroy.Nucleus
 import Mathlib.Topology.Bases
 import Mathlib.Order.CompleteSublattice
+import Mathlib.Tactic.Propose
 open CategoryTheory
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
-
 
 
 instance le : LE (Nucleus X) where
@@ -314,9 +314,14 @@ lemma Nucleus_Frame_minimal_axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), 
       apply h2
       intro x1 hx1
       let h3 := hb1 x1 hx1
+
       have h4 : sSup {w | ∀ (x_i : Nucleus E), (∀ (v : E), a v ≤ x_i v) → (∀ (v : E), x1 v ≤ x_i v) → w ≤ x_i v} ≤ x1 v := by
         sorry
+
+
       sorry
+
+
 
   exact
     Preorder.le_trans (b v)

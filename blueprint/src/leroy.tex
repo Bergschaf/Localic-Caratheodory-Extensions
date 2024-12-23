@@ -42,7 +42,7 @@
 \begin{lemma}[Union of Intersections]
 (Leroy Lemme 2.4)
     \label{lem:union_of_intersections}
-    \uses{def:subframe_intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
+    \uses{def:sublocal_intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
     For any family $B_i$ of sublocals of a local $E$ and a sublocal $A$, we have:
     \[A \cup (\bigcap_i B_i) = \bigcap_i (A \cap B_i)\]
     This implies if $A_i$ and $B_j$ are families of sublocals of $X$, we have:
@@ -99,7 +99,7 @@
 
 \begin{definition}[Regular Local]
     \label{def:regular_local}
-    \uses{def:further_topology}
+    \uses{def:open_sublocal, def:further_topology}
     \lean{regular}
     \leanok
     A local is regular, if for all open sublocals $U$ of $E$, the open sublocals $V$ such that $V\bar \subset U$ recover $U$.
@@ -136,7 +136,7 @@
 \begin{proposition}[Sublocals structure]
     Obacht TODO
     \label{prop:sublocals_structure}
-    \uses{def:subframe_intersection,def:complement,lem:union_of_intersections}
+    \uses{def:sublocal_intersection,def:complement,lem:union_of_intersections}
     The sublocals of a local $E$ form a complete (distributive vlt.) lattice with the operations of intersection and complement.
 \end{proposition}
 
@@ -144,7 +144,7 @@
 \begin{lemma}[Property 2]
 (Leroy Lemm 3.4)
     \label{lem:property_2}
-    \uses{def:complement,def:subframe_intersection,lem:property_1}
+    \uses{def:complement,def:sublocal_intersection,lem:property_1}
     For any open sublocal $U$ and any sublocal $A$ of a local $E$, the caratheodory extension of a measure on $X$ satisfies \[\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))\]
 \end{lemma}
 
@@ -201,7 +201,7 @@
 
 \begin{proposition}[reductive]
     \label{prop:reductive}  (Proposition 3.3.1)
-    \uses{def:subframe, prop:elementary_properties_of_caratheodory_extensions}
+    \uses{def:sublocal, prop:elementary_properties_of_caratheodory_extensions}
     For any measure on a local $X$, the caratheodory extension is
     reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
 \end{proposition}
@@ -271,7 +271,7 @@
 \begin{lemma}[Subset to sublocal Part 2]
 (Leroy Proposition 5.1.2, 5.1.3)
     \label{lem:subset_to_sublocal_part_2}
-    \uses{lem:nucleus_and_intersection}
+    \uses{lem:open_closed_intersection}
     For an open subspace $U$ of $E$ and a subspace $X$ of $E$, we have:
     \begin{gather*}
     [U \cap X]
@@ -283,16 +283,16 @@
 
 \end{lemma}
 
-\begin{lemma}[(Prop 4) Unions of subspaces]
-(Leroy Proposition 5.1.4)
-    \label{lem:unions_of_subspaces}
-    For a family $X_i$ of subspaces of $E$, we have:
-    \[\bigcup_i [X_i] = [\bigcup_i X_i]\]
-\end{lemma}
+%\begin{lemma}[(Prop 4) Unions of subspaces]
+%(Leroy Proposition 5.1.4)
+%    \label{lem:unions_of_subspaces}
+%    For a family $X_i$ of subspaces of $E$, we have:
+%    \[\bigcup_i [X_i] = [\bigcup_i X_i]\]
+%\end{lemma}
 
 \begin{lemma}[Part 3]
     \label{lem:subspaces_part_3}
-    \uses{lem:nucleus_and_intersection,lem:subset_to_sublocal_part_2,def:further_topology}
+    \uses{lem:open_closed_intersection,lem:subset_to_sublocal_part_2,def:further_topology}
     For any subspaces $X$ of E, we have:
     \begin{enumerate}
         \item \[Ext[X] = [Ext X]\]

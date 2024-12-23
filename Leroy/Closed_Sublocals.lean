@@ -14,6 +14,9 @@ noncomputable def complement (e : Open E) : Nucleus E where
   preserves_inf := (by simp;exact fun x y => sup_inf_left e.element x y)
 
 
+/--
+Leroy corollaire after lemme 8
+-/
 def complement_injective : Function.Injective (@complement E e_frm)  := by
   simp [Function.Injective, complement]
   intro a1 a2 h
@@ -24,9 +27,6 @@ def complement_injective : Function.Injective (@complement E e_frm)  := by
   simp at h2
   exact h2
 
-def complement_surjective : Function.Surjective (@complement E e_frm) := by
-  simp [Function.Surjective, complement]
-  intro b
 
 
 
@@ -108,13 +108,70 @@ lemma le_antisymm' :  ∀ (a b : Closed E), a ≤ b → b ≤ a → a = b := by
   simp [Function.Injective]
 
 
-instance Closed_sSup : PartialOrder (Closed E) where
+instance  : PartialOrder (Closed E) where
   le_refl := (by simp)
   le_trans x y z := (by simp[le];exact fun a a_1 v => Preorder.le_trans (z.nucleus v) (y.nucleus v) (x.nucleus v) (a_1 v) (a v))
   le_antisymm  := le_antisymm'
 
-def Open.complement (x : Open E) : Closed E where
-  element := x.element
+lemma Closed.le_iff (a b : Closed E) : a ≤ b ↔ b.element ≤ a.element := by
+  simp [Closed.nucleus, complement]
+  apply Iff.intro
+  . intro h
+    exact Disjoint.left_le_of_le_sup_right (h ⊥) fun ⦃x⦄ a a => a
+  . intro h
+    exact fun v => le_sup_of_le_left h
 
-def Closed.complement (x : Closed E) : Open E where
-  element := x.element
+
+instance : InfSet (Closed E) where
+  sInf x := ⟨sSup (Closed.element '' x)⟩
+
+instance : Min (Closed E) where
+  min x y := sInf {x, y}
+
+lemma Closed_sInf_le : ∀ (s : Set (Closed E)), ∀ a ∈ s, sInf s ≤ a := by
+  intro s c hc
+  simp [sInf,Closed.nucleus, complement]
+  intro v
+  refine le_sup_of_le_left ?_
+  apply le_sSup
+  simp
+  use c
+
+lemma Closed_le_sInf : ∀ (s : Set (Closed E)) (a : Closed E), (∀ b ∈ s, a ≤ b) → a ≤ sInf s := by
+  intro s c hc
+  simp [sInf, Closed.nucleus, complement]
+  intro v a h
+  simp [Closed.le_iff] at hc
+  have ha := hc a h
+  exact le_sup_of_le_left (hc a h)
+
+instance : CompleteSemilatticeInf (Closed E) where
+  sInf_le := Closed_sInf_le
+  le_sInf := Closed_le_sInf
+
+lemma Open_sSup_corresponds (x : Set E) : sSup x = sSup ((fun x ↦ (⟨x⟩ : Open E)) '' x) := by
+  simp [sSup]
+  rw [Set.image_image]
+  simp only [Set.image_id']
+
+
+lemma Closed_intersection_corresponds (x : Set (Closed E)) : (sInf x).nucleus = sInf (Closed.nucleus '' x) := by
+  simp [sInf, sSup, e_V_nucleus, Closed.nucleus, complement]
+  ext y
+  simp [e_V]
+  apply le_antisymm
+  . simp_all only [sup_le_iff, sSup_le_iff, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    apply And.intro
+    · intro a a_1
+      apply le_sSup
+      simp only [Set.mem_setOf_eq]
+      intro xi h
+      let h := h a a_1 y
+      exact h.left
+    . apply le_sSup
+      simp only [Set.mem_setOf_eq]
+      intro xi h
+      exact Nucleus.increasing' xi
+  · simp only [sSup_le_iff, Set.mem_setOf_eq]
+    intro b h
+    sorry
