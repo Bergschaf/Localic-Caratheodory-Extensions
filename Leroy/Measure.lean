@@ -204,6 +204,7 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodor
   . sorry --trival anscheinend
 
 omit [Fact (regular E)] in
+
 lemma Caratheodory_monotonic {A B : Nucleus E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
   intro h
   simp_rw [Measure.caratheodory]

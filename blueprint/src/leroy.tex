@@ -79,7 +79,7 @@
 \end{definition}
 
 \begin{definition}[Caratheodory]
-    \lean{caratheodory}
+    \lean{Measure.caratheodory}
     \leanok
     \label{def:caratheodory}
     \uses{def:measure_on_locals}
@@ -110,7 +110,7 @@
 \begin{definition}[Neighborhood]
     \label{def:neighborhood}
     \uses{def:open_sublocal}
-    \lean{Neighborhood}
+    \lean{Neighbourhood}
     \leanok
 
     A neighborhood of a sublocal $A$ of $X$ is an open sublocal $V$ of $X$ such that $A \le V$.
@@ -167,7 +167,7 @@
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}
     \uses{def:measure_on_locals,def:caratheodory}
-    \lean{Caratheodory_montonic}
+    \lean{Caratheodory_monotonic}
     \leanok
     The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
 \end{lemma}
