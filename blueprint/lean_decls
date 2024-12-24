@@ -9,6 +9,7 @@ nucleus_frameHom
 sublocal_inclusion
 factorisation
 e_V_nucleus
+e_V_nucleus
 Nucleus_min
 e_U
 eckig
@@ -19,7 +20,9 @@ complement_injective
 Closed
 Closed_sInf_le
 Nucleus.closure
+closure_eq_compl_ext
 Measure
 caratheodory
 regular
 Neighborhood
+Caratheodory_montonic

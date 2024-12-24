@@ -86,6 +86,10 @@ structure Closed (E : Type*) [Order.Frame E] where
 noncomputable def Closed.nucleus (c : Closed E) : Nucleus E :=
   complement ⟨c.element⟩
 
+
+noncomputable instance : Coe (Closed E) (Nucleus E) where
+  coe x := x.nucleus
+
 @[simp]
 instance : LE (Closed E) where
   le x y := x.nucleus ≤ y.nucleus

@@ -154,6 +154,8 @@
 (Leroy CH 4)
     \label{lem:sublocal_union}
     \uses{lem:nucleus, def:sublocal_union}
+    \leanok
+    \lean{e_V_nucleus}
     Let $X_i$ be a family of subframes of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let
     $e(V)$ be the union of all $W \in O(E)$ which are contained in every (TODO wieso every) $e_i(V)$. Then \\
     \begin{enumerate}
@@ -374,6 +376,23 @@
         \item $\partial X = \bar{X} \cap (E - Int X)$
     \end{enumerate}
 \end{definition}
+
+\begin{lemma} [Properties of Further Topology]
+    \label{lem:properties_of_further_topology}
+    \uses{def:further_topology}
+    \leanok
+    \lean{closure_eq_compl_ext}
+    \begin{enumerate}
+        \item $\bar{X} = E \setminus Ext(X)$
+        \item $\partialX = E \setminus (Int X \cup Ext X)$
+        \item $Int X \cup \partial X = \bar X$
+        \item $Ext X \cup \partial X = E \setminus Int X$
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    \uses{lem:properties_of_complements}
+\end{proof}
 
 
 %\begin{definition}[gamma]

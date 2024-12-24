@@ -166,9 +166,15 @@
 
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}
-    \uses{def:measure_on_locals,def:caratheodory} TODO uses inlcusion of sublocals
+    \uses{def:measure_on_locals,def:caratheodory}
+    \lean{Caratheodory_montonic}
+    \leanok
     The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
 \end{lemma}
+\begin{proof}
+    \leanok
+    This is a direct consequence of the definition of the caratheodory extension.
+\end{proof}
 
 \begin{proposition}[Elementary Properties of Caratheodory Extensions]
 (Leroy lemme 3.3, 3.4, Corollary 3.1, Lemme 3.5)

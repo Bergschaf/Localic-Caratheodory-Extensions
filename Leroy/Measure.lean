@@ -31,7 +31,6 @@ noncomputable def Measure.caratheodory {m : @Measure X h} (a : Nucleus X) : NNRe
 def increasing (s :  ℕ → Nucleus X) : Prop :=
   ∀ (n : ℕ), s n ≤ s (n + 1)
 
-variable {m : @Measure X h}(X_n : ℕ → Nucleus X)
 
 lemma Measure.all_le_top {m : @Measure X h} : ∀ a : Open X, m.toFun a ≤ m.toFun ⊤ := by
   intro a
@@ -143,28 +142,26 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
   sorry
 
 
--- TODO
 
+/--
+Leroy definition
+TODO Stone spaces als quelle anschauen
+da steht covered -> Muss da U ≤ sSup ... stehen?
+-/
 def regular (E : Type*)  [Order.Frame E]: Prop :=
   ∀ (U : Open E), U = sSup {V : Open E | V.nucleus.closure.nucleus ≤ U}
 
 
 variable {E : Type*} [e_frm : Order.Frame E] [Fact (regular E)]
-set_option maxHeartbeats 0
+
+variable {m : @Measure E e_frm}(X_n : ℕ → Nucleus E)
 
 /--
 Leroy Lemme 2.2
+TODO stone spaces als quelle vlt
+Seite 81. 1.2
 -/
-lemma sublocal_intersection_of_neighbours {x : Nucleus E} : x = sInf (Neighbourhood x) := by
-  have h :(∀ h, x h = ⨆ V ∈ Neighbourhood x, V h) → x = sInf (Neighbourhood x) := by
-    intro h1
-    ext y
-    rw [h1 y]
-    sorry
-
-  apply h
-  intro h
-
+lemma sublocal_intersection_of_neighbours {A : Nucleus E} : A = sInf (Neighbourhood A) := by
 
   apply le_antisymm
   . apply le_sInf_iff.mpr
@@ -174,15 +171,13 @@ lemma sublocal_intersection_of_neighbours {x : Nucleus E} : x = sInf (Neighbourh
     apply le_trans h3
     simp [Open_Neighbourhood] at h1
     exact h1 v
-  . simp [sInf]
-    intro b h v
 
-
+  . apply sInf_le_iff.mpr
+    intro b h
+    simp only [lowerBounds, Nucleus.toFun_eq_coe, Set.mem_setOf_eq] at h
 
     -- we have to construct an element of Neighbourhood x which is ≤ x
     sorry
-
-
 
 
 
@@ -207,3 +202,28 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodor
 
 
   . sorry --trival anscheinend
+
+omit [Fact (regular E)] in
+lemma Caratheodory_monotonic {A B : Nucleus E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
+  intro h
+  simp_rw [Measure.caratheodory]
+  apply csInf_le_csInf
+  . simp only [BddBelow, Set.Nonempty, lowerBounds, Set.mem_image, forall_exists_index, and_imp,
+     forall_apply_eq_imp_iff₂, Set.mem_setOf_eq]
+    use 0
+    intro a ha
+    simp only [zero_le]
+  . simp [Set.Nonempty, Open_Neighbourhood]
+    use m.toFun ⊤
+    use ⊤
+    simp only [Open.top_nucleus, Nucleus_top, Nucleus.toFun_eq_coe', and_true]
+    exact fun v => Nucleus.increasing' B
+  . simp only [Open_Neighbourhood, Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.image_subset_iff]
+    rw [@Set.setOf_subset]
+    intro x h1
+    simp only [Set.mem_preimage, Set.mem_image, Set.mem_setOf_eq]
+    use x
+    simp at h
+    apply And.intro
+    . exact fun v => Preorder.le_trans (x.nucleus v) (B v) (A v) (h1 v) (h v)
+    . rfl
