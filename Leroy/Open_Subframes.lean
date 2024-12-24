@@ -111,13 +111,13 @@ noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
 lemma leroy_6a (x : Nucleus E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
   . intro h
-    simp[le] at h
+    simp[Nucleus_le] at h
     let h1 := h U
     have h2 : (eckig U) U = ⊤ := by
       simp [eckig, e_U]
     exact eq_top_mono (h U) h2
   . intro h
-    simp [eckig, le]
+    simp [eckig, Nucleus_le]
     intro v
     simp [ e_U]
     intro b h1
@@ -195,7 +195,7 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
   apply iff_iff_implies_and_implies.mpr
   apply And.intro
   . intro h
-    simp [eckig, le, e_U]
+    simp [eckig, Nucleus_le, e_U]
     intro v b h1
     apply le_sSup
     simp
@@ -203,7 +203,7 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
       exact inf_le_inf_left b h
     exact Preorder.le_trans (b ⊓ U) (b ⊓ V) v h2 h1
   . intro h
-    simp [eckig, le, e_U] at h
+    simp [eckig, Nucleus_le, e_U] at h
     let h1 := h V U
     simp at h1
     apply_fun (fun x ↦ x ⊓ U) at h1

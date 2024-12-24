@@ -7,7 +7,7 @@ open CategoryTheory
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
 
-instance le : LE (Nucleus X) where
+instance Nucleus_le : LE (Nucleus X) where
   le x y := ∀ v : X, y.toFun v ≤ x.toFun v
 
 @[simp]
@@ -176,10 +176,10 @@ instance Nucleus_max : Max (Nucleus X) where
 
 
 instance : PartialOrder (Nucleus X) where
-  le_refl := (by simp [le])
-  le_trans := (by simp [le]; exact fun a b c a_1 a_2 v =>
+  le_refl := (by simp [Nucleus_le])
+  le_trans := (by simp [Nucleus_le]; exact fun a b c a_1 a_2 v =>
     Preorder.le_trans (c v) (b v) (a v) (a_2 v) (a_1 v))
-  le_antisymm := (by intro a b h i; simp only [le, Nucleus.toFun_eq_coe] at *; ext x; simp only [Nucleus.toFun_eq_coe]; apply le_antisymm; exact i x; exact h x )
+  le_antisymm := (by intro a b h i; simp only [Nucleus_le, Nucleus.toFun_eq_coe] at *; ext x; simp only [Nucleus.toFun_eq_coe]; apply le_antisymm; exact i x; exact h x )
 
 lemma Nucleus_le_sSup (s : Set (Nucleus E)) (a : Nucleus E) : a ∈ s → a ≤ sSup s := by
   simp [sSup, e_V_nucleus]

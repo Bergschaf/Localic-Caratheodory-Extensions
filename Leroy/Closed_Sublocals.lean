@@ -114,7 +114,7 @@ lemma le_antisymm' :  ∀ (a b : Closed E), a ≤ b → b ≤ a → a = b := by
 
 instance  : PartialOrder (Closed E) where
   le_refl := (by simp)
-  le_trans x y z := (by simp[le];exact fun a a_1 v => Preorder.le_trans (z.nucleus v) (y.nucleus v) (x.nucleus v) (a_1 v) (a v))
+  le_trans x y z := (by simp[Nucleus_le];exact fun a a_1 v => Preorder.le_trans (z.nucleus v) (y.nucleus v) (x.nucleus v) (a_1 v) (a v))
   le_antisymm  := le_antisymm'
 
 lemma Closed.le_iff (a b : Closed E) : a ≤ b ↔ b.element ≤ a.element := by
