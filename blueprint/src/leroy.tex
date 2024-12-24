@@ -1,320 +1,3 @@
-\chapter{Leroy Chapter I}
-
-
-\section{F star}
-
-\begin{definition}[Frame]
-    \label{lem:frame}
-    (Already in Mathlib )A Frame can be viewed as a Category.
-    There exists a morphism between $A$ and $B$ iff $A \le B$.
-    \leanok
-\end{definition}
-
-\begin{definition}[Top -> Frame]
-    \label{def:top_frame_func}
-    \uses{lem:frame}
-    (Brauchen wir das überhaupt?) There exists a contravariant Functor from a topological Space to the corresponding Frame Category with open Sets as objects. $f: X \rightarrow O(X)$
-\end{definition}
-
-\begin{definition}[$f^*$ and $f_*$]
-    \label{def:f_star}
-    \uses{def:top_frame_func}
-    \lean{f_obenstern}
-    \leanok
-    For every continuous Function $f : X \rightarrow Y$ between topological Spaces, there exists a pair of functors $(f^*,f_*)$.
-    \begin{gather*}
-        f* = f^{-1} : O(Y) \rightarrow O(X)\\
-        f_* : O(X) \rightarrow O(Y) := A \mapsto \bigcup_{f^*(v) \le A} v\\
-    \end{gather*}
-\end{definition}
-
-\begin{lemma}[$f^*$ commutes]
-    \label{lem:f_star_comm}
-    \uses{def:f_star}
-
-    $f^*$ commutes with finite meets and arbitrary joins. This is the same as saying that the Frame Category of open Sets has all small coproducts and all finite Limits. \href{https://ncatlab.org/nlab/show/frame}{nlab}
-\end{lemma}
-
-\begin{lemma}[Homsets]
-    \label{lem:f_star_homsets}
-    \uses{lem:f_star_adj}
-    \leanok
-    (Already in Mathlib)
-    \[Hom_{O(Y)}(f*(V), A) = Hom_{O(x)}(v, f_*(A))\]
-\end{lemma}
-
-\begin{lemma}[$f^* \dashv f_*$]
-    \label{lem:f_star_adj}
-    \uses{def:f_star}
-    \lean{f_adj}
-    \leanok
-    $f^*$ is the right adjoint to $f_*$
-\end{lemma}
-\begin{proof}
-    \leanok
-\end{proof}
-
-\begin{lemma}[triangle]
-(Mclane p. 485)
-
-    The triangular identities reduce to the following equalities:
-    \[f^*f_*f^* = f^* \quad \text{and} \quad f_*f^*f_* = f_*\]
-    \lean{triangle_one}
-    \leanok
-    \label{lem:triangle}
-\end{lemma}
-\begin{proof}
-    \uses{lem:f_star_adj}
-
-    This follows from the triangular identities of the adjunction.
-    \leanok
-\end{proof}
-
-
-\section{Embedding}
-
-\begin{lemma}[Embedding]
-(Leroy Lemme 1)
-    \label{lem:embedding}
-    \uses{def:f_star,lem:triangle}
-    \lean{f_injective_surjective}
-    The following arguments are equivalent:
-    \begin{enumerate}
-        \item $f^*$ is surjective
-        \item $f_*$ is injective
-        \item $f^{*}f_* = 1_{O(X)})$
-    \end{enumerate}
-\end{lemma}
-\begin{proof}
-    This follows from the triangular identities. \leanok
-\end{proof}
-
-\begin{definition}[Embedding]
-    \label{def:embedding}
-    \uses{lem:embedding}
-    An embedding is a morphism that satisfies the conditions of \cref{lem:embedding}
-    \lean{Leroy_Embedding}
-    \leanok
-\end{definition}
-
-
-\section{Subspaces}
-
-\begin{definition}[Nucleus]
-    \label{def:nucleus}
-    \uses{lem:frame}
-    \lean{Nucleus}
-    \leanok
-    A nucleus is a map $e : O(E) \rightarrow O(E)$ with the following three properties:
-    \begin{enumerate}
-        \item $e$ is idempotent
-        \item $U \le e U$
-        \item $e(U \cap V) = e(U) \cap e(V)$
-    \end{enumerate}
-\end{definition}
-
-\begin{lemma}[Nucleus]
-(Leroy Lemme 3)
-    \label{lem:nucleus}
-    \lean{nucleus_equiv_subframe_3}
-    \leanok
-    \uses{def:f_star,def:nucleus,def:embedding}
-    Let $e : O(E) \rightarrow O(E)$ be monotonic. The following are equivalent:
-    \begin{enumerate}
-        \item $e$ is a nucleus
-        \item There is a locale $X$ and a morphism $f: X \rightarrow E$ such that $e = f_*f^*$.
-        \item Then there is a locale $X$ and a embedding $f: X \rightarrow E$ such that $e = f_*f^*$.
-    \end{enumerate}
-\end{lemma}
-\begin{proof}
-\leanok
-\end{proof}
-
-\begin{definition}[Subframe]
-(Leroy CH 3)
-    \label{def:subframe}
-    \uses{lem:nucleus}
-    \lean{Subframe}
-    \leanok
-    A subspace $Y \subset X$ is defined by a nucleus $e_Y: O(X) \rightarrow O(X)$, such that $O(Y) = Im(e_Y) = \{U \in O(X) | e_Y(U) = U\}$.
-    The corresponding embedding (???) is $i_X : O(Y) \rightarrow O(X)$. $i^*_X(V) = e_X(V)$, $(i_X)_*(U) = U$
-
-    And every nucleus $e$ on $O(X)$ defines a subspace $Y$ of $X$ by $O(Y) = Im(e)$
-\end{definition}
-
-\begin{definition}[Subframe Inclusion]
-(Stimmt das?)(Leroy Ch 3)
-    \label{def:subframe_inclusion}
-    \uses{def:subframe}
-    $X \subset Y$ if $e_Y \le e_X$
-\end{definition}
-
-\begin{lemma}[factorisation]
-(Leroy Lemme 2)
-    \label{lem:factorisation}
-    \uses{def:f_star, def:embedding}
-    \lean{factorisation}
-    \leanok
-    Let $i : X \rightarrow E$ be an embedding and $f: Y \rightarrow E$ be a morphism of spaces. To have $f$ factor through $i$, it is necessary and sufficient that $i_*i^*(V) \le f_*f^*(V) for all V \in O(E)$.
-\end{lemma}
-\begin{proof}
-    \leanok
-\end{proof}
-
-
-\begin{lemma}[Familiy of subspaces]
-(Leroy CH 4)
-    \label{lem:family_of_subspaces}
-    \uses{lem:nucleus}
-    Let $X_i$ be a family of subspaces of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let $e(V)$ be the onion of all $W \in O(E)$ which are contained in every $e_i(V)$. Then \\
-    \begin{enumerate}
-        \item $e$ is the corresponding nucleus of a subspace $X$ of $E$
-        \item a subspace $Z$ of $E$ contains $x$ if and only if it contains all $X_i$ x is thus called the union of $X_i$ denoted by $\bigcup_i X_i$
-    \end{enumerate}
-\end{lemma}
-
-\subsection{Direct Images}
-\begin{definition}[Direct Images]
-    \uses{def:subframe}
-    \label{def:direct_images}
-    Let $f : E \rightarrow F$ be a morphism of spaces. The map $f_*f^* : O(F) \to O(F)$ is the nucleus of the subspace $Im(f)$ of $F$. By (lemma 2), $Im(F)$ is the smallest subspace of $F$ through which $f$ can be factored. For any subspace $X$ of $E$, we define the direct image as
-    \[f(x) = Im(fi_x)\]
-    Where $i_X$ is the inclusion of $X$ into $E$.
-\end{definition}
-
-\begin{lemma}[(4) Direct Images Transitive]
-(Leroy Lemme 4)
-    \label{lem:direct_images_transitive}
-    \uses{def:direct_images}
-    Given two morphisms $f : E \rightarrow F$ and $g : F \rightarrow G$ and a subspace $X$ of $E$, we have
-    \[(gf)(X) = g(f(X))\]
-\end{lemma}
-
-\begin{lemma}[(5) Direct Images Families]
-(Leroy Lemme 5)
-    \label{lem:direct_images_families}
-    \uses{def:direct_images}
-    For all morphisms $f: E \rightarrow F$ and a family $(X_i)$ of subspaces of $E$, the following holds:
-    \[f(\cup_i X_i) = \cup_i f(X_i)\]
-\end{lemma}
-
-\subsection{Inverse Images}
-\begin{definition}[Inverse Images]
-    \label{def:inverse_images}
-    \uses{lem:direct_images_transitive}
-    We have a morphism of spaces $f : E \rightarrow F$ and a subspace $Y$ of $F$. The inverse image $f^{-1}(Y)$ is the biggest subspace $X$ of $E$ such that $f(X) \subset Y$. \\
-    More generally for a morphism $h : A \rightarrow E$, the necessary and sufficient condition for $h$ to factor through $f^{-1}$ is that $fh$ factors through $Y$.
-    \[Im h \subset f^{-1}(Y)\iff f(Im h) \subset Y \iff Im(fh) \subset Y \] \
-\end{definition}
-
-\subsection{Open subspaces}
-\begin{definition}[$e_U$]
-    TODO bessere benennung
-    \label{def:e_U}
-    \uses{def:nucleus,def:subframe}
-    \lean{e_U}
-    \leanok
-    Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
-\end{definition}
-
-
-\begin{definition}[Open sublocal]
-    \label{def:open_sublocal}
-    \uses{def:e_U}
-    For any $U \in O(E)$, the sublocal $[U]$ is called an open sublocal of $E$.
-    (+Senf: stimmt das mit dem üblichen überein???)
-\end{definition}
-
-
-\begin{lemma}[(6,7) Open subspaces]
-(Leroy Lemma 6,7)
-    \label{lem:open_subspaces}
-    \uses{def:e_U}
-    \begin{enumerate}
-        \item For all subspaces $X$ of $E$ and any $U \in O(E)$:
-        \[X \subset [U] \iff e_X(U) = 1_E\]
-
-        \item For all $U, V \in O(E)$, we have:
-        \[[U \cap V] = [U] \cap [V]\]
-        \[e_{U \cap V} = e_Ue_V=e_Ve_U\]
-        \[U \subset V \iff [U] \subset [V]\]
-        \item
-        For all families $V_i$ of elements of $O(E)$, we have:
-        \[\cup_i[V_i] = [\cup_iV_i]\]
-
-        \item
-        For all morphisms of spaces $f: E \to F$ and all $V \in O(E)$, we have:
-        \[f^{-1}([V])] = [f^*(V)]\]
-        \item
-        Let $X$ be a subspace of $E$ and $U \in O(E)$. For all $V \in O(E)$, we have:
-        \[V \subset e_X(U) \iff [V] \cap X \subset [U]\]
-    \end{enumerate}
-\end{lemma}
-
-
-\begin{definition}[Complement]
-    \label{def:complement}
-    \uses{def:open_sublocal}
-    The complement of an open sublocal $U$ of $X$ is the sublocal $X \setminus U$.
-    (Leroy p. 12) (+ Senf brauchen wir das allgemein??)
-\end{definition}
-
-\begin{lemma}[(1.8) Properties of Complements]
-    \label{lem:properties_of_complements}
-    \uses{def:complement}
-    For any any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
-    \[V \cup X = E \iff E \setminus V subset X\]
-    \[V \cap X = \emptyset \iff X \subset E \setminus V\]
-    And thereby:
-    \[(E - U = E - V) \implies U = V\]
-\end{lemma}
-
-\begin{lemma}[(1.9) Preimage of complements]
-    \label{lem:preimage_of_complements}
-    \uses{def:complement,lem:properties_of_complements}
-    For any morphism of spaces $g: A \to E$ and any open sublocal $V$ of $F$, we have:
-    \[g^{-1}(E - V) = A - g^{-1}(V)\]
-\end{lemma}
-
-\begin{lemma}[(1.8bis) Properties of Complements Part 2]
-    \label{lem:properties_of_complements_part_2}
-    \uses{def:complement, lem:preimage_of_complements}
-    For any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
-    \[V \cup (E - V) = E \iff V \subset X \]
-    \[V \cap (E - V) = \emptyset X \subset V\]
-\end{lemma}
-
-
-\begin{lemma}[(1.10) Nucleus and Intersection]
-    \label{lem:nucleus_and_intersection}
-    \uses{def:nucleus,def:e_U}
-    For any $U \in O(E)$, and sub local $X$ of $E$ we have:
-    \[e_{U \cap X} = e_Ue_X\]
-    And for a closed $F$
-    \[e_{X \cap F} = e_Xe_F\]
-\end{lemma}
-
-\begin{lemma}[(1.11) Distribution of Intersections over Unions]
-    \label{lem:distribution_of_intersections_over_unions}
-    \uses{lem:nucleus_and_intersection}
-    Let $X, Y, L$ be three sub locals of $E$. If $L$ is open or closed, we have:
-    \[L \cap (X \cap Y) = (L \cap X) \cup (L \cap Y)\]
-\end{lemma}
-
-\begin{definition}[Further Topology]
-    \label{def:further_topology}
-    \begin{enumerate}
-        \item $Int X$ is the largest open sublocal contained in $X$
-        \item $Ext X$ is the largest open sublocal contained in $E \setminus X$
-        \item $\bar{X}$ is the smallest closed sublocal containing $X$
-        \item $\partial X = \bar{X} \cap (E - Int X)$
-    \end{enumerate}
-\end{definition}
-
-\begin{definition}[gamma]
-    \label{def:gamma}
-    $\gamma(E)$ is the minimal element of all dense sublocals of $E$.
-\end{definition}
 
 
 \chapter{Leroy Chapter II}\label{sec:leroy-chapter-ii}
@@ -359,7 +42,7 @@
 \begin{lemma}[Union of Intersections]
 (Leroy Lemme 2.4)
     \label{lem:union_of_intersections}
-    \uses{def:intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
+    \uses{def:sublocal_intersection,prop:boolean_algebra,lem:b_X_generates_sublocals}
     For any family $B_i$ of sublocals of a local $E$ and a sublocal $A$, we have:
     \[A \cup (\bigcap_i B_i) = \bigcap_i (A \cap B_i)\]
     This implies if $A_i$ and $B_j$ are families of sublocals of $X$, we have:
@@ -379,19 +62,25 @@
 \chapter{Leroy Chapter III}\label{sec:leroy-chapter-iii}
 \begin{definition}[Measure on Locals]
     \label{def:measure_on_locals}
-    \uses{def:open_sublocal}
+    \uses{def:open_sublocal,lem:sublocal_properties} TODO ggf auspalten mit extra lemma das sagt dass die Open subframes
+    einen frame bilden
+    \lean{Measure}
+    \leanok
     A measure on a local $X$ is a map $\mu : O(X) \to [0,\infty)$ such that:
     \begin{enumerate}
         \item $\mu(\emptyset) = 0$
         \item $U \subset V \implies \mu(U) \le \mu(V)$
         \item $\mu(U \cup V) = \mu(U) + \mu(V) - \mu(V \cap V)$
         \item For any increasingly filtered family $V_i$ of open sublocals of $X$, we have:
-        \[\mu(\bigcup V_i) = \sup_i \mu(V_i)\]
+        \[\mu(\bigcup V_i) = \sup_i \mu(V_i)\] this means:
+        For all $i$ and $j$ there exists a $k$ such that $V_i \cup V_j \subset V_k$ bzw. $V_i \subset V_k$ and $V_j \subset V_k$.
     \end{enumerate}
     (Leroy III.1.)
 \end{definition}
 
 \begin{definition}[Caratheodory]
+    \lean{caratheodory}
+    \leanok
     \label{def:caratheodory}
     \uses{def:measure_on_locals}
     For any measure on a local $X$, the caratheodory extension is:
@@ -410,6 +99,10 @@
 
 \begin{definition}[Regular Local]
     \label{def:regular_local}
+    \uses{def:open_sublocal, def:further_topology}
+    \lean{regular}
+    \leanok
+    A local is regular, if for all open sublocals $U$ of $E$, the open sublocals $V$ such that $V\bar \subset U$ recover $U$.
 \end{definition}
 
 
@@ -417,6 +110,9 @@
 \begin{definition}[Neighborhood]
     \label{def:neighborhood}
     \uses{def:open_sublocal}
+    \lean{Neighborhood}
+    \leanok
+
     A neighborhood of a sublocal $A$ of $X$ is an open sublocal $V$ of $X$ such that $A \le V$.
 \end{definition}
 
@@ -435,15 +131,12 @@
     For any open sublocal $U$ of a local $X$, the caratheodory extension of a measure on $X$ satisfies \[\mu(U) + \mu(X \setminus U) = \mu(X)\]
 \end{lemma}
 
-\begin{definition}[Intersection]
-    \label{def:intersection}
-    The intersection of any Family $A_i$ of sublocals of a local $E$ is defined as ........ (+ Senf pullback)
-\end{definition}
+
 
 \begin{proposition}[Sublocals structure]
     Obacht TODO
     \label{prop:sublocals_structure}
-    \uses{def:intersection,def:complement,lem:union_of_intersections}
+    \uses{def:sublocal_intersection,def:complement,lem:union_of_intersections}
     The sublocals of a local $E$ form a complete (distributive vlt.) lattice with the operations of intersection and complement.
 \end{proposition}
 
@@ -451,7 +144,7 @@
 \begin{lemma}[Property 2]
 (Leroy Lemm 3.4)
     \label{lem:property_2}
-    \uses{def:complement,def:intersection,lem:property_1}
+    \uses{def:complement,def:sublocal_intersection,lem:property_1}
     For any open sublocal $U$ and any sublocal $A$ of a local $E$, the caratheodory extension of a measure on $X$ satisfies \[\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))\]
 \end{lemma}
 
@@ -473,9 +166,15 @@
 
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}
-    \uses{def:measure_on_locals,def:caratheodory} TODO uses inlcusion of sublocals
+    \uses{def:measure_on_locals,def:caratheodory}
+    \lean{Caratheodory_montonic}
+    \leanok
     The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
 \end{lemma}
+\begin{proof}
+    \leanok
+    This is a direct consequence of the definition of the caratheodory extension.
+\end{proof}
 
 \begin{proposition}[Elementary Properties of Caratheodory Extensions]
 (Leroy lemme 3.3, 3.4, Corollary 3.1, Lemme 3.5)
@@ -508,7 +207,7 @@
 
 \begin{proposition}[reductive]
     \label{prop:reductive}  (Proposition 3.3.1)
-    \uses{def:subframe, prop:elementary_properties_of_caratheodory_extensions}
+    \uses{def:sublocal, prop:elementary_properties_of_caratheodory_extensions}
     For any measure on a local $X$, the caratheodory extension is
     reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
 \end{proposition}
@@ -578,7 +277,7 @@
 \begin{lemma}[Subset to sublocal Part 2]
 (Leroy Proposition 5.1.2, 5.1.3)
     \label{lem:subset_to_sublocal_part_2}
-    \uses{lem:nucleus_and_intersection}
+    \uses{lem:open_closed_intersection}
     For an open subspace $U$ of $E$ and a subspace $X$ of $E$, we have:
     \begin{gather*}
     [U \cap X]
@@ -590,16 +289,16 @@
 
 \end{lemma}
 
-\begin{lemma}[(Prop 4) Unions of subspaces]
-(Leroy Proposition 5.1.4)
-    \label{lem:unions_of_subspaces}
-    For a family $X_i$ of subspaces of $E$, we have:
-    \[\bigcup_i [X_i] = [\bigcup_i X_i]\]
-\end{lemma}
+%\begin{lemma}[(Prop 4) Unions of subspaces]
+%(Leroy Proposition 5.1.4)
+%    \label{lem:unions_of_subspaces}
+%    For a family $X_i$ of subspaces of $E$, we have:
+%    \[\bigcup_i [X_i] = [\bigcup_i X_i]\]
+%\end{lemma}
 
 \begin{lemma}[Part 3]
     \label{lem:subspaces_part_3}
-    \uses{lem:nucleus_and_intersection,lem:subset_to_sublocal_part_2,def:further_topology}
+    \uses{lem:open_closed_intersection,lem:subset_to_sublocal_part_2,def:further_topology}
     For any subspaces $X$ of E, we have:
     \begin{enumerate}
         \item \[Ext[X] = [Ext X]\]
