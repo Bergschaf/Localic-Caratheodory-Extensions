@@ -10,7 +10,6 @@ variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 instance Nucleus_le : LE (Nucleus X) where
   le x y := ∀ v : X, y.toFun v ≤ x.toFun v
 
-@[simp]
 lemma Nucleus.le_iff {n m : Nucleus X} : n ≤ m ↔ ∀ v : X, m.toFun v ≤ n.toFun v := by rfl
 
 def Nucleus_to_subtype (s : Nucleus X) : Type u := (s : Set X)

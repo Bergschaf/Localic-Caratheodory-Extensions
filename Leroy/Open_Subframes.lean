@@ -342,6 +342,8 @@ lemma eckig_preserves_top : eckig (⊤ : E) = ⊤ := by
 def FrameHom_eckig : FrameHom E (Nucleus E) :=
   ⟨⟨⟨eckig, eckig_preserves_inf⟩, eckig_preserves_top⟩, (by simp;exact fun s =>Eq.symm (eckig_preserves_sSup s))⟩
 
+
+
 instance Open.le : LE (Open E) where
   le x y := (x : Nucleus E) ≤ y
 
