@@ -118,10 +118,6 @@ instance : OrderTop (Nucleus X) where
 @[simp]
 lemma Nucleus.toFun_eq_coe (n : Nucleus X) : n.toFun = n := rfl
 
-@[simp]
-lemma Nucleus.toFun_eq_coe' {f : E → E} {g :∀ x, f (f x) = f x} {h : ∀ x, x ≤ f x} {i : ∀ x y, f (x ⊓ y) = f x ⊓ f y}: ↑({toFun := f, idempotent := g, increasing := h, preserves_inf := i} : Nucleus E) = f := by
-  rfl
-
 lemma Nucleus.idempotent'' (n : Nucleus X) {x : X} : n (n x) = n x := by
   rw [← n.toFun_eq_coe]
   exact n.idempotent'
@@ -222,7 +218,13 @@ lemma Nucleus_sInf_le :  ∀ (s : Set (Nucleus E)), ∀ a ∈ s, sInf s ≤ a :=
   simp only [Set.mem_setOf_eq]
   use a
 
-instance : CompleteSemilatticeInf (Nucleus E) where
+
+instance {α : Type*} [CompleteSemilatticeInf α] : CompleteSemilatticeSup αᵒᵈ where
+  le_sSup := @CompleteSemilatticeInf.sInf_le α _
+  sSup_le := @CompleteSemilatticeInf.le_sInf α _
+
+
+instance Nucleus.instCompleteSemilatticeInf : CompleteSemilatticeInf (Nucleus E) where
   le_antisymm a b h1 h2 := (by ext x; simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe] at *; apply le_antisymm;exact h1 x;exact h2 x)
   sInf_le := Nucleus_sInf_le
   le_sInf := Nucleus_le_sInf

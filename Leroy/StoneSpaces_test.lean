@@ -1,13 +1,13 @@
 import Leroy.Open_Subframes
 import Mathlib.Tactic.Propose
-
+import Mathlib.Data.Quot
 variable {X Y E: Type u} [x_frm : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
 
 def alt_sInf_fun (s : Set (Nucleus X)) (a : X) := sSup {j a | j ∈ s}
 
 
-
+#synth Setiod X
 
 
 lemma increasing : ∀ (x : X), x ≤ alt_sInf_fun s x := by

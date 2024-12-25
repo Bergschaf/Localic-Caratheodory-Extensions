@@ -106,6 +106,29 @@
     \leanok
 \end{proof}
 
+\begin{definition}[Nucleus Partial Order]
+    \label{def:nucleus_partial_order}
+    \uses{def:nucleus}
+    \lean{Nucleus.le_iff}
+    \leanok
+    For two nuclei $e$ and $f$ on $O(E)$, we say that $e \le f$ if $e(U) \le f(U)$ for all $U \in O(E)$.
+    This relation is a partial order.
+\end{definition}
+
+\begin{lemma} [Nucleus Intersection]
+    \label{lem:nucleus_intersection}
+    \uses{def:nucleus}
+    \lean{Nucleus.instCompleteSemilatticeInf}
+    \leanok
+    TODO Quelle StoneSpaces S.51
+    For a set $S$ of nuclei, the intersection $\bigcap S$ can be computed by $\bigcap S(a) = \bigcap \{j(a) | j \in S \}$.
+    This function satisfies the properties of a nucleus and of an infimum.
+\end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
+
+
 \begin{definition}[Sublocal]
 (Leroy CH 3)
     \label{def:sublocal}
@@ -119,12 +142,13 @@
 
 \begin{definition}[Sublocal Inclusion]
 (Stimmt das?)(Leroy Ch 3)
-    \label{def:sublocal_inclusion}
+    \label{def:sublocal_inclusion, def:nucleus_partial_order}
     \uses{def:sublocal}
     \lean{Nucleus_le}
     \leanok
-    $X \subset Y$ if $e_Y(u) \le e_X(u)$ for all $u$
+    $X \subset Y$ if $e_Y(u) \le e_X(u)$ for all $u$. This means that the Sublocals are a dual order to the nuclei.
 \end{definition}
+
 
 \begin{lemma}[factorisation]
 (Leroy Lemme 2)
@@ -168,6 +192,24 @@
     The properties of the nucleus (idempotent, increasing, preserving intersection) can be verified by unfolding the
     definition of $e(V)$.
     \leanok
+\end{proof}
+
+\begin{lemma}[Sublocal Union equals Nucleus Intersection]
+    \label{lem:sublocal_union_nucleus_intersection}
+    \uses{lem:sublocal_union,lem:nucleus_intersection}
+    \lean{leroy_eq_stone}
+    \leanok
+    For a family of sublocals $X_i$ of $E$, the union $\bigcup X_i$ is the intersection of the corresponding nuclei.
+\end{lemma}
+\begin{proof}
+    The infimum of the Nuclei is a Supremum of the sublocals, because the Nuclei are a dual order to the sublocals.)
+    This means that it suffices to show that suprema are unique. \\
+    TODO Quelle \link{https://proofwiki.org/wiki/Infimum_is_Unique} \\
+    Suppose there are two different suprema $c$ and $c'$ of a set $S$. Because of the definition of a supremum, we
+    that they are both upper bounds of $S$. But we also know that the supremum is smaller than any other upper bound, so
+    we get $c \le c'$ and $c' \le c$. This means that $c = c'$.
+    \leanok
+
 \end{proof}
 
 
