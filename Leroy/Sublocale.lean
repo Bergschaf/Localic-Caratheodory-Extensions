@@ -169,7 +169,6 @@ theorem leroy_eq_stone (s : Set (Sublocale E)) : e_V_sublocale s = sSup s := by
   . exact h4 (sSup s) h2
   . exact h3 (e_V_sublocale s) h1
 
-
 instance : InfSet (Sublocale E) where
   sInf X_i := sSup {w | ∀ x ∈ X_i, w ≤ x}
 
