@@ -14,6 +14,8 @@ e_V_nucleus
 e_V_nucleus
 leroy_eq_stone
 Nucleus_min
+Nucleus.instCompleteLattice
+Nucleus.instFrame
 e_U
 eckig
 Open

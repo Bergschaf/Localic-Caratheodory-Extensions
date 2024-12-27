@@ -222,6 +222,28 @@
     For all $V \in O(E)$, the intersection $\bigcap X_i$ is the Union of all Nuclei $w$ such that $w \le x_i $ for all $x_i \in X_i $
 \end{definition}
 
+\begin{lemma}[Nucleus Complete Lattice]
+    \label{lem:nucleus_complete_lattice}
+    \uses{def:sublocal_intersection,lem:nucleus_intersection}
+    \lean{Nucleus.instCompleteLattice}
+    \leanok
+    The Nuclei (and therefore the sublocals) form a complete lattice.
+\end{lemma}
+\begin{proof}
+    One can proove that the Nuclei are closed under arbitrary intersections by unfolding the definition of the intersection. The supremum is defined as the infimum of the upper Bound. \\
+    \leanok
+\end{proof}
+
+\begin{lemma}[Nucleus Frame]
+    \label{lem:nucleus_frame}
+    \uses{lem:nucleus_complete_lattice}
+    \lean{Nucleus.instFrame}
+    \leanok
+    The Nuclei (and therefore the sublocals) form a frame.
+\end{lemma}
+\begin{proof}
+\end{proof}
+
 \subsection{(1.5) Direct Images}
 
 \begin{definition}[Direct Images]
