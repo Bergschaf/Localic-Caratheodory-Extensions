@@ -77,6 +77,7 @@ lemma Nucleus.ext {n m : Nucleus X} (h: ∀ a, n.toFun a = m.toFun a) : n = m :=
   DFunLike.ext n m h
 
 
+
 /--
 A Nucleus preserves ⊤
 -/
@@ -115,7 +116,7 @@ instance : OrderTop (Nucleus X) where
   le_top := (by simp only [Nucleus.top, Nucleus.le_iff, le_top, implies_true])
 
 @[simp]
-lemma Nucleus.fun_of {tf : E → E} {h1 : ∀ (x : E), tf (tf x) ≤ tf x} {h2 : ∀ (x : E), x ≤ tf x} {h3 : ∀ (x y : E), tf (x ⊓ y) = tf x ⊓ tf y} {v : E} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Nucleus E) v = tf v := by rfl
+lemma Nucleus.fun_of {tf : X → X} {h1 : ∀ (x : X), tf (tf x) ≤ tf x} {h2 : ∀ (x : X), x ≤ tf x} {h3 : ∀ (x y : X), tf (x ⊓ y) = tf x ⊓ tf y} {v : X} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Nucleus X) v = tf v := by rfl
 
 @[simp]
 lemma Nucleus.toFun_eq_coe (n : Nucleus X) : n.toFun = n := rfl

@@ -17,16 +17,16 @@ instance Nucleus.instCompleteLattice : CompleteLattice (Nucleus E) where
 lemma Nucleus.min_eq (a b : Nucleus E) : a ⊓ b = sInf {a, b} := by rfl
 
 @[simp]
-lemma Sublocale_le_Nucleus (a : Sublocale E) (b : Nucleus E) : a ≤ b ↔ b ≤ a.Nucleus:= by
+lemma Sublocale_le_Nucleus (a : Sublocale E) (b : Nucleus E) : a ≤ b ↔ b ≤ a.nucleus:= by
   rw [@Sublocale.le_iff]
-  simp [Sublocale.Nucleus]
+  simp [Sublocale.nucleus]
   exact ge_iff_le
 
 @[simp]
-lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s ↔ a ∈ (Sublocale.Nucleus '' s):= by
+lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s ↔ a ∈ (Sublocale.nucleus '' s):= by
   exact Iff.symm (Set.mem_image_iff_of_inverse (congrFun rfl) (congrFun rfl))
 
-
+/-
 lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
   intro a S
 
@@ -47,3 +47,4 @@ lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), 
 
 instance Nucleus.instFrame : Order.Frame (Nucleus E) :=
   Order.Frame.ofMinimalAxioms ⟨Nucleus_Frame_minimal_Axioms⟩
+-/

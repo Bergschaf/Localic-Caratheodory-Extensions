@@ -5,6 +5,9 @@ variable {E : Type*} [e_frm : Order.Frame E]
 
 abbrev Sublocale (E : Type*) [Order.Frame E] := (Nucleus E)ᵒᵈ
 
+def Nucleus.nucleus (x : Nucleus E) := x
+def Sublocale.nucleus (x : Sublocale E) := x.ofDual
+
 instance : Coe (Sublocale E) (Nucleus E) where
   coe x := x.ofDual
 
@@ -12,9 +15,17 @@ instance : FunLike (Sublocale E) E E where
   coe x := x.ofDual.toFun
   coe_injective' f g h := (by cases f; cases g; congr)
 
+
 lemma Sublocale.le_iff (a b : Sublocale E) : a ≤ b ↔ b.ofDual ≤ a.ofDual := (by exact
   ge_iff_le)
 
+
+lemma Sublocale.le_iff'' (a b : Sublocale E) : @LE.le (Nucleus E) _ a b ↔ a.nucleus ≤ b.nucleus := by
+  exact ge_iff_le
+
+@[simp]
+lemma Sublocale.nucleus_toFun (a : Nucleus E) : (OrderDual.ofDual a).toFun = a.toFun := by
+  exact rfl
 
 --- Leroy SupSet
 

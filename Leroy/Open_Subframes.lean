@@ -1,5 +1,6 @@
 import Leroy.Nucleus
 import Leroy.Sublocale
+import Leroy.NucleusFrame
 
 variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [Order.Frame F]
 
@@ -20,10 +21,7 @@ example : @e_U E e_frm = e_U' := by
     intro b h
     simp_all only [himp_inf_self, inf_le_left]
 
-lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) = e_U U H := by
-  simp [e_U]
-  apply le_antisymm_iff.mpr
-  apply And.intro
+
 lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) ≤ e_U U H := by
   . apply sSup_le_iff.mpr
     simp
@@ -108,16 +106,19 @@ noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
 -- Leroy Lemme 6
 
 
-lemma leroy_6a (x : Nucleus E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
+lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
   . intro h
     simp[Nucleus.le_iff] at h
     let h1 := h U
     have h2 : (eckig U) U = ⊤ := by
-      simp [eckig, e_U]
+      simp only [eckig]
+      rw [Nucleus.fun_of]
+      simp only [e_U, inf_le_right, Set.setOf_true, sSup_univ]
+
     exact eq_top_mono (h U) h2
   . intro h
-    simp [eckig, Nucleus_le]
+    simp [eckig, Nucleus.le]
     intro v
     simp [ e_U]
     intro b h1
@@ -195,17 +196,25 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
   apply iff_iff_implies_and_implies.mpr
   apply And.intro
   . intro h
-    simp [eckig, Nucleus_le, e_U]
-    intro v b h1
+    intro v
+    simp [eckig, Nucleus.le, e_U]
+    intro b h1
     apply le_sSup
     simp
     have h2 : b ⊓ U ≤ b ⊓ V := by
       exact inf_le_inf_left b h
     exact Preorder.le_trans (b ⊓ U) (b ⊓ V) v h2 h1
   . intro h
-    simp [eckig, Nucleus_le, e_U] at h
-    let h1 := h V U
-    simp at h1
+
+    simp [eckig,  e_U] at h
+    rw [Nucleus.le_iff] at h
+    simp [Sublocale.nucleus] at h
+    rw [Nucleus.coe_eq_toFun] at h
+    rw [@Sublocale.nucleus_toFun] at h
+    simp only at h
+
+    let h1 := h V
+    simp only at h1
     apply_fun (fun x ↦ x ⊓ U) at h1
     dsimp at h1
     have h2 : sSup {W | W ⊓ U ≤ V} ⊓ U ≤ V := by
@@ -214,7 +223,9 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
     have h3 : U ≤ U ⊓ U := by
       simp only [le_refl, inf_of_le_left]
     apply le_trans h3
-    exact Preorder.le_trans (U ⊓ U) (sSup {W | W ⊓ U ≤ V} ⊓ U) V h1 h2
+    apply le_trans' h2
+    simp [e_U] at h1
+    exact inf_le_inf_right U h1
     rw [Monotone]
     exact fun ⦃a b⦄ a_1 => inf_le_inf_right U a_1
 
