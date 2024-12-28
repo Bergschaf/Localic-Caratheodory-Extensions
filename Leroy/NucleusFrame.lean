@@ -26,8 +26,6 @@ lemma Sublocale_le_Nucleus (a : Sublocale E) (b : Nucleus E) : a ≤ b ↔ b ≤
 lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s ↔ a ∈ (Sublocale.Nucleus '' s):= by
   exact Iff.symm (Set.mem_image_iff_of_inverse (congrFun rfl) (congrFun rfl))
 
-@[simp]
-lemma Nucleus.fun_of {tf : E → E} {h1 : ∀ (x : E), tf (tf x) ≤ tf x} {h2 : ∀ (x : E), x ≤ tf x} {h3 : ∀ (x y : E), tf (x ⊓ y) = tf x ⊓ tf y} {v : E} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Nucleus E) v = tf v := by rfl
 
 lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
   intro a S
@@ -42,9 +40,6 @@ lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), 
   intro v
   ---
   sorry
-
-
-
 
 
 

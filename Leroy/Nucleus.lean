@@ -84,7 +84,7 @@ lemma nucleus_preserves_top (n : Nucleus X) : n.toFun ⊤ = ⊤ :=
    top_le_iff.mp (n.increasing ⊤)
 
 
-instance : LE (Nucleus X) where
+instance Nucleus.le : LE (Nucleus X) where
   le x y := ∀ v : X, x.toFun v ≤ y.toFun v
 
 lemma Nucleus.le_iff {n m : Nucleus X} : m ≤ n ↔ ∀ v : X, m.toFun v ≤ n.toFun v := by rfl
@@ -114,6 +114,8 @@ instance Nucleus.top : Top (Nucleus X) where
 instance : OrderTop (Nucleus X) where
   le_top := (by simp only [Nucleus.top, Nucleus.le_iff, le_top, implies_true])
 
+@[simp]
+lemma Nucleus.fun_of {tf : E → E} {h1 : ∀ (x : E), tf (tf x) ≤ tf x} {h2 : ∀ (x : E), x ≤ tf x} {h3 : ∀ (x y : E), tf (x ⊓ y) = tf x ⊓ tf y} {v : E} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Nucleus E) v = tf v := by rfl
 
 @[simp]
 lemma Nucleus.toFun_eq_coe (n : Nucleus X) : n.toFun = n := rfl

@@ -94,7 +94,7 @@ noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
 lemma leroy_6a (x : Nucleus E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
   . intro h
-    simp[Nucleus_le] at h
+    simp[Nucleus.le_iff] at h
     let h1 := h U
     have h2 : (eckig U) U = ⊤ := by
       simp [eckig, e_U]
