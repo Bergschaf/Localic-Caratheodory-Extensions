@@ -1,14 +1,25 @@
 import Leroy.Nucleus
 import Mathlib.Topology.Bases
 import Mathlib.Order.CompleteSublattice
-import Leroy.Subframes
-open CategoryTheory
 
 variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [Order.Frame F]
 
 
 def e_U (U : E) (H : E) : E :=
   sSup {W : E | W ⊓ U ≤ H}
+
+def e_U' (U H : E) : E := U ⇨ H
+
+example : @e_U E e_frm = e_U' := by
+  ext x y
+  simp_rw [e_U, e_U']
+  apply le_antisymm
+  . apply sSup_le_iff.mpr
+    simp only [Set.mem_setOf_eq, le_himp_iff, imp_self, implies_true]
+  . apply le_sSup_iff.mpr
+    simp [upperBounds]
+    intro b h
+    simp_all only [himp_inf_self, inf_le_left]
 
 lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) = e_U U H := by
   simp [e_U]
