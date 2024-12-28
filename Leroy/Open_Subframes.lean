@@ -1,6 +1,5 @@
 import Leroy.Nucleus
-import Mathlib.Topology.Bases
-import Mathlib.Order.CompleteSublattice
+import Leroy.Sublocale
 
 variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [Order.Frame F]
 
@@ -25,6 +24,7 @@ lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) = e_U U H := by
   simp [e_U]
   apply le_antisymm_iff.mpr
   apply And.intro
+lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) ≤ e_U U H := by
   . apply sSup_le_iff.mpr
     simp
     intro b h
@@ -41,17 +41,6 @@ lemma e_U_idempotent (U : E) (H : E) : e_U U (e_U U H) = e_U U H := by
     rw [Monotone]
     intro a b h
     exact inf_le_inf_right U h
-
-
-  . apply sSup_le_iff.mpr
-    simp
-    intro b h
-    apply le_sSup
-    simp
-    have h2 : H ≤ sSup {W | W ⊓ U ≤ H} := by
-      apply le_sSup
-      simp
-    apply le_trans h h2
 
 def e_U_increasing (U : E) (H : E) : H ≤ e_U U H := by
   simp only [e_U, Set.mem_setOf_eq, inf_le_left, le_sSup]
@@ -86,7 +75,7 @@ def e_U_preserves_inf (U: E) (H : E) (J : E) : e_U U (H ⊓ J) = e_U U H ⊓ e_U
         exact inf_le_left
       apply le_trans h3 h2
 
-def eckig (U : E) : Nucleus E where
+def eckig (U : E) : Sublocale E where
   toFun := e_U U
   idempotent := e_U_idempotent U
   increasing := e_U_increasing U

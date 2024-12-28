@@ -5,7 +5,7 @@ variable {E : Type*} [Order.Frame E]
 
 instance : SupSet (Nucleus E) := OrderDual.supSet (Sublocale E)
 
-instance : CompleteLattice (Nucleus E) where
+instance Nucleus.instCompleteLattice : CompleteLattice (Nucleus E) where
   sup x y := sSup {x, y}
   le_sup_left := (by simp only [sSup_insert, csSup_singleton, le_sup_left, implies_true])
   le_sup_right := (by simp only [sSup_insert, csSup_singleton, le_sup_right, implies_true])
@@ -50,5 +50,5 @@ lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), 
 
 
 
-instance : Order.Frame (Nucleus E) :=
+instance Nucleus.instFrame : Order.Frame (Nucleus E) :=
   Order.Frame.ofMinimalAxioms ⟨Nucleus_Frame_minimal_Axioms⟩
