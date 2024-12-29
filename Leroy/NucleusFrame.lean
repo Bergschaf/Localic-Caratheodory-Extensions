@@ -16,7 +16,6 @@ instance Nucleus.instCompleteLattice : CompleteLattice (Nucleus E) where
 
 lemma Nucleus.min_eq (a b : Nucleus E) : a ⊓ b = sInf {a, b} := by rfl
 
-@[simp]
 lemma Sublocale_le_Nucleus (a : Sublocale E) (b : Nucleus E) : a ≤ b ↔ b ≤ a.nucleus:= by
   rw [@Sublocale.le_iff]
   simp [Sublocale.nucleus]
