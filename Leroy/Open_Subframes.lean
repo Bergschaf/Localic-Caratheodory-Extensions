@@ -207,9 +207,7 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
   . intro h
 
     simp [eckig,  e_U] at h
-    rw [Sublocale.le_iff] at h
-    rw [@Sublocale.nucleus_toFun] at h
-    simp only at h
+    simp [Sublocale.le_iff] at h
 
     let h1 := h V
     simp only at h1
@@ -227,7 +225,8 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
     rw [Monotone]
     exact fun ⦃a b⦄ a_1 => inf_le_inf_right U a_1
 
-
+@[simp]
+lemma coe_to_dual {n : Nucleus E} {x : E}: (OrderDual.toDual n) x = n x := by rfl
 
 lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := by
   apply le_antisymm
@@ -271,23 +270,35 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
     --simp [eckig] at h1
     exact ⟨h2, h3⟩
 
-  .
+  . simp [eckig, e_U]
+    simp only [Sublocale.min_eq, sInf, sSup, Set.mem_insert_iff, Set.mem_singleton_iff,
+      Sublocale.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, Nucleus.fun_of, e_U, sSup_le_iff,
+      Set.mem_setOf_eq, forall_eq, sInf_fun, le_sInf_iff, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂]
     intro v b h1
-    apply le_sSup
-    simp only [Set.mem_setOf_eq]
-    intro x_i h2 h3
-    have h1_ : b ⊓ V ⊓ U ≤ v := by
-      rw [inf_comm U V] at h1
-      rw [← inf_assoc] at h1
-      exact h1
-    let h4 := h2 (v) (b ⊓ V) h1_
-    let h5 := h3 (x_i v) (b) h4
-    rw [Nucleus.idempotent'] at h5
+    rw [Nucleus_mem_sublocale] at h1
+    simp [Sublocale.nucleus] at h1
+    intro b1 h2
+    rcases h1 with ⟨h3, h4⟩
+
+    have h1_ : b1 ⊓ U ⊓ V ≤ v := by
+      rw [← inf_assoc] at h2
+      exact h2
+
+    let h4 := h4 (v) (b1 ⊓ U) h1_
+    let h5 := h3 (b v) (b1) h4
+    simp at h5
+    rw [coe_to_dual] at h5
+    rw [Nucleus.idempotent''] at h5
     exact h5
+
 ------------
 lemma eckig_preserves_sSup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i) := by
   ext x
-  simp [eckig, sSup, e_V_nucleus, e_V, e_U]
+  simp only [eckig, Nucleus.toFun_eq_coe, Nucleus.fun_of]
+  rw [← leroy_eq_stone]
+  simp only [e_V_sublocale, Nucleus.fun_of, e_V, Set.mem_image, Nucleus.toFun_eq_coe,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, e_U]
   apply le_antisymm
   . apply sSup_le_sSup
     simp only [Set.setOf_subset_setOf]

@@ -1,7 +1,8 @@
 import Leroy.Nucleus
 import Mathlib.Order.Synonym
 
-variable {E : Type*} [e_frm : Order.Frame E]
+variable {E X: Type*} [e_frm : Order.Frame E] [Order.Frame X]
+
 
 abbrev Sublocale (E : Type*) [Order.Frame E] := (Nucleus E)ᵒᵈ
 
@@ -16,18 +17,27 @@ instance : FunLike (Sublocale E) E E where
   coe_injective' f g h := (by cases f; cases g; congr)
 
 
-lemma Sublocale.le_iff (a b : Sublocale E) : a ≤ b ↔ b.ofDual ≤ a.ofDual := (by exact
-  ge_iff_le)
-
+lemma Sublocale.le_iff (a b : Sublocale E) : a ≤ b ↔ ∀ x, b.toFun x ≤ a.toFun x := by
+  exact Eq.to_iff rfl
 
 lemma Sublocale.le_iff'' (a b : Sublocale E) : @LE.le (Nucleus E) _ a b ↔ a.nucleus ≤ b.nucleus := by
   exact ge_iff_le
+
+lemma Sublocale.ext_iff (a b : Sublocale E) : a = b ↔ ∀ x, a.toFun x = b.toFun x := by
+  exact DFunLike.ext_iff
+
+@[ext]
+lemma Sublocale.ext (a b : Sublocale E) (h : ∀ x, a.toFun x = b.toFun x) : a = b := by
+  exact (ext_iff a b).mpr h
 
 @[simp]
 lemma Sublocale.nucleus_toFun (a : Nucleus E) : (OrderDual.ofDual a).toFun = a.toFun := by
   exact rfl
 
 --- Leroy SupSet
+
+@[simp]
+lemma Sublocale.fun_of {tf : X → X} {h1 : ∀ (x : X), tf (tf x) ≤ tf x} {h2 : ∀ (x : X), x ≤ tf x} {h3 : ∀ (x y : X), tf (x ⊓ y) = tf x ⊓ tf y} {v : X} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Sublocale X) v = tf v := by rfl
 
 
 def e_V (X_i : Set (Sublocale E)) (V : E) := sSup {w : E | ∀ x_i ∈ X_i, w ≤ x_i.toFun V}
