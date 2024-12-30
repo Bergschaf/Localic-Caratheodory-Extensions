@@ -16,12 +16,22 @@ instance Nucleus.instCompleteLattice : CompleteLattice (Nucleus E) where
 
 lemma Nucleus.min_eq (a b : Nucleus E) : a ⊓ b = sInf {a, b} := by rfl
 
+lemma Nucleus.max_eq (a b : Nucleus E) : a ⊔ b = sSup {a, b} := rfl
+
+lemma Sublocale.max_eq (a b : Sublocale E) : a ⊔ b = sSup {a, b} := rfl
+
 lemma Sublocale.min_eq {a b : Sublocale E} : a ⊓ b = sInf {a, b} := by rfl
 
 lemma Sublocale_le_Nucleus (a : Sublocale E) (b : Nucleus E) : a ≤ b ↔ b ≤ a.nucleus:= by
   rw [@Sublocale.le_iff]
   simp [Sublocale.nucleus]
   exact Iff.symm Nucleus.le_iff
+
+lemma Sublocale.top_eq :∀ x, (⊤ : Sublocale E) x = x := by
+  exact fun x => rfl
+
+lemma Sublocale.bot_eq : ∀ x, (⊥ : Sublocale E) x = ⊤ := by
+  exact fun x => rfl
 
 @[simp]
 lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s ↔ a ∈ (Sublocale.nucleus '' s):= by
