@@ -397,7 +397,7 @@ instance : OrderTop (Open E) where
   le_top a := (by simp[Open.le_iff, Open.top])
 
 @[simp]
-lemma Open.top_nucleus : (⊤ : Open E).sublocale = ⊤ := by
+lemma Open.top_sublocale : (⊤ : Open E).sublocale = ⊤ := by
   simp [sublocale, Open.top]
   exact eckig_preserves_top
 

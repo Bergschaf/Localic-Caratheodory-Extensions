@@ -1,12 +1,12 @@
 import Mathlib.Data.Real.Basic
 import Leroy.Basic
-import Leroy.Open_Subframes
+import Leroy.Open_Sublocales
 import Leroy.Further_Topology
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
 
-def increasingly_filtered (s : Set (Nucleus X)) : Prop :=
+def increasingly_filtered (s : Set (Sublocale X)) : Prop :=
   ∀ (u v : s), ∃ (w : s), u ≤ w ∧ v ≤ w
 
 def increasingly_filtered' (s : Set (Open X)) : Prop :=
@@ -20,15 +20,15 @@ structure Measure where
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set (Open X)), increasingly_filtered' s → toFun (sSup s) = iSup (fun (x : s) ↦ toFun x)
 
-def Open_Neighbourhood (u : Nucleus X) : Set (Open X) := {v : Open X | u ≤ v}
+def Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 
-def Neighbourhood (u : Nucleus X) : Set (Nucleus X) := {v | ∃ w ∈ Open_Neighbourhood u, w ≤ v}
+def Neighbourhood (u : Sublocale X) : Set (Sublocale X) := {v | ∃ w ∈ Open_Neighbourhood u, w ≤ v}
 
 
-noncomputable def Measure.caratheodory {m : @Measure X h} (a : Nucleus X) : NNReal :=
+noncomputable def Measure.caratheodory {m : @Measure X h} (a : Sublocale X) : NNReal :=
   sInf (m.toFun '' Open_Neighbourhood a)
 
-def increasing (s :  ℕ → Nucleus X) : Prop :=
+def increasing (s :  ℕ → Sublocale X) : Prop :=
   ∀ (n : ℕ), s n ≤ s (n + 1)
 
 
@@ -46,7 +46,6 @@ lemma Caratheodory_opens {m : @Measure X h} : ∀ x : Open X, m.caratheodory x =
   . apply csInf_le'
     simp only [Set.mem_image, Set.mem_setOf_eq]
     use x
-    simp only [le_refl, implies_true, and_self]
   . rw [le_csInf_iff]
     simp
     intro a h
@@ -55,21 +54,18 @@ lemma Caratheodory_opens {m : @Measure X h} : ∀ x : Open X, m.caratheodory x =
     simp [Set.Nonempty]
     use m.toFun x
     use x
-    simp only [le_refl, implies_true, and_self]
 
 
 lemma Open_Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Open_Neighbourhood x) := by
   simp [Set.Nonempty]
   use ⊤
   rw [Open_Neighbourhood]
-  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_nucleus]
+  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_sublocale]
   exact fun v => Nucleus.increasing' x
 
 lemma Open_Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Open_Neighbourhood x := by
   rw [Open_Neighbourhood]
-  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_nucleus]
-  exact all_le_top x
-
+  simp only [Set.mem_setOf_eq, Open.top_sublocale, le_top]
 
 
 lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
@@ -132,12 +128,10 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
     apply csInf_le_csInf'
     simp
     let x := Open_Neighbourhood_nonempty (iSup  X_n)
-    apply @Set.nonempty_of_nonempty_subtype _ _
+    --apply @Set.nonempty_of_nonempty_subtype _ _
     --
-    refine Set.image_mono ?H.h.h
-    simp [Open_Neighbourhood]
-    intro a h v
     sorry -- sieht schlecht auss
+    sorry
 
   sorry
 
@@ -149,7 +143,7 @@ TODO Stone spaces als quelle anschauen
 da steht covered -> Muss da U ≤ sSup ... stehen?
 -/
 def regular (E : Type*)  [Order.Frame E]: Prop :=
-  ∀ (U : Open E), U = sSup {V : Open E | V.nucleus.closure.nucleus ≤ U}
+  ∀ (U : Open E), U = sSup {V : Open E | V.sublocale.closure.sublocale ≤ U}
 
 
 variable {E : Type*} [e_frm : Order.Frame E] [Fact (regular E)]
@@ -161,16 +155,23 @@ Leroy Lemme 2.2
 TODO stone spaces als quelle vlt
 Seite 81. 1.2
 -/
-lemma sublocal_intersection_of_neighbours {A : Nucleus E} : A = sInf (Neighbourhood A) := by
+lemma sublocal_intersection_of_neighbours {a : Nucleus E} : a = sInf (Neighbourhood a) := by
 
   apply le_antisymm
   . apply le_sInf_iff.mpr
     simp [Neighbourhood]
-    intro b e h1 h2 v
-    let h3 := h2 v
-    apply le_trans h3
-    simp [Open_Neighbourhood] at h1
-    exact h1 v
+    intro b h
+    rw [Nucleus_mem_sublocale] at h
+    simp at h
+
+    rcases h with ⟨a1, h1, h2⟩
+    simp only [Sublocale.nucleus, OrderDual.ofDual_toDual] at h2
+    rw [← h2]
+
+    let h3 := h1 (a)
+    simp only [OrderDual.ofDual_toDual, ge_iff_le]
+    sorry
+
 
   . apply sInf_le_iff.mpr
     intro b h
@@ -205,7 +206,7 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodor
 
 omit [Fact (regular E)] in
 
-lemma Caratheodory_monotonic {A B : Nucleus E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
+lemma Caratheodory_monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
   intro h
   simp_rw [Measure.caratheodory]
   apply csInf_le_csInf
@@ -217,14 +218,15 @@ lemma Caratheodory_monotonic {A B : Nucleus E} : A ≤ B → m.caratheodory A �
   . simp [Set.Nonempty, Open_Neighbourhood]
     use m.toFun ⊤
     use ⊤
-    simp only [Open.top_nucleus, Nucleus_top, Nucleus.toFun_eq_coe', and_true]
+
+    simp only [Open.top_sublocale, Nucleus.top, Nucleus.toFun_eq_coe, and_true]
     exact fun v => Nucleus.increasing' B
   . simp only [Open_Neighbourhood, Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.image_subset_iff]
     rw [@Set.setOf_subset]
     intro x h1
     simp only [Set.mem_preimage, Set.mem_image, Set.mem_setOf_eq]
     use x
-    simp at h
+    rw [Sublocale.le_iff] at h
     apply And.intro
-    . exact fun v => Preorder.le_trans (x.nucleus v) (B v) (A v) (h1 v) (h v)
+    . exact fun v => Preorder.le_trans (x.sublocale v) (B v) (A v) (h1 v) (h v)
     . rfl
