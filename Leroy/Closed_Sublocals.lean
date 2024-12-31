@@ -187,6 +187,10 @@ lemma Open_sSup_corresponds (x : Set E) : sSup x = sSup ((fun x ↦ (⟨x⟩ : O
   simp only [Set.image_id']
 
 
+lemma Nucleus.eq_join_open_closed (n : Nucleus E) : ∃ a b, n = (⟨a⟩ : Open E).sublocale ⊓ (⟨b⟩ : Closed E).sublocale := by
+  let k (v : E) := (⟨v⟩ : Open E).sublocale ⊓ (⟨(n v)⟩ : Closed E).sublocale
+  sorry
+
 /-
 lemma Closed_intersection_corresponds (x : Set (Closed E)) : (sInf x).sublocale = sInf (Closed.sublocale '' x) := by
   simp [sInf, sSup, e_V_nucleus, Closed.sublocale, complement]

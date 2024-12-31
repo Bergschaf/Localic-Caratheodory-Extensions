@@ -136,10 +136,23 @@ lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing
   sorry
 
 
+def well_inside (U V : Open E) := U.sublocale.closure.sublocale ≤ V
+
+infix:100 " ≪ " => well_inside
+
+/--
+Stone spaces s.80
+und auch Sketches of an Elephant 501...
+-/
+def well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c ⊔ V = ⊤ := by
+  rw [well_inside]
+
+  sorry
 
 /--
 Leroy definition
 TODO Stone spaces als quelle anschauen
+Steht auch in Sketches of an Elephant 501
 da steht covered -> Muss da U ≤ sSup ... stehen?
 -/
 def regular (E : Type*)  [Order.Frame E]: Prop :=
@@ -154,31 +167,12 @@ variable {m : @Measure E e_frm}(X_n : ℕ → Nucleus E)
 Leroy Lemme 2.2
 TODO stone spaces als quelle vlt
 Seite 81. 1.2
+Maybe depends on:
+Nucleus.eq_join_open_closed
 -/
 lemma sublocal_intersection_of_neighbours {a : Nucleus E} : a = sInf (Neighbourhood a) := by
+  sorry
 
-  apply le_antisymm
-  . apply le_sInf_iff.mpr
-    simp [Neighbourhood]
-    intro b h
-    rw [Nucleus_mem_sublocale] at h
-    simp at h
-
-    rcases h with ⟨a1, h1, h2⟩
-    simp only [Sublocale.nucleus, OrderDual.ofDual_toDual] at h2
-    rw [← h2]
-
-    let h3 := h1 (a)
-    simp only [OrderDual.ofDual_toDual, ge_iff_le]
-    sorry
-
-
-  . apply sInf_le_iff.mpr
-    intro b h
-    simp only [lowerBounds, Nucleus.toFun_eq_coe, Set.mem_setOf_eq] at h
-
-    -- we have to construct an element of Neighbourhood x which is ≤ x
-    sorry
 
 
 
