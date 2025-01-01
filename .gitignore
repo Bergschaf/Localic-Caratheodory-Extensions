@@ -311,3 +311,6 @@ TSWLatexianTemp*
 
 blueprint/web/*
 !blueprint/web/index.html
+!blueprint/web/styles/*
+!blueprint/web/symbol-defs.svg
+!blueprint/web/js/*
