@@ -225,26 +225,30 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
   apply le_antisymm
   . apply le_sInf
     exact fun b a_1 => le_Neighbourhood b a_1
-
-
-  rw [Sublocale.le_iff]
+  suffices h : (∀ H, a H = ⨆ V ∈ Neighbourhood a, V H) by
+    sorry
   intro H
-  simp
   let K := a H
-  have h (W : Open E) (h : W.sublocale.closure.sublocale ≤ (⟨K⟩ : Open E)) :
-    W.sublocale.closure.sublocale ≤ E_to_Open (a H) := by
-    let V := W.sublocale.closure.complement ⊔ ⟨H⟩
-    have h_V : V ∈ Open_Neighbourhood a := by sorry
+  let V (W : Open E) := W.sublocale.closure.complement ⊔ ⟨H⟩
 
-    have h : W ⊓ V = W ⊓ (⟨H⟩ : Open E) := by sorry
+  have h (W : Open E) (h : W.sublocale.closure.sublocale ≤ (⟨K⟩ : Open E)) :
+    W ≤ E_to_Open ((V W).sublocale H) := by
+    have h_V : V W ∈ Open_Neighbourhood a := by sorry
+
+    have h : W ⊓ V W = W ⊓ (⟨H⟩ : Open E) := by sorry
     have h1 : W ⊓ ⟨H⟩ ≤ ⟨H⟩ := by sorry
     sorry
 
-  have h1 : E_to_Open (a H) = sSup {W : Open E | W.sublocale.closure.sublocale ≤ (⟨K⟩ : Open E)} := by
+
+  have h1 : E_to_Open (a H) = sSup {W : Open E | W.sublocale.closure.sublocale ≤ (⟨a H⟩ : Open E)} := by
     sorry
 
-  rw [E_le_iff]
+
+  apply_fun E_to_Open
   rw [h1]
+
+
+
 
 
 

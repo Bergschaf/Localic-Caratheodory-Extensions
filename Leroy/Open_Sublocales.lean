@@ -523,10 +523,21 @@ lemma Open_le_sSup : ∀ (s : Set (Open E)), ∀ a ∈ s, a ≤ sSup s := by
   intro s a h
   rw [@Open.le_iff_sublocale]
   rw [@Open.sSup_eq]
-  sorry
+  apply le_sSup
+  simp only [Set.mem_image]
+  use a
+
+lemma Open_sSup_le : ∀ (s : Set (Open E)) (a : Open E), (∀ b ∈ s, b ≤ a) → sSup s ≤ a := by
+  intro s a h
+  rw [Open.le_iff_sublocale]
+  rw [Open.sSup_eq]
+  apply sSup_le
+  simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+  exact fun a a_1 => h a a_1
 
 instance : CompleteSemilatticeSup (Open E) where
-  le_sSup := sorry
+  le_sSup := Open_le_sSup
+  sSup_le := Open_sSup_le
 
 /-
 Leroy Lemme 10
