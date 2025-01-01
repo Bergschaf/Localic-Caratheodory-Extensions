@@ -5,12 +5,17 @@ f_injective_surjective
 Leroy_Embedding
 Nucleus
 nucleus_equiv_subframe_1
+Nucleus.le_iff
+Nucleus.instCompleteSemilatticeInf
 nucleus_frameHom
 Nucleus_le
 factorisation
 e_V_nucleus
 e_V_nucleus
+leroy_eq_stone
 Nucleus_min
+Nucleus.instCompleteLattice
+Nucleus.instFrame
 e_U
 eckig
 Open

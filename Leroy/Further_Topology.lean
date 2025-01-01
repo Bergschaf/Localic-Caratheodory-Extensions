@@ -3,20 +3,20 @@ import Mathlib.Order.CompleteSublattice
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
-def Nucleus.interior (x : Nucleus E) := sSup {z : Open E | z ≤ x}
+def Sublocale.interior (x : Sublocale E) := sSup {z : Open E | z ≤ x}
 
-def Nucleus.closure (x : Nucleus E) := sInf {z : Closed E | x ≤ z.nucleus}
+def Sublocale.closure (x : Sublocale E) := sInf {z : Closed E | x ≤ z.sublocale}
 
-def Nucleus.rand (x : Nucleus E) := x.closure.nucleus ⊓ (complement x.interior)
+noncomputable def Sublocale.rand (x : Sublocale E) := x.closure.sublocale ⊓ (complement x.interior)
 
-def Nucleus.exterior (x : Nucleus E) := sSup {z : Open E | z.nucleus ⊓ x = ⊥}
+def Sublocale.exterior (x : Sublocale E) := sSup {z : Open E | z.sublocale ⊓ x = ⊥}
 
-
+/-
 /--
 Dependency: Leroy lemma 8
 Leroy 1.10.1
 -/
-lemma closure_eq_compl_ext (x : Nucleus E) : x.closure.nucleus = complement (x.exterior) := by
+lemma closure_eq_compl_ext (x : Sublocale E) : x.closure.sublocale = complement (x.sublocale) := by
   rw [Nucleus.exterior, Nucleus.closure, Closed.nucleus]
   have h : ({ element := (sInf {z : Closed E | x ≤ z.nucleus}).element } : Open E)  = (sSup {z | z.nucleus ⊓ x = ⊥}) := by
     simp [sSup, sInf]
@@ -40,10 +40,11 @@ lemma closure_eq_compl_ext (x : Nucleus E) : x.closure.nucleus = complement (x.e
 
 
   apply_fun complement at h
-  exact h
+  exact h-/
 
-lemma rand_eq_compl_int_ext (x : Nucleus E) : x.rand = complement (x.interior ⊔ x.exterior) := by sorry
+/-
+lemma rand_eq_compl_int_ext (x : Sublocale E) : x.rand = complement (x.interior ⊔ x.exterior) := by sorry
 
-lemma int_rand_eq_closure (x : Nucleus E) : x.interior.nucleus ⊔ x.rand = x.closure.nucleus := by sorry
+lemma int_rand_eq_closure (x : Sublocale E) : x.interior.sublocale ⊔ x.rand = x.closure.sublocale := by sorry
 
-lemma ext_rand_eq_comp_int (x : Nucleus E) : ↑x.exterior ⊔ x.rand = complement (x.interior) := by sorry
+lemma ext_rand_eq_comp_int (x : Sublocale E) : ↑x.exterior ⊔ x.rand = complement (x.interior) := by sorry-/
