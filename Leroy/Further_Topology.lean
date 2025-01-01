@@ -3,6 +3,8 @@ import Mathlib.Order.CompleteSublattice
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
+def Closed.complement (x : Closed E) : Open E := ⟨x.element⟩
+
 def Sublocale.interior (x : Sublocale E) := sSup {z : Open E | z ≤ x}
 
 def Sublocale.closure (x : Sublocale E) := sInf {z : Closed E | x ≤ z.sublocale}

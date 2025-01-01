@@ -5,20 +5,24 @@ import Leroy.Further_Topology
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
+abbrev ι := ℕ  -- TODO darf man das?
 
-def increasingly_filtered (s : Set (Sublocale X)) : Prop :=
-  ∀ (u v : s), ∃ (w : s), u ≤ w ∧ v ≤ w
+variable {Z : Type*} [PartialOrder Z]
+def increasing (s : ι → Z) : Prop :=
+  ∀ i : ι, s i ≤ s (i + 1)
 
-def increasingly_filtered' (s : Set (Open X)) : Prop :=
-  ∀ (u v : s), ∃ (w : s), u ≤ w ∧ v ≤ w
+def filtered (s : ι → Z) : Prop :=
+  ∀ i j, ∃ k, s i ≤ s k ∧ s j ≤ s k
 
+def increasingly_filtered (s : ι → Z) : Prop :=
+  increasing s ∧ filtered s
 
 structure Measure where
   toFun : (Open X) → NNReal -- Evtl ENNReal (brauchen wir ⊤)
   empty : toFun ⊥ = 0
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
-  filtered : ∀ (s : Set (Open X)), increasingly_filtered' s → toFun (sSup s) = iSup (fun (x : s) ↦ toFun x)
+  filtered : ∀ (s : ι → Open X), increasingly_filtered s → toFun (iSup s) = iSup (toFun ∘ s)
 
 def Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 
@@ -28,8 +32,6 @@ def Neighbourhood (u : Sublocale X) : Set (Sublocale X) := {v | ∃ w ∈ Open_N
 noncomputable def Measure.caratheodory {m : @Measure X h} (a : Sublocale X) : NNReal :=
   sInf (m.toFun '' Open_Neighbourhood a)
 
-def increasing (s :  ℕ → Sublocale X) : Prop :=
-  ∀ (n : ℕ), s n ≤ s (n + 1)
 
 
 lemma Measure.all_le_top {m : @Measure X h} : ∀ a : Open X, m.toFun a ≤ m.toFun ⊤ := by
@@ -81,8 +83,14 @@ lemma Caratheodory_monotonic (m : Measure) {A B : Sublocale E} : A ≤ B → m.c
     . exact fun v => Preorder.le_trans (x.sublocale v) (B v) (A v) (h1 v) (h v)
     . rfl
 
+lemma le_Neighbourhood {a : Sublocale E} : ∀ x ∈ Neighbourhood a, a ≤ x := by
+  intro x h
+  simp only [Neighbourhood, Open_Neighbourhood, Set.mem_setOf_eq] at h
+  rcases h with ⟨w, ⟨h1,h2⟩⟩
+  exact Preorder.le_trans a w.sublocale x h1 h2
 
-lemma Open_Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Open_Neighbourhood x) := by
+
+lemma Open_Neighbourhood_nonempty (x : Sublocale X) : Nonempty (Open_Neighbourhood x) := by
   simp [Set.Nonempty]
   use ⊤
   rw [Open_Neighbourhood]
@@ -94,7 +102,7 @@ lemma Open_Neighbourhood.top_mem {x : Nucleus X}: ⊤ ∈ Open_Neighbourhood x :
   simp only [Set.mem_setOf_eq, Open.top_sublocale, le_top]
 
 
-lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Nucleus X) (h : increasing X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
+lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   simp [Measure.caratheodory]
   have h_epsilon : ∃ r : NNReal, r > 0 := by
     use 1
@@ -187,7 +195,7 @@ def regular (E : Type*)  [Order.Frame E]: Prop :=
 
 variable {E : Type*} [e_frm : Order.Frame E] [Fact (regular E)]
 
-variable {m : @Measure E e_frm}(X_n : ℕ → Nucleus E)
+variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
 /--
 Leroy Lemme 2.2
@@ -196,8 +204,56 @@ Seite 81. 1.2
 Maybe depends on:
 Nucleus.eq_join_open_closed
 -/
-lemma sublocal_intersection_of_neighbours {a : Nucleus E} : a = sInf (Neighbourhood a) := by
-  sorry
+def E_to_Open (x : E) : Open E := ⟨x⟩
+
+/--
+TODO dass muss weiter nach vorne
+-/
+lemma E_le_iff (x y : E) : x ≤ y ↔ E_to_Open x ≤ E_to_Open y := by
+  repeat rw [E_to_Open]
+  apply Iff.intro
+  . intro h
+    exact Open.le_iff.mpr h
+  . intro h
+    exact eckig_preserves_inclusion.mpr h
+
+@[simp]
+lemma E_to_Open_Open (x : Open E) : E_to_Open ↑x = x := by rfl
+
+
+lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbourhood a) := by
+  apply le_antisymm
+  . apply le_sInf
+    exact fun b a_1 => le_Neighbourhood b a_1
+
+
+  rw [Sublocale.le_iff]
+  intro H
+  simp
+  let K := a H
+  have h (W : Open E) (h : W.sublocale.closure.sublocale ≤ (⟨K⟩ : Open E)) :
+    W.sublocale.closure.sublocale ≤ E_to_Open (a H) := by
+    let V := W.sublocale.closure.complement ⊔ ⟨H⟩
+    have h_V : V ∈ Open_Neighbourhood a := by sorry
+
+    have h : W ⊓ V = W ⊓ (⟨H⟩ : Open E) := by sorry
+    have h1 : W ⊓ ⟨H⟩ ≤ ⟨H⟩ := by sorry
+    sorry
+
+  have h1 : E_to_Open (a H) = sSup {W : Open E | W.sublocale.closure.sublocale ≤ (⟨K⟩ : Open E)} := by
+    sorry
+
+  rw [E_le_iff]
+  rw [h1]
+
+
+
+
+
+
+
+
+
 
 
 

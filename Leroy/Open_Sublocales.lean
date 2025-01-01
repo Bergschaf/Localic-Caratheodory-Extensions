@@ -496,19 +496,19 @@ lemma Open.ext_nucleus (a b : Open E) : a = b ↔ a.sublocale = b.sublocale := b
     . apply eckig_preserves_inclusion.mpr a_1.right
 
 
-lemma Open.le_iff_nucleus {a b : Open E} : a ≤ b ↔ a.sublocale ≤ b.sublocale := by
+lemma Open.le_iff_sublocale {a b : Open E} : a ≤ b ↔ a.sublocale ≤ b.sublocale := by
   exact ge_iff_le
 
 
 lemma Open.le_sup_left : ∀ (a b : Open E), a ≤ a ⊔ b := by
   intro a b
-  apply Open.le_iff_nucleus.mpr
+  apply Open.le_iff_sublocale.mpr
   rw [Open.Max_eq]
   exact _root_.le_sup_left
 
 lemma Open.le_sup_right : ∀ (a b : Open E), b ≤ a ⊔ b := by
     intro a b
-    apply Open.le_iff_nucleus.mpr
+    apply Open.le_iff_sublocale.mpr
     rw [Open.Max_eq]
     exact _root_.le_sup_right
 
@@ -518,6 +518,15 @@ lemma Open_to_E_injective : Function.Injective (@Open_to_E E e_frm) := by
   rw [Function.Injective]
   simp [Open_to_E]
   exact fun ⦃a₁ a₂⦄ a => Open.ext a
+
+lemma Open_le_sSup : ∀ (s : Set (Open E)), ∀ a ∈ s, a ≤ sSup s := by
+  intro s a h
+  rw [@Open.le_iff_sublocale]
+  rw [@Open.sSup_eq]
+  sorry
+
+instance : CompleteSemilatticeSup (Open E) where
+  le_sSup := sorry
 
 /-
 Leroy Lemme 10
