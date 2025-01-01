@@ -183,7 +183,7 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodor
 
   apply le_antisymm
   . let V_a := Neighbourhood (complement U)
-    let W_a := (Nucleus.exterior '' V_a)
+    let W_a := (Sublocale.exterior '' V_a)
     have h : increasingly_filtered' W_a := by
       simp [increasingly_filtered']
       intro a h1 b h2
