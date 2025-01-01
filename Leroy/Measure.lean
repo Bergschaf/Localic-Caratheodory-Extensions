@@ -56,6 +56,32 @@ lemma Caratheodory_opens {m : @Measure X h} : ∀ x : Open X, m.caratheodory x =
     use x
 
 
+lemma Caratheodory_monotonic (m : Measure) {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
+  intro h
+  simp_rw [Measure.caratheodory]
+  apply csInf_le_csInf
+  . simp only [BddBelow, Set.Nonempty, lowerBounds, Set.mem_image, forall_exists_index, and_imp,
+     forall_apply_eq_imp_iff₂, Set.mem_setOf_eq]
+    use 0
+    intro a ha
+    simp only [zero_le]
+  . simp [Set.Nonempty, Open_Neighbourhood]
+    use m.toFun ⊤
+    use ⊤
+
+    simp only [Open.top_sublocale, Nucleus.top, Nucleus.toFun_eq_coe, and_true]
+    exact fun v => Nucleus.increasing' B
+  . simp only [Open_Neighbourhood, Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.image_subset_iff]
+    rw [@Set.setOf_subset]
+    intro x h1
+    simp only [Set.mem_preimage, Set.mem_image, Set.mem_setOf_eq]
+    use x
+    rw [Sublocale.le_iff] at h
+    apply And.intro
+    . exact fun v => Preorder.le_trans (x.sublocale v) (B v) (A v) (h1 v) (h v)
+    . rfl
+
+
 lemma Open_Neighbourhood_nonempty (x : Nucleus X) : Nonempty (Open_Neighbourhood x) := by
   simp [Set.Nonempty]
   use ⊤
@@ -187,40 +213,18 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodor
     have h : increasingly_filtered' W_a := by
       simp [increasingly_filtered']
       intro a h1 b h2
+
       sorry
-    have h1 : sSup W_a = U := by sorry
+    have h1 : sSup W_a = U := by
+      sorry
     have h2 : m.toFun U = ⨆ x : W_a, m.toFun x := by
       rw [← h1]
       let h3 := m.filtered W_a h
       rw [h3]
+
+    have h3 : ∀ w_a ∈ W_a, ∀ v_a ∈ V_a, m.caratheodory w_a + m.caratheodory v_a = m.caratheodory ⊤ := by
+      sorry
     sorry
 
-
-  . sorry --trival anscheinend
-
-omit [Fact (regular E)] in
-
-lemma Caratheodory_monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
-  intro h
-  simp_rw [Measure.caratheodory]
-  apply csInf_le_csInf
-  . simp only [BddBelow, Set.Nonempty, lowerBounds, Set.mem_image, forall_exists_index, and_imp,
-     forall_apply_eq_imp_iff₂, Set.mem_setOf_eq]
-    use 0
-    intro a ha
-    simp only [zero_le]
-  . simp [Set.Nonempty, Open_Neighbourhood]
-    use m.toFun ⊤
-    use ⊤
-
-    simp only [Open.top_sublocale, Nucleus.top, Nucleus.toFun_eq_coe, and_true]
-    exact fun v => Nucleus.increasing' B
-  . simp only [Open_Neighbourhood, Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.image_subset_iff]
-    rw [@Set.setOf_subset]
-    intro x h1
-    simp only [Set.mem_preimage, Set.mem_image, Set.mem_setOf_eq]
-    use x
-    rw [Sublocale.le_iff] at h
-    apply And.intro
-    . exact fun v => Preorder.le_trans (x.sublocale v) (B v) (A v) (h1 v) (h v)
-    . rfl
+  . simp only [caratheodory, Open_Neighbourhood, complement, Sublocale.le_iff, Nucleus.toFun_eq_coe]
+    sorry
