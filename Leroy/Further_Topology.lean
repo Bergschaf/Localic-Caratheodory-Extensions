@@ -4,14 +4,25 @@ import Mathlib.Order.CompleteSublattice
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
 def Closed.complement (x : Closed E) : Open E := ⟨x.element⟩
+def Open.complement (x : Open E) : Open E := ⟨x.element⟩
 
 def Sublocale.interior (x : Sublocale E) := sSup {z : Open E | z ≤ x}
+lemma Open_interior_eq_id : ∀ a : Open E, a.toSublocale.interior = a := by
+  simp only [Sublocale.interior]
+  intro a
+  apply le_antisymm
+  . simp only [sSup_le_iff, Set.mem_setOf_eq]
+    exact fun b a => a
+  . apply le_sSup
+    simp only [Set.mem_setOf_eq, le_refl]
 
-def Sublocale.closure (x : Sublocale E) := sInf {z : Closed E | x ≤ z.sublocale}
+def Open.interior (x : Sublocale E) := x
+noncomputable def Closed.interior (x : Closed E) : Open E := x.toSublocale.interior
+def Sublocale.closure (x : Sublocale E) := sInf {z : Closed E | x ≤ z}
 
-noncomputable def Sublocale.rand (x : Sublocale E) := x.closure.sublocale ⊓ (complement x.interior)
+noncomputable def Sublocale.rand (x : Sublocale E) : Sublocale E := x.closure ⊓ (complement x.interior)
 
-def Sublocale.exterior (x : Sublocale E) := sSup {z : Open E | z.sublocale ⊓ x = ⊥}
+def Sublocale.exterior (x : Sublocale E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
 
 /-
 /--
@@ -39,7 +50,7 @@ lemma closure_eq_compl_ext (x : Sublocale E) : x.closure.sublocale = complement 
       use ⟨xi.element⟩
       simp only [and_true]
       sorry --wahrscheinlich wieder leroy lemme 8
-
+W
 
   apply_fun complement at h
   exact h-/

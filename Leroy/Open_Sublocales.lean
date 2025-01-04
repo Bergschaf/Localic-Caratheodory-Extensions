@@ -86,10 +86,13 @@ def eckig (U : E) : Sublocale E where
 --class Open extends Subframe E where
 --  is_open : ∃ u : E, eckig u = e
 @[ext]
-structure Open (E : Type*) [Order.Frame E] extends (Sublocale E) where
+structure Open (E : Type*) [Order.Frame E] where
   element : E
-  eq_eckig : toNucleus = eckig element
 
+protected def Open.toSublocale (o : Open E) : Sublocale E := eckig o.element
+protected def Open.toNucleus (o : Open E) : Nucleus E := eckig o.element
+
+#check Nucleus.toFun
 
 
 

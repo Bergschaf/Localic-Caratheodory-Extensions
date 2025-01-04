@@ -31,7 +31,7 @@ def complement_injective : Function.Injective (@complement E e_frm)  := by
 
 
 
-lemma inf_complement (X : Open E) : X.sublocale ⊓ (complement X) = ⊥ := by
+lemma inf_complement (X : Open E) : X.toSublocale ⊓ (complement X) = ⊥ := by
   apply le_antisymm
   . simp only [Sublocale.min_eq, sInf]
     apply sSup_le
@@ -44,27 +44,27 @@ lemma inf_complement (X : Open E) : X.sublocale ⊓ (complement X) = ⊥ := by
     rw [Sublocale.bot_eq]
     rw [← Nucleus.idempotent'']
     refine eq_top_iff.mpr ?_
-    have h : X.sublocale (b v) ≤ b (b v) := by
+    have h : X.toSublocale (b v) ≤ b (b v) := by
       simp [Sublocale.le_iff] at h1
       exact h1 (b v)
 
-    have h2 : X.sublocale (complement X v) ≤ X.sublocale (b v) := by
+    have h2 : X.toSublocale (complement X v) ≤ X.toSublocale (b v) := by
       simp [Sublocale.le_iff] at h2
       simp at h
       let h2 := h2 v
-      apply_fun X.sublocale.toFun at h2
+      apply_fun X.toSublocale.toFun at h2
       simp at h2
       exact h2
       simp [Nucleus.monotone]
 
     apply le_trans ?_ h
     apply le_trans ?_ h2
-    simp [complement, Open.sublocale, eckig, e_U]
+    simp [complement, Open.toSublocale, eckig, e_U]
     refine sup_eq_top_of_top_mem ?_
     simp only [Set.mem_setOf_eq, le_top, inf_of_le_right]
     rw [Nucleus.coe_eq_toFun]
     simp only [le_sup_left]
-  . exact OrderBot.bot_le (X.sublocale ⊓ complement X)
+  . exact OrderBot.bot_le (X.toSublocale ⊓ complement X)
 
 
 lemma union_pointwise_le {U V : Sublocale E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x := by
@@ -82,7 +82,7 @@ lemma union_pointwise_le {U V : Sublocale E} :∀ x, (U ⊔ V) x ≤ U x ⊓ V x
 
 
 
-lemma sup_comp_eq_top (X : Open E)  : X.sublocale ⊔ (complement X) = ⊤ := by
+lemma sup_comp_eq_top (X : Open E)  : X.toSublocale ⊔ (complement X) = ⊤ := by
   ext y
   simp only [Nucleus.toFun_eq_coe]
   rw [Sublocale.top_eq]
@@ -96,7 +96,7 @@ lemma sup_comp_eq_top (X : Open E)  : X.sublocale ⊔ (complement X) = ⊤ := by
     simp only [Nucleus.toFun_eq_coe]
     rw [@inf_sup_left]
     simp only [sup_le_iff, inf_le_right, and_true]
-    simp only [Open.sublocale, eckig, Nucleus.fun_of, e_U]
+    simp only [Open.toSublocale, eckig, Nucleus.fun_of, e_U]
     rw [@sSup_inf_eq]
 
     simp only [Set.mem_setOf_eq, iSup_le_iff, imp_self, implies_true]
@@ -107,22 +107,22 @@ lemma sup_comp_eq_top (X : Open E)  : X.sublocale ⊔ (complement X) = ⊤ := by
 structure Closed (E : Type*) [Order.Frame E] where
   element : E
 
-noncomputable def Closed.sublocale (c : Closed E) : Sublocale E :=
+protected noncomputable def Closed.toSublocale (c : Closed E) : Sublocale E :=
   complement ⟨c.element⟩
 
 
 noncomputable instance : Coe (Closed E) (Sublocale E) where
-  coe x := x.sublocale
+  coe x := x.toSublocale
 
 @[simp]
 instance : LE (Closed E) where
-  le x y := x.sublocale ≤ y.sublocale
+  le x y := x.toSublocale ≤ y.toSublocale
 
 
 lemma le_antisymm' :  ∀ (a b : Closed E), a ≤ b → b ≤ a → a = b := by
   intro a b h1 h2
   ext
-  simp_all [Closed.sublocale]
+  simp_all [Closed.toSublocale]
   have h : complement ⟨a.element⟩ = complement ⟨b.element⟩ := by
     ext x
     apply le_antisymm
@@ -138,11 +138,11 @@ lemma le_antisymm' :  ∀ (a b : Closed E), a ≤ b → b ≤ a → a = b := by
 
 instance  : PartialOrder (Closed E) where
   le_refl := (by simp)
-  le_trans x y z := (by simp[Nucleus.le];exact fun a a_1 v => Preorder.le_trans (z.sublocale v) (y.sublocale v) (x.sublocale v) (a_1 v) (a v))
+  le_trans x y z := (by simp[Nucleus.le];exact fun a a_1 v => Preorder.le_trans (z.toSublocale v) (y.toSublocale v) (x.toSublocale v) (a_1 v) (a v))
   le_antisymm  := le_antisymm'
 
 lemma Closed.le_iff (a b : Closed E) : a ≤ b ↔ b.element ≤ a.element := by
-  simp [Closed.sublocale, complement]
+  simp [Closed.toSublocale, complement]
   apply Iff.intro
   . intro h
     simp [Sublocale.le_iff] at h
@@ -162,7 +162,7 @@ lemma Closed_sInf_le : ∀ (s : Set (Closed E)), ∀ a ∈ s, sInf s ≤ a := by
   intro s c hc
   simp [sInf]
 
-  simp [sInf,Closed.sublocale, complement]
+  simp [sInf,Closed.toSublocale, complement]
   intro v
   simp only [sup_le_iff, le_sup_right, and_true]
   refine le_sup_of_le_left ?_
@@ -172,7 +172,7 @@ lemma Closed_sInf_le : ∀ (s : Set (Closed E)), ∀ a ∈ s, sInf s ≤ a := by
 
 lemma Closed_le_sInf : ∀ (s : Set (Closed E)) (a : Closed E), (∀ b ∈ s, a ≤ b) → a ≤ sInf s := by
   intro s c hc
-  simp [sInf, Closed.sublocale, complement, Sublocale.le_iff]
+  simp [sInf, Closed.toSublocale, complement, Sublocale.le_iff]
   simp [Closed.le_iff] at hc
   exact fun x a a_1 => le_sup_of_le_left (hc a a_1)
 
@@ -187,8 +187,8 @@ lemma Open_sSup_corresponds (x : Set E) : sSup x = sSup ((fun x ↦ (⟨x⟩ : O
   simp only [Set.image_id']
 
 
-lemma Nucleus.eq_join_open_closed (n : Nucleus E) : ∃ a b, n = (⟨a⟩ : Open E).sublocale ⊓ (⟨b⟩ : Closed E).sublocale := by
-  let k (v : E) := (⟨v⟩ : Open E).sublocale ⊓ (⟨(n v)⟩ : Closed E).sublocale
+lemma Nucleus.eq_join_open_closed (n : Nucleus E) : ∃ a b, n = (⟨a⟩ : Open E).toSublocale ⊓ (⟨b⟩ : Closed E).toSublocale := by
+  let k (v : E) := (⟨v⟩ : Open E).toSublocale ⊓ (⟨(n v)⟩ : Closed E).toSublocale
   sorry
 
 /-
