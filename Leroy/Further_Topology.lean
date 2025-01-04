@@ -18,11 +18,27 @@ lemma Open_interior_eq_id : ∀ a : Open E, a.toSublocale.interior = a := by
 
 def Open.interior (x : Sublocale E) := x
 noncomputable def Closed.interior (x : Closed E) : Open E := x.toSublocale.interior
-def Sublocale.closure (x : Sublocale E) := sInf {z : Closed E | x ≤ z}
+
+def Sublocale.closure (x : Sublocale E) : Closed E:= sInf {z : Closed E | x ≤ z}
+def Open.closure (x : Open E) : Closed E :=  sInf {z : Closed E | x ≤ z.toSublocale}
 
 noncomputable def Sublocale.rand (x : Sublocale E) : Sublocale E := x.closure ⊓ (complement x.interior)
 
 def Sublocale.exterior (x : Sublocale E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
+def Open.exterior (x : Open E) := sSup {z : Open E | z ⊓ x = ⊥}
+
+lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
+  simp [Open.exterior, Open_min, Open_sSup]
+  ext
+  simp only
+  rw [inf_sSup_eq]
+  simp only [Set.mem_image, Set.mem_setOf_eq, iSup_exists, Open.bot]
+  apply le_antisymm
+  . simp [iSup_le]
+    intro a h
+    rw [inf_comm]
+    exact h
+  . apply OrderBot.bot_le
 
 /-
 /--

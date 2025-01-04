@@ -421,7 +421,7 @@ instance Open_sSup: SupSet (Open E) where
 instance Open_max : Max (Open X) where
   max U V := sSup {U, V}
 
-instance : Min (Open X) where
+instance Open_min : Min (Open X) where
   min U V := ⟨(U : X) ⊓ V⟩
 
 
@@ -544,6 +544,12 @@ lemma Open_sSup_le : ∀ (s : Set (Open E)) (a : Open E), (∀ b ∈ s, b ≤ a)
 instance : CompleteSemilatticeSup (Open E) where
   le_sSup := Open_le_sSup
   sSup_le := Open_sSup_le
+
+instance : SemilatticeInf (Open E) where
+  inf := min
+  inf_le_left := (by simp [Open.le_iff,Open_min])
+  inf_le_right := (by simp [Open.le_iff,Open_min])
+  le_inf := (by simp [Open.le_iff,Open_min];exact fun a b c a_1 a_2 => ⟨a_1, a_2⟩)
 
 /-
 Leroy Lemme 10
