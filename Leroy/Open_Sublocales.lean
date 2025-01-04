@@ -86,29 +86,34 @@ def eckig (U : E) : Sublocale E where
 --class Open extends Subframe E where
 --  is_open : ∃ u : E, eckig u = e
 @[ext]
-structure Open (E : Type*) [Order.Frame E] where
+structure Open (E : Type*) [Order.Frame E] extends (Sublocale E) where
   element : E
+  eq_eckig : toNucleus = eckig element
 
-def Open.sublocale (x : Open E) :=  eckig x.element
+
+
 
 instance : Coe (Open E) E where
   coe x := x.element
 
-instance : Coe (Open E) (Sublocale E) where
-  coe x := x.sublocale
+instance : Coe (E) (Open E) where
+  coe x := ⟨x⟩
 
+instance : Coe (Open E) (Sublocale E) where
+  coe x := x.toSublocale
 
 def is_open (e : Sublocale E) : Prop :=
   ∃ u : E, eckig u = e
 
 
+/--
 noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
   ⟨Classical.choose h⟩
 -- Leroy Lemme 6
 
-lemma Open_is_open (e : Open E) : is_open e.sublocale := by
-  simp only [is_open, Open.sublocale, exists_apply_eq_apply]
-
+lemma Open_is_open (e : Open E) : is_open e.toSublocale := by
+  simp only [is_open, Open.toSublocale, exists_apply_eq_apply]
+-/
 
 lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
@@ -384,10 +389,8 @@ instance Open.le : LE (Open E) where
   le x y := (x : Sublocale E) ≤ (y : Sublocale E)
 
 def Open.le_iff {U V : Open E} : U ≤ V ↔ U.element ≤ V.element := by
-  simp_rw [Open.le, Open.sublocale]
+  simp_rw [Open.le, Open.toSublocale]
   exact Iff.symm eckig_preserves_inclusion
-
-
 
 
 instance Open.top : Top (Open E) where
@@ -397,8 +400,8 @@ instance : OrderTop (Open E) where
   le_top a := (by simp[Open.le_iff, Open.top])
 
 @[simp]
-lemma Open.top_sublocale : (⊤ : Open E).sublocale = ⊤ := by
-  simp [sublocale, Open.top]
+lemma Open.top_sublocale : (⊤ : Open E).toSublocale = ⊤ := by
+  simp [Open.toSublocale, Open.top]
   exact eckig_preserves_top
 
 instance Open.bot : Bot (Open E) where
@@ -419,17 +422,17 @@ instance : Min (Open X) where
   min U V := ⟨(U : X) ⊓ V⟩
 
 
-lemma Open.sSup_eq {U_i : Set (Open X)} : (sSup U_i).sublocale = sSup (Open.sublocale '' U_i) := by
-  simp [Open.sublocale, Open_sSup]
+lemma Open.sSup_eq {U_i : Set (Open X)} : (sSup U_i).toSublocale = sSup (Open.toSublocale '' U_i) := by
+  simp [Open.toSublocale, Open_sSup]
   rw [← eckig_preserves_sSup]
   rw [Set.image_image]
 
-lemma Open.Min_eq {U V : Open X} : (U ⊓ V).sublocale = U.sublocale ⊓ V.sublocale := by
-  simp [Open.sublocale]
+lemma Open.Min_eq {U V : Open X} : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
+  simp [Open.toSublocale]
   rw [← eckig_preserves_inf]
   rfl
 
-lemma Open.Max_eq {U V : Open X} : (U ⊔ V).sublocale = U.sublocale ⊔ V.sublocale := by
+lemma Open.Max_eq {U V : Open X} : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.toSublocale := by
   let x := @Open.sSup_eq _ _ {U, V}
   simp [Open_max]
   rw [x]
@@ -437,18 +440,18 @@ lemma Open.Max_eq {U V : Open X} : (U ⊔ V).sublocale = U.sublocale ⊔ V.sublo
   rw [Set.image_pair]
 
 
-lemma open_inf_closed (U V : Open X) : is_open (U.sublocale ⊓ V.sublocale) := by
+lemma open_inf_closed (U V : Open X) : is_open (U.toSublocale ⊓ V.toSublocale) := by
   rw [is_open]
   use (U ⊓ V)
   rw [eckig_preserves_inf]
-  simp [Open.sublocale]
+  simp [Open.toSublocale]
 
 
-lemma opens_sSup_closed {U_i : Set (Open X)} : is_open (sSup (Open.sublocale '' U_i)) := by
+lemma opens_sSup_closed {U_i : Set (Open X)} : is_open (sSup (Open.toSublocale '' U_i)) := by
   rw [is_open]
   use (sSup (Open.element '' U_i))
   rw [← eckig_preserves_sSup]
-  simp [Open.sublocale]
+  simp [Open.toSublocale]
   rw [Set.image_image]
 
 
@@ -465,13 +468,13 @@ lemma eckig_injective : Function.Injective (@eckig E e_frm)  := by
 instance : PartialOrder (Open E) where
   le_refl := (by simp[Open.le])
   le_trans := (by simp[Open.le];exact fun a b c a_1 a_2 =>
-    Preorder.le_trans a.sublocale b.sublocale c.sublocale a_1 a_2)
+    Preorder.le_trans a.toSublocale b.toSublocale c.toSublocale a_1 a_2)
   le_antisymm := (by simp[Open.le,Open.le_iff,Open.ext_iff];intro a b h1 h2; apply le_antisymm;exact h1;exact h2)
 
 
-lemma Open.sublocale_injective : Function.Injective (@Open.sublocale E e_frm) := by
+lemma Open.toSublocale_injective : Function.Injective (@Open.toSublocale E e_frm) := by
     rw [Function.Injective]
-    simp [Open.sublocale]
+    simp [Open.toSublocale]
     intro a1 a2 h
     rw [le_antisymm_iff] at h
     rcases h with ⟨h1, h2⟩
@@ -483,8 +486,8 @@ lemma Open.sublocale_injective : Function.Injective (@Open.sublocale E e_frm) :=
 
 
 
-lemma Open.ext_nucleus (a b : Open E) : a = b ↔ a.sublocale = b.sublocale := by
-  simp [Open.sublocale]
+lemma Open.ext_nucleus (a b : Open E) : a = b ↔ a.toSublocale = b.toSublocale := by
+  simp [Open.toSublocale]
   apply Iff.trans Open.ext_iff
   apply Iff.intro
   · intro a_1
@@ -496,7 +499,7 @@ lemma Open.ext_nucleus (a b : Open E) : a = b ↔ a.sublocale = b.sublocale := b
     . apply eckig_preserves_inclusion.mpr a_1.right
 
 
-lemma Open.le_iff_sublocale {a b : Open E} : a ≤ b ↔ a.sublocale ≤ b.sublocale := by
+lemma Open.le_iff_sublocale {a b : Open E} : a ≤ b ↔ a.toSublocale ≤ b.toSublocale := by
   exact ge_iff_le
 
 
