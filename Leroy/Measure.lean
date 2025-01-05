@@ -5,24 +5,18 @@ import Leroy.Further_Topology
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
-abbrev ι := ℕ  -- TODO darf man das?
 
-variable {Z : Type*} [PartialOrder Z]
-def increasing (s : ι → Z) : Prop :=
-  ∀ i : ι, s i ≤ s (i + 1)
 
-def filtered (s : ι → Z) : Prop :=
-  ∀ i j, ∃ k, s i ≤ s k ∧ s j ≤ s k
+def increasingly_filtered {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
+  ∀ U ∈ s, ∀ V ∈ s, ∃ W ∈ s, U ≤ W ∧ V ≤ W
 
-def increasingly_filtered (s : ι → Z) : Prop :=
-  increasing s ∧ filtered s
 
 structure Measure where
   toFun : (Open X) → NNReal -- Evtl ENNReal (brauchen wir ⊤)
   empty : toFun ⊥ = 0
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
-  filtered : ∀ (s : ι → Open X), increasingly_filtered s → toFun (iSup s) = iSup (toFun ∘ s)
+  filtered : ∀ (s : Set  (Open X)), increasingly_filtered s → toFun (sSup s) = sSup (toFun '' s)
 
 def Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 
@@ -267,9 +261,7 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
 /--
 Leroy Lemme 3, Frage: Was ist eine Familie, wieso sind die voisanges ein familie
 -/
-lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodory U + m.caratheodory (complement U) = m.caratheodory (⊤ : Open E) := by
-  rw [Caratheodory_opens]
-  rw [Caratheodory_opens]
+lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m.caratheodory (U.complement) = m.toFun (⊤ : Open E) := by
 
   apply le_antisymm
   .
@@ -310,14 +302,28 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.caratheodor
       apply_fun m.toFun at h1
       rw [caratheodory_top]
       exact h1
+
+    have h2 : ∀ v_a ∈ V_a, m.caratheodory ( U.complement) ≤ m.toFun v_a := by
+      sorry
+
+    have h3 : ∀ v_a ∈ V_a, m.toFun v_a.exterior + m.caratheodory (U.complement) ≤ m.toFun ⊤ := by sorry
+
+    have h4 : m.toFun (sSup W_a) + m.caratheodory (U.complement) ≤ m.toFun ⊤ := by sorry
+
+    have h_aux : m.toFun (sSup W_a) = m.toFun U := by sorry
+
+    rw [h_aux] at h4
+    exact h4
+    -- m v_a ≤ m (compl U)
+    -- dann sSup machen
+
+
+  .
+
+
+    -- m compl U ist das Infimum von allen Offenen Umgebungen per definition
+
+    -- für jedes ε gibt es eine offene Umgebung X von compl U,
+   -- sodass compl
+
     sorry
-
-
-
-
-
-
-
-
-
-  sorry
