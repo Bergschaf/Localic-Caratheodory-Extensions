@@ -319,6 +319,63 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m
 
 
   .
+    have h (ε : Real) (hε : ε > 0) : m.toFun ⊤ ≤ m.toFun U + m.caratheodory (U.complement) + ε:= by
+      rw [Measure.caratheodory]
+      have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
+        refine Real.lt_sInf_add_pos ?_ hε
+        exact h
+
+      have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
+        let h1 := h_aux ε hε (NNReal.toReal '' s) (by simp only [Set.image_nonempty, h])
+        sorry
+
+      have h1 : ∃ W ∈ Open_Neighbourhood U.complement, m.toFun W < m.caratheodory U.complement + ε := by
+        rw [Measure.caratheodory]
+        let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood U.complement.toSublocale) (by sorry)
+        rcases h with ⟨V, h⟩
+        simp at h
+        rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
+        use x
+        simp only [h1, true_and]
+        rw [h2]
+        exact h3
+
+
+
+
+
+    have h1 : m.toFun ⊤ ≤ m.toFun U + m.caratheodory (U.complement) + sInf {ε : Real | ε > 0} := by
+      sorry
+
+    have h_aux : sInf {ε : Real | ε > 0} = 0 := by
+      apply le_antisymm
+      . rw [csInf_le_iff, lowerBounds]
+        simp only [gt_iff_lt, Set.mem_setOf_eq]
+        intro b h
+        exact le_of_forall_le_of_dense h
+        simp only [BddBelow, Set.Nonempty, gt_iff_lt]
+        use -42
+        simp only [lowerBounds, Set.mem_setOf_eq]
+        intro b h
+        apply le_trans' (le_of_lt h)
+        norm_num
+        simp [Set.Nonempty]
+        use 42
+        norm_num
+
+      . apply le_csInf
+        simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
+        use 42
+        norm_num
+        simp only [gt_iff_lt, Set.mem_setOf_eq]
+        exact fun b a => le_of_lt a
+    simp [h_aux] at h1
+    exact h1
+
+
+
+
+
 
 
     -- m compl U ist das Infimum von allen Offenen Umgebungen per definition
