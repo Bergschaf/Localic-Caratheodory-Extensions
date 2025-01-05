@@ -1,5 +1,3 @@
-
-
 \chapter{Leroy Chapter II}\label{sec:leroy-chapter-ii}
 \begin{definition}[Induced boolean algebra]
     \label{def:induced_boolean_algebra}
@@ -128,8 +126,14 @@
 (Leroy Lemme 3.3)
     \label{lem:property_1}
     \uses{def:complement, lem:commutes_with_sup, lem:regularity_of_sublocals,lem:properties_of_further_topology}
+    \lean{Measure.add_complement}
+    \leanok
     For any open sublocal $U$ of a local $X$, the caratheodory extension of a measure on $X$ satisfies \[\mu(U) + \mu(X \setminus U) = \mu(X)\]
 \end{lemma}
+\begin{proof}
+    \leanok
+    Siehe Leroy
+\end{proof}
 
 
 

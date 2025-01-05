@@ -29,6 +29,7 @@ noncomputable def Sublocale.rand (x : Sublocale E) : Sublocale E := x.closure �
 
 def Sublocale.exterior (x : Sublocale E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
 def Open.exterior (x : Open E) := sSup {z : Open E | z ⊓ x = ⊥}
+def Closed.exterior (x : Closed E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
 
 lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
   simp [Open.exterior, Open_min, Open_sSup]
@@ -46,6 +47,19 @@ lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
 lemma Open.exterior_exterior_eq_self (x : Open E) : x.exterior.exterior = x := by
   simp [Open.exterior]
   sorry
+
+lemma closure_eq_compl_exterior_compl : ∀ a : Open E, a.closure.toSublocale = a.exterior.compl.toSublocale := by
+  sorry
+
+lemma le_compl_iff {U V : Open E} : U.compl ≤ V.toSublocale ↔ V.compl ≤ U.toSublocale := by
+  sorry
+
+lemma compl_le_iff {U V : Open E} : U.compl ≤ V.exterior.toSublocale ↔ V.closure ≤ U.toSublocale := by sorry
+
+lemma Open.exterior_compl_eq_self {U : Open E} : U.compl.exterior = U := by sorry
+
+lemma Open.exterior_inf_eq_sup {U V : Open E} : (U ⊓ V).exterior = U.exterior ⊔ V.exterior := by sorry
+
 /-
 /--
 Dependency: Leroy lemma 8
