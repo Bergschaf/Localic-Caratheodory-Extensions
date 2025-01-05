@@ -3,8 +3,11 @@ import Mathlib.Order.CompleteSublattice
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
-def Closed.complement (x : Closed E) : Open E := ⟨x.element⟩
-def Open.complement (x : Open E) : Closed E := ⟨x.element⟩
+def Closed.compl (x : Closed E) : Open E := ⟨x.element⟩
+def Open.compl (x : Open E) : Closed E := ⟨x.element⟩
+
+lemma Open.complement_eq (x : Open E) : x.compl = (complement x) := by
+  exact rfl
 
 def Sublocale.interior (x : Sublocale E) := sSup {z : Open E | z ≤ x}
 lemma Open_interior_eq_id : ∀ a : Open E, a.toSublocale.interior = a := by
@@ -40,6 +43,9 @@ lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
     exact h
   . apply OrderBot.bot_le
 
+lemma Open.exterior_exterior_eq_self (x : Open E) : x.exterior.exterior = x := by
+  simp [Open.exterior]
+  sorry
 /-
 /--
 Dependency: Leroy lemma 8

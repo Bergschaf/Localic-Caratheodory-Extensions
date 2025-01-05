@@ -89,6 +89,11 @@ lemma Caratheodory_monotonic (m : Measure) {A B : Sublocale E} : A ≤ B → m.c
     . exact fun v => Preorder.le_trans (x.toSublocale v) (B v) (A v) (h1 v) (h v)
     . rfl
 
+lemma Caratheodory.le_top (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.caratheodory ⊤ := by
+  intro a
+  apply Caratheodory_monotonic
+  exact OrderTop.le_top a
+
 lemma le_Neighbourhood {a : Sublocale E} : ∀ x ∈ Neighbourhood a, a ≤ x := by
   intro x h
   simp only [Neighbourhood, Open_Neighbourhood, Set.mem_setOf_eq] at h
@@ -238,7 +243,7 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
     sorry
   intro H
   let K := a H
-  let V (W : Open E) := W.closure.complement ⊔ ⟨H⟩
+  let V (W : Open E) := W.closure.compl ⊔ ⟨H⟩
 
   have h (W : Open E) (h : W.closure ≤ (↑K : Open E).toSublocale) :
     W ≤ E_to_Open ((V W).toSublocale H) := by
@@ -257,11 +262,10 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
   rw [h1]
 
 
-
 /--
-Leroy Lemme 3, Frage: Was ist eine Familie, wieso sind die voisanges ein familie
+Leroy Lemme 3
 -/
-lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m.caratheodory (U.complement) = m.toFun (⊤ : Open E) := by
+lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m.caratheodory (U.compl) = m.toFun (⊤ : Open E) := by
 
   apply le_antisymm
   .
@@ -277,12 +281,29 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m
         simp [W_a] at h
         rcases h with ⟨a, ⟨h1, h2⟩⟩
         rw [← h2]
-        simp [V_a] at h1
-        sorry
-      . simp only [sSup_le_iff, Set.mem_setOf_eq]
-        sorry
+        simp only [V_a] at h1
+        simp only [Open_Neighbourhood, Set.mem_setOf_eq] at h1
+        have h_temporary : ∀ a : Open E, a.closure.toSublocale = a.exterior.compl.toSublocale := by sorry
+        rw [h_temporary]
+        rw [Open.exterior_exterior_eq_self]
+        sorry -- geht
+      . simp only [well_inside, Open_Neighbourhood, sSup_le_iff, Set.mem_setOf_eq, W_a, V_a]
+        intro b h
+        apply le_sSup
+        simp only [Set.mem_image, Set.mem_setOf_eq]
+        use b.exterior
+        apply And.intro
+        . sorry
+        . exact Open.exterior_exterior_eq_self b
+
     apply_fun m.caratheodory at sSup_W_a_eq_U
-    have h_filtered_croissant : m.toFun U = sSup (m.toFun '' W_a) := by sorry
+    have W_a_filtered_croissant : increasingly_filtered W_a := by
+      rw [increasingly_filtered]
+      intro u hu v hv
+      use u ⊔ v
+      sorry
+    --have h_filtered_croissant : m.toFun U = sSup (m.toFun '' W_a) := by
+
 
     have h1 : ∀ v_a ∈ V_a, m.toFun (v_a.exterior) + m.toFun v_a ≤ m.caratheodory ⊤ := by
       intro v_a h_v_a
@@ -302,36 +323,75 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m
       apply_fun m.toFun at h1
       rw [caratheodory_top]
       exact h1
+      apply Measure.mono
 
-    have h2 : ∀ v_a ∈ V_a, m.caratheodory ( U.complement) ≤ m.toFun v_a := by
-      sorry
+    have h2 : ∀ v_a ∈ V_a, m.caratheodory (U.compl) ≤ m.toFun v_a := by
+      intro va hva
+      simp [V_a, Open_Neighbourhood] at hva
+      rw [Open.complement_eq]
+      apply_fun m.caratheodory at hva
+      rw [Caratheodory_opens] at hva
+      exact hva
+      apply Caratheodory_monotonic
+    rw [Measure.caratheodory_top] at h1
+    have h3 : ∀ v_a ∈ V_a, m.toFun v_a.exterior + m.caratheodory (U.compl) ≤ m.toFun ⊤ := by
+      intro va hva
+      exact add_le_of_add_le_left (h1 va hva) (h2 va hva)
 
-    have h3 : ∀ v_a ∈ V_a, m.toFun v_a.exterior + m.caratheodory (U.complement) ≤ m.toFun ⊤ := by sorry
+    have h4 : m.toFun (sSup W_a) + m.caratheodory (U.compl) ≤ m.toFun ⊤ := by
+      rw [m.filtered _ W_a_filtered_croissant]
+      apply add_le_of_le_tsub_right_of_le
+      . rw [← Measure.caratheodory_top]
+        exact Caratheodory.le_top m U.compl.toSublocale
+      . apply csSup_le
+        . simp [Set.Nonempty, W_a, V_a]
+          use m.toFun (⊤ : Open E).exterior
+          use ⊤
+          simp only [and_true]
+          exact Open_Neighbourhood.top_mem
+        . simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+          intro a wa
+          simp [W_a] at wa
+          rcases wa with ⟨x, ⟨va, wa⟩⟩
+          let h4 := h3 x va
+          rw [wa] at h4
+          exact le_tsub_of_add_le_right h4
 
-    have h4 : m.toFun (sSup W_a) + m.caratheodory (U.complement) ≤ m.toFun ⊤ := by sorry
 
-    have h_aux : m.toFun (sSup W_a) = m.toFun U := by sorry
-
+    have h_aux : m.toFun (sSup W_a) = m.toFun U := by
+      repeat rw [Caratheodory_opens] at sSup_W_a_eq_U
+      exact sSup_W_a_eq_U
     rw [h_aux] at h4
     exact h4
     -- m v_a ≤ m (compl U)
     -- dann sSup machen
 
 
-  .
-    have h (ε : Real) (hε : ε > 0) : m.toFun ⊤ ≤ m.toFun U + m.caratheodory (U.complement) + ε:= by
-      rw [Measure.caratheodory]
+  . have h (ε : Real) (hε : ε > 0) : m.toFun ⊤ ≤ m.toFun U + m.caratheodory (U.compl) + ε:= by
       have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
         refine Real.lt_sInf_add_pos ?_ hε
         exact h
 
       have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
         let h1 := h_aux ε hε (NNReal.toReal '' s) (by simp only [Set.image_nonempty, h])
-        sorry
+        simp at h1
+        rcases h1 with ⟨x, ⟨h1, h2⟩⟩
+        use x
+        simp only [h1, true_and]
+        apply LT.lt.trans_le h2
+        simp only [add_le_add_iff_right]
+        rw [← NNReal.coe_sInf]
 
-      have h1 : ∃ W ∈ Open_Neighbourhood U.complement, m.toFun W < m.caratheodory U.complement + ε := by
+      have h1 : ∃ W ∈ Open_Neighbourhood U.compl, m.toFun W < m.caratheodory U.compl + ε := by
         rw [Measure.caratheodory]
-        let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood U.complement.toSublocale) (by sorry)
+        have h_nonempty : (m.toFun '' Open_Neighbourhood U.compl.toSublocale).Nonempty := by
+          simp only [Set.Nonempty, Set.mem_image]
+          use m.toFun ⊤
+          use ⊤
+          simp only [and_true]
+          exact Open_Neighbourhood.top_mem
+
+        let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood U.compl.toSublocale) h_nonempty
         rcases h with ⟨V, h⟩
         simp at h
         rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
@@ -339,13 +399,40 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m
         simp only [h1, true_and]
         rw [h2]
         exact h3
+      rcases h1 with ⟨W, ⟨h1, h2⟩⟩
+      have h : ↑(m.toFun U) + m.toFun W ≤ ↑(m.toFun U) + ↑(m.caratheodory U.compl.toSublocale) + ε := by
+        let h3 := le_of_lt h2
+        apply_fun (fun (x : Real) ↦ ↑(m.toFun U) + x) at h3
+        dsimp at h3
+        apply le_trans h3
+        rw [add_assoc]
+        simp only [Monotone, add_le_add_iff_left, imp_self, implies_true]
 
+      apply le_trans' h
+      have h3 : ↑(m.toFun U) + ↑(m.toFun W) - ↑(m.toFun (U ⊓ W)) ≤ ↑(m.toFun U) + ↑(m.toFun W) := by
+        simp only [tsub_le_iff_right, le_add_iff_nonneg_right, zero_le]
+      apply le_trans' h3
+      rw [← @pseudosymm]
+      refine m.mono ⊤ (U ⊔ W) ?_
+      simp only [Open_Neighbourhood, Set.mem_setOf_eq] at h1
+      refine Open.le_iff_sublocale.mpr ?_
+      rw [Open.Max_eq]
+      have h4 : U.toSublocale ⊔ U.compl.toSublocale ≤ U.toSublocale ⊔ W.toSublocale := by
+        exact sup_le_sup_left h1 U.toSublocale
+      apply le_trans' h4
+      rw [Open.complement_eq]
+      rw [sup_comp_eq_top]
+      apply OrderTop.le_top
 
-
-
-
-    have h1 : m.toFun ⊤ ≤ m.toFun U + m.caratheodory (U.complement) + sInf {ε : Real | ε > 0} := by
-      sorry
+    have h1 : m.toFun ⊤ - (m.toFun U + m.caratheodory (U.compl)) ≤ sInf {ε : Real | ε > 0} := by
+      apply le_csInf
+      rw [Set.Nonempty]
+      use 42
+      norm_num
+      simp only [Set.mem_setOf_eq]
+      intro b1 h1
+      rw [tsub_le_iff_left]
+      exact h b1 h1
 
     have h_aux : sInf {ε : Real | ε > 0} = 0 := by
       apply le_antisymm
@@ -371,16 +458,3 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m
         exact fun b a => le_of_lt a
     simp [h_aux] at h1
     exact h1
-
-
-
-
-
-
-
-    -- m compl U ist das Infimum von allen Offenen Umgebungen per definition
-
-    -- für jedes ε gibt es eine offene Umgebung X von compl U,
-   -- sodass compl
-
-    sorry
