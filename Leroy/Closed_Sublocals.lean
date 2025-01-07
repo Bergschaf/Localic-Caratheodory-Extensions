@@ -115,7 +115,7 @@ noncomputable instance : Coe (Closed E) (Sublocale E) where
   coe x := x.toSublocale
 
 @[simp]
-instance : LE (Closed E) where
+instance Closed.le : LE (Closed E) where
   le x y := x.toSublocale ≤ y.toSublocale
 
 
