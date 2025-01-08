@@ -28,37 +28,25 @@ def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.c
       rw [Open.complement_eq]
       rw [@sup_comp_eq_top]
   . intro h
-    apply_fun (fun x ↦ x ⊓ u.compl.toSublocale) at h
-    rw [top_inf_eq] at h
-    conv
-    let h := h
-    have h1 : ⊤ =  u.toSublocale ⊔ u.compl := by
-      rw [Open.complement_eq]
-      exact Eq.symm (sup_comp_eq_top u)
-
-    rw [h1] at h
-
-    rw [sup_eq_sup_iff_right] at h
-    rcases h with ⟨h1, h2⟩
-    sorry
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    simp_rw [Sublocale.max_eq,sSup,sInf] at h
+    simp [Sublocale.ext_iff, sInf_fun] at h
+    simp [Sublocale.le_iff]
+    intro v
+    let h1 := h v
+    have h2 : (⊤ : Sublocale E) v = v := by
+      exact rfl
+    rw [h2] at h1
+    rw [Set.setOf_or] at h1
+    simp [Open.compl,Closed.toSublocale, complement] at h1
+    rw [@inf_sup_right] at h1
+    --
+    simp [Open.toSublocale, eckig, e_U]
+    apply le_sSup
+    simp only [Set.mem_setOf_eq]
+    let h3 := le_of_eq h1
+    rw [@sup_le_iff] at h3
+    rw [inf_comm]
+    exact h3.left
 
 
 
