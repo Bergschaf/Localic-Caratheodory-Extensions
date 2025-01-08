@@ -12,6 +12,9 @@ def Open.compl (x : Open E) : Closed E := ⟨x.element⟩
 lemma Open.complement_eq (x : Open E) : x.compl = (complement x) := by
   exact rfl
 
+lemma Open.inf_compl {x : Open E} : x.toSublocale ⊓ x.compl = ⊥ := by
+  rw [Open.complement_eq]
+  exact inf_complement x
 
 /--
 Leroy Lemme 8 bis
@@ -47,6 +50,24 @@ def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.c
     rw [@sup_le_iff] at h3
     rw [inf_comm]
     exact h3.left
+
+def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.compl) = ⊥ := by
+  apply Iff.intro
+  . intro h
+    apply le_antisymm
+    . apply_fun (fun x ↦ x ⊓ u.compl.toSublocale) at h
+      dsimp at h
+      rw [Open.inf_compl] at h
+      exact h
+      simp only [Monotone, le_inf_iff, inf_le_right, and_true, OrderDual.forall,
+        OrderDual.toDual_le_toDual]
+      exact fun a a_1 a_2 => inf_le_of_left_le a_2
+    . exact OrderBot.bot_le (x ⊓ u.compl.toSublocale)
+  .
+    intro h
+    sorry
+
+
 
 
 
