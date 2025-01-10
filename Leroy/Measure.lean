@@ -123,11 +123,6 @@ Leroy Lemme 1
 Wie kriegt er V_n, also voisinages die weniger als εₙ größer sind als X_n
 -> Magie
 -/
-lemma preserves_sup (m : @Measure X h) {n : ℕ} (X_n : Fin n → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (sSup (Set.range X_n)) = sSup (m.caratheodory '' X_n) := by
-
-
-
-
 lemma preserves_sup (m : @Measure X h) (X_n : Finset (Sublocale X)) (h : increasing X_n.toSet) (h_nonempty : X_n.Nonempty): m.caratheodory (sSup X_n) = sSup (m.caratheodory '' X_n) := by
   simp [Measure.caratheodory]
   have h_epsilon : ∃ r : NNReal, r > 0 := by
@@ -165,39 +160,7 @@ lemma preserves_sup (m : @Measure X h) (X_n : Finset (Sublocale X)) (h : increas
 
       sorry
       simp only [StrictMono, sub_lt_sub_iff_right, imp_self, implies_true]
-
-
-  let V_n (x_n : X_n) := Classical.choose (h_1 x_n.val x_n.prop)
-
-  let W_n (n : ℕ) := iSup (fun (x : Fin n) ↦ V_n x)
-
-  let W := iSup (W_n)
-
-  have h_2 : W = iSup (V_n) := by
-    simp [W, W_n]
-    sorry
-
-  have h_3 : ∀ n : ℕ, m.toFun (W_n n) - m.caratheodory (X_n n) ≤ ∑ i ∈ Finset.range (n), e_n i := by sorry
-
-  have h_4 : m.toFun (W) ≤ ε + iSup (fun n ↦ (m.caratheodory (X_n n))) := by sorry
-
-
-  have h_trivial : ∀ n : ℕ, iSup (m.caratheodory ∘ X_n) ≤ m.caratheodory (iSup X_n) := by
-    intro n
-
-    apply ciSup_le
-    intro x
-    simp [Measure.caratheodory]
-    apply csInf_le_csInf'
-    simp
-    let x := Open_Neighbourhood_nonempty (iSup  X_n)
-    --apply @Set.nonempty_of_nonempty_subtype _ _
-    --
-    sorry -- sieht schlecht auss
-    sorry
-
   sorry
-
 
 
 def well_inside (U V : Open E) := U.closure ≤ V.toSublocale
