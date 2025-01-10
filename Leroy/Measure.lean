@@ -122,8 +122,13 @@ lemma Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbour
 Leroy Lemme 1
 Wie kriegt er V_n, also voisinages die weniger als εₙ größer sind als X_n
 -> Magie
+-/
+lemma preserves_sup (m : @Measure X h) {n : ℕ} (X_n : Fin n → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (sSup (Set.range X_n)) = sSup (m.caratheodory '' X_n) := by
 
-lemma preserves_sup (m : @Measure X h) (X_n : Set (Sublocale X)) (h : increasing X_n) : m.caratheodory (sSup X_n) = sSup (m.caratheodory '' X_n) := by
+
+
+
+lemma preserves_sup (m : @Measure X h) (X_n : Finset (Sublocale X)) (h : increasing X_n.toSet) (h_nonempty : X_n.Nonempty): m.caratheodory (sSup X_n) = sSup (m.caratheodory '' X_n) := by
   simp [Measure.caratheodory]
   have h_epsilon : ∃ r : NNReal, r > 0 := by
     use 1
@@ -132,29 +137,37 @@ lemma preserves_sup (m : @Measure X h) (X_n : Set (Sublocale X)) (h : increasing
   have h_epsilon' : ε > 0 := by
     simp [ε]
     apply Classical.choose_spec
-  have h_epsilon_n :  ∃ (e_n : ℕ → NNReal),∀ n : ℕ,( ∑ i ∈ Finset.range n, e_n i < ε) ∧ 0 < e_n n := by
-    let d (n : ℕ) := (0.5 * ε) / (2 ^ n)
-    use d
-    intro n
-    simp [d]
-    sorry
-  let e_n := Classical.choose h_epsilon_n
-  have h_e_n : ∀ n : ℕ, 0 < e_n n := by
-    intro n
-    simp [e_n]
-    let x := Classical.choose_spec h_epsilon_n n
-    exact x.right
+
+  have h_1 : ∀ x_n ∈ X_n, ∃ neighbour ∈ Open_Neighbourhood (x_n), m.toFun neighbour - m.caratheodory (x_n) ≤ ε / X_n.card :=  by
+    intro n h
+    rw [Measure.caratheodory]
+    let m_real := NNReal.toReal ∘ m.toFun
+    let h1 := @Real.lt_sInf_add_pos (m_real '' Open_Neighbourhood n) (by simp[Set.Nonempty];use m_real ⊤;use ⊤;apply And.intro; exact Open_Neighbourhood.top_mem; simp only [Function.comp_apply,m_real])
+    have h_pos :  0 < ε / X_n.card := by
+      rw [propext (div_pos_iff_of_pos_left h_epsilon')]
+      rw [@Nat.cast_pos]
+      rw [Finset.card_pos]
+      exact h_nonempty
+
+    let h1 := @h1 (ε / X_n.card) (by exact h_pos)
+    simp at h1
+    rcases h1 with ⟨a, ⟨h1, h2⟩⟩
+    use a
+    apply And.intro
+    . exact h1
+    . apply_fun (fun x ↦ x -sInf (m_real '' Open_Neighbourhood n)) at h2
+      simp at h2
+      simp [m_real] at h2
+
+      let h2 := le_of_lt h2
+      apply le_trans' h2
+      simp only [NNReal.val_eq_coe]
+
+      sorry
+      simp only [StrictMono, sub_lt_sub_iff_right, imp_self, implies_true]
 
 
-  have h_1 : ∀ x_n ∈ X_n, ∃ neighbour ∈ Open_Neighbourhood (x_n), m.toFun neighbour - m.caratheodory (x_n) < ε / n :=  by
-    intro n
-    simp [Measure.caratheodory]
-    -- TODO noa fragen
-    --- ggf sInf kommutiert mit measure
-    sorry
-
-
-  let V_n (n : ℕ) := Classical.choose (h_1 n)
+  let V_n (x_n : X_n) := Classical.choose (h_1 x_n.val x_n.prop)
 
   let W_n (n : ℕ) := iSup (fun (x : Fin n) ↦ V_n x)
 
@@ -184,7 +197,7 @@ lemma preserves_sup (m : @Measure X h) (X_n : Set (Sublocale X)) (h : increasing
     sorry
 
   sorry
--/
+
 
 
 def well_inside (U V : Open E) := U.closure ≤ V.toSublocale
@@ -264,6 +277,7 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
   apply_fun E_to_Open
   rw [h1]
   sorry
+  sorry
 
 
 
@@ -271,7 +285,7 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
 /--
 Leroy Lemme 3
 -/
-lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m.caratheodory (U.compl) = m.toFun (⊤ : Open E) := by
+lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl) = m.toFun (⊤ : Open E) := by
 
   apply le_antisymm
   .
@@ -479,3 +493,18 @@ lemma Measure.add_complement {m : @Measure E e_frm} {U : Open E} : m.toFun U + m
         exact fun b a => le_of_lt a
     simp [h_aux] at h1
     exact h1
+
+
+
+/--
+leroy Lemme 4
+-/
+lemma Measure.add_complement_inf {u : Open E} {a : Sublocale E} : m.caratheodory a = m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) := by
+  apply le_antisymm
+  . sorry
+  .
+    have h : ∀ w ∈ Open_Neighbourhood a, m.toFun w = m.toFun (w ⊓ u) + m.caratheodory (w ⊓ u.compl) := by
+      intro w h
+      let h1 := @Measure.add_complement E _ _ m u
+      sorry
+    sorry
