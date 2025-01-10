@@ -28,6 +28,12 @@ structure Nucleus (X : Type*) [SemilatticeInf X] where
   /-- A Nucleus preserves infima.-/
   preserves_inf (x y : X) : toFun (x ⊓ y) = toFun x ⊓ toFun y
 
+def bot : Nucleus X where
+  toFun := fun x ↦ x
+  idempotent x := (by rfl)
+  increasing x := (by rfl)
+  preserves_inf x y := (by rfl)
+
 /--
 A stronger version of Nucleus.idempotent which follows from Nucleus.increasing.
 -/
