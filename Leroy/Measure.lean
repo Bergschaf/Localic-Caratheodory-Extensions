@@ -163,10 +163,18 @@ lemma Open_Neighbourhood_nonempty (x : Sublocale X) : Nonempty (Open_Neighbourho
   simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_sublocale]
   exact fun v => Nucleus.increasing' x
 
+
+
 lemma Open_Neighbourhood.top_mem {x : Sublocale X}: ⊤ ∈ Open_Neighbourhood x := by
   rw [Open_Neighbourhood]
   simp only [Set.mem_setOf_eq, Open.top_sublocale, le_top]
 
+
+@[simp]
+lemma Open_Neighbourhood.Nonempty {u : Sublocale X} : (Open_Neighbourhood u).Nonempty := by
+  rw [Set.Nonempty]
+  use ⊤
+  exact top_mem
 
 lemma Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbourhood x, ∀ V ∈ Open_Neighbourhood x, U ⊓ V ∈ Open_Neighbourhood x := by
   sorry
@@ -579,11 +587,46 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
 noncomputable def Measure.restrict (m : @Measure E e_frm) (w : Open E) : Open E → NNReal :=
   fun x ↦ m.toFun (x ⊓ w)
 
+omit e_regular in
+lemma Measure.restrict_mono : ∀ (U V : Open E), U ≤ V → m.restrict w U ≤ m.restrict w V := by
+  intro u v h
+  simp [Measure.restrict]
+  apply Measure.mono
+  exact inf_le_inf_right w h
+
+omit e_regular in
+lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) = m.restrict w U + m.restrict w V - m.restrict w (U ⊓ V) := by
+  intro u v
+  simp [Measure.restrict]
+  have h : u ⊓ v ⊓ w = (u ⊓ w) ⊓ (v ⊓ w) := by
+    exact inf_inf_distrib_right u v w
+  rw [h]
+  rw [← Measure.pseudosymm]
+
+  have h : (u ⊔ v) ⊓ w = u ⊓ w ⊔  v ⊓ w := by
+    apply_fun (fun x ↦ Open.toSublocale x)
+    simp [Open.Min_eq, Open.Max_eq]
+    exact inf_sup_right u.toSublocale v.toSublocale w.toSublocale
+    exact Open.toSublocale_injective
+  rw [h]
+
+lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
+  intro s h
+  simp [Measure.restrict]
+  rw [← Caratheodory_opens]
+  simp_rw [Open.Min_eq]
+  rw [Open.sSup_eq]
+
+
+
+
+
+
 noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E)  : @Measure E e_frm where
   toFun := Measure.restrict m w
   empty := (by simp[Measure.restrict];exact m.empty)
-  mono := (by simp[Measure.restrict];sorry)
-  pseudosymm := (by simp [Measure.restrict];sorry)
+  mono := restrict_mono
+  pseudosymm := restrict_pseudosymm
   filtered := sorry
 
 
@@ -605,8 +648,6 @@ lemma Measure.add_complement_inf {u : Open E} {a : Sublocale E} : m.caratheodory
     apply_fun m.caratheodory at h
     apply le_trans' (Caratheodory_subadditive _ _)
     rw [← h]
-
-
   .
     have h : ∀ w ∈ Open_Neighbourhood a, (m.restrict_measure w).toFun ⊤  = (m.restrict_measure w).toFun (u) + (m.restrict_measure w).caratheodory (u.compl) := by
       intro w h
@@ -635,20 +676,28 @@ lemma Measure.add_complement_inf {u : Open E} {a : Sublocale E} : m.caratheodory
           intro b h1
           simp [Open_Neighbourhood] at h1
           apply le_csInf
-          . sorry
+          . simp only [Set.image_nonempty]
+            rw [Set.Nonempty]
+            use ⊤
+            exact Open_Neighbourhood.top_mem
           . simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
             intro a1 h2
             simp [Open_Neighbourhood] at h2
-            let h3 := h1 (a1 ⊓ w) (by rw [Open.Min_eq];sorry)
+            have h_aux : a ⊓ u.compl.toSublocale ≤ (a1 ⊓ w).toSublocale := by
+              rw [inf_comm]
+              rw [Open.Min_eq]
+              exact inf_le_inf h2 h
+
+            let h3 := h1 (a1 ⊓ w) h_aux
             exact h3
-          . sorry
-          . sorry
+          . simp only [OrderBot.bddBelow]
+          . simp only [Set.image_nonempty, Open_Neighbourhood.Nonempty]
     conv =>
       enter [2]
       rw [Measure.caratheodory]
 
     apply le_csInf
-    . sorry
+    . simp only [Set.image_nonempty, Open_Neighbourhood.Nonempty]
     . intro b h3
       simp at h3
       rcases h3 with ⟨w, ⟨h3, h4⟩⟩
