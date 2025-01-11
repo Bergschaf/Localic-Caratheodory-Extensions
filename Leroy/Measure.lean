@@ -3,8 +3,60 @@ import Leroy.Basic
 import Leroy.Open_Sublocales
 import Leroy.Further_Topology
 
-variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [Order.Frame E]
 
+
+
+lemma sInf_epsilon_eq_zero : sInf {ε : Real | ε > 0} = 0 := by
+      apply le_antisymm
+      . rw [csInf_le_iff, lowerBounds]
+        simp only [gt_iff_lt, Set.mem_setOf_eq]
+        intro b h
+        exact le_of_forall_le_of_dense h
+        simp only [BddBelow, Set.Nonempty, gt_iff_lt]
+        use -42
+        simp only [lowerBounds, Set.mem_setOf_eq]
+        intro b h
+        apply le_trans' (le_of_lt h)
+        norm_num
+        simp [Set.Nonempty]
+        use 42
+        norm_num
+
+      . apply le_csInf
+        simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
+        use 42
+        norm_num
+        simp only [gt_iff_lt, Set.mem_setOf_eq]
+        exact fun b a => le_of_lt a
+
+lemma sInf_epsilon_eq_zero' : sInf {ε : NNReal | ε > 0} = 0 := by
+
+      apply le_antisymm
+      . rw [csInf_le_iff, lowerBounds]
+        simp only [gt_iff_lt, Set.mem_setOf_eq]
+        intro b h
+        exact le_of_forall_le_of_dense h
+        simp only [BddBelow, Set.Nonempty, gt_iff_lt]
+        use 0
+        simp only [lowerBounds, Set.mem_setOf_eq]
+        intro b h
+        apply le_trans' (le_of_lt h)
+        norm_num
+        simp [Set.Nonempty]
+        use 42
+        norm_num
+
+      . apply le_csInf
+        simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
+        use 42
+        norm_num
+        simp only [gt_iff_lt, Set.mem_setOf_eq]
+        exact fun b a => le_of_lt a
+
+
+
+-----
+variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
 
 def increasingly_filtered {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
@@ -19,6 +71,7 @@ structure Measure where
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set  (Open X)), increasingly_filtered s → toFun (sSup s) = sSup (toFun '' s)
+variable {m : @Measure E e_frm}
 
 def Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 
@@ -163,6 +216,97 @@ lemma preserves_sup (m : @Measure X h) (X_n : Finset (Sublocale X)) (h : increas
   sorry
 
 
+lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε  := by
+      have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
+        refine Real.lt_sInf_add_pos ?_ hε
+        exact h
+
+      have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
+        let h1 := h_aux ε hε (NNReal.toReal '' s) (by simp only [Set.image_nonempty, h])
+        simp at h1
+        rcases h1 with ⟨x, ⟨h1, h2⟩⟩
+        use x
+        simp only [h1, true_and]
+        apply LT.lt.trans_le h2
+        simp only [add_le_add_iff_right]
+        rw [← NNReal.coe_sInf]
+      rw [Measure.caratheodory]
+      have h_nonempty : (m.toFun '' Open_Neighbourhood  a).Nonempty := by
+        simp only [Set.Nonempty, Set.mem_image]
+        use m.toFun ⊤
+        use ⊤
+        simp only [and_true]
+        exact Open_Neighbourhood.top_mem
+      intro ε hε
+      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) h_nonempty
+      rcases h with ⟨V, h⟩
+      simp at h
+      rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
+      use x
+      simp only [h1, true_and]
+      rw [h2]
+      exact le_of_lt h3
+
+
+lemma Caratheodory_subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
+  have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
+    intro ε h
+    have h_a : ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
+      exact Exists_Neighbourhood_epsilon a ε h
+    have h_b : ∃ w ∈ Open_Neighbourhood b, m.toFun w ≤ m.caratheodory b + ε := by
+      exact Exists_Neighbourhood_epsilon b ε h
+
+    rcases h_a with ⟨w_a, ⟨ha1, ha2⟩⟩
+    rcases h_b with ⟨w_b, ⟨hb1, hb2⟩⟩
+    simp [Open_Neighbourhood] at ha1 hb1
+    have h1 : m.caratheodory (a ⊔ b) ≤ m.caratheodory ((w_a ⊔ w_b).toSublocale) := by
+      apply Caratheodory_monotonic
+      rw [Open.Max_eq]
+      exact sup_le_sup ha1 hb1
+    apply le_trans h1
+    rw [Caratheodory_opens]
+    rw [Measure.pseudosymm]
+    simp only [tsub_le_iff_right]
+    have h2 : (m.caratheodory a + ε) + (m.caratheodory b +  ε) ≤ m.caratheodory a + m.caratheodory b + 2 * ε + m.toFun (w_a ⊓ w_b) := by
+      ring_nf
+      simp only [le_add_iff_nonneg_right, zero_le]
+    apply le_trans' h2
+    apply add_le_add
+    exact ha2
+    exact hb2
+
+  have h2 :  m.caratheodory (a ⊔ b) - (m.caratheodory a + m.caratheodory b)  ≤ sInf {ε : NNReal | ε > 0} := by
+    apply le_csInf
+    . simp [Set.Nonempty]
+      use 42
+      norm_num
+    . intro b1 h1
+      simp at h1
+      let h2 := h (b1 / 2) (by exact half_pos h1)
+      apply_fun (fun x : NNReal ↦ (x - (Measure.caratheodory a + Measure.caratheodory b))) at h2
+      simp at h2
+      have h3 :   m.caratheodory a + m.caratheodory b + 2 * (b1 / 2) - (m.caratheodory a + m.caratheodory b) = b1 := by
+        simp only [add_tsub_cancel_left]
+        ring_nf
+        simp only [isUnit_iff_ne_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+          IsUnit.div_mul_cancel]
+      rw [h3] at h2
+      apply h2
+      --
+      simp only [Monotone]
+      intro a1 b1 h
+      exact tsub_le_tsub_right h (Measure.caratheodory a + Measure.caratheodory b)
+
+  rw [sInf_epsilon_eq_zero'] at h2
+  simp at h2
+  apply_fun (. + (m.caratheodory a + m.caratheodory b)) at h2
+  simp only [zero_add] at h2
+  rw [← h2]
+  exact le_tsub_add
+
+
+
+
 def well_inside (U V : Open E) := U.closure ≤ V.toSublocale
 
 infix:100 " ≪ " => well_inside
@@ -241,10 +385,6 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbou
   rw [h1]
   sorry
   sorry
-
-
-
-
 /--
 Leroy Lemme 3
 -/
@@ -432,30 +572,9 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       rw [tsub_le_iff_left]
       exact h b1 h1
 
-    have h_aux : sInf {ε : Real | ε > 0} = 0 := by
-      apply le_antisymm
-      . rw [csInf_le_iff, lowerBounds]
-        simp only [gt_iff_lt, Set.mem_setOf_eq]
-        intro b h
-        exact le_of_forall_le_of_dense h
-        simp only [BddBelow, Set.Nonempty, gt_iff_lt]
-        use -42
-        simp only [lowerBounds, Set.mem_setOf_eq]
-        intro b h
-        apply le_trans' (le_of_lt h)
-        norm_num
-        simp [Set.Nonempty]
-        use 42
-        norm_num
-
-      . apply le_csInf
-        simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
-        use 42
-        norm_num
-        simp only [gt_iff_lt, Set.mem_setOf_eq]
-        exact fun b a => le_of_lt a
-    simp [h_aux] at h1
-    exact h1
+    simp_rw [sInf_epsilon_eq_zero] at h1
+    simp only [tsub_le_iff_right, zero_add] at h1
+    apply h1
 
 noncomputable def Measure.restrict (m : @Measure E e_frm) (w : Open E) : Open E → NNReal :=
   fun x ↦ m.toFun (x ⊓ w)
@@ -468,30 +587,6 @@ noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E) 
   filtered := sorry
 
 
-lemma Caratheodory_subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) = m.caratheodory a + m.caratheodory b := by
-  have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
-    intro ε h
-    have h_a : ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
-      sorry
-    have h_b : ∃ w ∈ Open_Neighbourhood b, m.toFun w ≤ m.caratheodory b + ε := by
-      sorry
-
-    rcases h_a with ⟨w_a, ⟨ha1, ha2⟩⟩
-    rcases h_b with ⟨w_b, ⟨hb1, hb2⟩⟩
-    simp [Open_Neighbourhood] at ha1 hb1
-    have h1 : m.caratheodory (a ⊔ b) ≤ m.caratheodory ((w_a ⊔ w_b).toSublocale) := by
-      apply Caratheodory_monotonic
-      sorry
-    apply le_trans h1
-    rw [Caratheodory_opens]
-    rw [Measure.pseudosymm]
-    simp only [tsub_le_iff_right]
-    sorry
-  have h2 :  m.caratheodory (a ⊔ b) - (m.caratheodory a + m.caratheodory b)  ≤ sInf {ε : NNReal | ε > 0} := by
-    apply le_csInf
-    . sorry
-    . intro b1 h1
-      sorry
 
 
 
@@ -501,18 +596,15 @@ def Open_Interiors  (u : Sublocale E) := {w : Open E | w ≤ u}
 leroy Lemme 4
 -/
 lemma Measure.add_complement_inf {u : Open E} {a : Sublocale E} : m.caratheodory a = m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) := by
-  have h : a = (a ⊓ u) ⊔ (a ⊓ u.compl.toSublocale) := by
+  apply le_antisymm
+  .
+    have h : a = (a ⊓ u) ⊔ (a ⊓ u.compl.toSublocale) := by
       rw [← @inf_sup_left]
       rw [@Open.sup_compl]
       simp only [le_top, inf_of_le_left]
-  apply_fun m.caratheodory at h
-  rw [Caratheodory_subadditive] at h
-  exact h
-  apply le_antisymm
-  .
-
-
-
+    apply_fun m.caratheodory at h
+    apply le_trans' (Caratheodory_subadditive _ _)
+    rw [← h]
 
 
   .
