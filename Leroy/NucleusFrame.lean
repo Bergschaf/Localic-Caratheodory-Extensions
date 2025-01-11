@@ -39,7 +39,7 @@ lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s �
 
 
 
-/-
+
 lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
   intro a S
 
@@ -60,4 +60,3 @@ lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), 
 
 instance Nucleus.instFrame : Order.Frame (Nucleus E) :=
   Order.Frame.ofMinimalAxioms ⟨Nucleus_Frame_minimal_Axioms⟩
--/
