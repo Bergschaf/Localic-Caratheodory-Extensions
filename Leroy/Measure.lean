@@ -7,6 +7,7 @@ import Leroy.Further_Topology
 
 
 lemma sInf_epsilon_eq_zero : sInf {ε : Real | ε > 0} = 0 := by
+      apply?
       apply le_antisymm
       . rw [csInf_le_iff, lowerBounds]
         simp only [gt_iff_lt, Set.mem_setOf_eq]
@@ -617,6 +618,7 @@ lemma increasingly_filtered_sSup_mem (s : Set (Open E)) (h : increasingly_filter
 lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
   intro s h
   simp [Measure.restrict]
+
   sorry
 
 
