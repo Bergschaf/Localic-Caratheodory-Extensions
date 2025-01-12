@@ -610,15 +610,14 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
     exact Open.toSublocale_injective
   rw [h]
 
+lemma increasingly_filtered_sSup_mem (s : Set (Open E)) (h : increasingly_filtered s) : sSup s ∈ s  := by
+  simp [increasingly_filtered] at h
+
+
 lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
   intro s h
   simp [Measure.restrict]
-  rw [← Caratheodory_opens]
-  simp_rw [Open.Min_eq]
-  rw [Open.sSup_eq]
-
-
-
+  sorry
 
 
 
