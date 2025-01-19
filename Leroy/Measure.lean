@@ -7,7 +7,6 @@ import Leroy.Further_Topology
 
 
 lemma sInf_epsilon_eq_zero : sInf {ε : Real | ε > 0} = 0 := by
-      apply?
       apply le_antisymm
       . rw [csInf_le_iff, lowerBounds]
         simp only [gt_iff_lt, Set.mem_setOf_eq]
@@ -31,7 +30,6 @@ lemma sInf_epsilon_eq_zero : sInf {ε : Real | ε > 0} = 0 := by
         exact fun b a => le_of_lt a
 
 lemma sInf_epsilon_eq_zero' : sInf {ε : NNReal | ε > 0} = 0 := by
-
       apply le_antisymm
       . rw [csInf_le_iff, lowerBounds]
         simp only [gt_iff_lt, Set.mem_setOf_eq]
@@ -343,13 +341,6 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
-/--
-Leroy Lemme 2.2
-TODO stone spaces als quelle vlt
-Seite 81. 1.2
-Maybe depends on:
-Nucleus.eq_join_open_closed
--/
 def E_to_Open (x : E) : Open E := ⟨x⟩
 
 /--
@@ -366,6 +357,13 @@ lemma E_le_iff (x y : E) : x ≤ y ↔ E_to_Open x ≤ E_to_Open y := by
 @[simp]
 lemma E_to_Open_Open (x : Open E) : E_to_Open ↑x = x := by rfl
 
+/--
+Leroy Lemme 2.2
+TODO stone spaces als quelle vlt
+Seite 81. 1.2
+Maybe depends on:
+Nucleus.eq_join_open_closed
+-/
 
 lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbourhood a) := by
   apply le_antisymm
@@ -613,11 +611,16 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
 
 lemma increasingly_filtered_sSup_mem (s : Set (Open E)) (h : increasingly_filtered s) : sSup s ∈ s  := by
   simp [increasingly_filtered] at h
+  sorry
+
+
+
 
 
 lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
   intro s h
   simp [Measure.restrict]
+
 
   sorry
 
