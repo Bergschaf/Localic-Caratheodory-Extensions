@@ -178,51 +178,6 @@ lemma Open_Neighbourhood.Nonempty {u : Sublocale X} : (Open_Neighbourhood u).Non
 lemma Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbourhood x, ∀ V ∈ Open_Neighbourhood x, U ⊓ V ∈ Open_Neighbourhood x := by
   sorry
 
-/--
-Leroy Lemme 1
-Wie kriegt er V_n, also voisinages die weniger als εₙ größer sind als X_n
--> Magie
--/
-lemma preserves_sup (m : @Measure X h) (X_n : Finset (Sublocale X)) (h : increasing X_n.toSet) (h_nonempty : X_n.Nonempty): m.caratheodory (sSup X_n) = sSup (m.caratheodory '' X_n) := by
-  simp [Measure.caratheodory]
-  have h_epsilon : ∃ r : NNReal, r > 0 := by
-    use 1
-    exact Real.zero_lt_one
-  let ε := Classical.choose h_epsilon
-  have h_epsilon' : ε > 0 := by
-    simp [ε]
-    apply Classical.choose_spec
-
-  have h_1 : ∀ x_n ∈ X_n, ∃ neighbour ∈ Open_Neighbourhood (x_n), m.toFun neighbour - m.caratheodory (x_n) ≤ ε / X_n.card :=  by
-    intro n h
-    rw [Measure.caratheodory]
-    let m_real := NNReal.toReal ∘ m.toFun
-    let h1 := @Real.lt_sInf_add_pos (m_real '' Open_Neighbourhood n) (by simp[Set.Nonempty];use m_real ⊤;use ⊤;apply And.intro; exact Open_Neighbourhood.top_mem; simp only [Function.comp_apply,m_real])
-    have h_pos :  0 < ε / X_n.card := by
-      rw [propext (div_pos_iff_of_pos_left h_epsilon')]
-      rw [@Nat.cast_pos]
-      rw [Finset.card_pos]
-      exact h_nonempty
-
-    let h1 := @h1 (ε / X_n.card) (by exact h_pos)
-    simp at h1
-    rcases h1 with ⟨a, ⟨h1, h2⟩⟩
-    use a
-    apply And.intro
-    . exact h1
-    . apply_fun (fun x ↦ x -sInf (m_real '' Open_Neighbourhood n)) at h2
-      simp at h2
-      simp [m_real] at h2
-
-      let h2 := le_of_lt h2
-      apply le_trans' h2
-      simp only [NNReal.val_eq_coe]
-
-      sorry
-      simp only [StrictMono, sub_lt_sub_iff_right, imp_self, implies_true]
-  sorry
-
-
 lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε  := by
       have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
         refine Real.lt_sInf_add_pos ?_ hε
@@ -253,6 +208,37 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Ope
       simp only [h1, true_and]
       rw [h2]
       exact le_of_lt h3
+
+
+def ℕpos := {n : ℕ // 0 < n}
+def Rpos := {r : NNReal // 0 < r}
+/--
+Leroy Lemme 1
+-> Magie
+-/
+lemma preserves_sup (m : @Measure X h) {n : ℕpos} (X_n : Fin (n.val) → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by 
+  
+  have h_1 : ∀ (ε : Rpos), ∀ n' : Fin (n.val), ∃ neighbour ∈ Open_Neighbourhood (X_n n'), m.toFun neighbour - m.caratheodory (X_n n') ≤ ε.val / n.val :=  by
+    intro ε n'
+    have h := @Exists_Neighbourhood_epsilon _ _ m (X_n n') (ε.val / n.val) (by simp_all; sorry)
+    rcases h with ⟨w, ⟨h1,h2⟩⟩
+    use w
+    use h1
+    exact tsub_le_iff_left.mpr h2
+  let V_n (ε : Rpos) (n' : Fin (n.val)) := Classical.choose (h_1 ε n')
+  let W_n (ε : Rpos) (n' : Fin (n.val)) := iSup (fun (m : Fin (n')) ↦ V_n ε ⟨m.val, (by apply lt_trans m.prop n'.prop)⟩)
+  let W (ε : Rpos) := iSup (W_n ε)
+  have sup_V_n (ε : Rpos) : W ε  = iSup (V_n ε) := by sorry 
+  
+  have h : ∀ (ε : Rpos), m.caratheodory (W ε) ≤ ε.val + m.caratheodory (iSup X_n) := by
+    intro ε    
+    have h_2 : ∀ n' : Fin (n.val), m.caratheodory (W_n ε n') - m.caratheodory (X_n n') ≤ n' * (ε.val / n.val) := by sorry
+    sorry
+
+  apply le_antisymm
+  . sorry
+  . sorry -- trivial ??
+
 
 
 lemma Caratheodory_subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
