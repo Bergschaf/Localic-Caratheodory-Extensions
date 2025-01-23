@@ -16,6 +16,10 @@ lemma Open.inf_compl {x : Open E} : x.toSublocale ⊓ x.compl = ⊥ := by
   rw [Open.complement_eq]
   exact inf_complement x
 
+lemma Open.sup_compl {x : Open E} : x.toSublocale ⊔ x.compl.toSublocale = ⊤ := by
+  rw [Open.complement_eq]
+  exact sup_comp_eq_top x
+
 /--
 Leroy Lemme 8 bis
 -/

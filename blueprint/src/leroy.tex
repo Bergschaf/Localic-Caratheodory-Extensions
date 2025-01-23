@@ -89,6 +89,7 @@
 (Leroy lemme 3.1)
     \label{lem:commutes_with_sup}
     \uses{def:measure_on_locals,def:caratheodory}
+    \leanok
     The caratheodory extension of a measure on a local commutes with unions of increasing families.
     (Senf von noa: commutes with filtered colimits)
 \end{lemma}
@@ -117,6 +118,8 @@
 \begin{lemma}[Regularity of Sublocals]
 (Leroy lemme 3.2)
     \label{lem:regularity_of_sublocals}
+    \lean{sublocal_intersection_of_neighbours}
+    \leanok
     \uses{def:regular_local, def:neighborhood}
     In a regular local, any sublocal is regular, meaning that it is the intersection of all open neighborhoods.
 \end{lemma}
@@ -140,17 +143,34 @@
 \begin{proposition}[Sublocals structure]
     Obacht TODO
     \label{prop:sublocals_structure}
-    \uses{def:sublocal_intersection,def:complement,lem:union_of_intersections}
+    \uses{def:sublocal_intersection,def:complement,lem:union_of_intersections,lem:nucleus_frame}
     The sublocals of a local $E$ form a complete (distributive vlt.) lattice with the operations of intersection and complement.
 \end{proposition}
 
+\begin{lemma}[Restriction]
+    The Restriction of a Measure to any open Sublocal is a Measure.
+    \label{lem:restriction}
+    \uses{def:measure_on_locals}
+    \lean{Measure.restrict_measure}
+    \leanok
+\end{lemma}
+\begin{proof}
+    \uses{commutes_with_sup}
+TODO    
+\end{proof}
 
 \begin{lemma}[Property 2]
 (Leroy Lemm 3.4)
     \label{lem:property_2}
-    \uses{def:complement,def:sublocal_intersection,lem:property_1}
+    \lean{Measure.add_complement_inf}
+    \leanok
+    \uses{def:complement,def:sublocal_intersection,lem:property_1,lem:restriction}
     For any open sublocal $U$ and any sublocal $A$ of a local $E$, the caratheodory extension of a measure on $X$ satisfies \[\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))\]
 \end{lemma}
+\begin{proof}
+    Siehe Leroy
+    \leanok
+\end{proof}
 
 \begin{lemma}[Property 3]
 (Leroy Lemm 3.5)

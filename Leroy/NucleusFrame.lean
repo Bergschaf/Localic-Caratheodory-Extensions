@@ -39,25 +39,13 @@ lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s �
 
 
 
-/-
-lemma Nucleus_Frame_minimal_Axioms : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
-  intro a S
-
-  rw [Nucleus.min_eq, iSup, le_sSup_iff]
-  simp only [upperBounds, Set.mem_range, forall_exists_index, forall_apply_eq_imp_iff, iSup_le_iff,
-    Set.mem_setOf_eq, sInf_insert, csInf_singleton]
-  intro b h
-  ---
-  rw [Nucleus.le_iff, Nucleus.min_eq]
-  simp [sSup, sInf, sInf_fun]
-  intro v
-  ---
-  sorry
 
 
 
 
+
+--instance Nucleus.instCoframe : Order.Coframe (Nucleus E) :=
+--  Order.Coframe.ofMinimalAxioms ⟨Nucleus_Coframe_minimal_Axioms⟩
 
 instance Nucleus.instFrame : Order.Frame (Nucleus E) :=
-  Order.Frame.ofMinimalAxioms ⟨Nucleus_Frame_minimal_Axioms⟩
--/
+  Order.Frame.ofMinimalAxioms ⟨sorry⟩

@@ -26,5 +26,8 @@ Measure
 Measure.caratheodory
 regular
 Neighbourhood
+sublocal_intersection_of_neighbours
 Measure.add_complement
+Measure.restrict_measure
+Measure.add_complement_inf
 Caratheodory_monotonic
