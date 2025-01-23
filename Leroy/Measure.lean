@@ -209,15 +209,14 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Ope
       rw [h2]
       exact le_of_lt h3
 
-
 def ℕpos := {n : ℕ // 0 < n}
 def Rpos := {r : NNReal // 0 < r}
 /--
 Leroy Lemme 1
 -> Magie
 -/
-lemma preserves_sup (m : @Measure X h) {n : ℕpos} (X_n : Fin (n.val) → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by 
-  
+lemma preserves_sup (m : @Measure X h) {n : ℕpos} (X_n : Fin (n.val) → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
+
   have h_1 : ∀ (ε : Rpos), ∀ n' : Fin (n.val), ∃ neighbour ∈ Open_Neighbourhood (X_n n'), m.toFun neighbour - m.caratheodory (X_n n') ≤ ε.val / n.val :=  by
     intro ε n'
     have h := @Exists_Neighbourhood_epsilon _ _ m (X_n n') (ε.val / n.val) (by simp_all; sorry)
@@ -228,10 +227,10 @@ lemma preserves_sup (m : @Measure X h) {n : ℕpos} (X_n : Fin (n.val) → Sublo
   let V_n (ε : Rpos) (n' : Fin (n.val)) := Classical.choose (h_1 ε n')
   let W_n (ε : Rpos) (n' : Fin (n.val)) := iSup (fun (m : Fin (n')) ↦ V_n ε ⟨m.val, (by apply lt_trans m.prop n'.prop)⟩)
   let W (ε : Rpos) := iSup (W_n ε)
-  have sup_V_n (ε : Rpos) : W ε  = iSup (V_n ε) := by sorry 
-  
+  have sup_V_n (ε : Rpos) : W ε  = iSup (V_n ε) := by sorry
+
   have h : ∀ (ε : Rpos), m.caratheodory (W ε) ≤ ε.val + m.caratheodory (iSup X_n) := by
-    intro ε    
+    intro ε
     have h_2 : ∀ n' : Fin (n.val), m.caratheodory (W_n ε n') - m.caratheodory (X_n n') ≤ n' * (ε.val / n.val) := by sorry
     sorry
 
@@ -240,7 +239,9 @@ lemma preserves_sup (m : @Measure X h) {n : ℕpos} (X_n : Fin (n.val) → Sublo
   . sorry -- trivial ??
 
 
-
+/--
+TODO ggf in den Blueprint aufnehmen
+-/
 lemma Caratheodory_subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
     intro ε h
