@@ -442,6 +442,11 @@ lemma Open.Max_eq {U V : Open X} : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.t
   simp_rw [Sublocale.max_eq]
   rw [Set.image_pair]
 
+lemma Open.Max_eq' {U V : Open X} : (U ⊔ V).element = U.element ⊔ V.element := by
+  simp only [Open_max, sSup, Set.image, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left, Set.setOf_or, Set.setOf_eq_eq_singleton', Set.union_singleton, sSup_insert,
+    csSup_singleton]
+  exact sup_comm V.element U.element
 
 lemma open_inf_closed (U V : Open X) : is_open (U.toSublocale ⊓ V.toSublocale) := by
   rw [is_open]

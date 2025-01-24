@@ -152,11 +152,19 @@ lemma Closed.le_iff (a b : Closed E) : a ≤ b ↔ b.element ≤ a.element := by
     exact fun v => le_sup_of_le_left h
 
 
-instance : InfSet (Closed E) where
+instance Closed.instsInf : InfSet (Closed E) where
   sInf x := ⟨sSup (Closed.element '' x)⟩
 
-instance : Min (Closed E) where
+instance Closed.instMin : Min (Closed E) where
   min x y := sInf {x, y}
+
+
+lemma Closed.Min_eq' {x y : Closed E} : x ⊓ y = ⟨x.element ⊔ y.element⟩ := by
+  simp [Closed.instMin, Closed.instsInf, Set.image, Set.setOf_or]
+  exact sup_comm y.element x.element
+
+lemma Closed.Min_eq {x y : Closed E} : x ⊓ y = x.toSublocale ⊓ y.toSublocale := by
+  sorry
 
 lemma Closed_sInf_le : ∀ (s : Set (Closed E)), ∀ a ∈ s, sInf s ≤ a := by
   intro s c hc

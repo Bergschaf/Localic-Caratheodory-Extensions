@@ -596,21 +596,17 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
     exact Open.toSublocale_injective
   rw [h]
 
-lemma increasingly_filtered_sSup_mem (s : Set (Open E)) (h : increasingly_filtered s) : sSup s ∈ s  := by
-  simp [increasingly_filtered] at h
-  sorry
+--lemma increasingly_filtered_sSup_mem (s : Set (Open E)) (h : increasingly_filtered s) : sSup s ∈ s  := by
+--  simp [increasingly_filtered] at h
+--  sorry
 
-
-
-
-
-lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
-  intro s h
-  simp [Measure.restrict]
-
-
-  sorry
-
+--lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
+--  intro s h
+--  simp [Measure.restrict]
+--
+--
+--  sorry
+--
 
 
 noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E)  : @Measure E e_frm where
@@ -629,7 +625,7 @@ def Open_Interiors  (u : Sublocale E) := {w : Open E | w ≤ u}
 /--
 leroy Lemme 4
 -/
-lemma Measure.add_complement_inf {u : Open E} {a : Sublocale E} : m.caratheodory a = m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) := by
+lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory a = m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) := by
   apply le_antisymm
   .
     have h : a = (a ⊓ u) ⊔ (a ⊓ u.compl.toSublocale) := by
@@ -697,3 +693,64 @@ lemma Measure.add_complement_inf {u : Open E} {a : Sublocale E} : m.caratheodory
       rw [← h4]
       rw [h]
       apply h1
+
+lemma todo_name {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.compl := by
+  apply_fun ((fun x ↦ ↑x) : Closed E → Sublocale E)
+  simp [Open.compl,Closed.toSublocale, complement]
+  ext x
+  simp
+  rw [Closed.Min_eq']
+  simp [Open.Max_eq']
+  --
+  exact injective_of_le_imp_le (fun (x : Closed E) => x.toSublocale) fun {x y} a => a
+
+/--
+Leroy Corollary 1 -/
+lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheodory (A ⊓ (U ⊔ V)) = m.caratheodory (A ⊓ U) + m.caratheodory (A ⊓ V) - m.caratheodory (A ⊓ U ⊓ V) := by
+  have h : m.caratheodory (A ⊓ (U ⊔ V).toSublocale) = m.caratheodory A - m.caratheodory (A ⊓ (U ⊔ V).compl) := by
+      apply eq_tsub_of_add_eq
+      rw [← Measure.add_complement_inf]
+  rw [todo_name] at h
+  rw [Closed.Min_eq] at h
+
+
+  have h2 : m.caratheodory A = m.caratheodory (A ⊓ U ⊓ V) + m.caratheodory (A ⊓ U ⊓ V.compl) + m.caratheodory (A ⊓ U.compl ⊓ V) + m.caratheodory (A ⊓ U.compl ⊓ V.compl) := by
+    rw [Measure.add_complement_inf U A]
+    rw [Measure.add_complement_inf V (A ⊓ U)]
+    rw [Measure.add_complement_inf V (A ⊓ U.compl)]
+    ring
+
+  rw [h2] at h
+  have h_help : ∀ x, x +  m.caratheodory (A ⊓ U.compl.toSublocale ⊓ V.compl.toSublocale) -
+    m.caratheodory (A ⊓ (U.compl.toSublocale ⊓ V.compl.toSublocale)) = x := by
+    intro x
+    rw [inf_assoc]
+    simp only [add_tsub_cancel_right]
+  rw [h_help ] at h
+  rw [← Measure.add_complement_inf] at h
+
+  have h_help2 : ∀ x, x = x + m.caratheodory (A ⊓ U ⊓ V) - m.caratheodory (A ⊓ U ⊓ V) := by
+    exact fun x =>
+      Eq.symm (add_tsub_cancel_right x (caratheodory (A ⊓ U.toSublocale ⊓ V.toSublocale)))
+
+  rw [h_help2 (caratheodory (A ⊓ U.toSublocale) + caratheodory (A ⊓ U.compl.toSublocale ⊓ V.toSublocale))] at h
+  rw [Open.Max_eq] at h
+  rw [h]
+  have h_help3 : m.caratheodory (A ⊓ U.compl.toSublocale ⊓ V.toSublocale) +
+      m.caratheodory (A ⊓ U.toSublocale ⊓ V.toSublocale) = m.caratheodory (A ⊓ V) := by
+      conv =>
+        enter [1, 1, 1]
+        rw [inf_assoc]
+        rw [inf_comm U.compl.toSublocale]
+        rw [← inf_assoc]
+      conv =>
+        enter [1, 2, 1]
+        rw [inf_assoc]
+        rw [inf_comm U.toSublocale]
+        rw [← inf_assoc]
+      rw [add_comm]
+      rw [← Measure.add_complement_inf]
+
+
+  rw [add_assoc]
+  rw [h_help3]
