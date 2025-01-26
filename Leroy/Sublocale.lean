@@ -1,6 +1,6 @@
 import Leroy.Nucleus
 import Mathlib.Order.Synonym
-
+import Mathlib.Tactic.ApplyFun
 variable {E X: Type*} [e_frm : Order.Frame E] [Order.Frame X]
 
 
@@ -14,7 +14,7 @@ instance : Coe (Sublocale E) (Nucleus E) where
 
 instance : FunLike (Sublocale E) E E where
   coe x := x.ofDual.toFun
-  coe_injective' f g h := (by cases f; cases g; congr)
+  coe_injective' f g h := (by cases f;congr! ;simp_all)
 
 
 lemma Sublocale.le_iff (a b : Sublocale E) : a ≤ b ↔ ∀ x, b.toFun x ≤ a.toFun x := by
@@ -36,8 +36,8 @@ lemma Sublocale.nucleus_toFun (a : Nucleus E) : (OrderDual.ofDual a).toFun = a.t
 
 --- Leroy SupSet
 
-@[simp]
-lemma Sublocale.fun_of {tf : X → X} {h1 : ∀ (x : X), tf (tf x) ≤ tf x} {h2 : ∀ (x : X), x ≤ tf x} {h3 : ∀ (x y : X), tf (x ⊓ y) = tf x ⊓ tf y} {v : X} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Sublocale X) v = tf v := by rfl
+--@[simp]
+--lemma Sublocale.fun_of {tf : X → X} {h1 : ∀ (x : X), tf (tf x) ≤ tf x} {h2 : ∀ (x : X), x ≤ tf x} {h3 : ∀ (x y : X), tf (x ⊓ y) = tf x ⊓ tf y} {v : X} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Sublocale X) v = tf v := by rfl
 
 
 def e_V (X_i : Set (Sublocale E)) (V : E) := sSup {w : E | ∀ x_i ∈ X_i, w ≤ x_i.toFun V}
@@ -48,7 +48,7 @@ def e_V_increasing : (x : E) → x ≤ (e_V X_i) x := by
   simp [e_V]
   apply le_sSup
   simp only [Set.mem_setOf_eq]
-  exact fun x_i a => x_i.increasing x
+  exact fun x_i a => x_i.le_apply 
 
 
 lemma e_V_idempotent :  ∀ (x : E), (e_V X_i) (e_V X_i x) ≤ e_V X_i x := by
@@ -64,9 +64,11 @@ lemma e_V_idempotent :  ∀ (x : E), (e_V X_i) (e_V X_i x) ≤ e_V X_i x := by
         intro b h6
         exact h6 h2 h3
       apply_fun h2.toFun at h7
-      rw [h2.idempotent'] at h7
+      simp at h7
+      rw [h2.idempotent] at h7
       exact h7
-      exact h2.monotone
+      simp
+      exact OrderHomClass.mono (h2.ofDual)
     exact
       Preorder.le_trans x1 (h2.toFun (sSup {w | ∀ x_i ∈ X_i, w ≤ x_i.toFun x})) (h2.toFun x)
         (h1 h2 h3) h5
@@ -79,26 +81,32 @@ lemma e_V_preserves_inf : ∀ (x y : E), (e_V X_i) (x ⊓ y) = (e_V X_i) x ⊓ e
       apply Iff.intro
       . intro h x_i h1
         have h2 : e_V X_i (x ⊓ y) ≤ x_i.toFun (x ⊓ y) := by
-          simp [e_V]
-          intro b h2
-          exact h2 x_i h1
+          simp
+          apply And.intro
+          . simp [e_V]
+            intro b h
+            apply (h x_i h1).left  
+          . simp [e_V]
+            intro b h
+            apply (h x_i h1).right
+          
         exact Preorder.le_trans W (e_V X_i (x ⊓ y)) (x_i.toFun (x ⊓ y)) h h2
       . intro h
         simp [e_V]
         apply le_sSup
         simp only [Set.mem_setOf_eq]
-        exact fun x_i a => h x_i a
-
-
+        intro a a_1
+        simp_all only [InfHom.toFun_eq_coe, map_inf, Nucleus.coe_toInfHom, le_inf_iff, OrderDual.forall, and_self] 
     have h2 : (∀ x_i ∈ X_i, W ≤ x_i.toFun (x ⊓ y)) ↔ ∀ x_i ∈ X_i, W ≤ x_i.toFun x ⊓ x_i.toFun y := by
       apply Iff.intro
       . intro h x_i h1
-        rw [← x_i.preserves_inf]
+        simp only [InfHom.toFun_eq_coe, Nucleus.coe_toInfHom]
+        rw [← map_inf]
         exact h x_i h1
       . intro h x_i h1
-        rw [x_i.preserves_inf]
+        simp only [InfHom.toFun_eq_coe, Nucleus.coe_toInfHom]
+        rw [map_inf]
         exact h x_i h1
-
 
     have h3 : (∀ x_i ∈ X_i, W ≤ x_i.toFun x ⊓ x_i.toFun y) ↔  W ≤  e_V X_i x ⊓ e_V X_i y := by
       apply Iff.intro
@@ -147,31 +155,35 @@ lemma e_V_preserves_inf : ∀ (x y : E), (e_V X_i) (x ⊓ y) = (e_V X_i) x ⊓ e
 
 def e_V_sublocale (X_i : Set (Sublocale E)) : Sublocale E where
   toFun := e_V X_i
-  idempotent := e_V_idempotent
-  increasing := e_V_increasing
-  preserves_inf := e_V_preserves_inf
+  idempotent' := e_V_idempotent
+  le_apply' := e_V_increasing
+  map_inf' := e_V_preserves_inf
+
+@[simp]
+lemma e_V_coe (X_i : Set (Sublocale E)) : ∀ x, e_V_sublocale X_i x = e_V X_i x := by exact
+  fun x => rfl
 
 lemma le_e_V : ∀ (s : Set (Sublocale E)), ∀ a ∈ s, a ≤ e_V_sublocale s := by
   intro s a ha
-  simp [e_V_sublocale]
-  apply Nucleus.le_iff.mpr
-  intro v
+  simp [LE.le]
+  intro i
+  rw [e_V_coe]
   simp [e_V]
   exact fun b a_1 => a_1 a ha
 
+
 lemma e_V_le : ∀ (s : Set (Sublocale E)), ∀ (a : (Sublocale E)), (∀ b ∈ s, b ≤ a) → e_V_sublocale s ≤ a := by
   intro s a h
-  simp [e_V_sublocale]
-  apply Nucleus.le_iff.mpr
-  intro v
+  simp [LE.le]
+  intro i
+  rw [e_V_coe]
   simp [e_V]
   apply le_sSup_iff.mpr
   simp [upperBounds]
   intro b h1
   apply h1
   intro ai hai
-  exact h (OrderDual.toDual ai) hai v
-
+  exact h (OrderDual.toDual ai) hai i
 
 theorem leroy_eq_stone (s : Set (Sublocale E)) : e_V_sublocale s = sSup s := by
   have h1 : e_V_sublocale s ∈ upperBounds s := by
