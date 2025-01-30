@@ -395,7 +395,7 @@ lemma eckig_preserves_top : eckig (⊤ : E) = ⊤ := by
 instance Open.le : LE (Open E) where
   le x y := (x : Sublocale E) ≤ (y : Sublocale E)
 
-def Open.le_iff {U V : Open E} : U ≤ V ↔ U.element ≤ V.element := by
+lemma Open.le_iff {U V : Open E} : U ≤ V ↔ U.element ≤ V.element := by
   simp_rw [Open.le, Open.toSublocale]
   exact Iff.symm eckig_preserves_inclusion
 

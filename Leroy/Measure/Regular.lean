@@ -396,6 +396,7 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
       rw [h]
       apply h1
 
+omit e_regular in
 lemma todo_name {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.compl := by
   apply_fun ((fun x ↦ ↑x) : Closed E → Sublocale E)
   simp [Open.compl,Closed.toSublocale, complement]

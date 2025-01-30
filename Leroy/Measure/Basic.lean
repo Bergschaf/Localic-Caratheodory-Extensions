@@ -70,7 +70,13 @@ structure Measure where
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set  (Open X)), increasingly_filtered s → toFun (sSup s) = sSup (toFun '' s)
+
+
 variable {m : @Measure E e_frm}
+
+def Measure.monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
+  exact congrArg m.toFun h
+
 
 def Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 

@@ -12,7 +12,6 @@ variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 def sInf_fun (s : Set (Nucleus X)) (a : X) := sInf {j a | j ∈ s}
 
 def sInf_fun_increasing :  ∀ (x : E), x ≤ sInf_fun s x := by
-  intro x
   simp [sInf_fun, le_apply]
 
 def sInf_fun_idempotent : ∀ (x : E), sInf_fun s (sInf_fun s x) ≤ sInf_fun s x := by
