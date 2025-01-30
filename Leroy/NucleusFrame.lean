@@ -40,70 +40,45 @@ lemma Nucleus_mem_sublocale' {a : Nucleus E} {s : Set (Sublocale E)} {p : Nucleu
   exact Iff.symm Set.forall_mem_image
 lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by exact fun a b => Eq.to_iff rfl
 
+
+
+
+
+
+
+
+
+
+
+structure Prenucleus (E : Type*) [CompleteLattice E] extends InfHom E E where
+  le_apply' (x : E) : x ≤ toFun x
+
+instance : FunLike (Prenucleus E) E E where
+  coe x := x.toFun
+  coe_injective' f g h := by  obtain ⟨⟨_, _⟩, _⟩ := f; congr!
+
+
+lemma toFun_eq_coe (n : Prenucleus E) : n.toFun = n := rfl
+@[simp] lemma coe_toInfHom (n : Prenucleus E) : ⇑n.toInfHom = n := rfl
+
+variable (n : Prenucleus E) (x : E)
+
+lemma le_apply : x ≤ n x := by
+  rw [← toFun_eq_coe]
+  exact n.le_apply' x
+
+lemma map_inf : n (x ⊓ y) = n x ⊓ n y := by
+  rw [← toFun_eq_coe]
+  exact n.map_inf' x y
+
+def Prenucleus.comp (n m : Prenucleus E) : Prenucleus E where
+  toFun := n ∘ m
+  map_inf' := (by sorry)
+  le_apply' := (by simp; intro x; apply le_trans (m.le_apply' x);exact le_apply n (m.toFun x))
+
+
 lemma mal_wieder : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
-  intro a s
-  simp only [iSup_le_iff, le_iSup_iff]
-  intro b h
-  simp [sSup, sInf, Nucleus.min_eq, Nucleus.le_iff]
-  rw [← Nucleus.toFun_eq_coe]
-  simp [sInf_fun]
-  --
-  intro i
-  rw [sInf_le_iff]
-  simp [lowerBounds]
-  intro c h1
-  have h3 : c ≤ a i := by
-    let h1 := @h1 (a i)
-    simp at h1
-    exact h1
-
-  let h4 := @h1 ((sSup s) i)
-  simp [sInf, sSup] at h4
-  repeat rw [← Nucleus.toFun_eq_coe] at h4
-  simp [sInf_fun] at h4
-
-
-
-
-
-  let j : Nucleus E := sorry
-  have h5 : j ∈ s := by sorry
-  let h6 := h j h5
-  rw [Nucleus.le_iff] at h6
-  apply le_trans' (h6 i)
-  rw [Nucleus.min_eq]
-  simp_rw [sInf]
-  rw [← Nucleus.toFun_eq_coe]
-  simp [sInf_fun]
-  intro b h7
-  cases h7 with
-  | inl h => exact le_of_le_of_eq h3 h
-  | inr h =>
-    let h8 := h4 (sSup s)
-    rw [Nucleus_mem_sublocale] at h8
-    simp at h8
-    let h9 := h8 (sSup s) (by exact fun a a_1 => CompleteLattice.le_sSup s a a_1) (by simp [Sublocale.nucleus];exact
-      rfl)
-    apply le_trans h9
-    rw [← h]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  sorry
 
 
 def minax : Order.Frame.MinimalAxioms (Nucleus E) where
