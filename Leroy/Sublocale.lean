@@ -48,7 +48,7 @@ def e_V_increasing : (x : E) → x ≤ (e_V X_i) x := by
   simp [e_V]
   apply le_sSup
   simp only [Set.mem_setOf_eq]
-  exact fun x_i a => x_i.le_apply 
+  exact fun x_i a => x_i.le_apply
 
 
 lemma e_V_idempotent :  ∀ (x : E), (e_V X_i) (e_V X_i x) ≤ e_V X_i x := by
@@ -85,18 +85,18 @@ lemma e_V_preserves_inf : ∀ (x y : E), (e_V X_i) (x ⊓ y) = (e_V X_i) x ⊓ e
           apply And.intro
           . simp [e_V]
             intro b h
-            apply (h x_i h1).left  
+            apply (h x_i h1).left
           . simp [e_V]
             intro b h
             apply (h x_i h1).right
-          
+
         exact Preorder.le_trans W (e_V X_i (x ⊓ y)) (x_i.toFun (x ⊓ y)) h h2
       . intro h
         simp [e_V]
         apply le_sSup
         simp only [Set.mem_setOf_eq]
         intro a a_1
-        simp_all only [InfHom.toFun_eq_coe, map_inf, Nucleus.coe_toInfHom, le_inf_iff, OrderDual.forall, and_self] 
+        simp_all only [InfHom.toFun_eq_coe, map_inf, Nucleus.coe_toInfHom, le_inf_iff, OrderDual.forall, and_self]
     have h2 : (∀ x_i ∈ X_i, W ≤ x_i.toFun (x ⊓ y)) ↔ ∀ x_i ∈ X_i, W ≤ x_i.toFun x ⊓ x_i.toFun y := by
       apply Iff.intro
       . intro h x_i h1

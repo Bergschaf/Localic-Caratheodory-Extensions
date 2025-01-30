@@ -10,8 +10,10 @@ variable {m : @Measure E' _}
 
 def e_μ (u : E') : E' := (sSup {w : Open E' | w ≤ u ∧ m.toFun w = m.toFun u}).element
 
-def μ_Reduction : Nucleus E' where
-  toFun := e_μ E'
-  idempotent := sorry
-  increasing := sorry
-  preserves_inf := sorry
+/-
+def μ_Reduction (m : @Measure E' _): Nucleus E' where
+  toFun := e_μ
+  idempotent' := sorry
+  le_apply' := sorry
+  map_inf' := sorry
+-/

@@ -2,7 +2,7 @@ import Mathlib.Data.Real.Basic
 import Leroy.Basic
 import Leroy.Open_Sublocales
 import Leroy.Further_Topology
-
+import Mathlib.Order.BoundedOrder.Basic
 
 
 
@@ -106,8 +106,8 @@ lemma Caratheodory_opens {m : @Measure X h} : ∀ x : Open X, m.caratheodory x =
     use x
 
 lemma Measure.caratheodory_top {m : @Measure X h} : m.caratheodory ⊤ = m.toFun ⊤ := by
-  simp only [caratheodory, Open_Neighbourhood, top_le_iff]
-  have h : {v : Open X | v.toSublocale = ⊤} = {⊤} := by
+  simp [caratheodory, Open_Neighbourhood, top_le_iff]
+  have h : {v : Open X |  v.toSublocale = ⊤} = {⊤} := by
     ext x
     simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
     have h1 : (⊤ : Open X).toSublocale = ⊤ := by
@@ -130,10 +130,9 @@ lemma Caratheodory_monotonic (m : Measure) {A B : Sublocale E} : A ≤ B → m.c
   . simp [Set.Nonempty, Open_Neighbourhood]
     use m.toFun ⊤
     use ⊤
+    simp [Open.top_sublocale, Nucleus.toFun_eq_coe, and_true]
 
-    simp only [Open.top_sublocale, Nucleus.top, Nucleus.toFun_eq_coe, and_true]
-    exact fun v => Nucleus.increasing' B
-  . simp only [Open_Neighbourhood, Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.image_subset_iff]
+  . simp [Open_Neighbourhood, Nucleus.toFun_eq_coe, Set.image_subset_iff]
     rw [@Set.setOf_subset]
     intro x h1
     simp only [Set.mem_preimage, Set.mem_image, Set.mem_setOf_eq]
@@ -159,10 +158,7 @@ lemma Open_Neighbourhood_nonempty (x : Sublocale X) : Nonempty (Open_Neighbourho
   simp [Set.Nonempty]
   use ⊤
   rw [Open_Neighbourhood]
-  simp only [Nucleus.le_iff, Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_sublocale]
-  exact fun v => Nucleus.increasing' x
-
-
+  simp [Nucleus.toFun_eq_coe, Set.mem_setOf_eq, Open.top_sublocale]
 
 lemma Open_Neighbourhood.top_mem {x : Sublocale X}: ⊤ ∈ Open_Neighbourhood x := by
   rw [Open_Neighbourhood]

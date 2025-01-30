@@ -1,5 +1,6 @@
 import Leroy.Closed_Sublocals
 import Mathlib.Order.CompleteSublattice
+import Mathlib.Order.BoundedOrder.Basic
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
@@ -19,7 +20,6 @@ lemma Open.inf_compl {x : Open E} : x.toSublocale ⊓ x.compl = ⊥ := by
 lemma Open.sup_compl {x : Open E} : x.toSublocale ⊔ x.compl.toSublocale = ⊤ := by
   rw [Open.complement_eq]
   exact sup_comp_eq_top x
-
 /--
 Leroy Lemme 8 bis
 -/
@@ -27,7 +27,7 @@ def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.c
   apply Iff.intro
   . intro h
     apply le_antisymm
-    . exact OrderTop.le_top (x ⊔ u.compl.toSublocale)
+    . apply BoundedOrder.toOrderTop.le_top
     .
       have h1 : u.toSublocale ⊔ u.compl.toSublocale ≤  x ⊔ u.compl.toSublocale := by
         exact sup_le_sup_right h u.compl.toSublocale

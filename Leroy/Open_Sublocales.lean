@@ -79,7 +79,8 @@ def eckig (U : E) : Sublocale E where
   le_apply':= e_U_increasing U
   map_inf' := e_U_preserves_inf U
 
-
+@[simp]
+lemma eckig.coe_apply {u x : X} : eckig u x = e_U u x := by rfl
 
 
 -- TODO typeclass
@@ -91,9 +92,6 @@ structure Open (E : Type*) [Order.Frame E] where
 
 protected def Open.toSublocale (o : Open E) : Sublocale E := eckig o.element
 protected def Open.toNucleus (o : Open E) : Nucleus E := eckig o.element
-
-
-
 
 instance : Coe (Open E) E where
   coe x := x.element
@@ -107,6 +105,8 @@ instance : Coe (Open E) (Sublocale E) where
 def is_open (e : Sublocale E) : Prop :=
   ∃ u : E, eckig u = e
 
+@[simp]
+lemma Open.coe_apply (u : Open E) (x : E) : (u : Sublocale E) x = e_U u.element x := by rfl
 
 /--
 noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
@@ -116,12 +116,12 @@ noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
 lemma Open_is_open (e : Open E) : is_open e.toSublocale := by
   simp only [is_open, Open.toSublocale, exists_apply_eq_apply]
 -/
-@[simp] lemma test (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Nucleus E) x = toFun x := by 
-  exact fun x a b c => rfl 
+@[simp] lemma test (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Nucleus E) x = toFun x := by
+  exact fun x a b c => rfl
 
 
-@[simp] lemma test' (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Sublocale E) x = toFun x := by 
-  exact fun x a b c => rfl 
+@[simp] lemma test' (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Sublocale E) x = toFun x := by
+  exact fun x a b c => rfl
 
 lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
@@ -132,7 +132,7 @@ lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
       simp [eckig]
       rw [test']
       simp [e_U]
-      
+
     exact eq_top_mono (h U) h2
   . intro h
     simp [eckig, LE.le]
@@ -286,8 +286,8 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
     --simp [eckig] at h1
     exact ⟨h2, h3⟩
 
-  . 
-   
+  .
+
     simp [eckig, e_U,LE.le ]
     rw [Sublocale.min_eq]
     simp_rw [sInf]
@@ -296,7 +296,7 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
     rw [Nucleus_mem_sublocale] at h2
     simp [Sublocale.nucleus] at h2
 
-     
+
     rcases h2 with ⟨h3, h4⟩
 
     have h1_ : b ⊓ U ⊓ V ≤ v := by
@@ -310,9 +310,10 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
 ----
 lemma eckig_preserves_sSup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i) := by
   ext x
-  simp only [eckig, Nucleus.toFun_eq_coe, Nucleus.fun_of]
+  simp
+  rw [eckig.coe_apply]
   rw [← leroy_eq_stone]
-  simp only [e_V_sublocale, Nucleus.fun_of, e_V, Set.mem_image, Nucleus.toFun_eq_coe,
+  simp only [e_V_sublocale, test, e_V, Set.mem_image, InfHom.toFun_eq_coe, Nucleus.coe_toInfHom,
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, e_U]
   apply le_antisymm
   . apply sSup_le_sSup
@@ -447,8 +448,7 @@ lemma Open.Max_eq {U V : Open X} : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.t
 
 lemma Open.Max_eq' {U V : Open X} : (U ⊔ V).element = U.element ⊔ V.element := by
   simp only [Open_max, sSup, Set.image, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left, Set.setOf_or, Set.setOf_eq_eq_singleton', Set.union_singleton, sSup_insert,
-    csSup_singleton]
+    exists_eq_left, Set.setOf_or, Set.setOf_eq_eq_singleton', Set.union_singleton, sSup_insert, sSup_singleton]
   exact sup_comm V.element U.element
 
 lemma open_inf_closed (U V : Open X) : is_open (U.toSublocale ⊓ V.toSublocale) := by
