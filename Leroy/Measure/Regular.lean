@@ -298,17 +298,20 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
     exact Open.toSublocale_injective
   rw [h]
 
---lemma increasingly_filtered_sSup_mem (s : Set (Open E)) (h : increasingly_filtered s) : sSup s ∈ s  := by
---  simp [increasingly_filtered] at h
---  sorry
+lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
+  intro s h
+  simp [Measure.restrict]
+  simp_rw [Open_min]
+  simp_rw [Open_sSup]
+  --
+  sorry
 
---lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
---  intro s h
---  simp [Measure.restrict]
---
---
---  sorry
---
+
+
+
+
+
+
 
 
 noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E)  : @Measure E e_frm where
@@ -457,3 +460,24 @@ lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheo
 
   rw [add_assoc]
   rw [h_help3]
+
+/--
+Leroy Lemme5
+-/
+lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingly_filtered s) :
+    m.caratheodory (A ⊓ (sSup s).toSublocale) = ⨆ b ∈ s, m.caratheodory (A ⊓ b) := by
+  sorry
+
+def Image (A : Sublocale E) := {x : E // A x = x}
+instance (A : Sublocale E)  : Order.Frame (Image A) := sorry
+
+def Measure.restrict_sublocale (m : @Measure E _) (A : Sublocale E) :Open (Image A) → NNReal :=
+  fun x ↦ m.toFun ⟨x.element.val⟩
+
+
+def Measure.restrict_sublocale_measure (m : @Measure E _) (A : Sublocale E) : @Measure (Image A) _ where
+  toFun := Measure.restrict_sublocale m A
+  empty := sorry
+  mono := sorry
+  pseudosymm := sorry
+  filtered := sorry
