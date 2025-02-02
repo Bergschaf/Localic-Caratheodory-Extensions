@@ -122,8 +122,15 @@ lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
 
   have h2 : m.caratheodory G = iSup (m.caratheodory ∘ F_n) := by
     apply le_antisymm
-    . simp [iSup]
-      sorry
+    . simp [iSup, G]
+      rw [le_csSup_iff]
+      . simp [upperBounds]
+        intro b h2
+        sorry --
+      . simp [BddAbove, upperBounds, Set.Nonempty]
+        use m.caratheodory ⊤
+        exact fun a => Caratheodory.le_top m (F_n a)
+      . exact Set.range_nonempty (Measure.caratheodory ∘ F_n)
 
     . simp [iSup]
       apply csSup_le
@@ -136,15 +143,29 @@ lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
 
   have h3 : ⨅ n : ℕ, (m.toFun ⊤ - m.caratheodory (F_n n)) ≤ m.caratheodory I := by
     apply le_trans' h1_
-    have h_help (a : NNReal) (s : ℕ → (NNReal)) : ⨅ n, a - s n = a - iSup s := by
-      sorry
+    have h_help (a : NNReal) (f : ℕ → (NNReal)) (hf : BddAbove (Set.range fun i => f i)):  a - ⨆ i, f i = ⨅ i, a - f i:= by
+      apply_fun (ENNReal.ofNNReal)
+      . simp
+        rw [@ENNReal.coe_iInf]
+        simp
+        rw [ENNReal.coe_iSup]
 
-    rw [h_help]
+        refine ENNReal.sub_iSup ?_
+        . exact ENNReal.coe_ne_top
+        exact hf
+      . exact ENNReal.coe_injective
+
+    rw [← h_help]
     rw [← Caratheodory_opens]
     simp only [Open.top_sublocale]
     apply tsub_le_tsub
     . rfl
-    . sorry
+    . rw [h2]
+      rfl
+
+    simp [BddAbove, upperBounds, Set.Nonempty]
+    use m.caratheodory ⊤
+    exact fun a => Caratheodory.le_top m (F_n a)
 
   have h4 : ⨅ n : ℕ, (m.toFun ⊤ - m.caratheodory (F_n n)) = iInf (m.toFun ∘ V_n)  := by
     simp [F_n, iInf]
