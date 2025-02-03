@@ -75,11 +75,12 @@ def e_U_preserves_inf (U: E) (H : E) (J : E) : e_U U (H ⊓ J) = e_U U H ⊓ e_U
 
 def eckig (U : E) : Sublocale E where
   toFun := e_U U
-  idempotent := e_U_idempotent U
-  increasing := e_U_increasing U
-  preserves_inf := e_U_preserves_inf U
+  idempotent':= e_U_idempotent U
+  le_apply':= e_U_increasing U
+  map_inf' := e_U_preserves_inf U
 
-
+@[simp]
+lemma eckig.coe_apply {u x : X} : eckig u x = e_U u x := by rfl
 
 
 -- TODO typeclass
@@ -91,10 +92,6 @@ structure Open (E : Type*) [Order.Frame E] where
 
 protected def Open.toSublocale (o : Open E) : Sublocale E := eckig o.element
 protected def Open.toNucleus (o : Open E) : Nucleus E := eckig o.element
-
-#check Nucleus.toFun
-
-
 
 instance : Coe (Open E) E where
   coe x := x.element
@@ -108,6 +105,8 @@ instance : Coe (Open E) (Sublocale E) where
 def is_open (e : Sublocale E) : Prop :=
   ∃ u : E, eckig u = e
 
+@[simp]
+lemma Open.coe_apply (u : Open E) (x : E) : (u : Sublocale E) x = e_U u.element x := by rfl
 
 /--
 noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
@@ -117,31 +116,36 @@ noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
 lemma Open_is_open (e : Open E) : is_open e.toSublocale := by
   simp only [is_open, Open.toSublocale, exists_apply_eq_apply]
 -/
+@[simp] lemma test (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Nucleus E) x = toFun x := by
+  exact fun x a b c => rfl
+
+
+@[simp] lemma test' (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Sublocale E) x = toFun x := by
+  exact fun x a b c => rfl
 
 lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
   . intro h
-    simp[Nucleus.le_iff] at h
+    simp[LE.le] at h
     let h1 := h U
     have h2 : (eckig U) U = ⊤ := by
-      simp only [eckig]
-      rw [Nucleus.fun_of]
-      simp only [e_U, inf_le_right, Set.setOf_true, sSup_univ]
+      simp [eckig]
+      rw [test']
+      simp [e_U]
 
     exact eq_top_mono (h U) h2
   . intro h
-    simp [eckig, Nucleus.le]
+    simp [eckig, LE.le]
     intro v
     simp [ e_U]
     intro b h1
     apply_fun x.toFun at h1
-    rw [x.preserves_inf] at h1
-    simp at h1
+    simp [x.map_inf] at h1
     rw [h] at h1
     simp at h1
-    apply le_trans (x.increasing b) h1
-    exact Nucleus.monotone x
-
+    apply le_trans (x.le_apply) h1
+    simp only [InfHom.toFun_eq_coe, Nucleus.coe_toInfHom]
+    apply OrderHomClass.mono x.ofDual
 
 lemma leroy_6b {U V : E} : e_U (U ⊓ V) = e_U U ∘ e_U V := by
   ext x
@@ -209,7 +213,7 @@ lemma eckig_preserves_inclusion {U V : E} : U ≤ V ↔ eckig U ≤ eckig V := b
   apply And.intro
   . intro h
     intro v
-    simp [eckig, Nucleus.le, e_U]
+    simp [eckig, LE.le, e_U]
     intro b h1
     apply le_sSup
     simp
@@ -244,7 +248,7 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
   apply le_antisymm
   . simp [eckig]
     simp only [min, sInf, sSup, Set.mem_insert_iff, Set.mem_singleton_iff,
-      Nucleus.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, Nucleus.toFun_eq_coe, forall_eq, e_V,
+      LE.le, Nucleus.toFun_eq_coe, forall_eq_or_imp, Nucleus.toFun_eq_coe, forall_eq, e_V,
       Set.mem_setOf_eq, and_imp, Function.comp_apply, sSup_le_iff]
     have h_help : SemilatticeInf.inf U V = U ⊓ V := by
       rfl
@@ -282,34 +286,34 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
     --simp [eckig] at h1
     exact ⟨h2, h3⟩
 
-  . simp [eckig, e_U]
-    simp only [Sublocale.min_eq, sInf, sSup, Set.mem_insert_iff, Set.mem_singleton_iff,
-      Sublocale.le_iff, Nucleus.toFun_eq_coe, forall_eq_or_imp, Nucleus.fun_of, e_U, sSup_le_iff,
-      Set.mem_setOf_eq, forall_eq, sInf_fun, le_sInf_iff, forall_exists_index, and_imp,
-      forall_apply_eq_imp_iff₂]
-    intro v b h1
-    rw [Nucleus_mem_sublocale] at h1
-    simp [Sublocale.nucleus] at h1
-    intro b1 h2
-    rcases h1 with ⟨h3, h4⟩
+  .
 
-    have h1_ : b1 ⊓ U ⊓ V ≤ v := by
-      rw [← inf_assoc] at h2
-      exact h2
+    simp [eckig, e_U,LE.le ]
+    rw [Sublocale.min_eq]
+    simp_rw [sInf, sSup, sInf]
+    simp [sSup, sInf_fun, LE.le, e_U]
+    intro v b h1 x1 h2
+    rw [Nucleus_mem_sublocale] at h2
+    simp [Sublocale.nucleus] at h2
 
-    let h4 := h4 (v) (b1 ⊓ U) h1_
-    let h5 := h3 (b v) (b1) h4
-    simp at h5
-    rw [coe_to_dual] at h5
-    rw [Nucleus.idempotent''] at h5
-    exact h5
 
-------------
+    rcases h2 with ⟨h3, h4⟩
+
+    have h1_ : b ⊓ U ⊓ V ≤ v := by
+      rw [← inf_assoc] at h1
+      exact h1
+    let h5 := h3 v (b ⊓ V) (by rw [inf_assoc]; rw [inf_comm V];exact h1)
+    let h6 := h4 (x1 v) b (h5)
+    apply le_trans h6
+    exact NucleusClass.idempotent v (x1)
+----
+----
 lemma eckig_preserves_sSup (U_i : Set X) : sSup (eckig '' U_i) = eckig (sSup U_i) := by
   ext x
-  simp only [eckig, Nucleus.toFun_eq_coe, Nucleus.fun_of]
+  simp
+  rw [eckig.coe_apply]
   rw [← leroy_eq_stone]
-  simp only [e_V_sublocale, Nucleus.fun_of, e_V, Set.mem_image, Nucleus.toFun_eq_coe,
+  simp only [e_V_sublocale, test, e_V, Set.mem_image, InfHom.toFun_eq_coe, Nucleus.coe_toInfHom,
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, e_U]
   apply le_antisymm
   . apply sSup_le_sSup
@@ -391,7 +395,7 @@ lemma eckig_preserves_top : eckig (⊤ : E) = ⊤ := by
 instance Open.le : LE (Open E) where
   le x y := (x : Sublocale E) ≤ (y : Sublocale E)
 
-def Open.le_iff {U V : Open E} : U ≤ V ↔ U.element ≤ V.element := by
+lemma Open.le_iff {U V : Open E} : U ≤ V ↔ U.element ≤ V.element := by
   simp_rw [Open.le, Open.toSublocale]
   exact Iff.symm eckig_preserves_inclusion
 
@@ -442,6 +446,10 @@ lemma Open.Max_eq {U V : Open X} : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.t
   simp_rw [Sublocale.max_eq]
   rw [Set.image_pair]
 
+lemma Open.Max_eq' {U V : Open X} : (U ⊔ V).element = U.element ⊔ V.element := by
+  simp only [Open_max, sSup, Set.image, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left, Set.setOf_or, Set.setOf_eq_eq_singleton', Set.union_singleton, sSup_insert, sSup_singleton]
+  exact sup_comm V.element U.element
 
 lemma open_inf_closed (U V : Open X) : is_open (U.toSublocale ⊓ V.toSublocale) := by
   rw [is_open]

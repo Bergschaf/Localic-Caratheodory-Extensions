@@ -1,3 +1,4 @@
+\begin{comment}
 \chapter{Leroy Chapter II}\label{sec:leroy-chapter-ii}
 \begin{definition}[Induced boolean algebra]
     \label{def:induced_boolean_algebra}
@@ -56,7 +57,7 @@
     \[f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B)\]
 \end{theorem}
 
-
+\end{comment}
 \chapter{Leroy Chapter III}\label{sec:leroy-chapter-iii}
 \begin{definition}[Measure on Locals]
     \label{def:measure_on_locals}
@@ -140,13 +141,6 @@
 
 
 
-\begin{proposition}[Sublocals structure]
-    Obacht TODO
-    \label{prop:sublocals_structure}
-    \uses{def:sublocal_intersection,def:complement,lem:union_of_intersections,lem:nucleus_frame}
-    The sublocals of a local $E$ form a complete (distributive vlt.) lattice with the operations of intersection and complement.
-\end{proposition}
-
 \begin{lemma}[Restriction]
     The Restriction of a Measure to any open Sublocal is a Measure.
     \label{lem:restriction}
@@ -176,6 +170,8 @@ TODO
 (Leroy Lemm 3.5)
     \label{lem:property_3}
     \uses{lem:property_2,lem:commutes_with_sup}
+    \lean{Measure.inf_filtered}
+    \leanok
     For a increasing family $V_{\alpha}$ of open sublocals of $E$ and any sublocal $A$, we have:
     \[\mu(A \cap(\bigcup V_{\alpha})) = \sup_\alpha \mu(A\cap V_\alpha)\]
 \end{lemma}
@@ -184,9 +180,13 @@ TODO
 \begin{lemma}[Commutes with inf opens]
 (Leroy Lemme 3.6)
     \label{lem:commutes_with_inf_opens}
-    \uses{lem:property_1,prop:sublocals_structure}
+    \uses{lem:property_1,lem:nucleus_frame}
+    \lean{leroy_6}
+    \leanok
     For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
 \end{lemma}
+\begin{proof}
+\end{proof}
 
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}

@@ -9,9 +9,9 @@ variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
 noncomputable def complement (e : Open E) : Sublocale E where
   toFun x := (e.element) ⊔ x
-  idempotent := (by simp)
-  increasing := (by simp)
-  preserves_inf := (by simp;exact fun x y => sup_inf_left e.element x y)
+  idempotent' := (by simp)
+  le_apply' := (by simp)
+  map_inf' := (by simp;exact fun x y => sup_inf_left e.element x y)
 
 
 /--
@@ -23,7 +23,7 @@ def complement_injective : Function.Injective (@complement E e_frm)  := by
   ext
   have h1 : ∀ x, a1.element ⊔ x = a2.element ⊔ x := by
     rw [Nucleus.ext_iff] at h
-    simp only at h
+    simp at h
     exact fun x => h x
   let h2 := h1 ⊥
   simp at h2
@@ -42,7 +42,7 @@ lemma inf_complement (X : Open E) : X.toSublocale ⊓ (complement X) = ⊥ := by
     ext v
     simp only [Nucleus.toFun_eq_coe]
     rw [Sublocale.bot_eq]
-    rw [← Nucleus.idempotent'']
+    rw [← Nucleus.idempotent]
     refine eq_top_iff.mpr ?_
     have h : X.toSublocale (b v) ≤ b (b v) := by
       simp [Sublocale.le_iff] at h1
@@ -55,15 +55,16 @@ lemma inf_complement (X : Open E) : X.toSublocale ⊓ (complement X) = ⊥ := by
       apply_fun X.toSublocale.toFun at h2
       simp at h2
       exact h2
-      simp [Nucleus.monotone]
+      simp
+      exact OrderHomClass.mono X.toNucleus
 
     apply le_trans ?_ h
     apply le_trans ?_ h2
     simp [complement, Open.toSublocale, eckig, e_U]
     refine sup_eq_top_of_top_mem ?_
-    simp only [Set.mem_setOf_eq, le_top, inf_of_le_right]
-    rw [Nucleus.coe_eq_toFun]
-    simp only [le_sup_left]
+    simp [Set.mem_setOf_eq, le_top, inf_of_le_right]
+    rw [test]
+    exact le_sup_left
   . exact OrderBot.bot_le (X.toSublocale ⊓ complement X)
 
 
@@ -96,12 +97,12 @@ lemma sup_comp_eq_top (X : Open E)  : X.toSublocale ⊔ (complement X) = ⊤ := 
     simp only [Nucleus.toFun_eq_coe]
     rw [@inf_sup_left]
     simp only [sup_le_iff, inf_le_right, and_true]
-    simp only [Open.toSublocale, eckig, Nucleus.fun_of, e_U]
+    simp only [Open.toSublocale, eckig, e_U]
     rw [@sSup_inf_eq]
 
     simp only [Set.mem_setOf_eq, iSup_le_iff, imp_self, implies_true]
 
-  . apply Nucleus.increasing'
+  . exact Nucleus.le_apply
 
 @[ext]
 structure Closed (E : Type*) [Order.Frame E] where
@@ -138,7 +139,7 @@ lemma le_antisymm' :  ∀ (a b : Closed E), a ≤ b → b ≤ a → a = b := by
 
 instance  : PartialOrder (Closed E) where
   le_refl := (by simp)
-  le_trans x y z := (by simp[Nucleus.le];exact fun a a_1 v => Preorder.le_trans (z.toSublocale v) (y.toSublocale v) (x.toSublocale v) (a_1 v) (a v))
+  le_trans x y z := (by simp[LE.le];exact fun a a_1 v => Preorder.le_trans (z.toSublocale v) (y.toSublocale v) (x.toSublocale v) (a_1 v) (a v))
   le_antisymm  := le_antisymm'
 
 lemma Closed.le_iff (a b : Closed E) : a ≤ b ↔ b.element ≤ a.element := by
@@ -152,23 +153,27 @@ lemma Closed.le_iff (a b : Closed E) : a ≤ b ↔ b.element ≤ a.element := by
     exact fun v => le_sup_of_le_left h
 
 
-instance : InfSet (Closed E) where
+instance Closed.instsInf : InfSet (Closed E) where
   sInf x := ⟨sSup (Closed.element '' x)⟩
 
-instance : Min (Closed E) where
+instance Closed.instMin : Min (Closed E) where
   min x y := sInf {x, y}
+
+
+lemma Closed.Min_eq' {x y : Closed E} : x ⊓ y = ⟨x.element ⊔ y.element⟩ := by
+  simp [Closed.instMin, Closed.instsInf, Set.image, Set.setOf_or]
+  exact sup_comm y.element x.element
+
+lemma Closed.Min_eq {x y : Closed E} : x ⊓ y = x.toSublocale ⊓ y.toSublocale := by
+  sorry
 
 lemma Closed_sInf_le : ∀ (s : Set (Closed E)), ∀ a ∈ s, sInf s ≤ a := by
   intro s c hc
-  simp [sInf]
-
-  simp [sInf,Closed.toSublocale, complement]
-  intro v
-  simp only [sup_le_iff, le_sup_right, and_true]
+  simp [sInf,Closed.toSublocale, complement, LE.le]
+  intro i
   refine le_sup_of_le_left ?_
   apply le_sSup
   exact Set.mem_image_of_mem Closed.element hc
-
 
 lemma Closed_le_sInf : ∀ (s : Set (Closed E)) (a : Closed E), (∀ b ∈ s, a ≤ b) → a ≤ sInf s := by
   intro s c hc
