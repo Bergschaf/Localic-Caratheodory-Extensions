@@ -234,12 +234,33 @@
     \leanok
 \end{proof}
 
+\begin{proposition}[Complete Heyting Algebra]
+    \label{prop:complete_heyting_algebra}
+    \leanok
+    A complete Lattice is a Frame if and only if it as a Heyting Algebra.
+\end{proposition}
+
+\begin{lemma}[Nucleus Distributive Lattice]
+    \label{lem:nucleus_distributive_lattice}
+    \uses{lem:nucleus_complete_lattice, sublocal_union_nucleus_intersection}
+    \leanok
+    The Nuclei form a distributive lattice.
+\end{lemma}
+
+\begin{lemma}[Nucleus Heyting Algebra]
+    \label{lem:nucleus_heyting_algebra}
+    \uses{lem:nucleus_distributive_lattice}
+    \leanok
+    The Nuclei form a Heyting Algebra.
+\end{lemma}
+
+
 \begin{lemma}[Nucleus Frame]
     \label{lem:nucleus_frame}
-    \uses{lem:nucleus_complete_lattice}
+    \uses{lem:nucleus_complete_lattice,lem:nucleus_heyting_algebra,prop:complete_heyting_algebra}
     % \lean{Nucleus.instFrame}
     \leanok
-    The Nuclei (and therefore the sublocals) form a frame.
+    The Nuclei  form a frame.
 \end{lemma}
 \begin{proof}
 \end{proof}

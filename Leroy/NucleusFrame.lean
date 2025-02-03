@@ -15,6 +15,12 @@ instance Nucleus.instCompleteLattice : CompleteLattice (Nucleus E) where
 
 lemma Nucleus.min_eq (a b : Nucleus E) : a ⊓ b = sInf {a, b} := by rfl
 
+lemma Nucleus.min_eq' (a b : Nucleus E) : ∀ i, (a ⊓ b) i = a i ⊓ b i := by
+  intro i
+  simp_rw [Nucleus.min_eq, sInf]
+  simp [sInf_fun,Set.setOf_or]
+  exact inf_comm (b i) (a i)
+
 lemma Nucleus.max_eq (a b : Nucleus E) : a ⊔ b = sSup {a, b} := rfl
 
 lemma Sublocale.max_eq (a b : Sublocale E) : a ⊔ b = sSup {a, b} := rfl
@@ -41,48 +47,95 @@ lemma Nucleus_mem_sublocale' {a : Nucleus E} {s : Set (Sublocale E)} {p : Nucleu
 lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by exact fun a b => Eq.to_iff rfl
 
 
+instance {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := sorry
+
+def himp_toFun (x y : Nucleus E) (a : E) :=
+  ⨅ b ≥ a, x b ⇨ y b
 
 
+def himp_idempotent (x y : Nucleus E) (a : E) :
+    himp_toFun x y (himp_toFun x y a) ≤  himp_toFun x y a := by
+  simp [himp_toFun]
+  intro i hi
+  simp [iInf]
+  rw [← sInf_pair]
+  rw [sInf_le_iff]
+  simp [lowerBounds]
+  intro b h1 h2
+  sorry
 
+def himp_le_apply (x y : Nucleus E) (a : E) :
+    a ≤ himp_toFun x y a := by
+  simp [himp_toFun]
+  intro i hi
+  refine inf_le_of_left_le ?_
+  apply le_trans hi y.le_apply
 
+def himp_Nucleus (x y : Nucleus E) : Nucleus E where
+  toFun := himp_toFun x y
+  idempotent' a := himp_idempotent x y a
+  le_apply' a := himp_le_apply x y a
+  map_inf' a b := sorry
 
+instance : HImp (Nucleus E) where
+  himp x y := himp_Nucleus x y
 
+lemma le_himp_iff'' : ∀ (a b c : Nucleus E), a ≤ b ⇨ c ↔ a ⊓ b ≤ c := by
+  intro a b c
+  simp [himp, himp_Nucleus]
+  apply Iff.intro
+  . intro h
+    simp [Nucleus.le_iff, himp_toFun, Nucleus.min_eq'] at *
+    intro i
+    apply h i i
+    rfl
+  . intro h
+    simp [Nucleus.le_iff, himp_toFun, Nucleus.min_eq'] at *
+    intro i j h1
+    have h2 : a i ⊓ b j ≤ a j ⊓ b j := by
+      simp
+      apply inf_le_of_left_le
+      exact OrderHomClass.GCongr.mono a h1
+    apply le_trans h2
+    apply h
 
+lemma le_sup_inf_Nucleus : ∀ (x y z : Nucleus E), (x ⊔ y) ⊓ (x ⊔ z) ≤ x ⊔ y ⊓ z := by
+  intro x y z
+  simp_rw [Nucleus.le_iff,Nucleus.min_eq, Nucleus.max_eq]
+  simp_rw [sInf, sSup]
+  simp [sInf_fun, Set.setOf_or]
+  intro i
+  simp_rw [Sublocale.min_eq, sInf]
+  simp [sSup, sInf_fun]
+  intro a h1
+  rw [Nucleus_mem_sublocale] at h1
+  simp [Sublocale.nucleus] at h1
+  rcases h1 with ⟨h1, h2⟩
+  simp [Sublocale.le_iff, sInf_fun, Set.setOf_or] at h2
+  --
+  apply le_trans' (h2 i)
+  simp only [le_inf_iff]
+  apply And.intro
+  . rw [← sInf_pair]
+    rw [sInf_le_iff]
+    simp [lowerBounds]
+    intro b h3 h4
 
+    let h5 := h4 (a ⊔ y) (by rw [Nucleus_mem_sublocale]; simp [Sublocale.nucleus];sorry)
+    simp_rw [Nucleus.max_eq, sSup,sInf] at h5
+    simp [sSup, sInf_fun] at h5
 
-structure Prenucleus (E : Type*) [CompleteLattice E] extends InfHom E E where
-  le_apply' (x : E) : x ≤ toFun x
-
-instance : FunLike (Prenucleus E) E E where
-  coe x := x.toFun
-  coe_injective' f g h := by  obtain ⟨⟨_, _⟩, _⟩ := f; congr!
-
-
-lemma toFun_eq_coe (n : Prenucleus E) : n.toFun = n := rfl
-@[simp] lemma coe_toInfHom (n : Prenucleus E) : ⇑n.toInfHom = n := rfl
-
-variable (n : Prenucleus E) (x : E)
-
-lemma le_apply : x ≤ n x := by
-  rw [← toFun_eq_coe]
-  exact n.le_apply' x
-
-lemma map_inf : n (x ⊓ y) = n x ⊓ n y := by
-  rw [← toFun_eq_coe]
-  exact n.map_inf' x y
-
-def Prenucleus.comp (n m : Prenucleus E) : Prenucleus E where
-  toFun := n ∘ m
-  map_inf' := (by sorry)
-  le_apply' := (by simp; intro x; apply le_trans (m.le_apply' x);exact le_apply n (m.toFun x))
-
-
-lemma mal_wieder : ∀ (a : Nucleus E) (s : Set (Nucleus E)), a ⊓ sSup s ≤ ⨆ b ∈ s, a ⊓ b := by
+    sorry
   sorry
 
 
-def minax : Order.Frame.MinimalAxioms (Nucleus E) where
-  inf_sSup_le_iSup_inf := mal_wieder
+instance : DistribLattice (Nucleus E) where
+  le_sup_inf := le_sup_inf_Nucleus
+
+/--
+Source: Stone Spaces pp. 51
+-/
+instance : HeytingAlgebra (Nucleus E) := HeytingAlgebra.ofHImp (· ⇨ ·) le_himp_iff''
 
 
 -- Temporary until the frame problem gets better
@@ -90,7 +143,6 @@ instance (priority := high): BoundedOrder (Sublocale E) := by exact OrderDual.in
 
 instance (priority := high) : OrderTop (Sublocale E) := by exact OrderDual.instOrderTop (Nucleus E)
 ---
-instance (priority := 0) Nucleus.instFrame : Order.Frame (Nucleus E) :=
-  Order.Frame.ofMinimalAxioms minax
+
 
 example : ∀ (u : Sublocale E), ⊤ ≤ u ↔ u = ⊤ := fun u => top_le_iff
