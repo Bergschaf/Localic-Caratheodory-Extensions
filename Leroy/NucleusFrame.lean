@@ -46,13 +46,20 @@ lemma Nucleus_mem_sublocale' {a : Nucleus E} {s : Set (Sublocale E)} {p : Nucleu
   exact Iff.symm Set.forall_mem_image
 lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by exact fun a b => Eq.to_iff rfl
 
-
+/--
+Source Johnstone
+-/
 instance {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := sorry
 
 def himp_toFun (x y : Nucleus E) (a : E) :=
   ⨅ b ≥ a, x b ⇨ y b
 
-
+/-
+Johnstone:
+(i): map_inf
+(ii): le_apply
+(iii): idempotent
+-/
 def himp_idempotent (x y : Nucleus E) (a : E) :
     himp_toFun x y (himp_toFun x y a) ≤  himp_toFun x y a := by
   simp [himp_toFun]
@@ -71,11 +78,18 @@ def himp_le_apply (x y : Nucleus E) (a : E) :
   refine inf_le_of_left_le ?_
   apply le_trans hi y.le_apply
 
+lemma himp_map_inf (x y : Nucleus E) :
+    ∀ (a b : E), himp_toFun x y (a ⊓ b) = himp_toFun x y a ⊓ himp_toFun x y b := by
+  intro a b
+  apply le_antisymm
+  . sorry -- trivial anscheinend
+  . sorry
+
 def himp_Nucleus (x y : Nucleus E) : Nucleus E where
   toFun := himp_toFun x y
   idempotent' a := himp_idempotent x y a
   le_apply' a := himp_le_apply x y a
-  map_inf' a b := sorry
+  map_inf' a b := himp_map_inf x y a b
 
 instance : HImp (Nucleus E) where
   himp x y := himp_Nucleus x y
@@ -99,50 +113,22 @@ lemma le_himp_iff'' : ∀ (a b c : Nucleus E), a ≤ b ⇨ c ↔ a ⊓ b ≤ c :
     apply le_trans h2
     apply h
 
-lemma le_sup_inf_Nucleus : ∀ (x y z : Nucleus E), (x ⊔ y) ⊓ (x ⊔ z) ≤ x ⊔ y ⊓ z := by
-  intro x y z
-  simp_rw [Nucleus.le_iff,Nucleus.min_eq, Nucleus.max_eq]
-  simp_rw [sInf, sSup]
-  simp [sInf_fun, Set.setOf_or]
-  intro i
-  simp_rw [Sublocale.min_eq, sInf]
-  simp [sSup, sInf_fun]
-  intro a h1
-  rw [Nucleus_mem_sublocale] at h1
-  simp [Sublocale.nucleus] at h1
-  rcases h1 with ⟨h1, h2⟩
-  simp [Sublocale.le_iff, sInf_fun, Set.setOf_or] at h2
-  --
-  apply le_trans' (h2 i)
-  simp only [le_inf_iff]
-  apply And.intro
-  . rw [← sInf_pair]
-    rw [sInf_le_iff]
-    simp [lowerBounds]
-    intro b h3 h4
-
-    let h5 := h4 (a ⊔ y) (by rw [Nucleus_mem_sublocale]; simp [Sublocale.nucleus];sorry)
-    simp_rw [Nucleus.max_eq, sSup,sInf] at h5
-    simp [sSup, sInf_fun] at h5
-
-    sorry
-  sorry
-
-
-instance : DistribLattice (Nucleus E) where
-  le_sup_inf := le_sup_inf_Nucleus
 
 /--
 Source: Stone Spaces pp. 51
 -/
-instance : HeytingAlgebra (Nucleus E) := HeytingAlgebra.ofHImp (· ⇨ ·) le_himp_iff''
+instance Nucleus.instHeytingAlgebra : HeytingAlgebra (Nucleus E) where
+  le_himp_iff := le_himp_iff''
+  compl x := x ⇨ ⊥
+  himp_bot _ := rfl
 
 
 -- Temporary until the frame problem gets better
+instance : DistribLattice (Nucleus E) := GeneralizedHeytingAlgebra.toDistribLattice
+
 instance (priority := high): BoundedOrder (Sublocale E) := by exact OrderDual.instBoundedOrder (Nucleus E)
 
 instance (priority := high) : OrderTop (Sublocale E) := by exact OrderDual.instOrderTop (Nucleus E)
 ---
-
 
 example : ∀ (u : Sublocale E), ⊤ ≤ u ↔ u = ⊤ := fun u => top_le_iff

@@ -224,13 +224,13 @@
 
 \begin{lemma}[Nucleus Complete Lattice]
     \label{lem:nucleus_complete_lattice}
-    \uses{def:sublocal_intersection,lem:nucleus_intersection}
+    \uses{def:sublocal_intersection,lem:nucleus_intersection, lem:sublocal_union_nucleus_intersection}
     \lean{Nucleus.instCompleteLattice}
     \leanok
     The Nuclei (and therefore the sublocals) form a complete lattice.
 \end{lemma}
 \begin{proof}
-    One can proove that the Nuclei are closed under arbitrary intersections by unfolding the definition of the intersection. The supremum is defined as the infimum of the upper Bound. \\
+    One can prove that the Nuclei are closed under arbitrary intersections by unfolding the definition of the intersection. The supremum is defined as the infimum of the upper Bound. \\
     \leanok
 \end{proof}
 
@@ -240,19 +240,17 @@
     A complete Lattice is a Frame if and only if it as a Heyting Algebra.
 \end{proposition}
 
-\begin{lemma}[Nucleus Distributive Lattice]
-    \label{lem:nucleus_distributive_lattice}
-    \uses{lem:nucleus_complete_lattice, sublocal_union_nucleus_intersection}
-    \leanok
-    The Nuclei form a distributive lattice.
-\end{lemma}
+
 
 \begin{lemma}[Nucleus Heyting Algebra]
     \label{lem:nucleus_heyting_algebra}
-    \uses{lem:nucleus_distributive_lattice}
+    \uses{lem:nucleus_intersection}
     \leanok
     The Nuclei form a Heyting Algebra.
 \end{lemma}
+\begin{proof}
+    Quelle Johnstone
+\end{proof}
 
 
 \begin{lemma}[Nucleus Frame]
@@ -265,6 +263,7 @@
 \begin{proof}
 \end{proof}
 
+\begin{comment}
 \subsection{(1.5) Direct Images}
 
 \begin{definition}[Direct Images]
@@ -300,7 +299,7 @@
     More generally for a morphism $h : A \rightarrow E$, the necessary and sufficient condition for $h$ to factor through $f^{-1}$ is that $fh$ factors through $Y$.
     \[Im h \subset f^{-1}(Y)\iff f(Im h) \subset Y \iff Im(fh) \subset Y \] \
 \end{definition}
-
+\end{comment}
 \subsection{(7) Open Sublocals}
 
 \begin{definition}[$e_U$]
@@ -442,13 +441,14 @@
     \[e_{X \cap F} = e_Xe_F\]
 \end{lemma}
 
+\begin{comment}
 \begin{lemma}[(1.11) Distribution of Intersections over Unions]
     \label{lem:distribution_of_intersections_over_unions}
     \uses{lem:open_closed_intersection}
     Let $X, Y, L$ be three sub locals of $E$. If $L$ is open or closed, we have:
     \[L \cap (X \cap Y) = (L \cap X) \cup (L \cap Y)\]
 \end{lemma}
-
+\end{comment}
 \begin{definition}[Further Topology]
     \label{def:further_topology}
     \uses{def:open_sublocal,def:closed_sublocal, def:complement, lem:closed_intersection}

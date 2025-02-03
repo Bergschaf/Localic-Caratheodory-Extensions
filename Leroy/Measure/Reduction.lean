@@ -221,5 +221,3 @@ lemma leroy_7 (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
 
   let V_n (n : ι) := Open_Neighbourhood (A_i n)
   admit -- TODO noha fragen
-
-TODO GGF Chapter II aus blueprint rausmachen, wenn man nen besseren Beweis für nen Frame findet
