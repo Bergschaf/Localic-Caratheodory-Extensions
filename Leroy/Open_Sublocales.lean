@@ -290,7 +290,7 @@ lemma eckig_preserves_inf (U V : E) : eckig (U ⊓ V) = eckig U ⊓ eckig V := b
 
     simp [eckig, e_U,LE.le ]
     rw [Sublocale.min_eq]
-    simp_rw [sInf]
+    simp_rw [sInf, sSup, sInf]
     simp [sSup, sInf_fun, LE.le, e_U]
     intro v b h1 x1 h2
     rw [Nucleus_mem_sublocale] at h2
