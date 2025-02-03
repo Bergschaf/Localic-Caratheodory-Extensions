@@ -176,6 +176,8 @@ TODO
 (Leroy Lemm 3.5)
     \label{lem:property_3}
     \uses{lem:property_2,lem:commutes_with_sup}
+    \lean{Measure.inf_filtered}
+    \leanok
     For a increasing family $V_{\alpha}$ of open sublocals of $E$ and any sublocal $A$, we have:
     \[\mu(A \cap(\bigcup V_{\alpha})) = \sup_\alpha \mu(A\cap V_\alpha)\]
 \end{lemma}
@@ -185,8 +187,12 @@ TODO
 (Leroy Lemme 3.6)
     \label{lem:commutes_with_inf_opens}
     \uses{lem:property_1,prop:sublocals_structure}
+    \lean{leroy_6}
+    \leanok
     For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
 \end{lemma}
+\begin{proof}
+\end{proof}
 
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}

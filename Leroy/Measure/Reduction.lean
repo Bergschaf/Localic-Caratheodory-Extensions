@@ -32,7 +32,6 @@ lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ 
       and_true]
     exact fun b a a_1 a_2 => a
 
-
 lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
   intro x
   simp [e_μ]
@@ -42,7 +41,9 @@ lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
 
 lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ m x ⊓ e_μ m y := by
   intro x y
-  sorry
+  apply le_antisymm
+  . sorry
+  . sorry
 
 def μ_Reduction (m : @Measure E' _): Nucleus E' where
   toFun := e_μ m
@@ -51,25 +52,28 @@ def μ_Reduction (m : @Measure E' _): Nucleus E' where
   map_inf' x y:= e_μ_map_inf m x y
 
 
+variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
 
+
+def decroissante' (V : ι → Open E) : Prop :=
+  ∀ i j : ι, i ≤ j → V j ≤ V i
 
 def decroissante (V : Set (Open E')) : Prop :=
-  ∀ v ∈ V, ∃ u ∈ V, u ≤ v
+  decroissante' (fun (x : V) ↦ x.val)
 
-def decroissante' (V : ℕ → Open E) : Prop :=
-  ∀ n : ℕ, V (n+1) ≤ V n
 
-def filtrante_decroissante (V : ℕ → Sublocale E) : Prop :=
-  ∀ n m : ℕ, ∃ l, V l ≤ V n ∧ V l ≤ V m
 
-/--
-Leroy lemma 6
--/
-lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
+def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
+  ∀ n m : ι, ∃ l, V l ≤ V n ∧ V l ≤ V m
+
+
+
+
+lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
     m.caratheodory (iInf (Open.toSublocale ∘ V_n)) = iInf (m.toFun ∘ V_n) := by
   let I :=  (iInf (Open.toSublocale ∘ V_n))
 
-  let F_n (n : ℕ) := Closed.toSublocale (Open.compl (V_n n))
+  let F_n (n : ι) := Closed.toSublocale (Open.compl (V_n n))
   let G := iSup (F_n)
 
   have h : G ⊔ I = ⊤ := by
@@ -126,7 +130,7 @@ lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       rw [le_csSup_iff]
       . simp [upperBounds]
         intro b h2
-        sorry --
+        sorry -- hier irgendwas mit Filter tendsto atTop
       . simp [BddAbove, upperBounds, Set.Nonempty]
         use m.caratheodory ⊤
         exact fun a => Caratheodory.le_top m (F_n a)
@@ -141,9 +145,9 @@ lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       apply le_sSup
       simp only [Set.mem_range, exists_apply_eq_apply, I, F_n, G]
 
-  have h3 : ⨅ n : ℕ, (m.toFun ⊤ - m.caratheodory (F_n n)) ≤ m.caratheodory I := by
+  have h3 : ⨅ n : ι, (m.toFun ⊤ - m.caratheodory (F_n n)) ≤ m.caratheodory I := by
     apply le_trans' h1_
-    have h_help (a : NNReal) (f : ℕ → (NNReal)) (hf : BddAbove (Set.range fun i => f i)):  a - ⨆ i, f i = ⨅ i, a - f i:= by
+    have h_help (a : NNReal) (f : ι → (NNReal)) (hf : BddAbove (Set.range fun i => f i)):  a - ⨆ i, f i = ⨅ i, a - f i:= by
       apply_fun (ENNReal.ofNNReal)
       . simp
         rw [@ENNReal.coe_iInf]
@@ -167,7 +171,7 @@ lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
     use m.caratheodory ⊤
     exact fun a => Caratheodory.le_top m (F_n a)
 
-  have h4 : ⨅ n : ℕ, (m.toFun ⊤ - m.caratheodory (F_n n)) = iInf (m.toFun ∘ V_n)  := by
+  have h4 : ⨅ n : ι, (m.toFun ⊤ - m.caratheodory (F_n n)) = iInf (m.toFun ∘ V_n)  := by
     simp [F_n, iInf]
     have h5 : Set.range (fun n => (m.toFun ⊤) - m.caratheodory (V_n n).compl.toSublocale) = (Set.range (m.toFun ∘ V_n)) := by
       rw [Set.range_eq_iff]
@@ -188,10 +192,34 @@ lemma leroy_6 (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
   exact h3
 
 
+/--
+Leroy lemma 6
+-/
+lemma leroy_6 (V : Set (Open E)) (h : decroissante V) (h1 : Nonempty V):
+    m.caratheodory (sInf (Open.toSublocale '' V)) = sInf (m.toFun '' V) := by
+  let h2 := @leroy_6' _ _ _ m _ _ _ (fun (x : V) ↦ x.val) (by exact h)
+  simp [iInf] at h2
+  have h3 : (Set.range (Open.toSublocale ∘ (fun (x : V) => ↑x))) = Open.toSublocale '' V := by
+    refine (Set.range_eq_iff (Open.toSublocale ∘ fun (x : V) => ↑x) (Open.toSublocale '' V)).mpr ?_
+    simp_all only [Function.comp_apply, Set.mem_image, Subtype.forall, Subtype.exists, exists_prop, implies_true,
+      and_true]
+    intro a b
+    use a
+  rw [h3] at h2
+  rw [h2]
+  refine csInf_eq_csInf_of_forall_exists_le ?_ ?_
+  simp
+  intro x a
+  use x
+  simp
+  intro x a
+  use x
 
 /-- Leroy lemme 7-/
-lemma leroy_7 (A_i : ℕ → Sublocale E) (h : filtrante_decroissante A_i) :
+lemma leroy_7 (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
-  let V_n (n : ℕ) := Open_Neighbourhood (A_i n)
+  let V_n (n : ι) := Open_Neighbourhood (A_i n)
   admit -- TODO noha fragen
+
+TODO GGF Chapter II aus blueprint rausmachen, wenn man nen besseren Beweis für nen Frame findet

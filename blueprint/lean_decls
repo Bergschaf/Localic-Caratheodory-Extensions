@@ -30,4 +30,6 @@ sublocal_intersection_of_neighbours
 Measure.add_complement
 Measure.restrict_measure
 Measure.add_complement_inf
+Measure.inf_filtered
+leroy_6
 Caratheodory_monotonic

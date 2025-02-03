@@ -468,6 +468,8 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
     m.caratheodory (A ⊓ (sSup s).toSublocale) = ⨆ b ∈ s, m.caratheodory (A ⊓ b) := by
   sorry
 
+
+
 def Image (A : Sublocale E) := {x : E // A x = x}
 instance (A : Sublocale E)  : Order.Frame (Image A) := sorry
 
