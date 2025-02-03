@@ -49,7 +49,7 @@ lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by
 /--
 Source Johnstone
 -/
-instance {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := sorry
+def CompleteHeytingAlgebra {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := sorry
 
 def himp_toFun (x y : Nucleus E) (a : E) :=
   ⨅ b ≥ a, x b ⇨ y b
@@ -123,12 +123,25 @@ instance Nucleus.instHeytingAlgebra : HeytingAlgebra (Nucleus E) where
   himp_bot _ := rfl
 
 
+--instance (priority := low) : Order.Frame (Nucleus E) := CompleteHeytingAlgebra
+
 -- Temporary until the frame problem gets better
-instance : DistribLattice (Nucleus E) := GeneralizedHeytingAlgebra.toDistribLattice
+--instance : DistribLattice (Nucleus E) := GeneralizedHeytingAlgebra.toDistribLattice
 
-instance (priority := high): BoundedOrder (Sublocale E) := by exact OrderDual.instBoundedOrder (Nucleus E)
+--instance (priority := high): BoundedOrder (Sublocale E) := by exact OrderDual.instBoundedOrder (Nucleus E)
 
-instance (priority := high) : OrderTop (Sublocale E) := by exact OrderDual.instOrderTop (Nucleus E)
+--instance (priority := high) : OrderTop (Sublocale E) := by exact OrderDual.instOrderTop (Nucleus E)
+instance (priority := low) : Order.Coframe (Sublocale E) where
+  sdiff := sorry
+  sdiff_le_iff := sorry
+  hnot := sorry
+  top_sdiff := sorry
+  iInf_sup_le_sup_sInf := sorry
 ---
 
 example : ∀ (u : Sublocale E), ⊤ ≤ u ↔ u = ⊤ := fun u => top_le_iff
+
+
+example (a : Sublocale E) (s : Set (Sublocale E)) :  a ⊔ sInf s = (⨅ b ∈ s, a ⊔ b) := by
+  let h1 := @sup_sInf_eq _ _ s a
+  apply h1
