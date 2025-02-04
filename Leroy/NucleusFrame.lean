@@ -64,7 +64,33 @@ Johnstone:
 -/
 def himp_idempotent (x y : Nucleus E) (a : E) :
     himp_toFun x y (himp_toFun x y a) ≤  himp_toFun x y a := by
-  sorry
+  have h_0 : ∀ b ≥ a, himp_toFun x y a ≤ x b ⇨ y b := by
+    simp [himp_toFun]
+    intro b h
+    rw [iInf_inf]
+    rw [iInf_le_iff]
+    simp only [le_inf_iff, le_iInf_iff, le_himp_iff]
+    intro c h1
+    rcases h1 b with ⟨h1, h2⟩
+    let h1 := h1 h
+    apply le_trans' h1
+    simp only [le_inf_iff, le_refl, true_and]
+    exact h2
+
+  have h : ∀ b ≥ a, (x (x b ⇨ y b)) ⇨ (y (x b ⇨ y b)) = x b ⇨ y b := by
+    intro b h
+    have h_fixpoint : y (x b ⇨ y b) = x b ⇨ y b := by
+      sorry -- exercise for the reader
+    rw [h_fixpoint]
+    rw [himp_himp]
+
+
+
+
+
+
+
+
 
 def himp_le_apply (x y : Nucleus E) (a : E) :
     a ≤ himp_toFun x y a := by
