@@ -236,19 +236,26 @@
 
 \begin{proposition}[Complete Heyting Algebra]
     \label{prop:complete_heyting_algebra}
+    -- TODO Mathlib
     \leanok
     A complete Lattice is a Frame if and only if it as a Heyting Algebra.
 \end{proposition}
-
+\begin{proof}
+(Source Johnstone:) The Heyting implication is right adjoint to the infimum. This means that the infimum preserves
+Suprema, since it is a left adjoint.
+    \leanok
+\end{proof}
 
 
 \begin{lemma}[Nucleus Heyting Algebra]
     \label{lem:nucleus_heyting_algebra}
     \uses{lem:nucleus_intersection}
     \leanok
+    \lean{himp_Nucleus}
     The Nuclei form a Heyting Algebra.
 \end{lemma}
 \begin{proof}
+    \leanok
     Quelle Johnstone
 \end{proof}
 
@@ -261,6 +268,7 @@
     The Nuclei  form a frame.
 \end{lemma}
 \begin{proof}
+    \leanok
 \end{proof}
 
 \begin{comment}
