@@ -49,7 +49,9 @@ lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by
 /--
 Source Johnstone
 -/
-def CompleteHeytingAlgebra {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := sorry
+def CompleteHeytingAlgebra {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := by
+  sorry
+
 
 def himp_toFun (x y : Nucleus E) (a : E) :=
   ⨅ b ≥ a, x b ⇨ y b
@@ -62,13 +64,6 @@ Johnstone:
 -/
 def himp_idempotent (x y : Nucleus E) (a : E) :
     himp_toFun x y (himp_toFun x y a) ≤  himp_toFun x y a := by
-  simp [himp_toFun]
-  intro i hi
-  simp [iInf]
-  rw [← sInf_pair]
-  rw [sInf_le_iff]
-  simp [lowerBounds]
-  intro b h1 h2
   sorry
 
 def himp_le_apply (x y : Nucleus E) (a : E) :
@@ -82,8 +77,91 @@ lemma himp_map_inf (x y : Nucleus E) :
     ∀ (a b : E), himp_toFun x y (a ⊓ b) = himp_toFun x y a ⊓ himp_toFun x y b := by
   intro a b
   apply le_antisymm
-  . sorry -- trivial anscheinend
-  . sorry
+  . simp [himp_toFun]
+    apply And.intro
+    . intro i hi
+      rw [iInf_inf]
+      rw [iInf_le_iff]
+      simp only [le_inf_iff, le_iInf_iff, le_himp_iff]
+      intro c h1
+      rcases (h1 i) with ⟨h1, h2⟩
+      let h1 := h1 (by exact inf_le_of_left_le hi)
+      apply le_trans' h1
+      rw [inf_of_le_left]
+      exact h2
+    . intro i hi
+      rw [iInf_inf]
+      rw [iInf_le_iff]
+      simp only [le_inf_iff, le_iInf_iff, le_himp_iff]
+      intro c h1
+      rcases (h1 i) with ⟨h1, h2⟩
+      let h1 := h1 (by exact inf_le_of_right_le hi)
+      apply le_trans' h1
+      rw [inf_of_le_left]
+      exact h2
+
+  . have h : ∀ c ≥ a ⊓ b, c = (a ⊔ c) ⊓ (b ⊔ c) := by
+      intro c h
+      rw [@inf_sup_left]
+      simp only [le_sup_right, inf_of_le_right, right_eq_sup]
+      simp at h
+      rw [inf_sup_right]
+      simp only [sup_le_iff, inf_le_left, and_true]
+      exact h
+    simp only [himp_toFun]
+    conv =>
+      enter [2, 1, c, 1]
+      intro h1
+      rw [h c h1]
+      rw [y.map_inf]
+      rw [himp_inf_distrib]
+      simp
+
+    rw [@le_iInf₂_iff]
+    intro i hi
+    rw [le_inf_iff]
+    apply And.intro
+    . apply inf_le_of_left_le
+      simp only [ge_iff_le, le_inf_iff]
+      . rw [iInf_le_iff]
+        have h : x (a ⊔ i) ⇨ y (a ⊔ i) ≤ (x (a ⊔ i) ⊓ x (b ⊔ i)) ⇨ y (a ⊔ i) := by
+          simp only [le_himp_iff]
+          rw [himp_eq_sSup]
+          rw [sSup_inf_eq]
+          simp only [Set.mem_setOf_eq, iSup_le_iff]
+          intro j h1
+          apply le_trans' h1
+          simp only [le_inf_iff, inf_le_left, true_and]
+          apply inf_le_of_right_le
+          exact inf_le_left
+
+        intro c h1
+        apply le_trans' h
+        simp at h1
+        simp
+        apply h1
+        exact le_sup_left
+    . apply inf_le_of_right_le
+      simp only [ge_iff_le, le_inf_iff]
+      . rw [iInf_le_iff]
+        have h : x (b ⊔ i) ⇨ y (b ⊔ i) ≤ (x (a ⊔ i) ⊓ x (b ⊔ i)) ⇨ y (b ⊔ i) := by
+          simp only [le_himp_iff]
+          rw [himp_eq_sSup]
+          rw [sSup_inf_eq]
+          simp only [Set.mem_setOf_eq, iSup_le_iff]
+          intro j h1
+          apply le_trans' h1
+          simp only [le_inf_iff, inf_le_left, true_and]
+          apply inf_le_of_right_le
+          exact inf_le_right
+
+        intro c h1
+        apply le_trans' h
+        simp at h1
+        simp
+        apply h1
+        exact le_sup_left
+
 
 def himp_Nucleus (x y : Nucleus E) : Nucleus E where
   toFun := himp_toFun x y
