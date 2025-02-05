@@ -13,6 +13,7 @@ instance Nucleus.instCompleteLattice : CompleteLattice (Nucleus E) where
     ⟨a_1, a_2⟩)
   __ := completeLatticeOfCompleteSemilatticeInf (Nucleus E)
 
+
 lemma Nucleus.min_eq (a b : Nucleus E) : a ⊓ b = sInf {a, b} := by rfl
 
 lemma Nucleus.min_eq' (a b : Nucleus E) : ∀ i, (a ⊓ b) i = a i ⊓ b i := by
@@ -45,12 +46,6 @@ lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s �
 lemma Nucleus_mem_sublocale' {a : Nucleus E} {s : Set (Sublocale E)} {p : Nucleus E → Prop} : (∀ a ∈ s, p a) ↔ (∀ a ∈ (Sublocale.nucleus '' s), p a) := by
   exact Iff.symm Set.forall_mem_image
 lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by exact fun a b => Eq.to_iff rfl
-
-/--
-Source Johnstone
--/
-def CompleteHeytingAlgebra {α : Type*} [CompleteLattice α] [HeytingAlgebra α] : Order.Frame α := by
-  sorry
 
 
 def himp_toFun (x y : Nucleus E) (a : E) :=
@@ -254,26 +249,13 @@ instance Nucleus.instHeytingAlgebra : HeytingAlgebra (Nucleus E) where
   compl x := x ⇨ ⊥
   himp_bot _ := rfl
 
+instance : Order.Frame (Nucleus E) where
+   __ := Nucleus.instHeytingAlgebra
+   __ := Nucleus.instCompleteLattice
 
---instance (priority := low) : Order.Frame (Nucleus E) := CompleteHeytingAlgebra
-
--- Temporary until the frame problem gets better
---instance : DistribLattice (Nucleus E) := GeneralizedHeytingAlgebra.toDistribLattice
-
---instance (priority := high): BoundedOrder (Sublocale E) := by exact OrderDual.instBoundedOrder (Nucleus E)
-
---instance (priority := high) : OrderTop (Sublocale E) := by exact OrderDual.instOrderTop (Nucleus E)
-instance (priority := low) : Order.Coframe (Sublocale E) where
-  sdiff := sorry
-  sdiff_le_iff := sorry
-  hnot := sorry
-  top_sdiff := sorry
-  iInf_sup_le_sup_sInf := sorry
----
 
 example : ∀ (u : Sublocale E), ⊤ ≤ u ↔ u = ⊤ := fun u => top_le_iff
 
-
-example (a : Sublocale E) (s : Set (Sublocale E)) :  a ⊔ sInf s = (⨅ b ∈ s, a ⊔ b) := by
+lemma test (a : Sublocale E) (s : Set (Sublocale E)) :  a ⊔ sInf s = (⨅ b ∈ s, a ⊔ b) := by
   let h1 := @sup_sInf_eq _ _ s a
   apply h1
