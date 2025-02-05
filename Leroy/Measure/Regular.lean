@@ -304,7 +304,15 @@ lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered 
   simp_rw [Open_min]
   simp_rw [Open_sSup]
   --
-  sorry
+  rw [sSup_inf_eq]
+  rw [iSup]
+  rw [← Open.sSup_eq'']
+  rw [Measure.filtered]
+  simp [Set.image_image]
+  . iSup const
+
+  . sorry
+
 
 
 

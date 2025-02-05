@@ -110,6 +110,7 @@
     \label{def:nucleus_partial_order}
     \uses{def:nucleus}
     \lean{Nucleus.le_iff}
+    \mathlibok
     \leanok
     For two nuclei $e$ and $f$ on $O(E)$, we say that $e \le f$ if $e(U) \le f(U)$ for all $U \in O(E)$.
     This relation is a partial order.
@@ -236,7 +237,8 @@
 
 \begin{proposition}[Complete Heyting Algebra]
     \label{prop:complete_heyting_algebra}
-    -- TODO Mathlib
+    \mathlibok
+    \lean{Order.Frame}
     \leanok
     A complete Lattice is a Frame if and only if it as a Heyting Algebra.
 \end{proposition}

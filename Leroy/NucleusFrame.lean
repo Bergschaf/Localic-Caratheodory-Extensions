@@ -43,7 +43,7 @@ lemma Sublocale.bot_eq : ∀ x, (⊥ : Sublocale E) x = ⊤ := by
 lemma Nucleus_mem_sublocale {a : Nucleus E} {s : Set (Sublocale E)} : a ∈ s ↔ a ∈ (Sublocale.nucleus '' s):= by
   exact Iff.symm (Set.mem_image_iff_of_inverse (congrFun rfl) (congrFun rfl))
 
-lemma Nucleus_mem_sublocale' {a : Nucleus E} {s : Set (Sublocale E)} {p : Nucleus E → Prop} : (∀ a ∈ s, p a) ↔ (∀ a ∈ (Sublocale.nucleus '' s), p a) := by
+lemma Nucleus_mem_sublocale' {s : Set (Sublocale E)} {p : Nucleus E → Prop} : (∀ a ∈ s, p a) ↔ (∀ a ∈ (Sublocale.nucleus '' s), p a) := by
   exact Iff.symm Set.forall_mem_image
 lemma Nucleus.le_iff : ∀ a b : Nucleus E, a ≤ b ↔ ∀ i, a i ≤ b i := by exact fun a b => Eq.to_iff rfl
 
@@ -252,10 +252,3 @@ instance Nucleus.instHeytingAlgebra : HeytingAlgebra (Nucleus E) where
 instance : Order.Frame (Nucleus E) where
    __ := Nucleus.instHeytingAlgebra
    __ := Nucleus.instCompleteLattice
-
-
-example : ∀ (u : Sublocale E), ⊤ ≤ u ↔ u = ⊤ := fun u => top_le_iff
-
-lemma test (a : Sublocale E) (s : Set (Sublocale E)) :  a ⊔ sInf s = (⨅ b ∈ s, a ⊔ b) := by
-  let h1 := @sup_sInf_eq _ _ s a
-  apply h1
