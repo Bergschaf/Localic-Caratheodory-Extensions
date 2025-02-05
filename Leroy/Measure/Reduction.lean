@@ -80,10 +80,10 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
     simp [G, I, F_n, iSup,iInf]
     rw [@sup_sInf_eq]
     simp [iInf]
-    apply eq_top_iff.mpr
-    simp
     intro a
-    apply eq_top_iff.mpr
+    rw [eq_top_iff]
+    simp
+    rw [eq_top_iff]
     simp
     intro a1 h1
     apply eq_top_iff.mpr

@@ -13,6 +13,7 @@ e_V_sublocale
 leroy_eq_stone
 Nucleus.min_eq
 Nucleus.instCompleteLattice
+Order.Frame
 himp_Nucleus
 e_U
 eckig

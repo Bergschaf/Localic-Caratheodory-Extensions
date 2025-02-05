@@ -434,6 +434,12 @@ lemma Open.sSup_eq {U_i : Set (Open X)} : (sSup U_i).toSublocale = sSup (Open.to
   rw [← eckig_preserves_sSup]
   rw [Set.image_image]
 
+lemma Open.sSup_eq'  {U_i : Set (Open X)} : (sSup U_i) = ⟨sSup (Open.element '' U_i)⟩  := by rfl
+
+lemma Open.sSup_eq''  {U_i : Set (X)} : (sSup (Open.mk '' U_i)) = ⟨sSup (U_i)⟩  := by
+  simp [Open.sSup_eq',Set.image_image]
+
+
 lemma Open.Min_eq {U V : Open X} : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
   simp [Open.toSublocale]
   rw [← eckig_preserves_inf]
