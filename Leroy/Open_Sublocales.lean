@@ -445,6 +445,9 @@ lemma Open.Min_eq {U V : Open X} : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.t
   rw [← eckig_preserves_inf]
   rfl
 
+lemma Open.Min_eq' {U V : Open X} : (U ⊓ V).element = U.element ⊓ V.element := by
+  exact rfl
+
 lemma Open.Max_eq {U V : Open X} : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.toSublocale := by
   let x := @Open.sSup_eq _ _ {U, V}
   simp [Open_max]
