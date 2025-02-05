@@ -305,19 +305,39 @@ lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered 
   simp_rw [Open_sSup]
   --
   rw [sSup_inf_eq]
-  rw [iSup]
+  have h_help :  ⨆ a ∈ Open.element '' s, a ⊓ w.element = sSup (Set.range (fun (a : Open.element '' s) ↦ a.val ⊓ w.element)) := by
+    simp [sSup_range]
+    apply le_antisymm
+    . simp only [le_iSup_iff, Subtype.forall, Set.mem_image, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, iSup_le_iff, imp_self, implies_true]
+    . simp only [le_iSup_iff, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂, Subtype.forall,
+      Set.mem_image, forall_exists_index, imp_self, implies_true]
+
+  rw [h_help]
   rw [← Open.sSup_eq'']
+
   rw [Measure.filtered]
   simp [Set.image_image]
-  . iSup const
 
-  . sorry
+  . have sSup_mono : ∀ a b : Set (NNReal), a = b → sSup a = sSup b := by
+      exact fun a b a_1 => congrArg sSup a_1
+    apply sSup_mono
+    ext x
+    simp only [Set.mem_image, Set.mem_range, Subtype.exists, exists_prop, exists_exists_and_eq_and]
 
-
-
-
-
-
+  . simp only [increasingly_filtered, Set.mem_image, Set.mem_range, Subtype.exists, exists_prop,
+    exists_exists_and_eq_and, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    intro a1 h1 a2 h2
+    rw [increasingly_filtered] at h
+    rcases h a1 h1 a2 h2 with ⟨a3, ⟨ha3, ⟨h1, h2⟩⟩⟩
+    use a3
+    use ha3
+    simp_rw [← Open.Min_eq']
+    have h_help : ∀ x : Open E, ⟨x.element⟩ = x := by exact fun x => rfl
+    simp_rw [h_help]
+    apply And.intro
+    . exact inf_le_inf_right w h1
+    . exact inf_le_inf_right w h2
 
 
 
@@ -327,8 +347,7 @@ noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E) 
   empty := (by simp[Measure.restrict];exact m.empty)
   mono := restrict_mono
   pseudosymm := restrict_pseudosymm
-  filtered := sorry
-
+  filtered := Measure.restrict_filtered
 
 
 
