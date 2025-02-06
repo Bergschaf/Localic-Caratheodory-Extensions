@@ -130,7 +130,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
       rw [le_csSup_iff]
       . simp [upperBounds]
         intro b h2
-        sorry -- hier irgendwas mit Filter tendsto atTop
+        sorry -- todo komisch
       . simp [BddAbove, upperBounds, Set.Nonempty]
         use m.caratheodory ⊤
         exact fun a => Caratheodory.le_top m (F_n a)
