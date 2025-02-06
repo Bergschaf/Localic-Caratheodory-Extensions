@@ -14,7 +14,7 @@ instance : Coe (Sublocale E) (Nucleus E) where
 
 instance : FunLike (Sublocale E) E E where
   coe x := x.ofDual.toFun
-  coe_injective' f g h := (by cases f;congr! ;simp_all)
+  coe_injective' f g h := (by cases f;simp_all)
 
 
 lemma Sublocale.le_iff (a b : Sublocale E) : a ≤ b ↔ ∀ x, b.toFun x ≤ a.toFun x := by
