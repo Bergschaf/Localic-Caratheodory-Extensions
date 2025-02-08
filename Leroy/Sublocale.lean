@@ -6,33 +6,23 @@ variable {E X: Type*} [e_frm : Order.Frame E] [Order.Frame X]
 
 abbrev Sublocale (E : Type*) [Order.Frame E] := (Nucleus E)ᵒᵈ
 
-def Nucleus.nucleus (x : Nucleus E) := x
-def Sublocale.nucleus (x : Sublocale E) := x.ofDual
+namespace Sublocale
+open Nucleus
 
 instance : Coe (Sublocale E) (Nucleus E) where
   coe x := x.ofDual
 
 instance : FunLike (Sublocale E) E E where
-  coe x := x.ofDual.toFun
-  coe_injective' f g h := (by cases f;simp_all)
+  coe x := x.toFun
+  coe_injective' f g h := (by cases f;cases g; simp_all)
 
-
-lemma Sublocale.le_iff (a b : Sublocale E) : a ≤ b ↔ ∀ x, b.toFun x ≤ a.toFun x := by
+lemma le_iff (a b : Sublocale E) : a ≤ b ↔ ∀ x, b x ≤ a x := by
   exact Eq.to_iff rfl
 
-lemma Sublocale.le_iff'' (a b : Sublocale E) : @LE.le (Nucleus E) _ a b ↔ a.nucleus ≤ b.nucleus := by
-  exact ge_iff_le
-
-lemma Sublocale.ext_iff (a b : Sublocale E) : a = b ↔ ∀ x, a.toFun x = b.toFun x := by
-  exact DFunLike.ext_iff
-
 @[ext]
-lemma Sublocale.ext (a b : Sublocale E) (h : ∀ x, a.toFun x = b.toFun x) : a = b := by
-  exact (ext_iff a b).mpr h
+lemma ext (a b : Sublocale E) (h : ∀ x, a x = b x) : a = b := by
+  exact Nucleus.ext h
 
-@[simp]
-lemma Sublocale.nucleus_toFun (a : Nucleus E) : (OrderDual.ofDual a).toFun = a.toFun := by
-  exact rfl
 
 --- Leroy SupSet
 
