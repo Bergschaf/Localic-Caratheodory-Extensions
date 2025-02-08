@@ -101,5 +101,9 @@ instance : HeytingAlgebra (Nucleus X) where
 instance : Order.Frame (Nucleus X) where
   __ := instHeytingAlgebra_leroy
   __ := instCompleteLattice_leroy
+---
 
-end Nucleus
+theorem sSup_apply (s : Set (Nucleus X)) (x : X) : sSup s x = ⨅ j ∈ {j | ∀ a ∈ s, a ≤ j}, j x := by
+  simp [← sInf_upperBounds_eq_csSup, upperBounds]
+
+-- TODO iSup_apply

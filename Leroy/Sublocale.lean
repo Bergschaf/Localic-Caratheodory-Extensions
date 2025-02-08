@@ -9,9 +9,6 @@ abbrev Sublocale (E : Type*) [Order.Frame E] := (Nucleus E)ᵒᵈ
 namespace Sublocale
 open Nucleus
 
-instance : Coe (Sublocale E) (Nucleus E) where
-  coe x := x.ofDual
-
 instance : FunLike (Sublocale E) E E where
   coe x := x.toFun
   coe_injective' f g h := (by cases f;cases g; simp_all)
@@ -23,13 +20,19 @@ lemma le_iff (a b : Sublocale E) : a ≤ b ↔ ∀ x, b x ≤ a x := by
 lemma ext (a b : Sublocale E) (h : ∀ x, a x = b x) : a = b := by
   exact Nucleus.ext h
 
+@[simp]
+lemma coe_mk (f : InfHom E E) (h1 h2) : ⇑(mk f h1 h2) = f := by rfl
+
+
+
+
 
 --- Leroy SupSet
 
 --@[simp]
 --lemma Sublocale.fun_of {tf : X → X} {h1 : ∀ (x : X), tf (tf x) ≤ tf x} {h2 : ∀ (x : X), x ≤ tf x} {h3 : ∀ (x y : X), tf (x ⊓ y) = tf x ⊓ tf y} {v : X} : ({toFun := tf, idempotent := h1, increasing := h2, preserves_inf := h3} : Sublocale X) v = tf v := by rfl
 
-
+/-
 def e_V (X_i : Set (Sublocale E)) (V : E) := sSup {w : E | ∀ x_i ∈ X_i, w ≤ x_i.toFun V}
 
 
@@ -217,4 +220,4 @@ lemma Sublocale_le_sInf : ∀ (s : Set (Sublocale E)) (a : Sublocale E), (∀ b 
 
 instance : CompleteSemilatticeInf (Sublocale E) where
   sInf_le := Sublocale_sInf_le
-  le_sInf := Sublocale_le_sInf
+  le_sInf := Sublocale_le_sInf-/

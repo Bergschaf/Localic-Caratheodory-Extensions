@@ -1,6 +1,6 @@
 import Leroy.Nucleus
 import Leroy.Sublocale
-import Leroy.NucleusFrame
+
 
 variable {X Y E F: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [Order.Frame F]
 
@@ -74,13 +74,19 @@ def e_U_preserves_inf (U: E) (H : E) (J : E) : e_U U (H ⊓ J) = e_U U H ⊓ e_U
       apply le_trans h3 h2
 
 def eckig (U : E) : Sublocale E where
-  toFun := e_U U
-  idempotent':= e_U_idempotent U
-  le_apply':= e_U_increasing U
-  map_inf' := e_U_preserves_inf U
+  toFun := e_U' U
+  idempotent':= sorry --e_U_idempotent U
+  le_apply':= sorry -- e_U_increasing U
+  map_inf' := sorry --e_U_preserves_inf U
 
-@[simp]
-lemma eckig.coe_apply {u x : X} : eckig u x = e_U u x := by rfl
+
+lemma eckig_self (U : E) : eckig U U = ⊤ := by
+  simp [e_U',eckig]
+
+  rw [Sublocale.coe_]
+  rw [Nucleus.coe_mk]
+  simp
+
 
 
 -- TODO typeclass
@@ -102,26 +108,15 @@ instance : Coe (E) (Open E) where
 instance : Coe (Open E) (Sublocale E) where
   coe x := x.toSublocale
 
-def is_open (e : Sublocale E) : Prop :=
-  ∃ u : E, eckig u = e
 
 @[simp]
-lemma Open.coe_apply (u : Open E) (x : E) : (u : Sublocale E) x = e_U u.element x := by rfl
+lemma Open.coe_apply (u : Open E) (x : E) : (u : Sublocale E) x = e_U u.element x := by
+  simp [Open.toSublocale, eckig]
 
-/--
-noncomputable def Nucleus_to_Open (e : Nucleus E) (h : is_open e) : Open E :=
-  ⟨Classical.choose h⟩
--- Leroy Lemme 6
-
-lemma Open_is_open (e : Open E) : is_open e.toSublocale := by
-  simp only [is_open, Open.toSublocale, exists_apply_eq_apply]
--/
-@[simp] lemma test (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Nucleus E) x = toFun x := by
-  exact fun x a b c => rfl
+  rw [Nucleus.coe_mk, InfHom.coe_mk]
 
 
-@[simp] lemma test' (toFun : E → E) :∀ x a b c, ({toFun := toFun, map_inf' :=a,idempotent' := b, le_apply' := c} : Sublocale E) x = toFun x := by
-  exact fun x a b c => rfl
+
 
 lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
   apply Iff.intro
@@ -130,7 +125,8 @@ lemma leroy_6a (x : Sublocale E) (U : E) : x ≤ eckig U ↔ (x U = ⊤) := by
     let h1 := h U
     have h2 : (eckig U) U = ⊤ := by
       simp [eckig]
-      rw [test']
+      simp [Nucleus.coe_mk]
+      rw [Nucleus.coe_mk']
       simp [e_U]
 
     exact eq_top_mono (h U) h2
