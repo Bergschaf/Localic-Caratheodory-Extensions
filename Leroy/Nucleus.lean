@@ -34,7 +34,7 @@ instance : CompleteSemilatticeInf (Nucleus X) where
 
 instance : CompleteLattice (Nucleus X) := completeLatticeOfCompleteSemilatticeInf (Nucleus X)
 
-@[simp] theorem inf_aply (m n : Nucleus X) (x : X) : (m ⊓ n) x = m x ⊓ n x := by
+@[simp] theorem inf_apply (m n : Nucleus X) (x : X) : (m ⊓ n) x = m x ⊓ n x := by
   rw [← sInf_pair, sInf_apply, iInf_pair]
 
 

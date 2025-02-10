@@ -83,7 +83,9 @@ def eckig (U : E) : Sublocale E where
 lemma eckig_self (U : E) : eckig U U = ⊤ := by
   simp [e_U',eckig]
 
-  rw [Sublocale.coe_]
+
+
+  rw [Sublocale.coe_mk]
   rw [Nucleus.coe_mk]
   simp
 
