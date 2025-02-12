@@ -1,4 +1,4 @@
-import Leroy.Closed_Sublocals
+import Leroy.Sublocale
 import Mathlib.Order.CompleteSublattice
 import Mathlib.Order.BoundedOrder.Basic
 
@@ -7,23 +7,11 @@ variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 /-!
 Properties of Complement
 -/
-def Closed.compl (x : Closed E) : Open E := ⟨x.element⟩
-def Open.compl (x : Open E) : Closed E := ⟨x.element⟩
 
-lemma Open.complement_eq (x : Open E) : x.compl = (complement x) := by
-  exact rfl
-
-lemma Open.inf_compl {x : Open E} : x.toSublocale ⊓ x.compl = ⊥ := by
-  rw [Open.complement_eq]
-  exact inf_complement x
-
-lemma Open.sup_compl {x : Open E} : x.toSublocale ⊔ x.compl.toSublocale = ⊤ := by
-  rw [Open.complement_eq]
-  exact sup_comp_eq_top x
 /--
 Leroy Lemme 8 bis
 -/
-def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.compl) = ⊤ := by
+def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.complement) = ⊤ := by
   apply Iff.intro
   . intro h
     apply le_antisymm

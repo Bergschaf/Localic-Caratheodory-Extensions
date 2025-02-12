@@ -1,7 +1,6 @@
 import Mathlib.Data.Real.Basic
 import Leroy.Basic
-import Leroy.Open_Sublocales
-import Leroy.Further_Topology
+import Leroy.Further
 import Mathlib.Order.BoundedOrder.Basic
 
 

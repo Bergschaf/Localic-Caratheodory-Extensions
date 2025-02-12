@@ -1,5 +1,5 @@
 import Leroy.Nucleus
-
+import Mathlib.Tactic.Widget.Conv
 variable {E : Type*} [Order.Frame E]
 
 
@@ -31,7 +31,7 @@ lemma ext (a b : Sublocale E) (h : ∀ x, a x = b x) : a = b := by
   simp [OrderDual.instSup]
   rw [Nucleus.inf_apply]
 
-lemma Sublocale.min_apply (u v : Sublocale E) (x : E) : (u ⊓ v) x = ⨅ j ∈ lowerBounds {u, v}, j x := by
+@[simp] lemma Sublocale.inf_apply (u v : Sublocale E) (x : E) : (u ⊓ v) x = ⨅ j ∈ lowerBounds {u, v}, j x := by
   simp only [OrderDual.instInf, Set.Ici_inter_Ici,Set.mem_Ici, sup_le_iff]
   rw [Nucleus.sup_apply]
   simp only [upperBounds_insert, upperBounds_singleton, Set.Ici_inter_Ici, Set.mem_Ici, sup_le_iff,
@@ -101,7 +101,7 @@ lemma le_iff (U V : Open E) : U ≤ V ↔ U.toSublocale ≤ V := by
 
 lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
   ext x
-  simp [inf_def, Sublocale.min_apply]
+  simp [inf_def, Sublocale.inf_apply]
   apply le_antisymm
   . sorry
   . sorry
@@ -122,22 +122,17 @@ lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSu
     apply inf_le_of_right_le
     exact le_biSup element h
   .
-    calc
-      _ = ⨅ j ∈ (Open.toSublocale '' s), j x  := by simp
+    have h : ⨅ j, ⨅ i, ⨅ (_ : i ∈ s ∧ i.toSublocale = j), j x = ⨅ j ∈ (Open.toSublocale '' s), j x  := by simp
+    rw [h]
+    sorry
 
-    end
+end Open
 
-
-
-
-
-def complement (U :Open E) : Sublocale E where
+def complement (U : Open E) : Sublocale E where
   toFun x := U ⊔ x
   map_inf' x y := by simp; exact sup_inf_left U.element x y
   idempotent' x := by simp
   le_apply' x := by simp
-
-end Open
 
 @[ext]
 structure Closed (E : Type*) [Order.Frame E] where
@@ -145,7 +140,35 @@ structure Closed (E : Type*) [Order.Frame E] where
 
 namespace Closed
 
-protected def toSublocale (c : Closed E) : Sublocale E := Open.complement ⟨c.element⟩
+protected def toSublocale (c : Closed E) : Sublocale E := complement ⟨c.element⟩
 
 instance : Coe (Closed E) (Sublocale E) where
   coe x := x.toSublocale
+
+instance : LE (Closed E) where
+  le x y := y.element ≤ x.element
+
+lemma le_def (x y : Closed E) : x ≤ y ↔ y.element ≤ x.element := by rfl
+
+lemma le_iff (x y : Closed E) : x ≤ y ↔ x.toSublocale ≤ y.toSublocale := by
+  simp [le_def, Closed.toSublocale, complement, LE.le]
+  apply Iff.intro
+  . exact fun h i => le_sup_of_le_left h
+  . intro h
+    let h1 := h ⊥
+    simp only [bot_le, sup_of_le_left] at h1
+    exact h1
+
+def compl (c : Closed E) : Open E := ⟨c.element⟩
+
+end Closed
+
+def Open.compl (U : Open E) : Closed E := ⟨U.element⟩
+
+lemma Open.inf_compl (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
+  refine le_antisymm ?_ bot_le
+  rw [Sublocale.le_iff]
+  sorry
+
+lemma Open.sup_compl (U : Open E) : U.toSublocale ⊔ U.compl = ⊤ := by
+  sorry
