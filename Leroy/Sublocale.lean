@@ -1,5 +1,5 @@
 import Leroy.Nucleus
---import Mathlib.Tactic.ApplyFun
+
 variable {E : Type*} [Order.Frame E]
 
 
@@ -82,6 +82,7 @@ instance : SemilatticeInf (Open E) where
   inf_le_right x y := by simp [le_def]
   le_inf x y z h1 h2 := by simp [le_def]; exact ⟨h1, h2⟩
 
+lemma inf_def (u v : Open E) : u ⊓ v = ⟨u ⊓ v⟩ := rfl
 
 @[simp] lemma toSublocale_apply (U : Open E) (x : E) : U.toSublocale x = U.element ⇨ x := rfl
 
@@ -99,7 +100,52 @@ lemma le_iff (U V : Open E) : U ≤ V ↔ U.toSublocale ≤ V := by
     exact h1
 
 lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
-  sorry
+  ext x
+  simp [inf_def, Sublocale.min_apply]
+  apply le_antisymm
+  . sorry
+  . sorry
 
 lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSublocale '' s) := by
-  sorry
+  ext x
+  simp [sSup_def]
+  apply le_antisymm
+  . simp only [le_iInf_iff, and_imp, forall_apply_eq_imp_iff₂, toSublocale_apply, le_himp_iff]
+    intro a h
+    rw [@sSup_image]
+    simp [himp_eq_sSup]
+    rw [sSup_inf_eq]
+    simp [iInf_le_iff]
+    intro i h1
+    apply le_trans' h1
+    simp only [le_inf_iff, inf_le_left, true_and]
+    apply inf_le_of_right_le
+    exact le_biSup element h
+  .
+    calc
+      _ = ⨅ j ∈ (Open.toSublocale '' s), j x  := by simp
+
+    end
+
+
+
+
+
+def complement (U :Open E) : Sublocale E where
+  toFun x := U ⊔ x
+  map_inf' x y := by simp; exact sup_inf_left U.element x y
+  idempotent' x := by simp
+  le_apply' x := by simp
+
+end Open
+
+@[ext]
+structure Closed (E : Type*) [Order.Frame E] where
+  element : E
+
+namespace Closed
+
+protected def toSublocale (c : Closed E) : Sublocale E := Open.complement ⟨c.element⟩
+
+instance : Coe (Closed E) (Sublocale E) where
+  coe x := x.toSublocale
