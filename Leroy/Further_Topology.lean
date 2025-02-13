@@ -1,6 +1,7 @@
 import Leroy.Sublocale
 import Mathlib.Order.CompleteSublattice
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Tactic.ApplyFun
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
@@ -11,7 +12,7 @@ Properties of Complement
 /--
 Leroy Lemme 8 bis
 -/
-def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.complement) = ⊤ := by
+def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.compl) = ⊤ := by
   apply Iff.intro
   . intro h
     apply le_antisymm
@@ -20,36 +21,26 @@ def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.c
       have h1 : u.toSublocale ⊔ u.compl.toSublocale ≤  x ⊔ u.compl.toSublocale := by
         exact sup_le_sup_right h u.compl.toSublocale
       apply le_trans' h1
-      rw [Open.complement_eq]
-      rw [@sup_comp_eq_top]
+      rw [Open.sup_compl_eq_top]
   . intro h
-    simp_rw [Sublocale.max_eq,sSup,sInf] at h
-    simp [Sublocale.ext_iff, sInf_fun] at h
-    simp [Sublocale.le_iff]
-    intro v
-    let h1 := h v
-    have h2 : (⊤ : Sublocale E) v = v := by
-      exact rfl
-    rw [h2] at h1
-    rw [Set.setOf_or] at h1
+    rw [Nucleus.ext_iff] at h
+    rw [Sublocale.le_iff]
+    intro i
+    let h1 := h i
+    rw [Sublocale.sup_apply, Sublocale.top_apply] at h1
+
     simp [Open.compl,Closed.toSublocale, complement] at h1
-    rw [@inf_sup_right] at h1
-    --
-    simp [Open.toSublocale, eckig, e_U]
-    apply le_sSup
-    simp only [Set.mem_setOf_eq]
-    let h3 := le_of_eq h1
-    rw [@sup_le_iff] at h3
-    rw [inf_comm]
-    exact h3.left
+    rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
+    sorry
 
 def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.compl) = ⊥ := by
   apply Iff.intro
   . intro h
     apply le_antisymm
-    . apply_fun (fun x ↦ x ⊓ u.compl.toSublocale) at h
+    .
+      apply_fun (fun x ↦ x ⊓ u.compl.toSublocale) at h
       dsimp at h
-      rw [Open.inf_compl] at h
+      rw [Open.inf_compl_eq_bot] at h
       exact h
       simp only [Monotone, le_inf_iff, inf_le_right, and_true, OrderDual.forall,
         OrderDual.toDual_le_toDual]
@@ -74,7 +65,7 @@ lemma Open_interior_eq_id : ∀ a : Open E, a.toSublocale.interior = a := by
   intro a
   apply le_antisymm
   . simp only [sSup_le_iff, Set.mem_setOf_eq]
-    exact fun b a => a
+    exact fun b a_1 => (fun U V => (Open.le_iff U V).mpr) b a a_1
   . apply le_sSup
     simp only [Set.mem_setOf_eq, le_refl]
 

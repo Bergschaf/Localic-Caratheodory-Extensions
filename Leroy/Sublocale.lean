@@ -39,6 +39,9 @@ lemma ext (a b : Sublocale E) (h : ∀ x, a x = b x) : a = b := by
   exact rfl
 
 
+@[simp] lemma Sublocale.top_apply (x : E) : (⊤ : Sublocale E) x = x := rfl
+@[simp] lemma Sublocale.bot_apply (x : E) : (⊥ : Sublocale E) x = ⊤ := rfl
+
 @[ext]
 structure Open (E : Type*) [Order.Frame E] where
   element : E
@@ -142,6 +145,8 @@ namespace Closed
 
 protected def toSublocale (c : Closed E) : Sublocale E := complement ⟨c.element⟩
 
+lemma toSublocale_apply (c : Closed E) (x : E) : c.toSublocale x = c.element ⊔ x := by rfl
+
 instance : Coe (Closed E) (Sublocale E) where
   coe x := x.toSublocale
 
@@ -161,14 +166,29 @@ lemma le_iff (x y : Closed E) : x ≤ y ↔ x.toSublocale ≤ y.toSublocale := b
 
 def compl (c : Closed E) : Open E := ⟨c.element⟩
 
+instance : InfSet (Closed E) where
+  sInf x := ⟨sSup (Closed.element '' x)⟩
+
+lemma sInf_def (s : Set (Closed E)) : sInf s = ⟨sSup (Closed.element '' s)⟩ := by rfl
+
+lemma sInf_corresponds (s : Set (Closed E)) : (sInf s).toSublocale = sInf (Closed.toSublocale '' s) := by
+  ext x
+  simp only [Closed.toSublocale, complement, sInf]
+  rw [Nucleus.coe_mk,InfHom.coe_mk] -- why no simp??
+  rw [Nucleus.sSup_apply]
+  simp only [upperBounds, Set.mem_image, LE.le, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, coe_mk, InfHom.coe_mk, sup_le_iff, Set.mem_setOf_eq]
+
+
+
 end Closed
 
 def Open.compl (U : Open E) : Closed E := ⟨U.element⟩
 
-lemma Open.inf_compl (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
+lemma Open.inf_compl_eq_bot (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
   refine le_antisymm ?_ bot_le
   rw [Sublocale.le_iff]
   sorry
 
-lemma Open.sup_compl (U : Open E) : U.toSublocale ⊔ U.compl = ⊤ := by
+lemma Open.sup_compl_eq_top (U : Open E) : U.toSublocale ⊔ U.compl = ⊤ := by
   sorry
