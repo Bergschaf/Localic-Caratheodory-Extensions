@@ -82,18 +82,18 @@ def Open.exterior (x : Open E) := sSup {z : Open E | z ⊓ x = ⊥}
 def Closed.exterior (x : Closed E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
 
 lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
-  simp [Open.exterior, Open_min, Open_sSup]
+  simp [Open.exterior]
   ext
-  simp only
+  simp [Open.inf_def,Open.sSup_def]
   rw [inf_sSup_eq]
-  simp only [Set.mem_image, Set.mem_setOf_eq, iSup_exists, Open.bot]
+  simp only [Set.mem_image, Set.mem_setOf_eq, iSup_exists]
   apply le_antisymm
   . simp [iSup_le]
     intro a h
     rw [inf_comm]
+    rw [Open.ext_iff] at h
     exact h
-  . apply OrderBot.bot_le
-
+  . exact OrderBot.bot_le _
 lemma Open.exterior_exterior_eq_self (x : Open E) : x.exterior.exterior = x := by
   simp [Open.exterior]
   rw [@sSup_eq_iSup']
@@ -118,47 +118,7 @@ Leroy 1.10.1
 -/
 lemma closure_eq_compl_ext (x : Sublocale E) : x.closure = x.exterior.compl := by
   simp [Sublocale.closure,Sublocale.exterior, Open.compl]
-
-  apply le_antisymm
-  .
-    rw [Closed.le_iff]
-    simp only [sSup, sInf, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
-      and_imp, forall_apply_eq_imp_iff₂]
-    intro a h
-    ---
-    apply le_sSup
-    simp only [Set.mem_image, Set.mem_setOf_eq]
-    use a.compl
-    apply And.intro
-    . sorry
-    . rfl
-  .
-    simp only [le_sInf_iff, Set.mem_setOf_eq]
-    intro b h
-
-    apply le_trans' h
-    simp only [Closed.toSublocale]
-    rw [complement]
-    rw [Sublocale.le_iff]
-    simp only [Nucleus.toFun_eq_coe]
-    intro v
-    simp only [sSup]
-    rw [@sSup_image]
-    simp only [Set.mem_setOf_eq]
-    rw [iSup_sup]
-    rw [le_iSup_iff]
-    simp only [sup_le_iff, iSup_le_iff]
-    intro b1 h1
-    rw [Sublocale.le_iff] at h
-    let h2 := h v
-    let h3 := h1 (x.exterior)
-    have h4 :  (x.exterior.toSublocale ⊓ x = ⊥)  := by
-      sorry
-    rcases h3 with ⟨h3, h6⟩
-    let h5 := h3 h4
-    sorry
-
-
+  sorry
 
 /-
 lemma closure_eq_compl_ext (x : Sublocale E) : x.closure.sublocale = complement (x.sublocale) := by

@@ -70,7 +70,16 @@ instance : PartialOrder (Open E) where
   le_trans a b c h1 h2 := by exact Preorder.le_trans a.element b.element c.element h1 h2
   le_antisymm a b h1 h2 := by ext; exact le_antisymm h1 h2
 
-instance : CompleteSemilatticeSup (Open E) where
+instance instBoundedOrder : BoundedOrder (Open E) where
+  top := ⟨⊤⟩
+  le_top x := OrderTop.le_top x.element
+  bot := ⟨⊥⟩
+  bot_le x := OrderBot.bot_le x.element
+
+@[simp] lemma top_element_eq : (⊤ : Open E).element = ⊤ := rfl
+@[simp] lemma bot_element_eq : (⊥ : Open E).element = ⊥ := rfl
+
+instance instCompleteSemilatticeSup : CompleteSemilatticeSup (Open E) where
   sSup s := ⟨sSup (Open.element '' s)⟩
   le_sSup s x h := by
     simp [LE.le]
@@ -79,11 +88,21 @@ instance : CompleteSemilatticeSup (Open E) where
 
 lemma sSup_def (s : Set (Open E)) : sSup s = ⟨sSup (Open.element '' s)⟩ := rfl
 
-instance : SemilatticeInf (Open E) where
+
+instance instSemilatticeInf : SemilatticeInf (Open E) where
   inf x y := ⟨x ⊓ y⟩
   inf_le_left x y := by simp [le_def]
   inf_le_right x y := by simp [le_def]
   le_inf x y z h1 h2 := by simp [le_def]; exact ⟨h1, h2⟩
+
+instance : CompleteLattice (Open E) where
+  __ := instBoundedOrder
+  __ := instSemilatticeInf
+  __ := completeLatticeOfCompleteSemilatticeSup (Open E)
+
+
+lemma sup_def (u v : Open E) : u ⊔ v = ⟨u.element ⊔ v.element⟩ := by
+  rw [← sSup_pair, sSup_def, Set.image_pair, sSup_pair]
 
 lemma inf_def (u v : Open E) : u ⊓ v = ⟨u ⊓ v⟩ := rfl
 
@@ -178,7 +197,7 @@ lemma sInf_corresponds (s : Set (Closed E)) : (sInf s).toSublocale = sInf (Close
   rw [Nucleus.sSup_apply]
   simp only [upperBounds, Set.mem_image, LE.le, forall_exists_index, and_imp,
     forall_apply_eq_imp_iff₂, coe_mk, InfHom.coe_mk, sup_le_iff, Set.mem_setOf_eq]
-
+  sorry
 
 
 end Closed
