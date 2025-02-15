@@ -13,7 +13,6 @@ und auch Sketches of an Elephant 501...
 -/
 def well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c ⊔ V = ⊤ := by
   rw [well_inside]
-
   sorry
 
 /--
@@ -30,21 +29,6 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
-def E_to_Open (x : E) : Open E := ⟨x⟩
-
-/--
-TODO dass muss weiter nach vorne
--/
-lemma E_le_iff (x y : E) : x ≤ y ↔ E_to_Open x ≤ E_to_Open y := by
-  repeat rw [E_to_Open]
-  apply Iff.intro
-  . intro h
-    exact Open.le_iff.mpr h
-  . intro h
-    exact eckig_preserves_inclusion.mpr h
-
-@[simp]
-lemma E_to_Open_Open (x : Open E) : E_to_Open ↑x = x := by rfl
 
 /--
 Leroy Lemme 2.2
@@ -54,32 +38,10 @@ Maybe depends on:
 Nucleus.eq_join_open_closed
 -/
 
-lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Neighbourhood a) := by
+lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
   . apply le_sInf
-    exact fun b a_1 => le_Neighbourhood b a_1
-  suffices h : (∀ H, a H = ⨆ V ∈ Neighbourhood a, V H) by
-    sorry
-  intro H
-  let K := a H
-  let V (W : Open E) := W.closure.compl ⊔ ⟨H⟩
-
-  have h (W : Open E) (h : W.closure ≤ (↑K : Open E).toSublocale) :
-    W ≤ E_to_Open ((V W).toSublocale H) := by
-    have h_V : V W ∈ Open_Neighbourhood a := by sorry
-
-    have h : W ⊓ V W = W ⊓ (⟨H⟩ : Open E) := by sorry
-    have h1 : W ⊓ ⟨H⟩ ≤ ⟨H⟩ := by sorry
-    sorry
-
-
-  have h1 : E_to_Open (a H) = sSup {W : Open E | W.closure ≤ (⟨a H⟩ : Open E).toSublocale} := by
-    sorry
-
-
-  apply_fun E_to_Open
-  rw [h1]
-  sorry
+    exact fun b a_1 => Sublocale.Neighourhood.le b a_1
   sorry
 /--
 Leroy Lemme 3
@@ -88,7 +50,7 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
 
   apply le_antisymm
   .
-    let V_a := Open_Neighbourhood (complement U)
+    let V_a := Sublocale.Open_Neighbourhood (complement U)
     let W_a := Open.exterior '' V_a
     have sSup_W_a_eq_U : sSup W_a = U := by
       rw [e_regular.elim U]
@@ -101,12 +63,12 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
         rcases h with ⟨a, ⟨h1, h2⟩⟩
         rw [← h2]
         simp only [V_a] at h1
-        simp only [Open_Neighbourhood, Set.mem_setOf_eq] at h1
+        simp only [Sublocale.Open_Neighbourhood, Set.mem_setOf_eq] at h1
         rw [closure_eq_compl_exterior_compl]
         rw [Open.exterior_exterior_eq_self]
         apply le_compl_iff.mp
         exact h1
-      . simp only [well_inside, Open_Neighbourhood, sSup_le_iff, Set.mem_setOf_eq, W_a, V_a]
+      . simp only [well_inside, Sublocale.Open_Neighbourhood, sSup_le_iff, Set.mem_setOf_eq, W_a, V_a]
         intro b h
 
         apply le_sSup
@@ -123,21 +85,21 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       intro u hu v hv
       use u ⊔ v
       apply And.intro
-      . simp only [Open_Neighbourhood, Set.mem_image, Set.mem_setOf_eq, W_a, V_a]
+      . simp only [Sublocale.Open_Neighbourhood, Set.mem_image, Set.mem_setOf_eq, W_a, V_a]
         simp [W_a,V_a] at hu hv
         rcases hu with ⟨u1, ⟨hu1, hu2⟩⟩
         rcases hv with ⟨v1, ⟨hv1, hv2⟩⟩
         use (u1 ⊓ v1)
         apply And.intro
-        . let x := Open_Neighbourhood.inf_closed u1 hu1 v1 hv1
+        . let x := Sublocale.Open_Neighbourhood.inf_closed u1 hu1 v1 hv1
           simp_rw [Open_Neighbourhood] at x
           simp at x
           exact x
         . rw [← hu2,← hv2]
           exact Open.exterior_inf_eq_sup
       . apply And.intro
-        . exact Open.le_sup_left u v
-        . exact Open.le_sup_right u v
+        . exact le_sup_left
+        . exact le_sup_right
 
     have h1 : ∀ v_a ∈ V_a, m.toFun (v_a.exterior) + m.toFun v_a ≤ m.caratheodory ⊤ := by
       intro v_a h_v_a
