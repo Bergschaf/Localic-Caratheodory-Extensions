@@ -4,7 +4,28 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Tactic.ApplyFun
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
+open Sublocale
+def Sublocale.Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 
+def Sublocale.Neighbourhood (u : Sublocale X) : Set (Sublocale X) := {v | ∃ w ∈ Open_Neighbourhood u, w ≤ v}
+
+
+lemma Sublocale.Neighourhood.le {a : Sublocale E} : ∀ x ∈ Neighbourhood a, a ≤ x := by
+  intro x h
+  simp only [Neighbourhood, Open_Neighbourhood, Set.mem_setOf_eq] at h
+  rcases h with ⟨w, ⟨h1,h2⟩⟩
+  exact Preorder.le_trans a w.toSublocale x h1 h2
+
+lemma Sublocale.Open_Neighbourhood.top_mem {x : Sublocale X}: ⊤ ∈ Open_Neighbourhood x := by
+  simp [Open_Neighbourhood]
+
+lemma Sublocale.Open_Neighbourhood.Nonempty (x : Sublocale X) : (Open_Neighbourhood x).Nonempty := by
+  simp [Set.Nonempty]
+  use ⊤
+  exact top_mem
+
+--lemma Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbourhood x, ∀ V ∈ Open_Neighbourhood x, U ⊓ V ∈ Open_Neighbourhood x := by
+--  sorry
 /-!
 Properties of Complement
 -/
@@ -65,7 +86,7 @@ lemma Open_interior_eq_id : ∀ a : Open E, a.toSublocale.interior = a := by
   intro a
   apply le_antisymm
   . simp only [sSup_le_iff, Set.mem_setOf_eq]
-    exact fun b a_1 => (fun U V => (Open.le_iff U V).mpr) b a a_1
+    exact fun b a_1 => Open.le_iff.mpr a_1
   . apply le_sSup
     simp only [Set.mem_setOf_eq, le_refl]
 

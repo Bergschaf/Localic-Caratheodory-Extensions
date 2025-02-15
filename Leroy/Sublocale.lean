@@ -1,5 +1,6 @@
 import Leroy.Nucleus
 import Mathlib.Tactic.Widget.Conv
+import Mathlib.Tactic.ApplyFun
 variable {E : Type*} [Order.Frame E]
 
 
@@ -11,7 +12,7 @@ instance : FunLike (Sublocale E) E E where
   coe x := x.toFun
   coe_injective' f g h := (by cases f;cases g; simp_all)
 
-lemma Sublocale.le_iff (u v : Sublocale E): u ≤ v ↔ ∀ i, v i ≤ u i := by exact Eq.to_iff rfl
+lemma Sublocale.le_iff (u v : Sublocale E) : u ≤ v ↔ ∀ i, v i ≤ u i := by exact Eq.to_iff rfl
 
 @[ext]
 lemma ext (a b : Sublocale E) (h : ∀ x, a x = b x) : a = b := by
@@ -48,11 +49,14 @@ structure Open (E : Type*) [Order.Frame E] where
 
 namespace Open
 
+variable {U V : Open E}
+
 protected def toSublocale (U : Open E) : Sublocale E where
   toFun x := U.element ⇨ x
   map_inf' x y := himp_inf_distrib U.element x y
   idempotent' x := by simp
   le_apply' x := by simp
+
 
 instance : Coe (Open E) E where
   coe x := x.element
@@ -63,12 +67,15 @@ instance : Coe (Open E) (Sublocale E) where
 instance : LE (Open E) where
   le x y := x.element ≤ y.element
 
-lemma le_def (x y : Open E): x ≤ y ↔ x.element ≤ y.element := by rfl
 
 instance : PartialOrder (Open E) where
   le_refl a := by rfl
   le_trans a b c h1 h2 := by exact Preorder.le_trans a.element b.element c.element h1 h2
   le_antisymm a b h1 h2 := by ext; exact le_antisymm h1 h2
+
+lemma le_def : U ≤ V ↔ U.element ≤ V.element := by rfl
+lemma lt_def : U < V ↔ U.element < V.element := lt_iff_lt_of_le_iff_le' le_def le_def
+
 
 instance instBoundedOrder : BoundedOrder (Open E) where
   top := ⟨⊤⟩
@@ -76,8 +83,16 @@ instance instBoundedOrder : BoundedOrder (Open E) where
   bot := ⟨⊥⟩
   bot_le x := OrderBot.bot_le x.element
 
-@[simp] lemma top_element_eq : (⊤ : Open E).element = ⊤ := rfl
-@[simp] lemma bot_element_eq : (⊥ : Open E).element = ⊥ := rfl
+@[simp] lemma top_element : (⊤ : Open E).element = ⊤ := rfl
+@[simp] lemma bot_element : (⊥ : Open E).element = ⊥ := rfl
+@[simp] lemma top_toSublocale : (⊤ : Open E).toSublocale = ⊤ := by
+  ext x
+  simp only [Open.toSublocale, top_element, top_himp, Sublocale.top_apply]
+  exact rfl
+@[simp] lemma bot_toSublocale : (⊥ : Open E).toSublocale = ⊥ := by
+  ext x
+  simp only [Open.toSublocale, bot_element, bot_himp, Sublocale.bot_apply]
+  exact rfl
 
 instance instCompleteSemilatticeSup : CompleteSemilatticeSup (Open E) where
   sSup s := ⟨sSup (Open.element '' s)⟩
@@ -110,7 +125,7 @@ lemma inf_def (u v : Open E) : u ⊓ v = ⟨u ⊓ v⟩ := rfl
 
 @[simp] lemma apply_self (U : Open E) : U.toSublocale U.element = ⊤ := by simp
 
-lemma le_iff (U V : Open E) : U ≤ V ↔ U.toSublocale ≤ V := by
+lemma le_iff : U ≤ V ↔ U.toSublocale ≤ V.toSublocale := by
   apply Iff.intro
   . simp only [Sublocale.le_iff, toSublocale_apply]
     intro h i
@@ -120,6 +135,22 @@ lemma le_iff (U V : Open E) : U ≤ V ↔ U.toSublocale ≤ V := by
     let h1 := h V
     simp only [himp_self, le_himp_iff, le_top, inf_of_le_right] at h1
     exact h1
+
+
+lemma toSublocale_injective : Function.Injective (@Open.toSublocale E _) := by
+  rw [Function.Injective]
+  intro a1 a2 h
+  apply le_antisymm
+  . exact le_iff.mpr (le_of_eq h)
+  . exact le_iff.mpr (ge_of_eq h)
+
+lemma eq_iff : U = V ↔ U.toSublocale = V.toSublocale := by
+  apply Iff.intro
+  . exact fun a => congrArg Open.toSublocale a
+  . intro h
+    apply_fun (fun x ↦ x.toSublocale)
+    exact h
+    exact toSublocale_injective
 
 lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
   ext x
@@ -147,6 +178,10 @@ lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSu
     have h : ⨅ j, ⨅ i, ⨅ (_ : i ∈ s ∧ i.toSublocale = j), j x = ⨅ j ∈ (Open.toSublocale '' s), j x  := by simp
     rw [h]
     sorry
+
+lemma preserves_sup : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.toSublocale := by
+  rw [← sSup_pair, preserves_sSup, Set.image_pair, sSup_pair]
+
 
 end Open
 
