@@ -220,6 +220,9 @@ lemma le_iff (x y : Closed E) : x ≤ y ↔ x.toSublocale ≤ y.toSublocale := b
 
 def compl (c : Closed E) : Open E := ⟨c.element⟩
 
+@[simp] lemma element_compl (c : Closed E) : c.compl.element = (⟨c.element⟩ : Open E) := by
+  rfl
+
 instance instInfSet : InfSet (Closed E) where
   sInf x := ⟨sSup (Closed.element '' x)⟩
 
@@ -263,6 +266,9 @@ def preserves_inf (x y : Closed E) : (x ⊓ y).toSublocale = x.toSublocale ⊓ y
 end Closed
 
 def Open.compl (U : Open E) : Closed E := ⟨U.element⟩
+
+@[simp] lemma Open.compl_element (U : Open E) : U.compl.element = U.element := by
+  rfl
 
 lemma Open.inf_compl_eq_bot (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
   refine le_antisymm ?_ bot_le

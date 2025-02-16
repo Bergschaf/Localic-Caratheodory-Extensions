@@ -64,7 +64,7 @@ lemma leroy_6' (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
   let F_n (n : ℕ) := Closed.toSublocale (Open.compl (V_n n))
   let G := iSup (F_n)
 
-  have h : G ⊔ I = ⊤ := by
+  have h_ : G ⊔ I = ⊤ := by
     simp [G, I, F_n, iSup,iInf]
     rw [@sup_sInf_eq]
     simp [iInf]
@@ -102,7 +102,7 @@ lemma leroy_6' (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
     simp only [Set.mem_range, Function.comp_apply, exists_apply_eq_apply, I, F_n, G]
 
   have h1 : m.caratheodory ⊤ ≤ m.caratheodory I + m.caratheodory G := by
-    rw [← h]
+    rw [← h_]
     rw [sup_comm]
     exact Measure.caratheodory.subadditive I G
 
@@ -118,8 +118,20 @@ lemma leroy_6' (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       rw [le_csSup_iff]
       . simp [upperBounds]
         intro b h2
-
-        sorry -- Geht mit N
+        have h : increasing (Set.range F_n) := by
+          simp [increasing, F_n]
+          intro a
+          use a + 1
+          simp [decroissante'] at h
+          rw [← Closed.le_iff]
+          rw [Closed.le_def]
+          simp
+          exact h _ _ (Nat.le_add_right _ _)
+        rw [sSup_range]
+        rw [preserves_sup]
+        apply ciSup_le
+        exact h2
+        exact h
       . simp [BddAbove, upperBounds, Set.Nonempty]
         use m.caratheodory ⊤
         exact fun a => Measure.caratheodory.le_top m (F_n a)
