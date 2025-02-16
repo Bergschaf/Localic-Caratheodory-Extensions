@@ -26,6 +26,8 @@ Closed_sInf_le
 Sublocale.closure
 Measure
 Measure.caratheodory
+Caratheodory_monotonic
+Measure.subadditive
 regular
 Neighbourhood
 sublocal_intersection_of_neighbours
@@ -33,5 +35,5 @@ Measure.add_complement
 Measure.restrict_measure
 Measure.add_complement_inf
 Measure.inf_filtered
-Caratheodory_monotonic
+Measure.restrict_sublocale_measure
 leroy_6
