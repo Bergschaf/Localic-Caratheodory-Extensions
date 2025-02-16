@@ -261,6 +261,7 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
     exact Open.toSublocale_injective
   rw [h]
 
+omit e_regular in
 lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
   intro s h
   simp [Measure.restrict]
@@ -327,7 +328,7 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
       rw [@Open.sup_compl_eq_top]
       simp only [le_top, inf_of_le_left]
     apply_fun m.caratheodory at h
-    apply le_trans' (Caratheodory_subadditive _ _)
+    apply le_trans' (Measure.caratheodory.subadditive _ _)
     rw [← h]
   .
     have h : ∀ w ∈ Sublocale.Open_Neighbourhood a, (m.restrict_measure w).toFun ⊤  = (m.restrict_measure w).toFun (u) + (m.restrict_measure w).caratheodory (u.compl) := by

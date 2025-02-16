@@ -2,55 +2,7 @@ import Mathlib.Data.Real.Basic
 import Leroy.Basic
 import Leroy.Further_Topology
 import Mathlib.Order.BoundedOrder.Basic
-
-
-
-lemma sInf_epsilon_eq_zero : sInf {ε : Real | ε > 0} = 0 := by
-      apply le_antisymm
-      . rw [csInf_le_iff, lowerBounds]
-        simp only [gt_iff_lt, Set.mem_setOf_eq]
-        intro b h
-        exact le_of_forall_gt_imp_ge_of_dense h
-        simp only [BddBelow, Set.Nonempty, gt_iff_lt]
-        use -42
-        simp only [lowerBounds, Set.mem_setOf_eq]
-        intro b h
-        apply le_trans' (le_of_lt h)
-        norm_num
-        simp [Set.Nonempty]
-        use 42
-        norm_num
-
-      . apply le_csInf
-        simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
-        use 42
-        norm_num
-        simp only [gt_iff_lt, Set.mem_setOf_eq]
-        exact fun b a => le_of_lt a
-
-lemma sInf_epsilon_eq_zero' : sInf {ε : NNReal | ε > 0} = 0 := by
-      apply le_antisymm
-      . rw [csInf_le_iff, lowerBounds]
-        simp only [gt_iff_lt, Set.mem_setOf_eq]
-        intro b h
-        exact le_of_forall_gt_imp_ge_of_dense h
-        simp only [BddBelow, Set.Nonempty, gt_iff_lt]
-        use 0
-        simp only [lowerBounds, Set.mem_setOf_eq]
-        intro b h
-        apply le_trans' (le_of_lt h)
-        norm_num
-        simp [Set.Nonempty]
-        use 42
-        norm_num
-
-      . apply le_csInf
-        simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
-        use 42
-        norm_num
-        simp only [gt_iff_lt, Set.mem_setOf_eq]
-        exact fun b a => le_of_lt a
-
+import Leroy.Measure.Aux
 
 
 -----
@@ -75,16 +27,19 @@ variable {m : @Measure E e_frm}
 
 namespace Measure
 
-noncomputable def caratheodory {m : @Measure X h} (a : Sublocale X) : NNReal :=
-  sInf (m.toFun '' Open_Neighbourhood a)
-
 
 lemma monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
   exact congrArg m.toFun h
 
 @[simp] lemma all_le_top {m : @Measure X h} (a : Open X): m.toFun a ≤ m.toFun ⊤ := m.mono _ _ (OrderTop.le_top a)
 
-lemma caratheodory.open_eq_toFun {m : @Measure X h} (x : Open X):  m.caratheodory x = m.toFun x := by
+noncomputable def caratheodory {m : @Measure X h} (a : Sublocale X) : NNReal :=
+  sInf (m.toFun '' Open_Neighbourhood a)
+
+namespace caratheodory
+
+
+lemma open_eq_toFun {m : @Measure X h} (x : Open X):  m.caratheodory x = m.toFun x := by
   simp [Measure.caratheodory,Open_Neighbourhood]
   apply le_antisymm
   . apply csInf_le'
@@ -99,7 +54,7 @@ lemma caratheodory.open_eq_toFun {m : @Measure X h} (x : Open X):  m.caratheodor
     use m.toFun x
     use x
 
-lemma caratheodory.top_eq_toFun {m : @Measure X h} : m.caratheodory ⊤ = m.toFun ⊤ := by
+lemma top_eq_toFun {m : @Measure X h} : m.caratheodory ⊤ = m.toFun ⊤ := by
   simp [caratheodory, Open_Neighbourhood, top_le_iff]
   have h : {v : Open X |  v.toSublocale = ⊤} = {⊤} := by
     ext x
@@ -112,7 +67,7 @@ lemma caratheodory.top_eq_toFun {m : @Measure X h} : m.caratheodory ⊤ = m.toFu
   simp only [Set.image_singleton, csInf_singleton]
 
 
-lemma caratheodory.monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
+lemma monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
   intro h
   simp_rw [Measure.caratheodory]
   apply csInf_le_csInf
@@ -136,10 +91,11 @@ lemma caratheodory.monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A 
     . exact fun v => Preorder.le_trans (x.toSublocale v) (B v) (A v) (h1 v) (h v)
     . rfl
 
-lemma caratheodory.le_top (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.caratheodory ⊤ := by
+lemma le_top (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.caratheodory ⊤ := by
   intro a
   apply caratheodory.monotonic
   exact OrderTop.le_top a
+end caratheodory
 end Measure
 
 
@@ -204,10 +160,8 @@ lemma preserves_sup (m : @Measure X h) {n : ℕpos} (X_n : Fin (n.val) → Sublo
   . sorry -- trivial ??
 
 
-/--
-TODO ggf in den Blueprint aufnehmen
--/
-lemma Caratheodory_subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
+
+lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
     intro ε h
     have h_a : ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by

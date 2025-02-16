@@ -54,12 +54,14 @@ def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
 
 
 
-
-lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
+/--
+Leroy Lemma 6
+-/
+lemma leroy_6' (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
     m.caratheodory (iInf (Open.toSublocale ∘ V_n)) = iInf (m.toFun ∘ V_n) := by
   let I :=  (iInf (Open.toSublocale ∘ V_n))
 
-  let F_n (n : ι) := Closed.toSublocale (Open.compl (V_n n))
+  let F_n (n : ℕ) := Closed.toSublocale (Open.compl (V_n n))
   let G := iSup (F_n)
 
   have h : G ⊔ I = ⊤ := by
@@ -102,7 +104,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
   have h1 : m.caratheodory ⊤ ≤ m.caratheodory I + m.caratheodory G := by
     rw [← h]
     rw [sup_comm]
-    exact Caratheodory_subadditive I G
+    exact Measure.caratheodory.subadditive I G
 
   have h1_ : m.caratheodory ⊤ - m.caratheodory G ≤ m.caratheodory I := by
     exact
@@ -116,7 +118,8 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
       rw [le_csSup_iff]
       . simp [upperBounds]
         intro b h2
-        sorry -- todo komisch
+
+        sorry -- Geht mit N
       . simp [BddAbove, upperBounds, Set.Nonempty]
         use m.caratheodory ⊤
         exact fun a => Measure.caratheodory.le_top m (F_n a)
@@ -131,9 +134,9 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
       apply le_sSup
       simp only [Set.mem_range, exists_apply_eq_apply, I, F_n, G]
 
-  have h3 : ⨅ n : ι, (m.toFun ⊤ - m.caratheodory (F_n n)) ≤ m.caratheodory I := by
+  have h3 : ⨅ n : ℕ, (m.toFun ⊤ - m.caratheodory (F_n n)) ≤ m.caratheodory I := by
     apply le_trans' h1_
-    have h_help (a : NNReal) (f : ι → (NNReal)) (hf : BddAbove (Set.range fun i => f i)):  a - ⨆ i, f i = ⨅ i, a - f i:= by
+    have h_help (a : NNReal) (f : ℕ → (NNReal)) (hf : BddAbove (Set.range fun i => f i)):  a - ⨆ i, f i = ⨅ i, a - f i:= by
       apply_fun (ENNReal.ofNNReal)
       . simp
         rw [@ENNReal.coe_iInf]
@@ -157,7 +160,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
     use m.caratheodory ⊤
     exact fun a => Measure.caratheodory.le_top m (F_n a)
 
-  have h4 : ⨅ n : ι, (m.toFun ⊤ - m.caratheodory (F_n n)) = iInf (m.toFun ∘ V_n)  := by
+  have h4 : ⨅ n : ℕ, (m.toFun ⊤ - m.caratheodory (F_n n)) = iInf (m.toFun ∘ V_n)  := by
     simp [F_n, iInf]
     have h5 : Set.range (fun n => (m.toFun ⊤) - m.caratheodory (V_n n).compl.toSublocale) = (Set.range (m.toFun ∘ V_n)) := by
       rw [Set.range_eq_iff]
@@ -177,29 +180,6 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
   simp_rw [h4, I] at h3
   exact h3
 
-
-/--
-Leroy lemma 6
--/
-lemma leroy_6 (V : Set (Open E)) (h : decroissante V) (h1 : Nonempty V):
-    m.caratheodory (sInf (Open.toSublocale '' V)) = sInf (m.toFun '' V) := by
-  let h2 := @leroy_6' _ _ _ m _ _ _ (fun (x : V) ↦ x.val) (by exact h)
-  simp [iInf] at h2
-  have h3 : (Set.range (Open.toSublocale ∘ (fun (x : V) => ↑x))) = Open.toSublocale '' V := by
-    refine (Set.range_eq_iff (Open.toSublocale ∘ fun (x : V) => ↑x) (Open.toSublocale '' V)).mpr ?_
-    simp_all only [Function.comp_apply, Set.mem_image, Subtype.forall, Subtype.exists, exists_prop, implies_true,
-      and_true]
-    intro a b
-    use a
-  rw [h3] at h2
-  rw [h2]
-  refine csInf_eq_csInf_of_forall_exists_le ?_ ?_
-  simp
-  intro x a
-  use x
-  simp
-  intro x a
-  use x
 
 /-- Leroy lemme 7-/
 lemma leroy_7 (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
