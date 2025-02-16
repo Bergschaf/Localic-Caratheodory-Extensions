@@ -77,6 +77,15 @@ def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.c
     sorry
 
 
+lemma compl_sup_eq_inf_compl {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.compl := by
+  apply_fun ((fun x ↦ ↑x) : Closed E → Sublocale E)
+  simp [Open.compl,Closed.toSublocale, complement]
+  ext x
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  simp  [Closed.inf_def,Open.sup_def]
+  --
+  exact injective_of_le_imp_le (fun (x : Closed E) => x.toSublocale) fun {x y} a => (by exact (Closed.le_iff x y).mpr a)
+
 
 
 

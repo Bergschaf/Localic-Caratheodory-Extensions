@@ -9,35 +9,21 @@ variable {m : @Measure E _}
 
 -- TODO Infrastruktur, dass man Sublocals als Local ansehen kann
 
-def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | w ≤ u ∧ m.toFun w = m.toFun u}).element
+def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | w ≤ u ∧ m.toFun w = m.toFun ⟨u⟩}).element
 
 lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ e_μ m x := by
-  simp [e_μ, ← Open.le_iff]
-  intro x a h1 h2
+  simp [e_μ, ← Open.le_iff, Open.le_def, Open.sSup_def]
+  intro x a h1 h2 h3 h4
   apply le_sSup
   simp
-  simp [Open.le_iff] at h1
-  rw [← Open.le_iff] at h1
-  apply And.intro
-  . apply le_trans h1
-    simp only [sSup_le_iff, Set.mem_setOf_eq, and_imp]
-    intro a b c
-    exact Open.le_iff.mpr b
-  . rw [h2]
-    apply Measure.monotone
-    ext
-    simp
-    rw [← Open.ext_iff]
-    simp only [le_antisymm_iff, sSup_le_iff, Set.mem_setOf_eq, and_imp, le_refl, and_self, le_sSup,
-      and_true]
-    exact fun b a a_1 a_2 => a
+  use h1
+  simp [h4]
+  sorry
 
 lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
   intro x
   simp [e_μ]
-  rw [← Open.le_iff]
-  apply le_sSup
-  simp
+  sorry
 
 lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ m x ⊓ e_μ m y := by
   intro x y
@@ -99,7 +85,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
     have h3 : a = (V_n a1).toSublocale := by exact id (Eq.symm h1)
     rw [h3]
     rw [sup_comm]
-    rw [Open.sup_compl]
+    rw [Open.sup_compl_eq_top]
 
   apply le_antisymm
   . simp [iInf]
@@ -108,8 +94,8 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
     simp only [Set.mem_range, Function.comp_apply, forall_exists_index, forall_apply_eq_imp_iff, I,
       F_n, G]
     intro n
-    rw [← Caratheodory_opens]
-    apply Caratheodory_monotonic
+    rw [← Measure.caratheodory.open_eq_toFun]
+    apply Measure.caratheodory.monotonic
     apply sInf_le
     simp only [Set.mem_range, Function.comp_apply, exists_apply_eq_apply, I, F_n, G]
 
@@ -133,7 +119,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
         sorry -- todo komisch
       . simp [BddAbove, upperBounds, Set.Nonempty]
         use m.caratheodory ⊤
-        exact fun a => Caratheodory.le_top m (F_n a)
+        exact fun a => Measure.caratheodory.le_top m (F_n a)
       . exact Set.range_nonempty (Measure.caratheodory ∘ F_n)
 
     . simp [iSup]
@@ -141,7 +127,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
       . exact Set.range_nonempty (Measure.caratheodory ∘ F_n)
       simp
       intro n
-      apply Caratheodory_monotonic
+      apply Measure.caratheodory.monotonic
       apply le_sSup
       simp only [Set.mem_range, exists_apply_eq_apply, I, F_n, G]
 
@@ -160,8 +146,8 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
       . exact ENNReal.coe_injective
 
     rw [← h_help]
-    rw [← Caratheodory_opens]
-    simp only [Open.top_sublocale]
+    rw [← Measure.caratheodory.open_eq_toFun]
+    simp only [Open.top_toSublocale]
     apply tsub_le_tsub
     . rfl
     . rw [h2]
@@ -169,7 +155,7 @@ lemma leroy_6' (V_n : ι → (Open E)) (h : decroissante' V_n) :
 
     simp [BddAbove, upperBounds, Set.Nonempty]
     use m.caratheodory ⊤
-    exact fun a => Caratheodory.le_top m (F_n a)
+    exact fun a => Measure.caratheodory.le_top m (F_n a)
 
   have h4 : ⨅ n : ι, (m.toFun ⊤ - m.caratheodory (F_n n)) = iInf (m.toFun ∘ V_n)  := by
     simp [F_n, iInf]
@@ -219,5 +205,5 @@ lemma leroy_6 (V : Set (Open E)) (h : decroissante V) (h1 : Nonempty V):
 lemma leroy_7 (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
-  let V_n (n : ι) := Open_Neighbourhood (A_i n)
+  let V_n (n : ι) := Sublocale.Open_Neighbourhood (A_i n)
   admit -- TODO noha fragen

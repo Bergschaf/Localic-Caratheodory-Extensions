@@ -220,12 +220,12 @@ lemma le_iff (x y : Closed E) : x ≤ y ↔ x.toSublocale ≤ y.toSublocale := b
 
 def compl (c : Closed E) : Open E := ⟨c.element⟩
 
-instance : InfSet (Closed E) where
+instance instInfSet : InfSet (Closed E) where
   sInf x := ⟨sSup (Closed.element '' x)⟩
 
 lemma sInf_def (s : Set (Closed E)) : sInf s = ⟨sSup (Closed.element '' s)⟩ := by rfl
 
-lemma sInf_corresponds (s : Set (Closed E)) : (sInf s).toSublocale = sInf (Closed.toSublocale '' s) := by
+lemma preserves_sInf (s : Set (Closed E)) : (sInf s).toSublocale = sInf (Closed.toSublocale '' s) := by
   ext x
   simp only [Closed.toSublocale, complement, sInf]
   rw [Nucleus.coe_mk,InfHom.coe_mk] -- why no simp??
@@ -234,6 +234,31 @@ lemma sInf_corresponds (s : Set (Closed E)) : (sInf s).toSublocale = sInf (Close
     forall_apply_eq_imp_iff₂, coe_mk, InfHom.coe_mk, sup_le_iff, Set.mem_setOf_eq]
   sorry
 
+instance : CompleteSemilatticeInf (Closed E) where
+  __ := instInfSet
+  le_refl x := by rfl
+  le_trans x y z h1 h2  := Preorder.le_trans z.element y.element x.element h2 h1
+  le_antisymm x y h1 h2 := by ext; exact le_antisymm h2 h1
+  sInf_le s a h := by
+    simp [sInf_def, le_def, sSup_image]
+    exact le_biSup element h
+  le_sInf s a h := by
+    simp [sInf_def, le_def]
+    exact h
+
+instance : SemilatticeInf (Closed E) where
+  inf x y := ⟨x.element ⊔ y.element⟩
+  inf_le_left x y := by simp [le_def]
+  inf_le_right x y := by simp [le_def]
+  le_inf x y z h1 h2 := by simp [le_def]; exact ⟨h1, h2⟩
+
+def inf_def (x y : Closed E) : x ⊓ y = ⟨x.element ⊔ y.element⟩ := rfl
+
+def preserves_inf (x y : Closed E) : (x ⊓ y).toSublocale = x.toSublocale ⊓ y.toSublocale := by
+  rw [← sInf_pair]
+  rw [← Set.image_pair]
+  rw [← preserves_sInf]
+  rw [@sInf_def, inf_def, Set.image_pair, sSup_pair]
 
 end Closed
 

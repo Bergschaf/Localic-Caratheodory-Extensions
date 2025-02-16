@@ -390,25 +390,14 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
       rw [h]
       apply h1
 
-omit e_regular in
-lemma todo_name {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.compl := by
-  apply_fun ((fun x ↦ ↑x) : Closed E → Sublocale E)
-  simp [Open.compl,Closed.toSublocale, complement]
-  ext x
-  simp
-  rw [Closed.Min_eq']
-  simp [Open.Max_eq']
-  --
-  exact injective_of_le_imp_le (fun (x : Closed E) => x.toSublocale) fun {x y} a => a
-
 /--
 Leroy Corollary 1 -/
 lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheodory (A ⊓ (U ⊔ V)) = m.caratheodory (A ⊓ U) + m.caratheodory (A ⊓ V) - m.caratheodory (A ⊓ U ⊓ V) := by
   have h : m.caratheodory (A ⊓ (U ⊔ V).toSublocale) = m.caratheodory A - m.caratheodory (A ⊓ (U ⊔ V).compl) := by
       apply eq_tsub_of_add_eq
       rw [← Measure.add_complement_inf]
-  rw [todo_name] at h
-  rw [Closed.Min_eq] at h
+  rw [compl_sup_eq_inf_compl] at h
+  rw [Closed.preserves_inf] at h
 
 
   have h2 : m.caratheodory A = m.caratheodory (A ⊓ U ⊓ V) + m.caratheodory (A ⊓ U ⊓ V.compl) + m.caratheodory (A ⊓ U.compl ⊓ V) + m.caratheodory (A ⊓ U.compl ⊓ V.compl) := by
@@ -431,7 +420,7 @@ lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheo
       Eq.symm (add_tsub_cancel_right x (caratheodory (A ⊓ U.toSublocale ⊓ V.toSublocale)))
 
   rw [h_help2 (caratheodory (A ⊓ U.toSublocale) + caratheodory (A ⊓ U.compl.toSublocale ⊓ V.toSublocale))] at h
-  rw [Open.Max_eq] at h
+  rw [Open.preserves_sup] at h
   rw [h]
   have h_help3 : m.caratheodory (A ⊓ U.compl.toSublocale ⊓ V.toSublocale) +
       m.caratheodory (A ⊓ U.toSublocale ⊓ V.toSublocale) = m.caratheodory (A ⊓ V) := by
