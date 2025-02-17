@@ -109,7 +109,7 @@
 \begin{definition}[Nucleus Partial Order]
     \label{def:nucleus_partial_order}
     \uses{def:nucleus}
-    \lean{Nucleus.le_iff}
+    \lean{Nucleus.instPartialOrder}
     \mathlibok
     \leanok
     For two nuclei $e$ and $f$ on $O(E)$, we say that $e \le f$ if $e(U) \le f(U)$ for all $U \in O(E)$.
@@ -145,7 +145,7 @@
 (Stimmt das?)(Leroy Ch 3)
     \label{def:sublocal_inclusion}
     \uses{def:sublocal, def:nucleus_partial_order}
-    \lean{Nucleus.le}
+    \lean{Sublocale.le_iff}
     \leanok
     $X \subset Y$ if $e_Y(u) \le e_X(u)$ for all $u$. This means that the Sublocals are a dual order to the nuclei.
 \end{definition}
@@ -169,7 +169,6 @@
 (Leroy CH 1.4)
     \label{def:sublocal_union}
     \uses{def:sublocal_inclusion,lem:nucleus}
-    \lean{e_V_sublocale}
     \leanok
     Let $(X_i)_i$ be a family of sublocals of $E$ and $(e_i)_i$ the corresponding nuclei.
     For all $V \in O(E)$, let $e(V)$ be the union of all $W \in O(E)$ which are contained in all $e_i(V)$.
@@ -180,12 +179,12 @@
     \label{lem:sublocal_union}
     \uses{lem:nucleus, def:sublocal_union}
     \leanok
-    \lean{e_V_sublocale}
+    \lean{Sublocale.sSup_apply}
     Let $X_i$ be a family of subframes of $E$ and $e_i$ be the corresponding nuclei. For every $V \in O(E)$, let
-    $e(V)$ be the union of all $W \in O(E)$ which are contained in every (TODO wieso every) $e_i(V)$. Then \\
+    $e(V)$ be the union of all $W \in O(E)$ which are contained in every $e_i(V)$. Then \\
     \begin{enumerate}
-        \item $e$ is the corresponding nucleus of a subframe $X$ of $E$
-        \item a subframe $Z$ of $E$ contains $x$ if and only if it contains all $X_i$. $X$ is thus called the union of
+        \item $e$ is the corresponding nucleus of a sublocale $X$ of $E$
+        \item a sublocale $Z$ of $E$ contains $x$ if and only if it contains all $X_i$. $X$ is thus called the union of
         $X_i$ denoted by $\bigcup_i X_i$
     \end{enumerate}
 \end{lemma}
@@ -198,9 +197,9 @@
 \begin{lemma}[Sublocal Union equals Nucleus Intersection]
     \label{lem:sublocal_union_nucleus_intersection}
     \uses{lem:sublocal_union,lem:nucleus_intersection}
-    \lean{leroy_eq_stone}
     \leanok
     For a family of sublocals $X_i$ of $E$, the union $\bigcup X_i$ is the intersection of the corresponding nuclei.
+    TODO lean link
 \end{lemma}
 \begin{proof}
     The infimum of the Nuclei is a Supremum of the sublocals, because the Nuclei are a dual order to the sublocals.)
@@ -217,7 +216,7 @@
 \begin{definition}[Intersection of Sublocals]
     \label{def:sublocal_intersection}
     \uses{lem:sublocal_union,lem:nucleus}
-    \lean{Nucleus.min_eq}
+    \lean{Sublocale.inf_apply}
     \leanok
     Let $(X_i)_i$ be a family of sublocal of $E$ and $(e_i)_i$ the corresponding nuclei.
     For all $V \in O(E)$, the intersection $\bigcap X_i$ is the Union of all Nuclei $w$ such that $w \le x_i $ for all $x_i \in X_i $
@@ -315,7 +314,7 @@ Suprema, since it is a left adjoint.
 \begin{definition}[$e_U$]
     \label{def:e_U}
     \uses{def:nucleus,def:sublocal,lem:sublocal_union, def:sublocal_intersection}
-    \lean{e_U}
+    \lean{Open.toSublocale}
     \leanok
     Let $E$ be a space with $U, H \in O(E)$. We donote by $e_U$ the largest $W \in O(E)$ such that $W \cap U \subset H$. We verify that $e_U$ is the nucleus of a subspace, which we will temporarily denote by $[U]$.
 \end{definition}
@@ -323,7 +322,7 @@ Suprema, since it is a left adjoint.
 \begin{lemma}[$e_U$ is a nucleus]
     \label{lem:e_U_nucleus}
     \uses{def:e_U}
-    \lean{eckig}
+    \lean{Open}
     \leanok
     The map $e_U$ is a nucleus.
 \end{lemma}
