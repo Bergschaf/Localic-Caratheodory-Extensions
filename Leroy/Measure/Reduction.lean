@@ -9,16 +9,44 @@ variable {m : @Measure E _}
 
 -- TODO Infrastruktur, dass man Sublocals als Local ansehen kann
 
-def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | w ≤ u ∧ m.toFun w = m.toFun ⟨u⟩}).element
+def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | u ≤ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
+
+
+lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
+  simp [e_μ, Open.sSup_def]
+  rw [← Open.sSup_def]
+  rw [Measure.filtered]
+  apply le_antisymm
+  . rw [csSup_le_iff]
+    simp
+    intro b x h1 h2 h3
+    rw [← h3, h2]
+    . simp [BddAbove, upperBounds, Set.Nonempty]
+      use m.toFun ⊤
+      intro a x h1 h2 h3
+      rw [← h3]
+      exact Measure.all_le_top x
+    . simp [Set.Nonempty]
+      use m.toFun ⟨u⟩
+      use ⟨u⟩
+  . rw [le_csSup_iff]
+    simp [upperBounds]
+    intro b h
+    . exact h ⟨u⟩ (by rfl) (by rfl) (by rfl)
+    simp [BddAbove, upperBounds, Set.Nonempty]
+    use m.toFun ⟨u⟩
+    intro a x h1 h2 h3
+    rw [← h3, h2]
+    --
+    simp [Set.Nonempty]
+    use m.toFun ⟨u⟩
+    use ⟨u⟩
+
 
 lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ e_μ m x := by
-  simp [e_μ, ← Open.le_iff, Open.le_def, Open.sSup_def]
-  intro x a h1 h2 h3 h4
-  apply le_sSup
-  simp
-  use h1
-  simp [h4]
+  intro x
   sorry
+
 
 lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
   intro x

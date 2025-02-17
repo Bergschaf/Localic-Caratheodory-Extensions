@@ -152,12 +152,40 @@ lemma eq_iff : U = V ↔ U.toSublocale = V.toSublocale := by
     exact h
     exact toSublocale_injective
 
+@[simp] lemma Sublocale.coe_mk (f h2 h3) : ↑(⟨f, h2, h3,⟩ : Sublocale E) = f := rfl
+
 lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
   ext x
-  simp [inf_def, Sublocale.inf_apply]
   apply le_antisymm
-  . sorry
-  . sorry
+  . simp only [inf_def, toSublocale_apply, Sublocale.inf_apply, lowerBounds_insert,
+    lowerBounds_singleton, Set.Iic_inter_Iic, Set.mem_Iic, le_inf_iff]
+    simp only [le_iInf_iff, and_imp, OrderDual.forall]
+    intro a h1 h2
+    simp [himp_eq_sSup]
+    intro b h3
+    simp [Sublocale.le_iff] at h1 h2
+    let h4 := h1 x
+    let h5 := h2 (a x)
+    simp [himp_eq_sSup] at h4 h5
+    let h4 := h4 (b ⊓ V.element) (by apply le_trans' h3; rw [inf_assoc, inf_comm V.element])
+    let h5 := h5 b h4
+    apply le_trans h5
+    have h : (OrderDual.toDual a) = a := rfl
+    rw [h, Nucleus.idempotent]
+  .
+    simp [Open.toSublocale,Nucleus.sSup_apply,Sublocale.le_iff]
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+    simp only [le_himp_iff]
+    rw [iInf_inf, iInf_le_iff]
+    simp only [himp_eq_sSup, sSup_le_iff, Set.mem_setOf_eq, le_inf_iff, le_iInf_iff, and_imp,
+      OrderDual.forall]
+    intro b h
+    sorry
+
+
+    --rcases h with ⟨h1, h2⟩
+
+
 
 lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSublocale '' s) := by
   ext x

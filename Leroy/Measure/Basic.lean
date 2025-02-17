@@ -4,7 +4,6 @@ import Leroy.Further_Topology
 import Mathlib.Order.BoundedOrder.Basic
 import Leroy.Measure.Aux
 
-
 -----
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
@@ -26,7 +25,6 @@ open Sublocale
 variable {m : @Measure E e_frm}
 
 namespace Measure
-
 
 lemma monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
   exact congrArg m.toFun h
