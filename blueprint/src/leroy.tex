@@ -97,7 +97,7 @@
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}
     \uses{def:measure_on_locals,def:caratheodory}
-    \lean{Caratheodory_monotonic}
+    \lean{Measure.caratheodory.monotonic}
     \leanok
     The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
 \end{lemma}
@@ -109,7 +109,7 @@
 \begin{lemma}[Subadditivity]
     \label{lem:caratheodory_subaddtive}
     \uses{def:measure_on_locals,lem:monotonic}
-    \lean{Measure.subadditive}
+    \lean{Measure.caratheodory.subadditive}
     The Caratheodory extension is subaddtive:
     $$\mu(A \cup B) \le \mu(A) + \mu(b)$$
     \leanok
@@ -131,7 +131,7 @@
 \begin{definition}[Neighborhood]
     \label{def:neighborhood}
     \uses{def:open_sublocal}
-    \lean{Neighbourhood}
+    \lean{Sublocale.Neighbourhood}
     \leanok
 
     A neighborhood of a sublocal $A$ of $X$ is an open sublocal $V$ of $X$ such that $A \le V$.
@@ -249,7 +249,7 @@
 (Leroy Lemme 3.6)
     \label{lem:commutes_with_inf_opens}
     \uses{lem:measure_add_compl_eq_top,lem:nucleus_frame}
-    \lean{leroy_6}
+    \lean{Measure.caratheodory.preserves_sInf}
     \leanok
     For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
 \end{lemma}

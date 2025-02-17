@@ -118,7 +118,8 @@
 
 \begin{lemma} [Nucleus Intersection]
     \label{lem:nucleus_intersection}
-    \uses{def:nucleus}
+    \mathlibok
+    \uses{def:nucleus,def:nucleus_partial_order}
     \lean{Nucleus.instCompleteSemilatticeInf}
     \leanok
     TODO Quelle StoneSpaces S.51
@@ -215,7 +216,7 @@
 
 \begin{definition}[Intersection of Sublocals]
     \label{def:sublocal_intersection}
-    \uses{lem:sublocal_union,lem:nucleus}
+    \uses{lem:sublocal_union,lem:nucleus,lem:nucleus_complete_lattice}
     \lean{Sublocale.inf_apply}
     \leanok
     Let $(X_i)_i$ be a family of sublocal of $E$ and $(e_i)_i$ the corresponding nuclei.
@@ -223,8 +224,9 @@
 \end{definition}
 
 \begin{lemma}[Nucleus Complete Lattice]
+    \mathlibok
     \label{lem:nucleus_complete_lattice}
-    \uses{def:sublocal_intersection,lem:nucleus_intersection, lem:sublocal_union_nucleus_intersection}
+    \uses{lem:nucleus_intersection}
     \lean{Nucleus.instCompleteLattice}
     \leanok
     The Nuclei (and therefore the sublocals) form a complete lattice.
@@ -245,6 +247,8 @@
 (Source Johnstone:) The Heyting implication is right adjoint to the infimum. This means that the infimum preserves
 Suprema, since it is a left adjoint.
     \leanok
+        \mathlibok
+
 \end{proof}
 
 
@@ -252,7 +256,8 @@ Suprema, since it is a left adjoint.
     \label{lem:nucleus_heyting_algebra}
     \uses{lem:nucleus_intersection}
     \leanok
-    \lean{himp_Nucleus}
+    \mathlibok
+    \lean{Nucleus.instHeytingAlgebra}
     The Nuclei form a Heyting Algebra.
 \end{lemma}
 \begin{proof}
@@ -263,6 +268,7 @@ Suprema, since it is a left adjoint.
 
 \begin{lemma}[Nucleus Frame]
     \label{lem:nucleus_frame}
+    \mathlibok
     \uses{lem:nucleus_complete_lattice,lem:nucleus_heyting_algebra,prop:complete_heyting_algebra}
     % \lean{Nucleus.instFrame}
     \leanok
@@ -344,7 +350,7 @@ Suprema, since it is a left adjoint.
 \begin{lemma}[(6,7) Open Sublocal Properties]
 (Leroy Lemma 6,7)
     \label{lem:sublocal_properties}
-    \lean{eckig_preserves_inf}
+    \lean{Open.preserves_inf}
     \leanok
     \uses{def:e_U,def:open_sublocal}
     \begin{enumerate}
@@ -385,7 +391,7 @@ Suprema, since it is a left adjoint.
 \begin{lemma}[Complement Injective]
     \label{lem:complement_injective}
     \uses{def:complement}
-    \lean{complement_injective}
+    \lean{Open.toSublocale_injective}
     \leanok
     The complement is injective.
 \end{lemma}
@@ -404,7 +410,7 @@ Suprema, since it is a left adjoint.
 \begin{lemma}[Intersection of Closed Sublocals]
     \label{lem:closed_intersection}
     \uses{def:closed_sublocal}
-    \lean{Closed_sInf_le}
+    \lean{Closed.instInfSet}
     \leanok
     For any family $X_i$ of closed sublocals of $E$, the intersection $\bigcap X_i$ is closed (it can be computed by
     taking the complment of the union of the complements).
@@ -425,16 +431,20 @@ Suprema, since it is a left adjoint.
     \[(E - U = E - V) \implies U = V\]
 \end{lemma}
 
+\begin{comment}
 \begin{lemma}[(1.9) Preimage of complements]
     \label{lem:preimage_of_complements}
     \uses{def:complement,lem:properties_of_complements}
     For any morphism of spaces $g: A \to E$ and any open sublocal $V$ of $F$, we have:
     \[g^{-1}(E - V) = A - g^{-1}(V)\]
 \end{lemma}
+\end{comment}
 
 \begin{lemma}[(1.8bis) Properties of Complements Part 2]
     \label{lem:properties_of_complements_part_2}
-    \uses{def:complement, lem:preimage_of_complements}
+    \uses{def:complement, lem:properties_of_complements}
+    \lean{sup_compl_eq_top_iff}
+    \leanok
     For any open sublocal $V$ of $E$ and any sublocal $X$ of $E$, we have:
     \[V \cup (E - V) = E \iff V \subset X \]
     \[V \cap (E - V) = \emptyset X \subset V\]
@@ -473,7 +483,7 @@ Suprema, since it is a left adjoint.
 
 \begin{lemma} [Properties of Further Topology]
     \label{lem:properties_of_further_topology}
-    \uses{def:further_topology}
+    \uses{def:further_topology,lem:properties_of_complements_part_2}
     \leanok
     %\lean{closure_eq_compl_ext}
     \begin{enumerate}

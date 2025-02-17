@@ -57,7 +57,7 @@ def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
 /--
 Leroy Lemma 6
 -/
-lemma leroy_6' (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
+lemma Measure.caratheodory.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
     m.caratheodory (iInf (Open.toSublocale ∘ V_n)) = iInf (m.toFun ∘ V_n) := by
   let I :=  (iInf (Open.toSublocale ∘ V_n))
 
