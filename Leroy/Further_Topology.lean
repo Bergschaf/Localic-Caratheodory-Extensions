@@ -1,25 +1,40 @@
-import Leroy.Closed_Sublocals
+import Leroy.Sublocale
 import Mathlib.Order.CompleteSublattice
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Tactic.ApplyFun
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
+open Sublocale
+def Sublocale.Open_Neighbourhood (u : Sublocale X) : Set (Open X) := {v : Open X | u ≤ v}
 
+def Sublocale.Neighbourhood (u : Sublocale X) : Set (Sublocale X) := {v | ∃ w ∈ Open_Neighbourhood u, w ≤ v}
+
+
+lemma Sublocale.Neighourhood.le {a : Sublocale E} : ∀ x ∈ Neighbourhood a, a ≤ x := by
+  intro x h
+  simp only [Neighbourhood, Open_Neighbourhood, Set.mem_setOf_eq] at h
+  rcases h with ⟨w, ⟨h1,h2⟩⟩
+  exact Preorder.le_trans a w.toSublocale x h1 h2
+
+lemma Sublocale.Open_Neighbourhood.top_mem {x : Sublocale X}: ⊤ ∈ Open_Neighbourhood x := by
+  simp [Open_Neighbourhood]
+
+lemma Sublocale.Open_Neighbourhood.Nonempty (x : Sublocale X) : (Open_Neighbourhood x).Nonempty := by
+  simp [Set.Nonempty]
+  use ⊤
+  exact top_mem
+
+
+
+lemma Sublocale.Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbourhood x, ∀ V ∈ Open_Neighbourhood x, U ⊓ V ∈ Open_Neighbourhood x := by
+  simp [Open_Neighbourhood]
+  intro U h1 V h2
+  rw [Open.preserves_inf]
+  exact le_inf h1 h2
 /-!
 Properties of Complement
 -/
-def Closed.compl (x : Closed E) : Open E := ⟨x.element⟩
-def Open.compl (x : Open E) : Closed E := ⟨x.element⟩
 
-lemma Open.complement_eq (x : Open E) : x.compl = (complement x) := by
-  exact rfl
-
-lemma Open.inf_compl {x : Open E} : x.toSublocale ⊓ x.compl = ⊥ := by
-  rw [Open.complement_eq]
-  exact inf_complement x
-
-lemma Open.sup_compl {x : Open E} : x.toSublocale ⊔ x.compl.toSublocale = ⊤ := by
-  rw [Open.complement_eq]
-  exact sup_comp_eq_top x
 /--
 Leroy Lemme 8 bis
 -/
@@ -32,36 +47,26 @@ def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.c
       have h1 : u.toSublocale ⊔ u.compl.toSublocale ≤  x ⊔ u.compl.toSublocale := by
         exact sup_le_sup_right h u.compl.toSublocale
       apply le_trans' h1
-      rw [Open.complement_eq]
-      rw [@sup_comp_eq_top]
+      rw [Open.sup_compl_eq_top]
   . intro h
-    simp_rw [Sublocale.max_eq,sSup,sInf] at h
-    simp [Sublocale.ext_iff, sInf_fun] at h
-    simp [Sublocale.le_iff]
-    intro v
-    let h1 := h v
-    have h2 : (⊤ : Sublocale E) v = v := by
-      exact rfl
-    rw [h2] at h1
-    rw [Set.setOf_or] at h1
+    rw [Nucleus.ext_iff] at h
+    rw [Sublocale.le_iff]
+    intro i
+    let h1 := h i
+    rw [Sublocale.sup_apply, Sublocale.top_apply] at h1
+
     simp [Open.compl,Closed.toSublocale, complement] at h1
-    rw [@inf_sup_right] at h1
-    --
-    simp [Open.toSublocale, eckig, e_U]
-    apply le_sSup
-    simp only [Set.mem_setOf_eq]
-    let h3 := le_of_eq h1
-    rw [@sup_le_iff] at h3
-    rw [inf_comm]
-    exact h3.left
+    rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
+    sorry
 
 def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.compl) = ⊥ := by
   apply Iff.intro
   . intro h
     apply le_antisymm
-    . apply_fun (fun x ↦ x ⊓ u.compl.toSublocale) at h
+    .
+      apply_fun (fun x ↦ x ⊓ u.compl.toSublocale) at h
       dsimp at h
-      rw [Open.inf_compl] at h
+      rw [Open.inf_compl_eq_bot] at h
       exact h
       simp only [Monotone, le_inf_iff, inf_le_right, and_true, OrderDual.forall,
         OrderDual.toDual_le_toDual]
@@ -71,6 +76,15 @@ def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.c
     intro h
     sorry
 
+
+lemma compl_sup_eq_inf_compl {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.compl := by
+  apply_fun ((fun x ↦ ↑x) : Closed E → Sublocale E)
+  simp [Open.compl,Closed.toSublocale, complement]
+  ext x
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  simp  [Closed.inf_def,Open.sup_def]
+  --
+  exact injective_of_le_imp_le (fun (x : Closed E) => x.toSublocale) fun {x y} a => (by exact (Closed.le_iff x y).mpr a)
 
 
 
@@ -86,7 +100,7 @@ lemma Open_interior_eq_id : ∀ a : Open E, a.toSublocale.interior = a := by
   intro a
   apply le_antisymm
   . simp only [sSup_le_iff, Set.mem_setOf_eq]
-    exact fun b a => a
+    exact fun b a_1 => Open.le_iff.mpr a_1
   . apply le_sSup
     simp only [Set.mem_setOf_eq, le_refl]
 
@@ -103,18 +117,18 @@ def Open.exterior (x : Open E) := sSup {z : Open E | z ⊓ x = ⊥}
 def Closed.exterior (x : Closed E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
 
 lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
-  simp [Open.exterior, Open_min, Open_sSup]
+  simp [Open.exterior]
   ext
-  simp only
+  simp [Open.inf_def,Open.sSup_def]
   rw [inf_sSup_eq]
-  simp only [Set.mem_image, Set.mem_setOf_eq, iSup_exists, Open.bot]
+  simp only [Set.mem_image, Set.mem_setOf_eq, iSup_exists]
   apply le_antisymm
   . simp [iSup_le]
     intro a h
     rw [inf_comm]
+    rw [Open.ext_iff] at h
     exact h
-  . apply OrderBot.bot_le
-
+  . exact OrderBot.bot_le _
 lemma Open.exterior_exterior_eq_self (x : Open E) : x.exterior.exterior = x := by
   simp [Open.exterior]
   rw [@sSup_eq_iSup']
@@ -139,47 +153,7 @@ Leroy 1.10.1
 -/
 lemma closure_eq_compl_ext (x : Sublocale E) : x.closure = x.exterior.compl := by
   simp [Sublocale.closure,Sublocale.exterior, Open.compl]
-
-  apply le_antisymm
-  .
-    rw [Closed.le_iff]
-    simp only [sSup, sInf, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
-      and_imp, forall_apply_eq_imp_iff₂]
-    intro a h
-    ---
-    apply le_sSup
-    simp only [Set.mem_image, Set.mem_setOf_eq]
-    use a.compl
-    apply And.intro
-    . sorry
-    . rfl
-  .
-    simp only [le_sInf_iff, Set.mem_setOf_eq]
-    intro b h
-
-    apply le_trans' h
-    simp only [Closed.toSublocale]
-    rw [complement]
-    rw [Sublocale.le_iff]
-    simp only [Nucleus.toFun_eq_coe]
-    intro v
-    simp only [sSup]
-    rw [@sSup_image]
-    simp only [Set.mem_setOf_eq]
-    rw [iSup_sup]
-    rw [le_iSup_iff]
-    simp only [sup_le_iff, iSup_le_iff]
-    intro b1 h1
-    rw [Sublocale.le_iff] at h
-    let h2 := h v
-    let h3 := h1 (x.exterior)
-    have h4 :  (x.exterior.toSublocale ⊓ x = ⊥)  := by
-      sorry
-    rcases h3 with ⟨h3, h6⟩
-    let h5 := h3 h4
-    sorry
-
-
+  sorry
 
 /-
 lemma closure_eq_compl_ext (x : Sublocale E) : x.closure.sublocale = complement (x.sublocale) := by

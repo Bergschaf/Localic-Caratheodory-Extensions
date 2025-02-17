@@ -61,8 +61,7 @@
 \chapter{Leroy Chapter III}\label{sec:leroy-chapter-iii}
 \begin{definition}[Measure on Locals]
     \label{def:measure_on_locals}
-    \uses{def:open_sublocal,lem:sublocal_properties} TODO ggf auspalten mit extra lemma das sagt dass die Open subframes
-    einen frame bilden
+    \uses{def:open_sublocal,lem:sublocal_properties} 
     \lean{Measure}
     \leanok
     A measure on a local $X$ is a map $\mu : O(X) \to [0,\infty)$ such that:
@@ -95,7 +94,29 @@
     (Senf von noa: commutes with filtered colimits)
 \end{lemma}
 
+\begin{lemma}[Caratheodory Extensions are monotonic]
+    \label{lem:monotonic}
+    \uses{def:measure_on_locals,def:caratheodory}
+    \lean{Measure.caratheodory.monotonic}
+    \leanok
+    The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
+\end{lemma}
+\begin{proof}
+    \leanok
+    This is a direct consequence of the definition of the caratheodory extension.
+\end{proof}
 
+\begin{lemma}[Subadditivity]
+    \label{lem:caratheodory_subaddtive}
+    \uses{def:measure_on_locals,lem:monotonic}
+    \lean{Measure.caratheodory.subadditive}
+    The Caratheodory extension is subaddtive:
+    $$\mu(A \cup B) \le \mu(A) + \mu(b)$$
+    \leanok
+\end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
 
 \begin{definition}[Regular Local]
     \label{def:regular_local}
@@ -110,7 +131,7 @@
 \begin{definition}[Neighborhood]
     \label{def:neighborhood}
     \uses{def:open_sublocal}
-    \lean{Neighbourhood}
+    \lean{Sublocale.Neighbourhood}
     \leanok
 
     A neighborhood of a sublocal $A$ of $X$ is an open sublocal $V$ of $X$ such that $A \le V$.
@@ -126,9 +147,9 @@
 \end{lemma}
 
 
-\begin{lemma}[Property 1]
+\begin{lemma}[Measure add compl eq top]
 (Leroy Lemme 3.3)
-    \label{lem:property_1}
+    \label{lem:measure_add_compl_eq_top}
     \uses{def:complement, lem:commutes_with_sup, lem:regularity_of_sublocals,lem:properties_of_further_topology}
     \lean{Measure.add_complement}
     \leanok
@@ -149,16 +170,16 @@
     \leanok
 \end{lemma}
 \begin{proof}
-    \uses{commutes_with_sup}
+    \uses{lem:commutes_with_sup}
 \leanok
 \end{proof}
 
 \begin{lemma}[Property 2]
 (Leroy Lemm 3.4)
-    \label{lem:property_2}
+    \label{lem:restrict_add_compl_eq_top}
     \lean{Measure.add_complement_inf}
     \leanok
-    \uses{def:complement,def:sublocal_intersection,lem:property_1,lem:restriction}
+    \uses{def:complement,def:sublocal_intersection,lem:measure_add_compl_eq_top,lem:restriction, lem:caratheodory_subaddtive}
     For any open sublocal $U$ and any sublocal $A$ of a local $E$, the caratheodory extension of a measure on $X$ satisfies \[\mu(A) = \mu(A \cap U) + \mu(A \cap(E\setminus U))\]
 \end{lemma}
 \begin{proof}
@@ -168,42 +189,28 @@
 
 \begin{lemma}[Property 3]
 (Leroy Lemm 3.5)
-    \label{lem:property_3}
-    \uses{lem:property_2,lem:commutes_with_sup}
+    \label{lem:restrict_preserves_sSup}
+    \uses{lem:restrict_add_compl_eq_top,lem:commutes_with_sup}
     \lean{Measure.inf_filtered}
     \leanok
     For a increasing family $V_{\alpha}$ of open sublocals of $E$ and any sublocal $A$, we have:
     \[\mu(A \cap(\bigcup V_{\alpha})) = \sup_\alpha \mu(A\cap V_\alpha)\]
 \end{lemma}
 
-
-\begin{lemma}[Commutes with inf opens]
-(Leroy Lemme 3.6)
-    \label{lem:commutes_with_inf_opens}
-    \uses{lem:property_1,lem:nucleus_frame}
-    \lean{leroy_6}
+\begin{lemma}[Restriction to a Sublocale]
+    Let $A$ be a sublocale of $E$ with the embedding $i : A \rightarrow E$. The restriction of a measure $\mu$ on $E$ to $A$ is a measure on $A$:
+    $$V \mapsto \mu(i(V)) : Open(A) \to \mathbb{R}$$
+    \label{lem:restriction_to_sublocale}
+    \uses{lem:restrict_preserves_sSup}
+    \lean{Measure.restrict_sublocale_measure}
     \leanok
-    For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
 \end{lemma}
-\begin{proof}
-\end{proof}
 
-\begin{lemma}[Caratheodory Extensions are monotonic]
-    \label{lem:monotonic}
-    \uses{def:measure_on_locals,def:caratheodory}
-    \lean{Caratheodory_monotonic}
-    \leanok
-    The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
-\end{lemma}
-\begin{proof}
-    \leanok
-    This is a direct consequence of the definition of the caratheodory extension.
-\end{proof}
-
+\begin{comment}
 \begin{proposition}[Elementary Properties of Caratheodory Extensions]
 (Leroy lemme 3.3, 3.4, Corollary 3.1, Lemme 3.5)
     \label{prop:elementary_properties_of_caratheodory_extensions}
-    \uses{lem:property_1,lem:property_2,lem:commutes_with_sup, lem:property_3, lem:commutes_with_inf_opens,lem:monotonic}
+    \uses{lem:measure_add_compl_eq_top,lem:restrict_add_compl_eq_top,lem:commutes_with_sup, lem:restrict_preserves_sSup,lem:monotonic}
     For any measure on a local $X$, the caratheodory extension satisfies the following properties:
     \begin{enumerate}
         \item It is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
@@ -217,7 +224,7 @@
     In particular, for two open sublocals $U$ and $V$ of $X$ and any sublocal $A$ of $X$, we have
     \[\mu(A \cap (U \cup V)) = \mu(A\cap U) + \mu(A\cap V) - \mu(A \cap U \cap V)\]
 \end{proposition}
-
+\end{comment}
 
 
 \begin{proposition}[strictly additve]
@@ -231,11 +238,24 @@
 
 \begin{proposition}[reductive]
     \label{prop:reductive}  (Proposition 3.3.1)
-    \uses{def:sublocal, prop:elementary_properties_of_caratheodory_extensions}
+    \uses{def:sublocal, prop:elementary_properties_of_caratheodory_extensions,lem:regularity_of_sublocals,lem:restriction_to_sublocale}
     For any measure on a local $X$, the caratheodory extension is
     reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
 \end{proposition}
 
+
+
+\begin{lemma}[Commutes with inf opens]
+(Leroy Lemme 3.6)
+    \label{lem:commutes_with_inf_opens}
+    \uses{lem:measure_add_compl_eq_top,lem:nucleus_frame}
+    \lean{Measure.caratheodory.preserves_sInf}
+    \leanok
+    For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
+\end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
 
 \begin{proposition}[Commutes with inf]
 (Leroy lemme 3.7 et principal)
@@ -353,13 +373,6 @@
     \uses{lem:opens_correspond,lem:subset_sublocal,prop:subset_to_sublocal_structure,lem:regular_top_to_regular_local}
     Any measure on a good enough topological space $X$ induces a measure on the corresponding local. Furthermore, the classical caratheodory extension onto $\mathcal{P}(X)$ agrees with the restriction of the caratheodory extension of the induced measure on the local.
 \end{theorem}
-
-\begin{theorem}[Goal]
-    \label{thm:goal}
-    \uses{thm:measure_top_to_loc,thm:main}
-    One can interpret any classical borel measure as a measure on locals and their life is good :)
-\end{theorem}
-
 
 
 
