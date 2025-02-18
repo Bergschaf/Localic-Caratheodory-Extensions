@@ -9,7 +9,7 @@ lean_lib «Leroy» where
 
 @[default_target]
 lean_exe "leroy" where
-  root := `Main
+  root := `Leroy
 
 
 
