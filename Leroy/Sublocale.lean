@@ -207,10 +207,12 @@ lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSu
     simp only [le_inf_iff, inf_le_left, true_and]
     apply inf_le_of_right_le
     exact le_biSup element h
-  .
-    have h : ⨅ j, ⨅ i, ⨅ (_ : i ∈ s ∧ i.toSublocale = j), j x = ⨅ j ∈ (Open.toSublocale '' s), j x  := by simp
-    rw [h]
-    sorry
+  . rw [iInf_le_iff]
+    simp only [le_iInf_iff, and_imp, forall_apply_eq_imp_iff₂, toSublocale_apply, le_himp_iff]
+    intro b h
+    rw [inf_sSup_eq]
+    simp only [Set.mem_image, iSup_exists, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂]
+    exact h
 
 lemma preserves_sup : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.toSublocale := by
   rw [← sSup_pair, preserves_sSup, Set.image_pair, sSup_pair]
@@ -268,7 +270,19 @@ lemma preserves_sInf (s : Set (Closed E)) : (sInf s).toSublocale = sInf (Closed.
   rw [Nucleus.sSup_apply]
   simp only [upperBounds, Set.mem_image, LE.le, forall_exists_index, and_imp,
     forall_apply_eq_imp_iff₂, coe_mk, InfHom.coe_mk, sup_le_iff, Set.mem_setOf_eq]
-  sorry
+  apply le_antisymm
+  . simp only [le_iInf_iff, sup_le_iff, sSup_le_iff, Set.mem_image, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂]
+    intro i h1
+    refine ⟨fun a h ↦ (h1 a h x).left , le_apply⟩
+  . simp only [iInf_le_iff, le_iInf_iff]
+    intro b h
+    let h1 := h (sInf s).toSublocale
+    simp only [Closed.toSublocale, complement, sInf, coe_mk, InfHom.coe_mk, le_sup_right,
+      and_true] at h1
+    apply h1
+    intro a ha i
+    exact le_sup_of_le_left (le_sSup (Set.mem_image_of_mem element ha))
 
 instance : CompleteSemilatticeInf (Closed E) where
   __ := instInfSet
