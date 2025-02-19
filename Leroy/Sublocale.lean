@@ -320,7 +320,30 @@ def Open.compl (U : Open E) : Closed E := ⟨U.element⟩
 lemma Open.inf_compl_eq_bot (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
   refine le_antisymm ?_ bot_le
   rw [Sublocale.le_iff]
-  sorry
+  simp only [Sublocale.bot_apply, Open.toSublocale, Closed.toSublocale, complement, compl,
+    Sublocale.inf_apply, lowerBounds_insert, lowerBounds_singleton, Set.Iic_inter_Iic, Set.mem_Iic,
+    le_inf_iff, id_eq, InfHom.toFun_eq_coe, le_iInf_iff, top_le_iff, and_imp, OrderDual.forall, Sublocale.le_iff]
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  intro i a h1 h2
+  simp [himp_eq_sSup] at h1
+  have h3: U.element ≤ a i := by
+    apply le_trans' (h2 i)
+    exact le_sup_left
+  let h4 := h1 (a i) ⊤ (by simp [h3])
+  rw [eq_top_iff]
+  apply le_trans h4
+  have h_help : OrderDual.toDual a = a := rfl
+  rw [h_help, idempotent]
 
 lemma Open.sup_compl_eq_top (U : Open E) : U.toSublocale ⊔ U.compl = ⊤ := by
-  sorry
+  refine le_antisymm le_top ?_
+  rw [Sublocale.le_iff]
+  simp [Open.toSublocale, Closed.toSublocale, complement]
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  intro i
+  rw [himp_eq_sSup, sSup_inf_eq]
+  simp only [Set.mem_setOf_eq, iSup_le_iff]
+  intro j h
+  rw [inf_sup_left]
+  simp only [sup_le_iff, inf_le_right, and_true]
+  exact h
