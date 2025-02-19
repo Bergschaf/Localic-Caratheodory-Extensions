@@ -156,36 +156,41 @@ lemma eq_iff : U = V ↔ U.toSublocale = V.toSublocale := by
 
 lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
   ext x
+  simp [inf_def, Sublocale.inf_apply]
   apply le_antisymm
-  . simp only [inf_def, toSublocale_apply, Sublocale.inf_apply, lowerBounds_insert,
-    lowerBounds_singleton, Set.Iic_inter_Iic, Set.mem_Iic, le_inf_iff]
-    simp only [le_iInf_iff, and_imp, OrderDual.forall]
+  . simp only [le_iInf_iff, and_imp, OrderDual.forall]
     intro a h1 h2
-    simp [himp_eq_sSup]
+    simp only [Open.toSublocale, Sublocale.le_iff] at h1 h2
+    rw [Nucleus.coe_mk, InfHom.coe_mk] at h1 h2
+    simp only [himp_eq_sSup, sSup_le_iff, Set.mem_setOf_eq] at *
     intro b h3
-    simp [Sublocale.le_iff] at h1 h2
-    let h4 := h1 x
-    let h5 := h2 (a x)
-    simp [himp_eq_sSup] at h4 h5
-    let h4 := h4 (b ⊓ V.element) (by apply le_trans' h3; rw [inf_assoc, inf_comm V.element])
-    let h5 := h5 b h4
-    apply le_trans h5
-    have h : (OrderDual.toDual a) = a := rfl
-    rw [h, Nucleus.idempotent]
-  .
-    simp [Open.toSublocale,Nucleus.sSup_apply,Sublocale.le_iff]
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-    simp only [le_himp_iff]
-    rw [iInf_inf, iInf_le_iff]
-    simp only [himp_eq_sSup, sSup_le_iff, Set.mem_setOf_eq, le_inf_iff, le_iInf_iff, and_imp,
-      OrderDual.forall]
+    let h1 := h1 x (b ⊓ V) (by rw  [inf_assoc, inf_comm V.element]; exact h3)
+    let h2 := h2 (a x) b h1
+    apply le_trans h2
+    have h_help : (OrderDual.toDual a) = a := rfl
+    rw [h_help, idempotent]
+  . rw [iInf_le_iff]
     intro b h
-    sorry
-
-
-    --rcases h with ⟨h1, h2⟩
-
-
+    let h1 := h ((⟨U.element ⊓ V.element⟩ :Open E) : Sublocale E)
+    simp [Open.toSublocale, Sublocale.le_iff] at h1
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
+    apply h1
+    . intro i
+      simp [himp_eq_sSup]
+      intro b h1
+      apply le_sSup
+      simp
+      apply le_trans' h1
+      simp
+      exact inf_le_of_right_le inf_le_left
+    . intro i
+      simp [himp_eq_sSup]
+      intro b h1
+      apply le_sSup
+      simp only [Set.mem_setOf_eq]
+      apply le_trans' h1
+      simp
+      apply inf_le_of_right_le inf_le_right
 
 lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSublocale '' s) := by
   ext x
