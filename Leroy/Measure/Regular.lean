@@ -1,4 +1,5 @@
 import Leroy.Measure.Basic
+import Mathlib.Algebra.Order.Group.CompleteLattice
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
@@ -44,7 +45,7 @@ lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Sublocal
   apply le_antisymm
   . apply le_sInf
     exact fun b a_1 => Sublocale.Neighourhood.le b a_1
-
+  sorry
 /--
 Leroy Lemme 3
 -/
@@ -444,14 +445,130 @@ lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheo
   rw [add_assoc]
   rw [h_help3]
 
+omit e_regular in
+lemma le_iSup_mem  (s : Set (Open E)) (a : NNReal) (f : Open E → NNReal) :
+        (∀ b ∈ s, f b ≤ a) → ⨆ b ∈ s, f b ≤ a := by
+      intro h
+      apply ciSup_le
+      intro b
+      by_cases hC : b ∈ s
+      . apply @ciSup_le _ _ _ (by simp [hC])
+        intro hb
+        exact h b hC
+      . have h_empty : IsEmpty (b ∈ s) := by exact { false := hC }
+        rw [@NNReal.iSup_empty]
+        exact zero_le a
+
 /--
 Leroy Lemme5
 -/
 lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingly_filtered s) :
     m.caratheodory (A ⊓ (sSup s).toSublocale) = ⨆ b ∈ s, m.caratheodory (A ⊓ b) := by
-  sorry
+  apply le_antisymm
+  .
+    have h1 : ∀ ε > 0, m.caratheodory (A ⊓ (sSup s).toSublocale) ≤ (⨆ b ∈ s, m.caratheodory (A ⊓ b.toSublocale)) + ε := by
+      intro ε h_ε
+      let h2 := @Exists_Neighbourhood_epsilon _ _ m A ε h_ε
+      rcases h2 with ⟨W, ⟨h2, h3⟩⟩
+      have h4 : ∀ v ∈ s, m.caratheodory (W ⊓ v) ≤ m.caratheodory (A ⊓ v) + ε := by
+        intro v hv
+        ---
+        let lem_4_a := m.add_complement_inf v A
+        let lem_4_w := m.add_complement_inf v W
+        rw [Measure.caratheodory.open_eq_toFun] at lem_4_w
+        ---
+        let h3' := h3
+        rw [lem_4_a, lem_4_w] at h3'
+        have h_help : m.caratheodory (W.toSublocale ⊓ v.compl.toSublocale)
+          ≤ m.caratheodory (A ⊓ v.toSublocale) + m.caratheodory (A ⊓ v.compl.toSublocale) + ε := by
+          rw [← Measure.add_complement_inf]
+          have h' : m.caratheodory (W.toSublocale ⊓ v.compl.toSublocale)  ≤
+            m.caratheodory W.toSublocale := by
+            apply Measure.caratheodory.monotonic
+            exact inf_le_left
+          apply le_trans h'
+          rw [Measure.caratheodory.open_eq_toFun]
+          exact h3
+        let h4 := (tsub_le_tsub_iff_right h_help).mpr h3'
+        simp only [add_tsub_cancel_right] at h4
+        apply le_trans h4
+        simp only [tsub_le_iff_right]
+        rw [add_assoc _ ε]
+        rw [add_assoc]
+        apply add_le_add
+        . rfl
+        . rw [add_comm]
+          simp only [add_le_add_iff_left]
+          apply Measure.caratheodory.monotonic
+          simp only [le_inf_iff, inf_le_right, and_true]
+          apply inf_le_of_left_le
+          exact h2
+
+      have h5 : m.caratheodory (A ⊓ (sSup s).toSublocale) ≤ m.caratheodory (W ⊓ (sSup s).toSublocale) := by
+        apply Measure.caratheodory.monotonic
+        exact inf_le_inf h2 (by rfl)
+      have h6 : m.caratheodory (W ⊓ (sSup s).toSublocale) = ⨆ b ∈ s, m.caratheodory (W ⊓ b) := by
+        conv =>
+          enter [2, 1, b, 1]
+          rw [← Open.preserves_inf]
+          rw [Measure.caratheodory.open_eq_toFun]
+
+        have h_help :  ⨆ b ∈ s, m.toFun (W ⊓ b) = sSup (m.toFun '' (Set.range (fun b : s ↦ W ⊓ b.val))) := by
+          sorry
+        rw [h_help]
+        rw [← m.filtered]
+        rw [← Open.preserves_inf]
+        rw [Measure.caratheodory.open_eq_toFun]
+        congr
+        repeat rw [Open.inf_def, Open.sSup_def]
+        ext
+        simp only
+        rw [inf_sSup_eq]
+        sorry
+        . simp only [increasingly_filtered, Set.mem_range, Subtype.exists, exists_prop,
+          exists_exists_and_eq_and, le_inf_iff, forall_exists_index, and_imp,
+          forall_apply_eq_imp_iff₂, inf_le_left, true_and]
+          intro a ha a1 ha1
+          simp [increasingly_filtered] at h
+          let h' := h a ha a1 ha1
+          rcases h' with ⟨a2,⟨ha2, ⟨h', h''⟩ ⟩⟩
+          use a2
+          use ha2
+          refine ⟨inf_le_of_right_le h', inf_le_of_right_le h''⟩
+
+      apply le_trans h5
+      rw [h6]
+      apply le_iSup_mem
+      intro b hb
+      sorry -- geht
+
+    have h7 : ∀ ε > 0, m.caratheodory (A ⊓ (sSup s).toSublocale) - ⨆ b ∈ s, m.caratheodory (A ⊓ b.toSublocale) ≤ ε := by
+      intro e he
+      let h8 := h1 e he
+      rw [tsub_le_iff_left]
+      exact h8
+
+    rw [← add_zero (⨆ b ∈ s, caratheodory (A ⊓ b.toSublocale))]
+    rw [← sInf_epsilon_eq_zero']
+    rw [← tsub_le_iff_left]
+    apply le_csInf
+    . simp only [Set.Nonempty, gt_iff_lt, Set.mem_setOf_eq]
+      use 42
+      norm_num
+    exact h7
+  . --- todo, das geht schöner (ohne by_cases), da muss es eig was in der mathlib geben
 
 
+    apply le_iSup_mem
+
+    intro b
+    intro hb
+    apply Measure.caratheodory.monotonic
+    apply inf_le_inf
+    . rfl
+    . rw [Open.preserves_sSup]
+      apply le_sSup
+      exact Set.mem_image_of_mem Open.toSublocale hb
 
 def Image (A : Sublocale E) := {x : E // A x = x}
 instance (A : Sublocale E)  : Order.Frame (Image A) := sorry
