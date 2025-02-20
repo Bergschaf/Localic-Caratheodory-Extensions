@@ -540,7 +540,9 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
       rw [h6]
       apply le_iSup_mem
       intro b hb
-      sorry -- geht
+
+
+      sorry -- geht -- TODO vlt alles auf Real
 
     have h7 : ∀ ε > 0, m.caratheodory (A ⊓ (sSup s).toSublocale) - ⨆ b ∈ s, m.caratheodory (A ⊓ b.toSublocale) ≤ ε := by
       intro e he
