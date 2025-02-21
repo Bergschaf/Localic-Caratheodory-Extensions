@@ -459,6 +459,27 @@ lemma le_iSup_mem  (s : Set (Open E)) (a : NNReal) (f : Open E → NNReal) :
         rw [@NNReal.iSup_empty]
         exact zero_le a
 
+omit e_regular in
+lemma iSup_mem_eq (s : Set (Open E)) (f : Open E → NNReal) (h_top : ∀ a, f a ≤ f ⊤) : ⨆ b ∈ s, f b = sSup (Set.range (fun b : s => f b.val)) := by
+  rw [sSup_range]
+  apply_fun ENNReal.ofNNReal
+  repeat rw [ENNReal.coe_iSup]
+  have h (a : Open E) :  BddAbove (Set.range fun (h : a ∈ s) => f a) := by
+    simp [BddAbove, upperBounds, Set.Nonempty]
+    use f ⊤
+    exact fun a_1 => h_top a
+
+  conv =>
+    enter [1, 1, a]
+    rw [ENNReal.coe_iSup (h a)]
+  rw [iSup_subtype']
+  . simp [BddAbove, upperBounds, Set.Nonempty]
+    use  f ⊤
+    exact fun a a_1 => h_top a
+  . simp [BddAbove, upperBounds, Set.Nonempty]
+    use f ⊤
+    exact fun a => ciSup_le' fun i => h_top a
+  . exact ENNReal.coe_injective
 /--
 Leroy Lemme5
 -/
@@ -514,7 +535,15 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
           rw [Measure.caratheodory.open_eq_toFun]
 
         have h_help :  ⨆ b ∈ s, m.toFun (W ⊓ b) = sSup (m.toFun '' (Set.range (fun b : s ↦ W ⊓ b.val))) := by
-          sorry
+          rw [iSup_mem_eq]
+          . congr
+            ext x
+            simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image,
+              exists_exists_and_eq_and]
+          . intro a
+            apply m.mono
+            refine inf_le_inf (by rfl) (by exact OrderTop.le_top a)
+
         rw [h_help]
         rw [← m.filtered]
         rw [← Open.preserves_inf]
@@ -524,7 +553,13 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
         ext
         simp only
         rw [inf_sSup_eq]
-        sorry
+        . simp only [Set.mem_image, iSup_exists, Open.inf_def, Open.sSup_def]
+          rw [← Set.range_comp, Function.comp_def]
+          simp only
+          rw [sSup_range]
+          --- v geht safe schöner (vlt doch nicht)
+          apply le_antisymm <;> simp only [le_iSup_iff, Subtype.forall, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂,
+            imp_self, implies_true]
         . simp only [increasingly_filtered, Set.mem_range, Subtype.exists, exists_prop,
           exists_exists_and_eq_and, le_inf_iff, forall_exists_index, and_imp,
           forall_apply_eq_imp_iff₂, inf_le_left, true_and]
@@ -541,8 +576,38 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
       apply le_iSup_mem
       intro b hb
 
+      -- vlt gehts schöner
+      rw [iSup_mem_eq, sSup_range]
 
-      sorry -- geht -- TODO vlt alles auf Real
+      have h_help (a b : NNReal) : a ≤ b ↔ (a : ℝ) ≤ (b : ℝ) := by
+        exact ge_iff_le
+      apply (h_help _ _).mpr
+      rw [NNReal.coe_add, NNReal.coe_iSup]
+      have h_nonempty : Nonempty ↑s := by
+        use b
+      rw [ciSup_add]
+      . norm_cast
+        let h4' := h4 b hb
+        apply le_trans h4'
+        rw [le_ciSup_iff']
+        . simp only [Subtype.forall]
+          intro b1 h
+          exact h b hb
+        . simp [BddAbove, upperBounds, Set.Nonempty]
+          use m.caratheodory ⊤ + ε
+          intro a ha
+          simp only [add_le_add_iff_right]
+          apply Measure.caratheodory.le_top
+      . simp only [BddAbove, Set.Nonempty, upperBounds, Set.mem_range, Subtype.exists, exists_prop,
+        forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Set.mem_setOf_eq]
+        use m.caratheodory ⊤
+        norm_cast
+        intro a ha
+        apply Measure.caratheodory.le_top
+      . intro a
+        apply Measure.caratheodory.monotonic
+        exact inf_le_inf (by rfl) (by simp only [Open.top_toSublocale, le_top])
+
 
     have h7 : ∀ ε > 0, m.caratheodory (A ⊓ (sSup s).toSublocale) - ⨆ b ∈ s, m.caratheodory (A ⊓ b.toSublocale) ≤ ε := by
       intro e he
@@ -550,7 +615,7 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
       rw [tsub_le_iff_left]
       exact h8
 
-    rw [← add_zero (⨆ b ∈ s, caratheodory (A ⊓ b.toSublocale))]
+    rw [← add_zero (⨆ i ∈ s, caratheodory (A ⊓ i.toSublocale))]
     rw [← sInf_epsilon_eq_zero']
     rw [← tsub_le_iff_left]
     apply le_csInf

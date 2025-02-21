@@ -78,7 +78,6 @@ lemma monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.carathe
     use m.toFun ⊤
     use ⊤
     simp
-
   . simp [Open_Neighbourhood, Nucleus.toFun_eq_coe, Set.image_subset_iff]
     rw [@Set.setOf_subset]
     intro x h1
@@ -97,17 +96,18 @@ end caratheodory
 end Measure
 
 
-lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε  := by
+lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε  > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
       have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
         refine Real.lt_sInf_add_pos ?_ hε
         exact h
 
-      have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
+      have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < (sInf s) + ε := by
         let h1 := h_aux ε hε (NNReal.toReal '' s) (by simp only [Set.image_nonempty, h])
         simp at h1
         rcases h1 with ⟨x, ⟨h1, h2⟩⟩
         use x
         simp only [h1, true_and]
+
         apply LT.lt.trans_le h2
         simp only [add_le_add_iff_right]
         rw [← NNReal.coe_sInf]
@@ -119,7 +119,8 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Ope
         simp only [and_true]
         exact Open_Neighbourhood.top_mem
       intro ε hε
-      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) h_nonempty
+
+      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) sorry
       rcases h with ⟨V, h⟩
       simp at h
       rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
