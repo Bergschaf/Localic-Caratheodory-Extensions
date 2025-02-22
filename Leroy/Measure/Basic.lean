@@ -120,7 +120,7 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε  > 0,  ∃ w ∈ O
         exact Open_Neighbourhood.top_mem
       intro ε hε
 
-      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) sorry
+      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) (by use m.toFun ⊤; rw [Set.mem_image]; use ⊤;simp;exact Open_Neighbourhood.top_mem)
       rcases h with ⟨V, h⟩
       simp at h
       rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
