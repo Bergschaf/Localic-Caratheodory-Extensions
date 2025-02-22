@@ -38,11 +38,11 @@ Seite 81. 1.2
 Maybe depends on:
 Nucleus.eq_join_open_closed
 -/
-lemma Sublocale.intersection_Open_Neighbourhhood {a : Sublocale E} : a = sInf (Sublocale.Open_Neighbourhood a) := by
+lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (Sublocale.Open_Neighbourhood a) := by
   sorry
 
 
-lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Sublocale.Neighbourhood a) := by
+lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
   . apply le_sInf
     exact fun b a_1 => Sublocale.Neighourhood.le b a_1

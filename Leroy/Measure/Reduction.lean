@@ -84,16 +84,17 @@ def decroissante (V : Set (Open E')) : Prop :=
   decroissante' (fun (x : V) ↦ x.val)
 
 
-
+--- TODO bis zum Landeswettbewerb gescheit definieren
 def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
   ∀ n m : ι, ∃ l, V l ≤ V n ∧ V l ≤ V m
 
-
+def filtrante_decroissante' (s : Set (Sublocale E)) : Prop :=
+  ∀ n ∈ s, ∀ m ∈ s, ∃ l ∈ s, l ≤ n ∧ l ≤ m
 
 /--
 Leroy Lemma 6
 -/
-lemma Measure.caratheodory.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
+lemma Measure.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
     m.caratheodory (iInf (Open.toSublocale ∘ V_n)) = iInf (m.toFun ∘ V_n) := by
   let I :=  (iInf (Open.toSublocale ∘ V_n))
 
@@ -230,18 +231,24 @@ lemma Measure.caratheodory.preserves_sInf (V_n : ℕ → (Open E)) (h : decroiss
 
 
 /-- Leroy lemme 7-/
-lemma leroy_7 (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
+lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
   let V_n (n : ι) := Sublocale.Open_Neighbourhood (A_i n)
   admit -- TODO noha fragen
 
-theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
+lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
+  m.caratheodory (sInf s) = ⨅ x : s, m.caratheodory x := by sorry
 
+theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
     m.caratheodory (A ⊔ B) = m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B) := by
 
   have h_n_1 : Nonempty ↑A.Open_Neighbourhood := Nonempty_Open_Neighbourhood A
   have h_n_2 : Nonempty ↑B.Open_Neighbourhood := Nonempty_Open_Neighbourhood B
+  have h_n_3 : Nonempty ↑(A ⊔ B).Open_Neighbourhood := Nonempty_Open_Neighbourhood (A ⊔ B)
+  have h_n_4 : Nonempty ↑(A ⊓ B).Open_Neighbourhood := Nonempty_Open_Neighbourhood (A ⊓ B)
+  have h_n_5 : Nonempty ↑(A ⊓ B).Neighbourhood := Nonempty_Neighbourhood (A ⊓ B)
+
   have h1 : m.caratheodory (A ⊔ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊔ w_b) := by
     apply le_antisymm
     . simp [le_ciInf_iff]
@@ -250,13 +257,27 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       apply Measure.caratheodory.monotonic
       rw [Open.preserves_sup]
       exact sup_le_sup ha hb
-    . refine ciInf_le_of_le' w_b ?_
-      sorry
+    .
+      simp only [caratheodory]
+      rw [sInf_image']
+      simp [le_ciInf_iff]
+      intro a ha
+      --
+      refine ciInf_le_of_le ?_ ⟨a, (by simp [Sublocale.Open_Neighbourhood]; apply le_trans' ha; exact le_sup_left)⟩ ?_
+      . use 0
+        simp only [lowerBounds, Set.mem_range, Subtype.exists, exists_prop, forall_exists_index,
+          and_imp, forall_apply_eq_imp_iff₂, Set.mem_setOf_eq, zero_le, implies_true]
+      refine ciInf_le_of_le ?_ ⟨a, (by simp [Sublocale.Open_Neighbourhood]; apply le_trans' ha; exact le_sup_right)⟩ ?_
+      . use 0
+        simp only [lowerBounds, Set.mem_range, Subtype.exists, exists_prop, forall_exists_index,
+          and_imp, forall_apply_eq_imp_iff₂, Set.mem_setOf_eq, zero_le, implies_true]
+      apply Measure.mono
+      simp only [le_refl, sup_of_le_left]
 
+  have h2 : m.caratheodory (A ⊓ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊓ w_b) := by
+    --rw [Sublocale.intersection_Neighbourhood (A ⊓ B)]
+    sorry
 
-
-
-  have h2 : m.caratheodory (A ⊓ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊓ w_b) := by sorry
 
   apply_fun (. + m.caratheodory (A ⊓ B))
   . ring_nf
@@ -313,9 +334,12 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       intro a b
       rw [add_comm]
       rw [m.pseudosymm]
-      sorry
-
-
+      rw [@add_tsub_cancel_iff_le]
+      have h : m.toFun a ≤ m.toFun a + m.toFun b := by
+        simp
+      apply le_trans' h
+      apply Measure.mono
+      exact inf_le_left
     conv =>
       enter [1, 1, v_a, 1, w_b]
       rw [h5]
