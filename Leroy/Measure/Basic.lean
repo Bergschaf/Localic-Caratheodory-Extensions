@@ -18,7 +18,7 @@ structure Measure where
   toFun : (Open X) → NNReal --
   empty : toFun ⊥ = 0
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
-  pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
+  pseudosymm (U V : Open X) : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set  (Open X)), increasingly_filtered s → toFun (sSup s) = sSup (toFun '' s)
 open Sublocale
 

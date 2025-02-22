@@ -24,6 +24,11 @@ lemma Sublocale.Open_Neighbourhood.Nonempty (x : Sublocale X) : (Open_Neighbourh
   use ⊤
   exact top_mem
 
+lemma Sublocale.Nonempty_Open_Neighbourhood (x : Sublocale X) : Nonempty (Open_Neighbourhood x) := by
+  simp [Nonempty]
+  use ⊤
+  exact Open_Neighbourhood.top_mem
+
 
 
 lemma Sublocale.Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbourhood x, ∀ V ∈ Open_Neighbourhood x, U ⊓ V ∈ Open_Neighbourhood x := by

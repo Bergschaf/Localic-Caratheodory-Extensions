@@ -6,6 +6,7 @@ variable {E' : Type*} [Order.Frame E']
 --variable {m : @Measure E' _}
 variable {m : @Measure E _}
 
+open Sublocale
 
 -- TODO Infrastruktur, dass man Sublocals als Local ansehen kann
 
@@ -41,6 +42,13 @@ lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.
     simp [Set.Nonempty]
     use m.toFun ⟨u⟩
     use ⟨u⟩
+  . simp only [increasingly_filtered, Set.mem_setOf_eq, and_imp]
+    intro v h1 h2 w h4 h5
+    use ⟨u⟩
+    simp only [le_refl, and_self, true_and]
+    sorry
+
+
 
 
 lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ e_μ m x := by
@@ -227,3 +235,95 @@ lemma leroy_7 (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
 
   let V_n (n : ι) := Sublocale.Open_Neighbourhood (A_i n)
   admit -- TODO noha fragen
+
+theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
+
+    m.caratheodory (A ⊔ B) = m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B) := by
+
+  have h_n_1 : Nonempty ↑A.Open_Neighbourhood := Nonempty_Open_Neighbourhood A
+  have h_n_2 : Nonempty ↑B.Open_Neighbourhood := Nonempty_Open_Neighbourhood B
+  have h1 : m.caratheodory (A ⊔ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊔ w_b) := by
+    apply le_antisymm
+    . simp [le_ciInf_iff]
+      intro a ha b hb
+      rw [← Measure.caratheodory.open_eq_toFun]
+      apply Measure.caratheodory.monotonic
+      rw [Open.preserves_sup]
+      exact sup_le_sup ha hb
+    . refine ciInf_le_of_le' w_b ?_
+      sorry
+
+
+
+
+  have h2 : m.caratheodory (A ⊓ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊓ w_b) := by sorry
+
+  apply_fun (. + m.caratheodory (A ⊓ B))
+  . ring_nf
+    have h3 : m.caratheodory (A ⊔ B) + m.caratheodory (A ⊓ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B,  m.toFun (v_a ⊔ w_b) +  m.toFun (v_a ⊓ w_b) := by
+      conv =>
+        enter [1]
+        rw [h1, h2]
+
+      apply_fun ENNReal.ofNNReal
+      . simp only [ENNReal.coe_add, ENNReal.coe_sub]
+
+        repeat rw [ENNReal.coe_iInf]
+        conv =>
+          enter [1, 1, 1, a]
+          rw [ENNReal.coe_iInf]
+        conv =>
+          enter [1, 2, 1, a]
+          rw [ENNReal.coe_iInf]
+        rw [@ENNReal.iInf_add]
+        conv =>
+          enter [1, 1, i]
+          rw [@ENNReal.iInf_add]
+        conv =>
+          enter [1, 1, i, 1, i]
+          rw [@ENNReal.add_iInf]
+        conv =>
+          enter [1, 1, i, 1, i, 1, b]
+          rw [@ENNReal.add_iInf]
+        conv =>
+          enter [2, 1, a]
+          rw [ENNReal.coe_iInf]
+        apply le_antisymm
+        . simp_all only [nonempty_subtype, ENNReal.coe_add, le_iInf_iff, iInf_le_iff,
+          Subtype.forall, Subtype.coe_prop, implies_true]
+        . simp_all only [nonempty_subtype, ENNReal.coe_add, le_iInf_iff, iInf_le_iff,
+          Subtype.forall]
+          intro a b a_1 b_1 a_2 b_2 a_3 b_3 b_4 a_4
+          obtain ⟨w, h⟩ := h_n_1
+          obtain ⟨w_1, h_1⟩ := h_n_2
+          let h1 := a_4 a b a_1 b_1
+          let h2 := a_4 a_2 b_2 a_3 b_3
+          let h3 := a_4 (a ⊓ a_2) (by exact Open_Neighbourhood.inf_closed a b a_2 b_2) (a_1 ⊓ a_3) (by exact Open_Neighbourhood.inf_closed a_1 b_1 a_3 b_3)
+          apply le_trans h3
+          apply add_le_add
+          . norm_cast
+            apply Measure.mono
+            apply sup_le_sup inf_le_left inf_le_left
+          . norm_cast
+            apply Measure.mono
+            apply inf_le_inf inf_le_right inf_le_right
+      exact ENNReal.coe_injective
+    rw [h3]
+    have h5 : ∀ a b : Open E, m.toFun (a ⊔ b) + m.toFun (a ⊓ b) = m.toFun a + m.toFun b := by
+      intro a b
+      rw [add_comm]
+      rw [m.pseudosymm]
+      sorry
+
+
+    conv =>
+      enter [1, 1, v_a, 1, w_b]
+      rw [h5]
+    have h6 : ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun ↑v_a + m.toFun ↑w_b  =
+        (⨅ v_a : Open_Neighbourhood A, m.toFun ↑v_a) +  ⨅ w_b : Open_Neighbourhood B, m.toFun ↑w_b := by sorry
+    rw [h6]
+    have h7 : m.caratheodory (A ⊓ B) + (m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B)) = (m.caratheodory A + m.caratheodory B) := by sorry
+    rw [h7]
+    rw [add_eq_add_iff_eq_and_eq] <;> simp [Measure.caratheodory, sInf_image']
+
+  . exact add_left_injective (caratheodory (A ⊓ B))

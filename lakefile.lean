@@ -9,9 +9,7 @@ lean_lib «Leroy» where
 
 @[default_target]
 lean_exe "leroy" where
-  root := `Main
-
-
+  root := `Leroy
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4"

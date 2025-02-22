@@ -41,6 +41,7 @@ Nucleus.eq_join_open_closed
 lemma Sublocale.intersection_Open_Neighbourhhood {a : Sublocale E} : a = sInf (Sublocale.Open_Neighbourhood a) := by
   sorry
 
+
 lemma sublocal_intersection_of_neighbours {a : Sublocale E} : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
   . apply le_sInf
@@ -312,7 +313,7 @@ noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E) 
   toFun := Measure.restrict m w
   empty := (by simp[Measure.restrict];exact m.empty)
   mono := restrict_mono
-  pseudosymm := restrict_pseudosymm
+  pseudosymm (U V) := restrict_pseudosymm
   filtered := Measure.restrict_filtered
 
 
@@ -623,9 +624,7 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
       use 42
       norm_num
     exact h7
-  . --- todo, das geht schöner (ohne by_cases), da muss es eig was in der mathlib geben
-
-
+  .
     apply le_iSup_mem
 
     intro b
@@ -640,7 +639,7 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
 def Image (A : Sublocale E) := {x : E // A x = x}
 instance (A : Sublocale E)  : Order.Frame (Image A) := sorry
 
-def Measure.restrict_sublocale (m : @Measure E _) (A : Sublocale E) :Open (Image A) → NNReal :=
+def Measure.restrict_sublocale (m : @Measure E _) (A : Sublocale E) : Open (Image A) → NNReal :=
   fun x ↦ m.toFun ⟨x.element.val⟩
 
 
