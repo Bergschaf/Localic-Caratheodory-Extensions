@@ -165,7 +165,7 @@ lemma Measure.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
           simp
           exact h _ _ (Nat.le_add_right _ _)
         rw [sSup_range]
-        rw [preserves_sup]
+        rw [Measure.caratheodory.preserves_sup]
         apply ciSup_le
         exact h2
         exact h
