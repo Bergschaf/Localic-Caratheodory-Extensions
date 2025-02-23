@@ -137,7 +137,14 @@ Leroy Lemme 1
 -/
 lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   apply le_antisymm
-  . sorry
+  .
+    have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
+      intro ε h_ε
+      let ε_n (n : ℕ) := ε / (2 ^ (n + 1))
+      sorry
+
+
+    sorry
   . apply ciSup_le
     intro n
     simp only [Function.comp_apply]
