@@ -366,21 +366,43 @@
     Die Interaktionen zwischen Unterräumen eines Klassischen Topologischen Raumes (also Inklusion, Vereinigung und
     Schnitt) sind punktweise definiert. Da die Unterlokalen die Unterräume eines klassischen Topologischen Raumes
     in der (Punktfreien) Theorie der Lokalen verallgemeinern, werden diese Interaktionen auf andere Weise definiert.
-    Zunächst werden wir zeigen, dass die Nuklei auf einer Lokale einen Frame \autocite{noauthor_frame_nodate} bilden. Da die
+    Zunächst werden wir zeigen, dass die Nuklei $N(E)$ auf der Lokale $E$ einen Frame \autocite{noauthor_frame_nodate} bilden. Da die
     Nuklei direkt mit den Unterlokalen zusammenhängen kann direkt auf die Interaktionen der Unterlokalen geschlossen
     werden.
 
     \subsubsection{Nuklei als Frame}
+    Die Nuklei wurden nicht nur bei Leroy verwendet, sie
+    Die Ordnungsrelation der Nuklei lässt sich punktweise definieren:
+    \begin{definition}
+        Für zwei Nuklei $n$ und $m$ gilt $n \le m$, genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$ gilt.
+    \end{definition} TODO hier überall Lean häkchen
+    Die Nuklei bilden damit eine Halbordnung. \\
+    Zusätzlich dazu benötigt die Frame Struktur der Nuklei zwei besondere Nuklei; den größten und den kleisten Nukleus:
+    \begin{definition}
+        Der größte Nukleus $\top_n$ ist definiert durch $\top_n(a)=\top_E$ für alle $a\in O(E)$.\\
+        Der kleinste Nukleus $\bot_n$ ist definiert durch $\bot_n(a)= a$ für alle $a \in O(E)$
+    \end{definition}
+    $\top_E$ ist das größte Element von $E$ und existiert, da $E$ ein Frame bildet.
+    Man sieht direkt, dass der größte Nukleus punktweise größer als alle anderen Nuklei ist.
+    Der kleinste Nukleus ist punktweise kleiner als alle anderen Nuklei, da alle Nuklei $x$ die Bedingung $a\le x(a)$ erfüllen müssen. \\
+    Bei beliebigen Infima von Nuklei können wir uns an der Definition von Peter Johnstone in seinem Buch \glqq Stone spaces \grqq (TODO Quelle) orientieren:
+    \begin{definition}
+        Das Infimum einer Menge $S$ an Nuklei auf $E$ bildet einen Nukleus mit folgender Funktion:
+        \[(\bigwedge_n S)(a) = \bigwedge_E \{j(a) \| j \in S\}\]
+        für alle $a \in O(E)$
+    \end{definition}
+    Wir haben in Lean verifiziert, dass diese Definition tatsächlich ein Nukleus ist und die Bedingungen eines Infimums erfüllt. \\
+    Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben (TODO Quelle), daher verwenden wir das Infimum aller oberen Schranken:
+    \begin{definition}
+        Das Supremum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Infimum der oberen Schranken von $S$:
+            \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \| x \le w\})(a)\]
+        für alle $x \in S$.
+    \end{definition}
+    Diese Defintion  ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
+    Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden.
+    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra (TODO QUelle) bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet (TODO Mathlib Quelle).
 
-    TODO Inklusion Nuklei
-
-    TODO Top Bot Nuklei
-
-    TODO Schnitt Nuklei
-
-    TODO Vereinigung Nuklei
-
-    (evtl Himp für Frame)
+   TODO Himp zuig
 
     \subsubsection{Schnitt und Vereinigung von Unterlokalen}
     Wir bezeichenen den Nukleus, der mit der Unterlokalen $X$ zusammenhängt $n_X$.
@@ -398,45 +420,7 @@
     TODO Mathlib Quelle) der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
     Wir wollen uns nun aber noch etwas genauer mit der Definition der Vereinigung von Unterlokalen beschäftigen, da
     sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt: TODO
-
-
-    Mit der Ordnungsrelation $X \le Y \iff X h \le Y h$ für alle $h$, und alle Nuklei $X$ und $Y$ bilden die Nuklei eine Halbordnung. Die Ordnung der Unterlokale ist Dual zu dieser Ordnung definiert:
-
-% TODO quelle auch von berühmten leuten ((StoneSpaces S. grob 50, 2.5)) da gibs bessere
-    \begin{definition}
-        Die Inklusion zweier Unterlokale $X$ und $Y$ von $E$ lässt sich damit folgendermaßen definieren:
-        $$X \subseteq Y \iff e_X(h) \supseteq e_Y(h)$$
-        für all $h \in E$
-    \end{definition}
-% Sollen wir hier bei \subseteq bleiben oder \le verwenden??
-
-
-
-
-    Wir können diese Definition der Inklusion nun verwenden, um zwei besondere Nuklei genauer zu betrachten:
-    \begin{definition}
-        Wir bezeichnen den folgenden Nukleus mit: $\top_n (a) = \top_E$. $\top_E$ symbolisiert das größte Element von $E$. Wir wissen, dass es existiert, da $E$ einen Frame bildet.
-    \end{definition}
-    Man sieht, dass $\top_n$ der größte Nukleus ist, da er im punktweisen Vergleich, alle anderen Nuklei enthält.
-    \begin{definition}
-        $\bot_n$ bezeichnet folgenden Nukleus: $\bot_n (a) = a$
-    \end{definition}
-    Dieser Nukleus ist \glqq kleiner \grqq{} als alle anderen Nuklei, da jeder Nukleus $x$ die Bedingung $a \le x(a)$ erfüllen muss. Da die Unterlokale eine duale Ordnung zu den Nuklei bilden, wissen wir, dass der größte Nukleus dem kleinsten Unterlokal entspricht. Der kleinste Nukleus gehört daher zur größten Unterlokale:
-    $$\top_s = \bot_n \text{ und } \bot_s = \top_n$$
-    $\top_s$ bezeichnet im Folgenden also das größte und $\bot_s$ das kleinste Unterlokal. \\
-
-    Da es deutlich mehr Unterlokalen einer Lokale als Teilmengen des entsprechenden Topologischen Raums gibt, können wir den Schnitt und die Vereinigung von Unterlokalen nicht punktweise definieren.
-
-    Peter Johnstone definiert daher in seinem Buch \glqq Stone spaces\grqq{} \autocite{johnstone_stone_1982} das beliebige infimum der Nuklei folgendermaßen: \\
-    \begin{definition}
-        Der Schnitt einer Menge $S$ an Nuklei auf $E$ bildet einen Nukleus mit folgender Funktion:
-        $$(\bigcap_n S)(a) = \bigcap \{j(a) | j \in S\} $$ für alle $a \in E$\\
-
-    \end{definition}
-    Um zwischen dem Schnitt von Nuklei und Unterlokalen zu unterscheiden, bezeichnet $\bigcap_n$ den Schnitt von Nuklei und $\bigcap_s$ den Schnitt von Unterlokalen. \\
-    Wir haben analog zu Johnstone in Lean verifiziert, dass die Funktion $\bigcap_n S(a)$ die drei Bedingungen für einen Nukleus erfüllt. % TODO lean link
-    Außerdem haben wir verifiziert, dass dieser Nukleus auch die Bedingungen eines beliebigen Infimums erfüllt \autocite{noauthor_mathlibordercompletelattice_nodate}.\\
-    Dieses Infimum der Nuklei bildet aufgrund der Dualen Ordnung ein Supremum der Unterlokalen \autocite{noauthor_supremum_nodate}. Leroy hat aber ebenfalls ein Supremum auf den Unterlokalen definiert:
+TODO Johnstone hat hier gemacht... Leroy hat aber ebenfalls ein Supremum auf den Unterlokalen definiert:
     \begin{definition}
         Der Schnitt einer Menge $S$ an Unterlokalen von $E$ bildet einen Nukleus mit folgender Funktion:
         $$(\bigcup_s S)(a) = \bigcup \{w \in E | \forall x \in S,w \subseteq x\} $$ für all $a \in E$
@@ -454,15 +438,6 @@
         Wir wissen aber ebenfalls, dass beide Suprema die kleinste obere Schranke bilden, daher haben wir $(\bigcap_n S) \le (\bigcup_s S)$ und  $(\bigcup_s S) \le (\bigcap_n S)$, woraus die Gleichheit folgt.
             % TODO lean link
     \end{proof}
-
-
-
-    Infima von Unterlokalen (bzw. Suprema von Nuklei) lassen sich schwerer mit einer expliziten Formel beschreiben \autocite[S. 6]{leroy_theorie_2013}, es kann aber auch das Supremum aller unteren Schranken verwendet werden.\\
-% Definition Infimum
-    \begin{definition}
-        Das Infimum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Supremum der unteren Schranke von $S$.
-        $$\bigcap_s S = \bigcup_s \{w \in E | w \le x\}$$ für alle $x \in S$
-    \end{definition}
 
     TODO bis hier überarbeiten
 
@@ -508,13 +483,13 @@
 
     \begin{definition}
         Jedes Element $V \in E$ erzeugt eine geschlossene Unterlokale mit dem Nukleus:
-        $$c_v(a) = v \cap a$$
+        \[c_v(a) = v \cap a\]
         für alle a.
     \end{definition}
 %TODO quelle
-    Es lässt sich leicht verifizieren, dass es sich bei $c_v$ um einen Nukleus handelt. Leroy behauptet außerdem, dass es sich bei $c_v$ für alle $v \in E$ um das Komplement von $o_v$ handelt. Dies lässt sich anhand der folgenden Eigenschaften zeigen:
+    Es lässt sich leicht verifizieren, dass es sich bei $c_v$ um einen Nukleus handelt. Leroy zeigt außerdem, dass es sich bei $c_v$ für alle $v \in E$ um das Komplement von $o_v$ handelt. Dies lässt sich anhand der folgenden Eigenschaften beweisen:
     \begin{lemma}
-        $$c_v \cap o_v = \bot_s \text{  und  } c_v \cup o_v = \top_s$$
+        \[c_v \cap o_v = \bot_s \text{  und  } c_v \cup o_v = \top_s\]
         für alle $v \in E$.
     \end{lemma}
     Wir können also definieren:
@@ -524,13 +499,15 @@
     \begin{definition}
         Im Folgenden bezeichnen $O(E)$ und $C(E)$ die Menge der offenen bzw. abgeschlossenen Unterlokalen von $E$
     \end{definition}
+    Wir können hier $O(E)$ für die offenen Unterlokalen verwenden, da sie mit den Elementen $O(E)$ eines Lokals übereinstimmen. \\
+
     Mit diesen Definitionen der offenen und geschlossenen Unterlokalen können wir nun einige klassische topologische Operationen auf den Unterlokalen definieren. Diese werden später oft in verschiedenen Beweisen verwendet.
     \begin{definition}
         Der Abschluss einer Unterlokalen $X$ entspricht der kleinsten geschlossenen Unterlokalen, die $X$ enthält:
-        $$\overline{X} = \bigcap \{W \in C(E) \mid X \le W \}$$
+        \[\overline{X} = \bigcap \{W \in C(E) \mid X \le W \}\]
     \end{definition}
     \begin{definition}
-        Das Äußere einer Unterlokalen $X$ entspricht der größten offenen Unterlokalen, die disjunkt zu $X$ ist: $$Ext~X = \bigcap \{W \in O(E) \mid W \cap X = \bot_s \}$$
+        Das Äußere einer Unterlokalen $X$ entspricht der größten offenen Unterlokalen, die disjunkt zu $X$ ist: \[Ext~X = \bigcap \{W \in O(E) \mid W \cap X = \bot_s \}\]
     \end{definition}
 
     \begin{definition}
