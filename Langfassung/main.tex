@@ -490,12 +490,12 @@
 
     \begin{lemma}
         Die Definitionen von Johnstone und Leroy \autocite[S. 5]{leroy_theorie_2013} sind äquivalent:
-        $$(\bigcap_n S) (a) = (\bigcup_s S) (a)$$ für alle Mengen an Nuklei $S$ und für alle $a \in E$ \\
+        $$(\bigwedge S) (a) = (\bigcup_s S) (a)$$ für alle Mengen an Nuklei $S$ und für alle $a \in E$ \\
             %TODO hier müsste man eig definieren wie man Unterlokale zu Nuklei konvertiert und umgekehrt
     \end{lemma}
     \begin{proof}
         Da wir verifiziert haben, dass beide Suprema die Bedingungen für beliebige Suprema erfüllen, wissen wir, dass beide eine obere Schranke für $S$ bilden \autocite{noauthor_beschrankte_2021}.
-        Wir wissen aber ebenfalls, dass beide Suprema die kleinste obere Schranke bilden, daher haben wir $(\bigcap_n S) \le (\bigcup_s S)$ und  $(\bigcup_s S) \le (\bigcap_n S)$, woraus die Gleichheit folgt.
+        Wir wissen aber ebenfalls, dass beide Suprema die kleinste obere Schranke bilden, daher haben wir $(\bigwedge_n S) \le (\bigcup_s S)$ und  $(\bigcup_s S) \le (\bigwedge_n S)$, woraus die Gleichheit folgt.
             % TODO lean link
     \end{proof}
 
