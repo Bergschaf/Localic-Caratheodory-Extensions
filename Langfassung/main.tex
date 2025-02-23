@@ -382,10 +382,22 @@
 
     (evtl Himp für Frame)
 
-
     \subsubsection{Schnitt und Vereinigung von Unterlokalen}
-
-
+    Wir bezeichenen den Nukleus, der mit der Unterlokalen $X$ zusammenhängt $n_X$.
+    \begin{definition}
+        Die Inklusion zweier Unterlokale $X$ und $Y$ von $E$ lässt sich folgendermaßen definieren:
+        \[X \subseteq Y \iff n_Y \le n_X\]
+        also $n_Y(V) \le n_X(V)$ für alle $V\in O(E)$
+    \end{definition}
+    Die Unterlokale bilden daher eine Duale Ordnung zu den Nuklei. \autocite[S. 51]{johnstone_stone_1982} \autocite{noauthor_categorydual_nodate}
+    Dadurch können Resultate auf der einen Ordnung zu der dualen Version auf der anderen Ordnung übertragen werden.
+    Um im Folgenden zwischen Unterlokalen und Nuklei zu Unterscheiden bezeichnen wir Nuklei mit $n$ und Unterlokale
+    mit $s$ (von engl. Sublocale).
+    Das größte Element der Nuklei $\top_n$ ist somit das kleinste Unterlokal $\bot_s$ und umgekehrt ($\bot_n = \top_s$). \\
+    Aufgrund der Dualen Ordnung der Nuklei können wir von der Frame-Struktur der Nuklei auf die Coframe Struktur (
+    TODO Mathlib Quelle) der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
+    Wir wollen uns nun aber noch etwas genauer mit der Definition der Vereinigung von Unterlokalen beschäftigen, da
+    sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt: TODO
 
 
     Mit der Ordnungsrelation $X \le Y \iff X h \le Y h$ für alle $h$, und alle Nuklei $X$ und $Y$ bilden die Nuklei eine Halbordnung. Die Ordnung der Unterlokale ist Dual zu dieser Ordnung definiert:
@@ -400,9 +412,7 @@
 
 
 
-    Die Unterlokale bilden daher eine Duale Ordnung zu den Nuklei. \autocite[S. 51]{johnstone_stone_1982} \autocite{noauthor_categorydual_nodate}% TODO QUelle https://proofwiki.org/wiki/Category:Dual_Orderings
-    Dadurch können Resultate auf der einen Ordnung zu der dualen Version auf der anderen Ordnung übertragen werden. Es ist beispielsweise bekannt, dass eine Ordnung genau dann einen Verband (engl: Lattice) bildet, wenn die duale Ordnung ebenfalls einen Verband \autocite{noauthor_verband_2024} bildet \autocite{noauthor_dual_nodate}. % Quelle Verband : https://de.wikipedia.org/wiki/Verband_(Mathematik) % QUelle dual lattice https://proofwiki.org/wiki/Dual_of_Lattice_Ordering_is_Lattice_Ordering
-    In unserem Fall reicht es daher aus, zu zeigen, dass die Nuklei (bzw. die Unterlokale) einen Verband bilden, um von der selben Struktur auf den Unterlokalen (bzw. den Nuklei) zu wissen. \\
+
     Wir können diese Definition der Inklusion nun verwenden, um zwei besondere Nuklei genauer zu betrachten:
     \begin{definition}
         Wir bezeichnen den folgenden Nukleus mit: $\top_n (a) = \top_E$. $\top_E$ symbolisiert das größte Element von $E$. Wir wissen, dass es existiert, da $E$ einen Frame bildet.
@@ -437,12 +447,12 @@
     \begin{lemma}
         Die Definitionen von Johnstone und Leroy \autocite[S. 5]{leroy_theorie_2013} sind äquivalent:
         $$(\bigcap_n S) (a) = (\bigcup_s S) (a)$$ für alle Mengen an Nuklei $S$ und für alle $a \in E$ \\
-        %TODO hier müsste man eig definieren wie man Unterlokale zu Nuklei konvertiert und umgekehrt
+            %TODO hier müsste man eig definieren wie man Unterlokale zu Nuklei konvertiert und umgekehrt
     \end{lemma}
     \begin{proof}
         Da wir verifiziert haben, dass beide Suprema die Bedingungen für beliebige Suprema erfüllen, wissen wir, dass beide eine obere Schranke für $S$ bilden \autocite{noauthor_beschrankte_2021}.
         Wir wissen aber ebenfalls, dass beide Suprema die kleinste obere Schranke bilden, daher haben wir $(\bigcap_n S) \le (\bigcup_s S)$ und  $(\bigcup_s S) \le (\bigcap_n S)$, woraus die Gleichheit folgt.
-        % TODO lean link
+            % TODO lean link
     \end{proof}
 
 
@@ -454,30 +464,35 @@
         $$\bigcap_s S = \bigcup_s \{w \in E | w \le x\}$$ für alle $x \in S$
     \end{definition}
 
+    TODO bis hier überarbeiten
+
     \subsection{Offene und abgeschlossene Unterlokale}
-    Die offenen Mengen eines Topologischen Raums bilden immer eine Lokale. Die Elemente dieser Lokale hängen exakt mit den offenen Unterlokalen zusammen, die daher also den offenen Mengen eines Topologischen Raums entsprechen. Die Komplemente dieser offenen Unterlokalen (bzw. offenen Mengen) bilden die abgeschlossenen Unterlokalen, die mit den abgeschlossenen Mengen eines Topologischen Raums zusammenhängen.\\
+    Wie in der klassischen Topologie gibt es auch in der Theorie der Lokalen offene und geschlossene Unterlokalen.
+    Da die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ immer eine Lokale bilden (TODO ref zum Beispiel), hängen
+    die offenen Unterlokalen mit den Elementen $O(E)$ der Lokale $E$ zusammen und entsprechen damit den offenen Mengen eines klassischen Topologischen Raumes.
+    Die Komplemente dieser offenen Unterlokalen (bzw. offenen Mengen) bilden die abgeschlossenen Unterlokalen, die mit den abgeschlossenen Mengen eines Topologischen Raumes zusammenhängen. \\
+
     Johnstone \autocite[S. 50]{johnstone_stone_1982} und MacLane \autocite[S. 488]{mac_lane_sheaves_1994} definieren beide in ihren Büchern die offenen Unterlokalen folgendermaßen:
     \begin{definition}
         \label{def:open}
         Jedes Element $v$ einer Lokale $E$ erzeugt eine offene Unterlokale von $E$ mit der Funktion:
         $$o_v(a) = v \Rightarrow a$$ für alle $a \in E$. % ($\implies$ symbolisiert die Heyting Implikation)% TODO quelle heyting implication
     \end{definition}
-    Johnstone und MacLane verwenden hier $v \Rightarrow a$, die sogenannte Heyting-Implikation (auch relatives-Pseudokomplement) \autocite{noauthor_heyting-algebra_2024}\autocite{noauthor_heyting_nodate}.
+    Johnstone und MacLane verwenden hier $v \Rightarrow a$, die sogenannte Heyting-Implikation (auch relatives-Pseudokomplement)\autocite{noauthor_heyting-algebra_2024,noauthor_heyting_nodate}.
     \begin{definition}
         Die Heyting-Implikation erfüllt die Bedingung $a \le b \Rightarrow c$ genau dann, wenn $a \cap b \le c$ für alle $a$, $b$ und $c$. Eine Heyting Algebra ist ein Verband, bei dem diese Operation für alle Elemente definiert ist.
     \end{definition}
-    Die Heyting-Implikation kann hier verwendet werden, da die Elemente einer Lokale eine vollständige Heyting Algebra bilden.\\
-% TODO Quelle Open Sublocals (Mclane488) (Stonespaces S.50) (Leroy)
+    Die Heyting-Implikation kann hier verwendet werden, da die Elemente einer Lokale einen Frame, also eine vollständige Heyting Algebra bilden.\\
     Anhand dieser Eigenschaften haben wir hier auch in Lean wieder verifiziert, dass es sich bei $o_v$ für alle $v \in E$ um einen Nukleus handelt \autocite{noauthor_leroyopen_sublocales_nodate}. % TODO lean link.
 
     \begin{lemma}
         \label{lem:himp_eq}
         Die Definition der offenen Unterlokale von Johnstone \ref{def:open} ist äquivalent zu der Definition von Leroy:
-        $$o_v(a) = \bigcup \{ W \in E | W \cap V \le a \}$$
+        \[o_v(a) = \bigcup \{ W \in E | W \cap V \le a \}\]
     \end{lemma}
     \begin{proof}
         Es genügt hier zu zeigen, dass $v \Rightarrow a$ das größte Element in der Menge $S = \{ W \in E | W \cap V \le a \}$ ist.
-        Wir wissen, dass $c \le c \Rightarrow a$ genau dann, wenn $f c \cap v \le a$, daher sind alle Elemente $S$ kleiner oder gleich wie $v \Rightarrow a$.
+        Wir wissen, dass $c \le c \Rightarrow a$ genau dann, wenn $c \cap v \le a$, daher sind alle Elemente $S$ kleiner oder gleich wie $v \Rightarrow a$.
     \end{proof}
     Wir können nun anhand einiger Eigenschaften der offenen Unterlokalen (analog zu Leroy \autocite[S. 10]{leroy_theorie_2013}) zeigen, dass die offenen Unterlokalen von $E$ nahezu austauschbar mit ihrem entsprechenden Element von $E$ verwendbar sind. Um den folgenden Teil etwas übersichtlicher darzustellen, verwenden wir die Notation $[V]$ für $o_v$. \\
     Uns ist es gelungen, zu verifizieren, dass $[V] \subseteq [U]$ genau dann, wenn $V \subseteq U$ für alle $u, v \in E$. %TODO Blueprint Link.
@@ -487,6 +502,7 @@
     Die offenen Unterlokalen kommutieren zudem mit endlichen Infima:
     $$[U \cap V] = [U] \cap [V]$$ %% TODO Blueprint link
     für alle $U, V \in E$. Da wir diese Eigenschaften (neben einigen anderen) auch in Lean formalisiert haben, sind sie auch im \href{https://bergschaf.github.io/Localic-Caratheodory-Extensions/blueprint/sect0004.html#def:open_sublocal}{Blueprint} zu finden. \\
+
     Johnstone, MacLane und Leroy definieren die abgeschlossenen Unterlokalen alle ähnlich:
 % Definition Closed Sublocals (Mclane 488) (Stonespaces S.50)
 
