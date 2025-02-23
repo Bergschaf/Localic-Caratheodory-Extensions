@@ -2,6 +2,7 @@ import Mathlib.Data.Real.Basic
 import Leroy.Basic
 import Leroy.Further_Topology
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Leroy.Measure.Aux
 
 -----
@@ -96,7 +97,7 @@ end caratheodory
 end Measure
 
 
-lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε  > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
+lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
       have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
         refine Real.lt_sInf_add_pos ?_ hε
         exact h
@@ -140,9 +141,13 @@ lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublo
   .
     have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
       intro ε h_ε
-      let ε_n (n : ℕ) := ε / (2 ^ (n + 1))
+      let ε_n (n : ℕ) : ℝ := ε / (2 ^ (n + 1))
+      have h_ε_n (n : ℕ) : ε_n n > 0 := by sorry
+      have h_sum : tsum ε_n < ε := by
+        sorry
+      let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon _ _ m (X_n n) ⟨(ε_n n), sorry⟩ (h_ε_n n))
+      have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by sorry
       sorry
-
 
     sorry
   . apply ciSup_le
