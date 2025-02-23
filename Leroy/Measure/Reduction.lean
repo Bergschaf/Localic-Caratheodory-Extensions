@@ -275,8 +275,83 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       simp only [le_refl, sup_of_le_left]
 
   have h2 : m.caratheodory (A ⊓ B) = ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊓ w_b) := by
-    --rw [Sublocale.intersection_Neighbourhood (A ⊓ B)]
-    sorry
+
+    apply_fun ENNReal.ofNNReal
+    rw [ENNReal.coe_iInf]
+    conv =>
+      enter [2, 1, a]
+      rw [ENNReal.coe_iInf]
+    rw [iInf_prod']
+    . rw [← ENNReal.coe_iInf]
+      simp only [ENNReal.coe_inj]
+      rw [Sublocale.intersection_Neighbourhood A]
+      rw [Sublocale.intersection_Neighbourhood B]
+      repeat rw [sInf_eq_iInf]
+      repeat rw [iInf_subtype']
+      have h_n : Nonempty (Subtype (Membership.mem A.Neighbourhood)) := by exact Nonempty_Neighbourhood A
+      have h_n' : Nonempty (Subtype (Membership.mem B.Neighbourhood)) := by exact Nonempty_Neighbourhood B
+      rw [iInf_inf]
+      conv =>
+        enter [1, 1, 1, x]
+        rw [inf_iInf]
+      rw [iInf_prod']
+      rw [Measure.caratheodordy.preserves_iInf]
+      . rw [Function.comp_def]
+        apply le_antisymm
+        . repeat rw [← @sInf_eq_iInf', ← @intersection_Neighbourhood]
+          rw [@le_ciInf_iff']
+          simp only [Prod.forall, Subtype.forall]
+          intro a ha b hb
+          refine ciInf_le_of_le ?_ ⟨⟨a, (by simp [Neighbourhood]; use a)⟩,⟨b, (by simp [Neighbourhood]; use b)⟩⟩ ?_
+          . use 0
+            simp [lowerBounds]
+          simp only
+          rw [← Measure.caratheodory.open_eq_toFun]
+          apply Measure.caratheodory.monotonic
+          rw [Open.preserves_inf]
+
+        . simp [le_ciInf_iff]
+          intro a ha b hb
+          simp [Sublocale.Neighbourhood] at ha hb
+          rcases ha with ⟨a', ⟨ha1, ha2⟩⟩
+          rcases hb with ⟨b', ⟨hb1, hb2⟩⟩
+          refine ciInf_le_of_le ?_ ⟨⟨a', (by rw [← @sInf_eq_iInf', ← Sublocale.intersection_Neighbourhood]; exact ha1)⟩, ⟨b', (by rw [← @sInf_eq_iInf', ← Sublocale.intersection_Neighbourhood]; exact hb1)⟩⟩ ?_
+          . use 0
+            simp [lowerBounds]
+          . simp
+            rw [← Measure.caratheodory.open_eq_toFun]
+            apply Measure.caratheodory.monotonic
+            simp [Open.preserves_inf]
+            exact ⟨(by exact inf_le_of_left_le ha2),(by exact inf_le_of_right_le hb2)⟩
+
+      . simp only [filtrante_decroissante, le_inf_iff, Prod.exists, Subtype.exists, exists_and_left,
+        exists_prop, OrderDual.exists, Prod.forall, Subtype.forall, OrderDual.forall]
+        intro a1 h1 a2 h2 a3 h3 a4 h4
+        use a1 ⊔ a3
+        simp only [toDual_sup]
+        refine ⟨(by exact
+          Neighbourhood.inf_closed A (OrderDual.toDual a1) h1 (OrderDual.toDual a3) h3), ?_⟩
+        use a2 ⊔ a4
+        apply And.intro
+        . apply And.intro
+          . apply inf_le_of_left_le
+            apply inf_le_of_left_le
+            rfl
+          . apply inf_le_of_right_le
+            apply inf_le_of_left_le
+            rfl
+        . apply And.intro
+          . apply inf_le_of_left_le
+            apply inf_le_of_right_le
+            rfl
+          . apply And.intro
+            . apply Neighbourhood.inf_closed
+              exact h2
+              exact h4
+            . apply inf_le_of_right_le
+              apply inf_le_of_right_le
+              rfl
+    . exact ENNReal.coe_injective
 
 
   apply_fun (. + m.caratheodory (A ⊓ B))
@@ -344,7 +419,15 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       enter [1, 1, v_a, 1, w_b]
       rw [h5]
     have h6 : ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun ↑v_a + m.toFun ↑w_b  =
-        (⨅ v_a : Open_Neighbourhood A, m.toFun ↑v_a) +  ⨅ w_b : Open_Neighbourhood B, m.toFun ↑w_b := by sorry
+        (⨅ v_a : Open_Neighbourhood A, m.toFun ↑v_a) +  ⨅ w_b : Open_Neighbourhood B, m.toFun ↑w_b := by
+      rw [@NNReal.eq_iff]
+      simp [NNReal.coe_iInf]
+      rw [ciInf_add]
+      conv =>
+        enter [2, 1, i]
+        rw [add_ciInf (by use 0; simp[lowerBounds])]
+      use 0
+      simp [lowerBounds]
     rw [h6]
     have h7 : m.caratheodory (A ⊓ B) + (m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B)) = (m.caratheodory A + m.caratheodory B) := by sorry
     rw [h7]
