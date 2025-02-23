@@ -18,12 +18,12 @@
 \usepackage{inputenc}
 \usepackage{float}
 \usepackage[justification=centering]{caption}
-%\usepackage[backend=biber,style=alphabetic,]{biblatex}
 \usepackage{csquotes}
 \usepackage{tikz}
 \usepackage{multicol}
 \usepackage{amsmath,amssymb}
 \usepackage{wrapfig}
+\usepackage{notes2bib}
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref} % makes urls break
 \hypersetup{
     colorlinks=true,
@@ -46,6 +46,67 @@
 \newmintinline[lean]{lean}{bgcolor=white,fontsize=\small}
 \newminted[leancode]{lean}{fontsize=\footnotesize,baselinestretch=1.2}
 \usemintedstyle{tango}  % a nice, colorful theme
+
+
+\usepackage[url=true,backend=biber]{biblatex}
+
+% Command for marking things as leanok
+\definecolor{darkgreen}{HTML}{1F8F1F}
+
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\addbibresource{main.bib}
+
+
+% Define the custom lean citation command.
+% When you write \leanok{Example-Declaration} it will:
+%   - Print in text a green clickable citation [lean: Example-Declaration]
+%     that jumps to the corresponding lean entry.
+%   - Append an entry to the lean declarations list containing the key and a URL✔✔✔
+%     constructed from the argument.
+\newcommand{\hash}{\#}
+
+% Macro to hold the list of lean keys already added
+\newcommand{\leankeys}{}
+
+% Macro to hold the lean entries for the Lean-Declarations bibliography
+\newcommand{\leanentries}{}
+
+% The custom lean citation command:
+\newcommand{\leanok}[1]{%
+    % Always print the in-text citation (green and hyperlinked)
+    \hyperlink{Lean:#1}{\textcolor{darkgreen}{\textbf{[Lean: #1]}}}%
+    % If the key is not already in \lean@keys, then add it and append the entry:
+    \ifinlist{#1}{\leankeys}{}{%
+         \listgadd{\leankeys}{#1}%
+         \gappto{\leanentries}{%
+             \item \hypertarget{Lean:#1}{} \textbf{#1}\quad\url{https://bergschaf.github.io/Localic-Caratheodory-Extensions/docs/find/\hash doc/#1}%
+         }%
+    }%
+}
+
+
+% Macro to hold the list of lean keys already added
+\newcommand{\mathlibkeys}{}
+
+% Macro to hold the lean entries for the Lean-Declarations bibliography
+\newcommand{\mathlibentries}{}
+
+% The custom lean citation command:
+\newcommand{\mathlibok}[1]{%
+    % Always print the in-text citation (green and hyperlinked)
+    \hyperlink{Lean:#1}{\textcolor{darkgreen}{\textbf{[Lean: #1]}}}%
+    % If the key is not already in \lean@keys, then add it and append the entry:
+    \ifinlist{#1}{\mathlibkeys}{}{%
+         \listgadd{\mathlibkeys}{#1}%
+         \gappto{\mathlibentries}{%
+             \item \hypertarget{Lean:#1}{} \textbf{#1}\quad\url{https://leanprover-community.github.io/mathlib4_docs/find/\hash doc/#1}%
+         }%
+    }%
+}
+
+
+%%%%%%%
 
 \title{Langfassung JUFO 2025}
 \author{Chiara Cimino}
@@ -88,11 +149,6 @@
 \setlist{nosep}
 \setlist{itemsep=0pt}
 
-
-\usepackage[sorting=none]{biblatex}
-\setcounter{biburllcpenalty}{7000}
-\setcounter{biburlucpenalty}{8000}
-\addbibresource{main.bib}
 \pagestyle{fancy}
 
 \begin{document}
@@ -395,14 +451,14 @@
     Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben (TODO Quelle), daher verwenden wir das Infimum aller oberen Schranken:
     \begin{definition}
         Das Supremum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Infimum der oberen Schranken von $S$:
-            \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \| x \le w\})(a)\]
+        \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \| x \le w\})(a)\]
         für alle $x \in S$.
     \end{definition}
-    Diese Defintion  ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
+    Diese Defintion ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
     Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden.
     Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra (TODO QUelle) bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet (TODO Mathlib Quelle).
 
-   TODO Himp zuig
+    TODO Himp zuig
 
     \subsubsection{Schnitt und Vereinigung von Unterlokalen}
     Wir bezeichenen den Nukleus, der mit der Unterlokalen $X$ zusammenhängt $n_X$.
@@ -420,7 +476,7 @@
     TODO Mathlib Quelle) der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
     Wir wollen uns nun aber noch etwas genauer mit der Definition der Vereinigung von Unterlokalen beschäftigen, da
     sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt: TODO
-TODO Johnstone hat hier gemacht... Leroy hat aber ebenfalls ein Supremum auf den Unterlokalen definiert:
+    TODO Johnstone hat hier gemacht... Leroy hat aber ebenfalls ein Supremum auf den Unterlokalen definiert:
     \begin{definition}
         Der Schnitt einer Menge $S$ an Unterlokalen von $E$ bildet einen Nukleus mit folgender Funktion:
         $$(\bigcup_s S)(a) = \bigcup \{w \in E | \forall x \in S,w \subseteq x\} $$ für all $a \in E$
@@ -699,4 +755,9 @@ lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
 
     \section{Quellen}
     \printbibliography[heading=none]
+    \section*{Lean-Quellen}
+    \begin{enumerate}[label={}]
+        \leanentries
+        \mathlibentries
+    \end{enumerate}
 \end{document}
