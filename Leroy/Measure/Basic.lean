@@ -135,8 +135,14 @@ def Rpos := {r : NNReal // 0 < r}
 Leroy Lemme 1
 -> Magie
 -/
-lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
-  sorry
+lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
+  apply le_antisymm
+  . sorry
+  . apply ciSup_le
+    intro n
+    simp only [Function.comp_apply]
+    apply Measure.caratheodory.monotonic
+    exact le_iSup X_n n
 
 lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
