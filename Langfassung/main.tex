@@ -105,6 +105,25 @@
     }%
 }
 
+% Macro to hold the list of lean keys already added
+\newcommand{\prkeys}{}
+
+% Macro to hold the lean entries for the Lean-Declarations bibliography
+\newcommand{\prentries}{}
+
+% The custom lean citation command:
+\newcommand{\prok}[1]{%
+% Always print the in-text citation (green and hyperlinked)
+    \hyperlink{pr:\detokenize{#1}}{\textcolor{blue}{\textbf{[\##1]}}}%
+    % If the key is not already in \lean@keys, then add it and append the entry:
+    \ifinlist{#1}{\prkeys}{}{%
+        \listgadd{\prkeys}{#1}%
+        \gappto{\prentries}{%
+            \item \hypertarget{pr:\detokenize{#1}}{} \textbf{#1}\quad\url{https://github.com/leanprover-community/mathlib4/pull/#1}%
+        }%
+    }%
+}
+
 
 %%%%%%%
 
@@ -649,13 +668,28 @@
 
     \noindent Insbesondere gilt nun die strikte Additivität des Maßes mit Caratheodory-Erweiterung für alle Unterlokale eines gegebenen Lokals. Da jede Teilmenge einer gegebenen Menge ein Unterlokal induziert, lässt sich die strikte Additivität auf diese Teilmengen übertragen. Entsprechend können wir festhalten, dass die Caratheodory-Erweiterung nun bessere Eigenschaften hat, die es zusammen mit der besseren Definition des Schnitts möglich machen, den Banach-Tarski-Mengen eine sinnvolle Größe zuzuordnen und dem \glqq Banach-Tarski-Paradoxon\grqq~seinen paradoxen Charakter entziehen, indem ein Duplizieren einer Kugel im Sinne des Satzes von Banach-Tarski nicht mehr möglich ist.
 
+
     \section{Zusammenfassung der Ergebnisse und kritische Betrachtung}
     Ein wichtiger Teil unseres Projektes ist es, die Resultate nicht nur zu verstehen und zu Papier zu bringen, sondern parallel auch in Lean zu formalisieren. Das hat einerseits natürlich den Vorteil, dass Beweise mit Lean automatisch sicher verifiziert werden können. Ein weiterer wichtiger Aspekt, bei dem Lean großes Potenzial hat, ist die Zusammenarbeit zwischen Mathematikern. Hier spielt natürlich auch wieder die Verifizierung eine Rolle, da so vor allem in großen Teams nicht jedes Mitglied alle Beweise verstehen und überprüfen muss. Für unser Projekt war es allerdings von deutlich größerer Bedeutung, dass Lean dem Nutzer die Möglichkeit gibt, Definitionen mit einer formalen Sprache standardisiert zu verfassen und in der Mathlib \autocite{noauthor_leanprover-communitymathlib4_2025}
     zu veröffentlichen. Bei dem Aufnahmeprozess in die Mathlib werden Definitionen zudem ausführlich mit anderen Mitwirkenden der Mathlib diskutiert, was die Möglichkeit für wertvolles Feedback gibt. Da eine sogenannte \glqq Pull Request\grqq{} \autocite{noauthor_how_nodate}
-    dadurch (in Abhängigkeit von der Komplexität des hinzugefügten Materials) auch etwas länger dauern kann, haben wir uns vorgenommen, bereits vor dem Ende unseres Projektes erste Definitionen und Resultate in der Mathlib zu veröffentlichen. \\
-    Ein Beispiel für eine Pull Request, die bereits zur Mathlib hinzugefügt wurde \autocite{noauthor_github_nodate} ist das Lemma, das ein beliebiges Infimum auf einer Ordnung einen beliebigen Supremum auf der Dualen Ordnung entspricht (bzw. ein beliebiges Supremum entspricht einem beliebigen Infimum auf der Dualen Ordnung). \\ %(TO DO link zu github mathlib code vlt...)
-    Ein weiteres Resultat, das bereits von zwei Reviewern kontrolliert wurde, ist eine verallgemeinerte Version von Lemma \ref{lem:himp_eq}, die besagt, dass die Heyting Implikation auch als Supremum ausgedrückt werden kann. Unsere Version in der Mathlib enthält dazu noch einige allgemeine Hilfslemmata und die entsprechende Version mit der Subtraktionsoperation einer Coheyting Algebra. \\ % TO DO mathlib github code link
-    Unsere größte Pull Request, die sich gerade im Überprüfungsprozess für die Mathlib befindet, enthält die Definition von einem Nukleus in Kombination mit einigen nützlichen Resultaten (z.B. die Monotonie, die Ordnungsrelation und den größten bzw. den kleinsten Nukleus).\\ % TO DO link
+    dadurch (in Abhängigkeit von der Komplexität des hinzugefügten Materials) auch etwas länger dauern kann, haben wir uns vorgenommen, bereits vor dem Ende unseres Projektes erste Definitionen und Resultate in der Mathlib zu veröffentlichen.
+    Daher haben wir bereits einige Pull Requests \autocite{noauthor_github_nodate} zu verschiedenen Themen erstellt, die auch schon zur Mathlib hinzugefügt wurden:
+    \begin{tabular}{c | p{17cm}}
+        \prok{21718} & fix(Order/Nucleus): Remove outdated comment                                                                    \\
+        \prok{21560} & feat(Order/Nucleus): nuclei form a frame                                                                       \\
+        \prok{21515} & feat(Order/Nucleus): nuclei form a complete lattice                                                            \\
+        \prok{21418} & doc(Order/Heyting/Basic): Coheyting difference is not right adjoint                                            \\
+        \prok{21391} & refactor(Order/CompleteBooleanAlgebra): a complete lattice which is a \newline Heyting Algebra is automatically a frame \\
+        \prok{21346} & feat(Order/Nucleus): coe\_mk simp lemma                                                                        \\
+        \prok{20918} & doc(Order/Hom/Lattice): warn against \lean{toFun}                                                              \\
+        \prok{20328} & feat(Order/CompleteBooleanAlgebra): Himp in terms of sSup                                                      \\
+        \prok{20246} & feat(Order/CompleteLattice): instances for \newline CompleteSemilatticeInf/CompleteSemilatticeSup for Dual types        \\
+        \prok{19440} & feat(Order/Nucleus): Nucleus                                                                                   \\
+    \end{tabular} \\
+    Man sieht, dass wir einen wichtigen Teil unserer Arbeit; den Nukleus und dessen Frame-Struktur bereits in die Mathlib gebracht haben.
+    So kann nun jeder, der die Mathlib benutzt, unsere Definition des Nukleus verwenden.
+    In einer anderen Pull Request haben wir die Definition des Frames, die bereits in der Mathlib enthalten war, optimiert.
+    Wir konnten zeigen, dass das Axiom der Distributivität, das vorher in der Definition enthalten war, nicht benötigt wurde, da es allein daraus folgt, dass ein vollständiger Verband in Kombination mit einer Heyting Algebra vorliegt. \\
     Neben der Arbeit für die Mathlib haben wir parallel in unserem eigenen Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025} große Teile der elementaren Lokalen-Theorie formalisiert. Dazu gehört die Definition eines Nukleus, die Ordnungsrelation des Nukleus, beliebige Suprema und Infima und schließlich die Verbandsstruktur der Nuklei. Außerdem haben wir die, zu den Nuklei dualen, Unterlokalen mit den entsprechenden Operationen formalisiert. Auch die offenen Unterlokalen und deren Komplemente, die abgeschlossenen Unterlokalen, haben wir bereits in Lean fertiggestellt. Es ist uns außerdem gelungen bereits erste Definitionen und Lemmata der Maßtheorie auf Lokalen zu formalisieren. Dazu gehört einerseits die Definition eines Maßes auf den offenen Unterlokalen, aber auch schon erste Eigenschaften der Caratheodory Erweiterung dieses Maßes. \\
 
     Um die Arbeit mit Lean zu veranschaulichen, werden wir nun beispielhaft die Definition eines Nukleus betrachten. Unter folgendem Link man den Lean-Code auf Live-Lean, einer online Lean Plattform, nachvollziehen: \href{https://live.lean-lang.org/#codez=JYWwDg9gTgLgBAWQIYwBYBtgCMBQpKyIobYB0A8lACYCmUpCEAdhDMzaQEJIDOwAxjgD0AWhE4AKqhpwJATzAyIAMzgA5AK790NYHGZwkcAGJQkIDjhFCcPGFC0wNUGZu00NPOAAoAGnAAuWQUaACoASjgAbQBlGhBgdBQYARoASSZVXwBdOAB3aRccODhREVlpOGUNJn4UgxU4NBkmLR1PUmtipohjGsC4f0AkwkHusrgAQXU2jy9gOdpwVhomGE6bEuBFyBgV+G8ADwHfSKC2PqYfc/6DyMATIh6LuAOxsUnp9084ee/al15gEwAObrbqA/j/PjAnxHIInAZHB7XS4vErjKZudpeMAuHh0ABuNDmmVASFBJRxRIJRIA+oDVIc4HJjqdHv1GYBkoiZkQAvGyUXAucimThRTh8UgoMAkFgdHAAN7+ILyRShAC+0UotHopnMMhywjEOAAooDpgBrLFwc1IJiXJDoLy6JgyC7m+qXLA0exIfioXbwPJ0WhMUhWGyAuy2/gyIIXAAywHNMm8mNmg0i/n8BToNG6/Agsb5aY6yPzhbpTAAVjQ6sBCQByKpwIFwVCBPlYZn8XhEqoAbjgPbxXiBg4LwKghvEGJmXx+IGYbBd4ZwOhAICMJZ4pEXLGXKcuQW3GYGjH37DgR87cm6UDy0XPrHY2TBqygEEMcCwbe6qCQhJtgAjAMRhcj+fJGAEfL0jSNAAI40joyhrOAUC/iU/6AagABMHZXqQlJ4lAhI8JWqhGLgJT3tEqBAbkKBtjh3Q0AcvrwMhMBwYh9K7mATFAA}{livelean}. Während eines Beweises wird auf der rechten Seite der aktuelle Stand angezeigt.
@@ -710,7 +744,8 @@ lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
     \noindent Ein besonderer Dank gilt unseren Betreuern Noa Bihlmaier, Student an der Universität Tübingen, und Helmut Ruf, Lehrer in Tuttlingen. Durch Sie haben wir überhaupt erst von der Theorie der Lokale erfahren. Während der ganzen Zeit haben sie stets geduldig unsere mathematischen Verständnisfragen beantwortet und durch regelmäßige Feedback-Runden unser Projekt strukturiert.
 
     \noindent Auch wenn wir aufgrund der Unterschiede unserer Wohnorte viel online gearbeitet haben, haben wir uns immer wieder in den Räumen des SFZ in Tuttlingen getroffen. Wir sind sehr dankbar für diese Möglichkeit.\\
-    Besonders motiviert hat uns das Feedback von der Jury auf dem Landeswettbewerb 2024, vor allem da wir von Dr. Victoria Schleiß eine Einladung auf den International Congress für Mathematical Software in Durham erhielten. Dort hatten wir die Möglichkeit, viele interessante Vorträge, u.a. über Lean, zu hören und mit Mathematikern ins Gespräch zu kommen.
+    Besonders motiviert hat uns das Feedback von der Jury auf dem Landeswettbewerb 2024, vor allem da wir von Dr. Victoria Schleiß eine Einladung auf den International Congress für Mathematical Software in Durham erhielten.
+    Dort hatten wir die Möglichkeit, viele interessante Vorträge, u.a. über Lean, zu hören und mit Mathematikern ins Gespräch zu kommen.
     \clearpage
 
 
@@ -720,5 +755,9 @@ lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
     \begin{enumerate}[label={}]
         \leanentries
         \mathlibentries
+    \end{enumerate}
+    \section*{Pull-Requests}
+    \begin{enumerate}[label={}]
+        \prentries
     \end{enumerate}
 \end{document}
