@@ -74,14 +74,14 @@
 
 % The custom lean citation command:
 \newcommand{\leanok}[1]{%
-    % Always print the in-text citation (green and hyperlinked)
-    \hyperlink{Lean:#1}{\textcolor{darkgreen}{\textbf{[Lean: #1]}}}%
+% Always print the in-text citation (green and hyperlinked)
+    \hyperlink{Lean:\detokenize{#1}}{\textcolor{darkgreen}{\textbf{[Lean: #1]}}}%
     % If the key is not already in \lean@keys, then add it and append the entry:
     \ifinlist{#1}{\leankeys}{}{%
-         \listgadd{\leankeys}{#1}%
-         \gappto{\leanentries}{%
-             \item \hypertarget{Lean:#1}{} \textbf{#1}\quad\url{https://bergschaf.github.io/Localic-Caratheodory-Extensions/docs/find/\hash doc/#1}%
-         }%
+        \listgadd{\leankeys}{#1}%
+        \gappto{\leanentries}{%
+            \item \hypertarget{Lean:\detokenize{#1}}{} \textbf{#1}\quad\url{https://bergschaf.github.io/Localic-Caratheodory-Extensions/docs/find/\hash doc/#1}%
+        }%
     }%
 }
 
@@ -94,14 +94,14 @@
 
 % The custom lean citation command:
 \newcommand{\mathlibok}[1]{%
-    % Always print the in-text citation (green and hyperlinked)
-    \hyperlink{Lean:#1}{\textcolor{darkgreen}{\textbf{[Lean: #1]}}}%
+% Always print the in-text citation (green and hyperlinked)
+    \hyperlink{Mathlib:\detokenize{#1}}{\textcolor{darkgreen}{\textbf{[Mathlib: #1]}}}%
     % If the key is not already in \lean@keys, then add it and append the entry:
     \ifinlist{#1}{\mathlibkeys}{}{%
-         \listgadd{\mathlibkeys}{#1}%
-         \gappto{\mathlibentries}{%
-             \item \hypertarget{Lean:#1}{} \textbf{#1}\quad\url{https://leanprover-community.github.io/mathlib4_docs/find/\hash doc/#1}%
-         }%
+        \listgadd{\mathlibkeys}{#1}%
+        \gappto{\mathlibentries}{%
+            \item \hypertarget{Mathlib:\detokenize{#1}}{} \textbf{#1}\quad\url{https://leanprover-community.github.io/mathlib4_docs/find/\hash doc/#1}%
+        }%
     }%
 }
 
@@ -356,13 +356,17 @@
         \item Das Feld \textit{latex} führt zu der ausführlicheren Beschreibung der Aussage bzw. Definition im Fließtext-Teil des Blueprints.
         \item Ist das Lemma oder die Definition bereits fertig formalisiert, dann gelangt man über das Feld \textit{lean} auch zu der automatisch generierten Dokumentation des dazugehörigen Lean-Codes. In dieser Dokumentation ist zu jedem Abschnitt der entsprechende Quellcode unter \textit{source} verlinkt.
     \end{itemize}
+    Da wir bereits einen großen Teil unserer Arbeit in Lean verifiziert haben, können wir im weiteren Verlauf der Langfassung für viele Lemmata die schriftlichen Beweise weglassen, um für Übersichtlichkeit zu sorgen.
+    Die Definitionen und Beweise, die wir in Lean verifiziert haben oder die bereits in der Mathlib enthalten sind, sind folgendermaßen gekennzeichnet:
+    \leanok{Measure} bzw. \mathlibok{Nucleus}.
+    Die Links zu unserer Lean-Dokumentation bzw. zu der Mathlib-Dokumentation sind im Quellenverzeichniss enthalten.
 
     \subsection{Elementare Definitionen und Lemmata der Theorie der Lokale}
     Nun wollen wir aber die benötigte Theorie der Lokale besser verstehen. Allgemein besteht ein Lokal $E$ aus einer
     Teilgeordneten Menge $O(E)$ (mit einer Ordnungsrelation $\le$), die die Eigenschaften eines Frames (bzw. einer
-    vollständigen Heyting Algebra) erfüllt. (TODO Mathlib Quelle).
+    vollständigen Heyting Algebra) erfüllt \mathlibok{Order.Frame}.
     \begin{definition}
-        Ein Lokal $E$ besteht aus $(O(E), \le)$, wobei $O(E)$ eine teilgeordnete Menge mit der Ordnuungsrelation $\le$
+        Ein Lokal $E$ besteht aus $(O(E), \le)$, wobei $O(E)$ eine partiell geordnete Menge mit der Ordnungsrelation $\le$
         bezeichnet, die die Eigenschaften eines Frames erfüllt:
         \begin{itemize}
             \item Es existiert ein kleinstes Element $\bot_E$ und ein größtes Element $\top_E$.
@@ -373,7 +377,7 @@
     \end{definition}
     \begin{example}
         Die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ bilden mit der Inklusion als Ordnungsrelation ein
-        Lokal. (TODO Mathlib link)
+        Lokal \mathlibok{TopologicalSpace.Opens.instFrame}.
     \end{example}
     Um nun mit diesen Lokalen arbeiten zu können, müssen wir definieren, was wir unter einem Morphismus zwischen zwei Lokale verstehen.
     \begin{definition}
@@ -408,6 +412,7 @@
             \item $e(U\cap V)=e(U)\cap e(V)$ für alle $U,V\in O(E)$
         \end{itemize}
     \end{definition}
+    \mathlibok{Nucleus}
 
     \subsection{Unterlokale}
     Ein wesentliches Konzept der klassischen Topologie sind die Teilengen bzw. Unterräume eines
@@ -416,13 +421,13 @@
     Es gibt mehrere Möglichkeiten, Unterlokale zu definieren (TODO nlab Quelle), wir beschäftigen uns hier mit der
     Definition durch Nuklei:
     \begin{definition}
-        Ein Unterlokal $X$ eines Lokals $E$ wird durch eine Abbildung $e_X:O(E)\to O(E)$ definiert, die die Eigenschaften eines Nukleus erfüllt (Definition \ref{def:nukleus},Lemma \ref{lemma1}). Folglich ist das von $X$ erzeugte Lokal gegeben durch $O(X)=Im(e_X)=\{V\in O(E) | e_X(V)=V\}$ und die zugehörige Einbettung $i_X:X\to E$ ist durch $i^\ast_X(V)=e_X(V)$, $(i_X)_\ast(U)=U$ definiert. \autocite{noauthor_sublocale_nodate}
+        Ein Unterlokal $X$ eines Lokals $E$ wird durch eine Abbildung $e_X:O(E)\to O(E)$ definiert, die die Eigenschaften eines Nukleus erfüllt (Definition \ref{def:nukleus},Lemma \ref{lemma1}). Folglich ist das von $X$ erzeugte Lokal gegeben durch $O(X)=Im(e_X)=\{V\in O(E) | e_X(V)=V\}$ und die zugehörige Einbettung $i_X:X\to E$ ist durch $i^\ast_X(V)=e_X(V)$, $(i_X)_\ast(U)=U$ definiert. \autocite{noauthor_sublocale_nodate} \leanok{Sublocale}
     \end{definition}
 
     Die Interaktionen zwischen Unterräumen eines Klassischen Topologischen Raumes (also Inklusion, Vereinigung und
     Schnitt) sind punktweise definiert. Da die Unterlokalen die Unterräume eines klassischen Topologischen Raumes
     in der (Punktfreien) Theorie der Lokalen verallgemeinern, werden diese Interaktionen auf andere Weise definiert.
-    Zunächst werden wir zeigen, dass die Nuklei $N(E)$ auf der Lokale $E$ einen Frame \autocite{noauthor_frame_nodate} bilden. Da die
+    Zunächst werden wir zeigen, dass die Nuklei $N(E)$ auf der Lokale $E$ einen Frame \autocite{noauthor_frame_nodate} \mathlibok{Order.Frame} bilden. Da die
     Nuklei direkt mit den Unterlokalen zusammenhängen kann direkt auf die Interaktionen der Unterlokalen geschlossen
     werden.
 
@@ -431,12 +436,12 @@
     Die Ordnungsrelation der Nuklei lässt sich punktweise definieren:
     \begin{definition}
         Für zwei Nuklei $n$ und $m$ gilt $n \le m$, genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$ gilt.
-    \end{definition} TODO hier überall Lean häkchen
-    Die Nuklei bilden damit eine Halbordnung. \\
+    \end{definition}
+    Die Nuklei bilden damit eine Halbordnung \mathlibok{Nucleus.instPartialOrder}. \\
     Zusätzlich dazu benötigt die Frame Struktur der Nuklei zwei besondere Nuklei; den größten und den kleisten Nukleus:
     \begin{definition}
-        Der größte Nukleus $\top_n$ ist definiert durch $\top_n(a)=\top_E$ für alle $a\in O(E)$.\\
-        Der kleinste Nukleus $\bot_n$ ist definiert durch $\bot_n(a)= a$ für alle $a \in O(E)$
+        Der größte Nukleus $\top_n$ ist definiert durch $\top_n(a)=\top_E$ für alle $a\in O(E)$ \mathlibok{Nucleus.instBot}.\\
+        Der kleinste Nukleus $\bot_n$ ist definiert durch $\bot_n(a)= a$ für alle $a \in O(E)$ \mathlibok{Nucleus.instTop}.
     \end{definition}
     $\top_E$ ist das größte Element von $E$ und existiert, da $E$ ein Frame bildet.
     Man sieht direkt, dass der größte Nukleus punktweise größer als alle anderen Nuklei ist.
@@ -445,9 +450,9 @@
     \begin{definition}
         Das Infimum einer Menge $S$ an Nuklei auf $E$ bildet einen Nukleus mit folgender Funktion:
         \[(\bigwedge_n S)(a) = \bigwedge_E \{j(a) \| j \in S\}\]
-        für alle $a \in O(E)$
+        für alle $a \in O(E)$.
     \end{definition}
-    Wir haben in Lean verifiziert, dass diese Definition tatsächlich ein Nukleus ist und die Bedingungen eines Infimums erfüllt. \\
+    Wir haben in Lean verifiziert, dass diese Definition tatsächlich ein Nukleus ist und die Bedingungen eines Infimums erfüllt. \mathlibok{Nucleus.instInfSet} \\
     Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben (TODO Quelle), daher verwenden wir das Infimum aller oberen Schranken:
     \begin{definition}
         Das Supremum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Infimum der oberen Schranken von $S$:
@@ -455,8 +460,8 @@
         für alle $x \in S$.
     \end{definition}
     Diese Defintion ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
-    Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden.
-    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra (TODO QUelle) bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet (TODO Mathlib Quelle).
+    Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden \mathlibok{Nucleus.instCompleteLattice}.
+    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra \mathlibok{HeytingAlgebra} bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet \mathlibok{Order.Frame}. \\
 
     TODO Himp zuig
 
@@ -465,17 +470,16 @@
     \begin{definition}
         Die Inklusion zweier Unterlokale $X$ und $Y$ von $E$ lässt sich folgendermaßen definieren:
         \[X \subseteq Y \iff n_Y \le n_X\]
-        also $n_Y(V) \le n_X(V)$ für alle $V\in O(E)$
+        also $n_Y(V) \le n_X(V)$ für alle $V\in O(E)$ \leanok{Sublocale.le\_iff}.
     \end{definition}
     Die Unterlokale bilden daher eine Duale Ordnung zu den Nuklei. \autocite[S. 51]{johnstone_stone_1982} \autocite{noauthor_categorydual_nodate}
     Dadurch können Resultate auf der einen Ordnung zu der dualen Version auf der anderen Ordnung übertragen werden.
     Um im Folgenden zwischen Unterlokalen und Nuklei zu Unterscheiden bezeichnen wir Nuklei mit $n$ und Unterlokale
     mit $s$ (von engl. Sublocale).
     Das größte Element der Nuklei $\top_n$ ist somit das kleinste Unterlokal $\bot_s$ und umgekehrt ($\bot_n = \top_s$). \\
-    Aufgrund der Dualen Ordnung der Nuklei können wir von der Frame-Struktur der Nuklei auf die Coframe Struktur (
-    TODO Mathlib Quelle) der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
+    Aufgrund der Dualen Ordnung der Nuklei können wir von der Frame-Struktur der Nuklei auf die Coframe Struktur \mathlibok{OrderDual.instCoframe} der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
     Wir wollen uns nun aber noch etwas genauer mit der Definition der Vereinigung von Unterlokalen beschäftigen, da
-    sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt: TODO
+    sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt: TODO ausformulieren
     TODO Johnstone hat hier gemacht... Leroy hat aber ebenfalls ein Supremum auf den Unterlokalen definiert:
     \begin{definition}
         Der Schnitt einer Menge $S$ an Unterlokalen von $E$ bildet einen Nukleus mit folgender Funktion:
@@ -495,8 +499,6 @@
             % TODO lean link
     \end{proof}
 
-    TODO bis hier überarbeiten
-
     \subsection{Offene und abgeschlossene Unterlokale}
     Wie in der klassischen Topologie gibt es auch in der Theorie der Lokalen offene und geschlossene Unterlokalen.
     Da die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ immer eine Lokale bilden (TODO ref zum Beispiel), hängen
@@ -507,7 +509,7 @@
     \begin{definition}
         \label{def:open}
         Jedes Element $v$ einer Lokale $E$ erzeugt eine offene Unterlokale von $E$ mit der Funktion:
-        $$o_v(a) = v \Rightarrow a$$ für alle $a \in E$. % ($\implies$ symbolisiert die Heyting Implikation)% TODO quelle heyting implication
+        $$o_v(a) = v \Rightarrow a$$ für alle $a \in E$ \leanok{Open}. % ($\implies$ symbolisiert die Heyting Implikation)% TODO quelle heyting implication
     \end{definition}
     Johnstone und MacLane verwenden hier $v \Rightarrow a$, die sogenannte Heyting-Implikation (auch relatives-Pseudokomplement)\autocite{noauthor_heyting-algebra_2024,noauthor_heyting_nodate}.
     \begin{definition}
@@ -523,34 +525,34 @@
     \end{lemma}
     \begin{proof}
         Es genügt hier zu zeigen, dass $v \Rightarrow a$ das größte Element in der Menge $S = \{ W \in E | W \cap V \le a \}$ ist.
-        Wir wissen, dass $c \le c \Rightarrow a$ genau dann, wenn $c \cap v \le a$, daher sind alle Elemente $S$ kleiner oder gleich wie $v \Rightarrow a$.
+        Wir wissen, dass $c \le c \Rightarrow a$ genau dann, wenn $c \cap v \le a$, daher sind alle Elemente $S$ kleiner oder gleich wie $v \Rightarrow a$ \mathlibok{himp\_eq\_sSup}.
     \end{proof}
     Wir können nun anhand einiger Eigenschaften der offenen Unterlokalen (analog zu Leroy \autocite[S. 10]{leroy_theorie_2013}) zeigen, dass die offenen Unterlokalen von $E$ nahezu austauschbar mit ihrem entsprechenden Element von $E$ verwendbar sind. Um den folgenden Teil etwas übersichtlicher darzustellen, verwenden wir die Notation $[V]$ für $o_v$. \\
-    Uns ist es gelungen, zu verifizieren, dass $[V] \subseteq [U]$ genau dann, wenn $V \subseteq U$ für alle $u, v \in E$. %TODO Blueprint Link.
-    Wir haben außerdem gezeigt, dass die offenen Unterlokalen mit beliebigen Suprema kommutieren:
-    $$\bigcup_i [V_i] = [\bigcup_i V_i]$$ %TODO Blueprint link
+    Uns ist es gelungen, zu verifizieren, dass $[V] \subseteq [U]$ genau dann, wenn $V \subseteq U$ für alle $u, v \in E$ \leanok{Open.le\_iff}.
+    Wir haben außerdem gezeigt, dass die offenen Unterlokalen mit beliebigen Suprema kommutieren \leanok{Open.preserves\_sSup}:
+    $$\bigcup_i [V_i] = [\bigcup_i V_i]$$
     Für alle Familien $V_i$ aus Elementen von $E$. \\
-    Die offenen Unterlokalen kommutieren zudem mit endlichen Infima:
-    $$[U \cap V] = [U] \cap [V]$$ %% TODO Blueprint link
-    für alle $U, V \in E$. Da wir diese Eigenschaften (neben einigen anderen) auch in Lean formalisiert haben, sind sie auch im \href{https://bergschaf.github.io/Localic-Caratheodory-Extensions/blueprint/sect0004.html#def:open_sublocal}{Blueprint} zu finden. \\
+    Die offenen Unterlokalen kommutieren zudem mit endlichen Infima \leanok{Open.preserves\_inf}:
+    $$[U \cap V] = [U] \cap [V]$$
+    für alle $U, V \in E$. Diese Eigenschaften haben wir bereits alle in Lean verifiziert. \\
+
 
     Johnstone, MacLane und Leroy definieren die abgeschlossenen Unterlokalen alle ähnlich:
-% Definition Closed Sublocals (Mclane 488) (Stonespaces S.50)
-
+% TODO Definition Closed Sublocals (Mclane 488) (Stonespaces S.50)
     \begin{definition}
         Jedes Element $V \in E$ erzeugt eine geschlossene Unterlokale mit dem Nukleus:
         \[c_v(a) = v \cap a\]
         für alle a.
     \end{definition}
-%TODO quelle
+    \leanok{Closed}
     Es lässt sich leicht verifizieren, dass es sich bei $c_v$ um einen Nukleus handelt. Leroy zeigt außerdem, dass es sich bei $c_v$ für alle $v \in E$ um das Komplement von $o_v$ handelt. Dies lässt sich anhand der folgenden Eigenschaften beweisen:
     \begin{lemma}
         \[c_v \cap o_v = \bot_s \text{  und  } c_v \cup o_v = \top_s\]
-        für alle $v \in E$.
+        für alle $v \in E$. \leanok{Open.inf\_compl\_eq\_bot} \leanok{Open.sup\_compl\_eq\_top}
     \end{lemma}
     Wir können also definieren:
     \begin{definition}
-        Das Komplement einer offenen Unterlokale $o_v$ entspricht $o_v^c = c_v$ für alle $v \in E$
+        Das Komplement einer offenen Unterlokale $o_v$ entspricht $o_v^c = c_v$ für alle $v \in E$ \leanok{Open.compl}.
     \end{definition}
     \begin{definition}
         Im Folgenden bezeichnen $O(E)$ und $C(E)$ die Menge der offenen bzw. abgeschlossenen Unterlokalen von $E$
@@ -559,25 +561,25 @@
 
     Mit diesen Definitionen der offenen und geschlossenen Unterlokalen können wir nun einige klassische topologische Operationen auf den Unterlokalen definieren. Diese werden später oft in verschiedenen Beweisen verwendet.
     \begin{definition}
-        Der Abschluss einer Unterlokalen $X$ entspricht der kleinsten geschlossenen Unterlokalen, die $X$ enthält:
+        Der Abschluss einer Unterlokalen $X$ entspricht der kleinsten geschlossenen Unterlokalen, die $X$ enthält \leanok{Sublocale.closure}:
         \[\overline{X} = \bigcap \{W \in C(E) \mid X \le W \}\]
     \end{definition}
     \begin{definition}
-        Das Äußere einer Unterlokalen $X$ entspricht der größten offenen Unterlokalen, die disjunkt zu $X$ ist: \[Ext~X = \bigcap \{W \in O(E) \mid W \cap X = \bot_s \}\]
+        Das Äußere einer Unterlokalen $X$ entspricht der größten offenen Unterlokalen, die disjunkt zu $X$ ist \leanok{Sublocale.exterior}: \[Ext~X = \bigcap \{W \in O(E) \mid W \cap X = \bot_s \}\]
     \end{definition}
 
     \begin{definition}
-        Die offene Umgebung eines Unterlokals $X$ ist die Menge aller offenen Unterlokalen $V$, für die gilt $X \subseteq V$
+        Die offene Umgebung eines Unterlokals $X$ ist die Menge aller offenen Unterlokalen $V$, für die gilt $X \subseteq V$ \leanok{Sublocale.Open\_Neighbourhood}.
     \end{definition}
 
     \begin{definition}
-        Ein Lokal $E$ heißt regulär, wenn für alle offenen Unterlokale $U$ von $E$ die offenen Unterlokale $V$ von $E$ mit $\overline{V} \subseteq U$ ganz $U$ abdecken.
+        Ein Lokal $E$ heißt regulär, wenn für alle offenen Unterlokale $U$ von $E$ die offenen Unterlokale $V$ von $E$ mit $\overline{V} \subseteq U$ ganz $U$ abdecken \leanok{regular}.
     \end{definition}
     Sei $E$ im Folgenden ein reguläres Lokal.
     \begin{lemma}
         \label{lem:regular_sublocal}
         In einem regulären Lokal entspricht jedes Unterlokal $U$ dem Schnitt der offenen Umgebung von $U$.
-    \end{lemma}
+    \end{lemma} TODO lean
     Jetzt haben wir die notwendigen Voraussetzungen definiert und kleinere Lücken geschlossen, um mit der Maßtheorie über Lokalen zu beginnen.
 
 
