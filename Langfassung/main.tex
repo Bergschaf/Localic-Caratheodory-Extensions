@@ -13,7 +13,6 @@
 \usepackage{amsmath,amsthm}
 \usepackage{comment}
 \usepackage{enumerate}
-\usepackage{graphicx}
 \usepackage{fancyhdr}
 \usepackage{xcolor}
 \usepackage{inputenc}
@@ -21,10 +20,8 @@
 \usepackage[justification=centering]{caption}
 %\usepackage[backend=biber,style=alphabetic,]{biblatex}
 \usepackage{csquotes}
-\usepackage{amsmath}
 \usepackage{tikz}
 \usepackage{multicol}
-\usepackage{csquotes}
 \usepackage{amsmath,amssymb}
 \usepackage{wrapfig}
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref} % makes urls break
@@ -43,7 +40,6 @@
 \usepackage{fontspec}
 % switch to a monospace font supporting more Unicode characters
 % \setmonofont{FreeMono}
-\usepackage{fontspec}
 \setmonofont{JetBrains Mono}
 \usepackage{minted}
 % instruct minted to use our local theorem.py
@@ -193,11 +189,6 @@
     \listoffigures
     \thispagestyle{empty}
 
-    \begin{comment}
-        Kurzfassung: (bleibt hier nur vorübergehend)\\
-
-        Das Ziel unseres letztjährigen Jufo-Projekts war es, den Satz von Banach-Tarski zu leanen und der Lean-Community zur Verfügung zu stellen. Diese Arbeit ging über die Grenzen von Jufo hinaus und führte uns u.a. zu einem Kongress nach Durham, was einen Austausch mit Lean-Experten ermöglichte. Ausgehend davon erkannten wir, dass Lean noch viel mächtiger und relevanter ist, als bisher von uns angenommen wurde. Wir machten uns daher zum neuen Ziel, die mathematische Problematik hinter Banach-Tarski zu beheben. Bei einem der vielen Gespräche mit Experten erreichte uns der Hinweis von fields medal Träger Laurent Lafforgue, das Manuskript von Olivier Leroy LES INTERSECTIONS CACHEES DANS LE PARADOXE DE BANACH-TARSKI zu leanen. Das Manuskript weist auf eine allgemeinere Theorie hin, in der die Problematik hinter Banach-Tarski behoben wird. Allerdings wurde es nie in einem Journal veröffentlicht und nie offiziell geprüft. Daher gilt es für uns, das französische Manuskript zu verstehen und zu leanen.
-    \end{comment}
     \clearpage
     \setcounter{page}{1}
 
@@ -279,8 +270,10 @@
     Leroy zeigt nun durch die Anwendung der Theorie der Lokale, dass es möglich ist, das Auswahlaxiom zu verwenden und dennoch sicherzustellen, dass alle \glqq Teilmengen\grqq~messbar bleiben. Dies wird durch die Einführung von Unterlokalen erreicht, die als Unterräume fungieren. In diesem Kontext ist die Fortsetzung des Lebesgue-Maßes auf die Gesamtheit der Unterlokalen von $[0;1]$ ein $\sigma$-additives Maß, welches sogar noch weitere erstaunliche gute Eigenschaften wie Reduzibilität besitzt. Dadurch werden die paradoxen Zerlegungen, wie sie bei Banach-Tarski zu finden sind und die in der klassischen Theorie zu nicht messbaren Mengen führen, in der Theorie der Lokale vermieden, da es versteckte Schnittmengen gibt, die in der klassischen Betrachtung nicht sichtbar sind.\\
 
     \subsection{Unser Blueprint}
-    Ein wesentliches Hilfsmittel, um bei bei der Arbeit in Lean die Übersicht nicht zu verlieren, ist das so genannte Lean-Blueprint-Tool \autocite{massot_patrickmassotleanblueprint_2025}, das auch in vielen großen Formalisierungsprojekten zum Einsatz kommt.
-    Es bietet die Möglichkeit, alle Definitionen und Lemmata für Menschen verständlich zu formulieren und zu dem entsprechenden Lean-Code zu verlinken. Eine der wichtigsten Funktionen des Lean-Blueprint-Tools ist vermutlich der interaktive Dependency-Graph (siehe Abbildung \ref{fig:test1}). Dieser stellt alle Beziehungen zwischen den Lemmata und Definitionen übersichtlich in einem Graph dar (also welche Lemmata und Definitionen müssen zuerst fertiggestellt werden). Außerdem kann man anhand der Farbe der Knoten erkennen, wie weit die Formalisierung bereits fortgeschritten ist. \\
+    Ein wesentliches Hilfsmittel, um bei bei der Arbeit in Lean die Übersicht nicht zu verlieren, ist das sogenannte Lean-Blueprint-Tool \autocite{massot_patrickmassotleanblueprint_2025}, das auch in vielen großen Formalisierungsprojekten zum Einsatz kommt.
+    Es bietet die Möglichkeit, alle Definitionen und Lemmata für Menschen verständlich zu formulieren und zu dem
+    entsprechenden Lean-Code zu verlinken. Eine der wichtigsten Funktionen des Lean-Blueprint-Tools ist wohl der
+    interaktive Dependency-Graph (siehe Abbildung \ref{fig:test1}). Dieser stellt alle Beziehungen zwischen den Lemmata und Definitionen übersichtlich in einem Graph dar (also welche Lemmata und Definitionen müssen zuerst fertiggestellt werden). Außerdem kann man anhand der Farbe der Knoten erkennen, wie weit die Formalisierung bereits fortgeschritten ist. \\
     Wir haben für unser Projekt einen solchen Blueprint erstellt, der unter folgender Internetadresse veröffentlicht ist: \url{https://bergschaf.github.io/Localic-Caratheodory-Extensions/blueprint/}.\\
     \begin{figure}[h]
         \centering
@@ -377,7 +370,7 @@
     \subsection{Unterlokale}
     Ein wesentliches Konzept, das wir in unserer Arbeit benötigen, ist das Konzept der Unterlokale, weshalb wir diese nun im Folgenden näher betrachten wollen.
     \begin{definition}
-        Ein Unterlokal $X$ eines Lokals $E$ wird durch eine Abbildung $e_X:O(E)\to O(E)$ definiert, die die Eigenschaften eines Nukleus erfüllt (Definition \ref{def:nukleus},Lemma \ref{lemma1}). Folglich ist das von $X$ erzeugte Lokal gegeben durch $O(X)=Im(e_X)=\{V\in O(E) | e_X(V)=V\}$ und die zugehörige Einbettung $i_X:X\to E$ ist durch $i^∗_X(V)=e_X(V)$, $(i_X)_∗(U)=U$ definiert. \autocite{noauthor_sublocale_nodate}
+        Ein Unterlokal $X$ eines Lokals $E$ wird durch eine Abbildung $e_X:O(E)\to O(E)$ definiert, die die Eigenschaften eines Nukleus erfüllt (Definition \ref{def:nukleus},Lemma \ref{lemma1}). Folglich ist das von $X$ erzeugte Lokal gegeben durch $O(X)=Im(e_X)=\{V\in O(E) | e_X(V)=V\}$ und die zugehörige Einbettung $i_X:X\to E$ ist durch $i^\ast_X(V)=e_X(V)$, $(i_X)_\ast(U)=U$ definiert. \autocite{noauthor_sublocale_nodate}
     \end{definition}
 
 
