@@ -302,27 +302,28 @@
     \end{itemize}
 
     \subsection{Elementare Definitionen und Lemmata der Theorie der Lokale}
-    Nun wollen wir aber die benötigte Theorie der Lokale besser verstehen.
-    Vorab definieren wir uns deshalb, was eine (partiell) geordnete Menge ist, deren Elemente wir \glqq offene Mengen von E\grqq~nennen und deren Ordnungsrelation wir mit $\subset$ schreiben. Des Weiteren klären wir nun, was man unter einem Lokal versteht.
+    Nun wollen wir aber die benötigte Theorie der Lokale besser verstehen. Allgemein besteht ein Lokal $E$ aus einer
+    Teilgeordneten Menge $O(E)$ (mit einer Ordnungsrelation $\le$), die die Eigenschaften eines Frames (bzw. einer
+    vollständigen Heyting Algebra) erfüllt. (TODO Mathlib Quelle).
     \begin{definition}
-        Ein Lokal $E$ besteht aus $(O(E),\subset)$, wobei $O(E)$ eine geordnete Menge mit Ordnungsrelation $\subset$ bezeichnet, für die folgendes gilt:
+        Ein Lokal $E$ besteht aus $(O(E), \le)$, wobei $O(E)$ eine teilgeordnete Menge mit der Ordnuungsrelation $\le$
+        bezeichnet, die die Eigenschaften eines Frames erfüllt:
         \begin{itemize}
-            \item Es existiert ein kleinstes Element $0_E$ (oder $\emptyset$) und ein größtes Element $1_E$ (oder $E$ je nach Kontext)
-            \item Jede Familie $(V_i)$ von Elementen aus $O(E)$ besitzt ein Supremum (genannt Vereinigung), welche mit $\bigcup_i V_i$ bezeichnet wird.
-            \item  Jedes Paar $U,V$ von Elementen aus $O(E)$ besitzt ein Infimum (genannt Schnitt von $U$ und $V$), welche mit $U\cap V$ bezeichnet wird.
-            \item  Für jede Familie $(V_i)$ von Elementen aus $O(E)$ und für ein beliebiges $W\in O(E)$ gilt $W\cap\bigcup_i V_i=\bigcup_i (W\cap V_i)$
+            \item Es existiert ein kleinstes Element $\bot_E$ und ein größtes Element $\top_E$.
+            \item Jede Familie $(V_i)$ von Elementen aus $O(E)$ besitzt ein Supremum (genannt Vereinigung), welche mit $\bigvee_i V_i$ bezeichnet wird.
+            \item Jede Familie $(V_i)$ von Elementen aus $O(E)$ besitzt ein Infimum (genannt Schnitt), welches mti $\bigwedge_i V_i$ bezeichnet wird.
+            \item Für jede Familie $(V_i)$ von Elementen aus $O(E)$ und für ein beliebiges $W\in O(E)$ gilt $W\wedge \bigvee_i V_i = \bigvee_i (W\wedge V_i)$.
         \end{itemize}
-
     \end{definition}
-    Wir nennen $O(E)$ auch oft die Menge an offenen Elementen von E.
     \begin{example}
-        Für einen Topologischen Raum $E$ bezeichne mit $O(E)$ die Menge der offenen Teilmengen von $E$. Die Ordnungsrelation ist dabei durch Inklusion gegeben.
+        Die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ bilden mit der Inklusion als Ordnungsrelation ein
+        Lokal. (TODO Mathlib link)
     \end{example}
     Um nun mit diesen Lokalen arbeiten zu können, müssen wir definieren, was wir unter einem Morphismus zwischen zwei Lokale verstehen.
     \begin{definition}
         Seien $E$ und $F$ Lokale. Ein Morphismus $f:E\to F$ wird durch eine monotone Abbildung $f^*:O(F)\to O(E)$ erzeugt, für die gilt:
         \begin{itemize}
-            \item $f^*(0_F)=0_E$ und $f^*(1_F)=1_E$
+            \item $f^*(\bot_F)=\bot_E$ und $f^*(\top_F)=\top_E$
             \item $f^*$ kommutiert mit endlichen Schnitten und beliebigen Vereinigungen
         \end{itemize}
     \end{definition}
@@ -341,7 +342,7 @@
         Man nennt einen Morphismus von Lokalen, der diese Eigenschaften erfüllt, Einbettung.
     \end{lemma}
     Eine weitere zentrale Abbildung ist der Nukleus, welchen wir im Folgenden definieren:
-
+    Eine zentrale Abbildung in der Theorie der Lokale ist der Nukleus, den wir im Folgenden definieren:
     \begin{definition}
         \label{def:nukleus}
         Ein Nukleus \autocite[S. 485]{mac_lane_sheaves_1994} ist eine Abbildung $e:O(E)\to O(E)$ mit den folgenden drei Eigenschaften:
@@ -352,31 +353,41 @@
         \end{itemize}
     \end{definition}
 
-
-    \begin{lemma}
-        \label{lemma1}
-        \autocite[S. 484]{mac_lane_sheaves_1994} Sei $E$ ein Lokal und $e:O(E)\to O(E)$ eine monotone Abbildung. Die folgenden Aussagen sind äquivalent:
-        \begin{itemize}
-            \item Es existiert ein Lokal $X$ und ein Morphismus $f:X\to E$ mit $e = f_∗f^∗$.
-            \item $e$ ist idempotent mit einer Einbettung
-            \item $e$ ist idempotent für alle $U,V\in O(E), e(U)\supset U$ und $e(U\cap V)=e(U)\cap e(V)$ (Also $e$ ist ein Nukleus)
-        \end{itemize}
-    \end{lemma}
-
-    \begin{lemma}
-        Sei  $i:X\to E$ eine Einbettung und $f:Y\to E$ ein Morphismus von Lokalen. Damit sich  $f$ durch $i$ faktorisieren lässt, ist es notwendig und hinreichend, dass für jedes $V\in O(E)$ gilt: $i^* i_* (V)\subset f^* f_* (V)$.
-    \end{lemma}
-
     \subsection{Unterlokale}
-    Ein wesentliches Konzept, das wir in unserer Arbeit benötigen, ist das Konzept der Unterlokale, weshalb wir diese nun im Folgenden näher betrachten wollen.
+    Ein wesentliches Konzept der klassischen Topologie sind die Teilengen bzw. Unterräume eines
+    Topologischen Raumes, die durch Inklusion geordnet sind. Die Entsprechung in der Theorie der Lokale sind die
+    Unterlokale.
+    Es gibt mehrere Möglichkeiten, Unterlokale zu definieren (TODO nlab Quelle), wir beschäftigen uns hier mit der
+    Definition durch Nuklei:
     \begin{definition}
         Ein Unterlokal $X$ eines Lokals $E$ wird durch eine Abbildung $e_X:O(E)\to O(E)$ definiert, die die Eigenschaften eines Nukleus erfüllt (Definition \ref{def:nukleus},Lemma \ref{lemma1}). Folglich ist das von $X$ erzeugte Lokal gegeben durch $O(X)=Im(e_X)=\{V\in O(E) | e_X(V)=V\}$ und die zugehörige Einbettung $i_X:X\to E$ ist durch $i^\ast_X(V)=e_X(V)$, $(i_X)_\ast(U)=U$ definiert. \autocite{noauthor_sublocale_nodate}
     \end{definition}
 
+    Die Interaktionen zwischen Unterräumen eines Klassischen Topologischen Raumes (also Inklusion, Vereinigung und
+    Schnitt) sind punktweise definiert. Da die Unterlokalen die Unterräume eines klassischen Topologischen Raumes
+    in der (Punktfreien) Theorie der Lokalen verallgemeinern, werden diese Interaktionen auf andere Weise definiert.
+    Zunächst werden wir zeigen, dass die Nuklei auf einer Lokale einen Frame \autocite{noauthor_frame_nodate} bilden. Da die
+    Nuklei direkt mit den Unterlokalen zusammenhängen kann direkt auf die Interaktionen der Unterlokalen geschlossen
+    werden.
 
-    Um mit diesen Unterlokalen arbeiten zu können, definieren wir nun die Inklusion, Vereinigung und den Schnitt von Unterlokalen. Später werden wir zeigen, dass die Menge aller Nuklei $N(A)$ auf einem Lokal $A$ einen Frame \autocite{noauthor_frame_nodate} bilden. \\
+    \subsubsection{Nuklei als Frame}
 
-% Ich finde des mit der Dualen Ordnung irgendwie elegant, ist halt die Frage wie viel uns das bringt...
+    TODO Inklusion Nuklei
+
+    TODO Top Bot Nuklei
+
+    TODO Schnitt Nuklei
+
+    TODO Vereinigung Nuklei
+
+    (evtl Himp für Frame)
+
+
+    \subsubsection{Schnitt und Vereinigung von Unterlokalen}
+
+
+
+
     Mit der Ordnungsrelation $X \le Y \iff X h \le Y h$ für alle $h$, und alle Nuklei $X$ und $Y$ bilden die Nuklei eine Halbordnung. Die Ordnung der Unterlokale ist Dual zu dieser Ordnung definiert:
 
 % TODO quelle auch von berühmten leuten ((StoneSpaces S. grob 50, 2.5)) da gibs bessere
