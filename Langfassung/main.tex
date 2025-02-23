@@ -649,47 +649,6 @@
 
     \noindent Insbesondere gilt nun die strikte Additivität des Maßes mit Caratheodory-Erweiterung für alle Unterlokale eines gegebenen Lokals. Da jede Teilmenge einer gegebenen Menge ein Unterlokal induziert, lässt sich die strikte Additivität auf diese Teilmengen übertragen. Entsprechend können wir festhalten, dass die Caratheodory-Erweiterung nun bessere Eigenschaften hat, die es zusammen mit der besseren Definition des Schnitts möglich machen, den Banach-Tarski-Mengen eine sinnvolle Größe zuzuordnen und dem \glqq Banach-Tarski-Paradoxon\grqq~seinen paradoxen Charakter entziehen, indem ein Duplizieren einer Kugel im Sinne des Satzes von Banach-Tarski nicht mehr möglich ist.
 
-
-    \section{Einbettung in Topostheorie (ein Ausblick)}
-    Die von Alexander Grothendieck in den 1960er Jahren aufgestellte Topostheorie ist ein Teilgebiet der Mathematik, das Kategorien, Logik und Geometrie verbindet.
-
-    Ein Topos ist dabei durch seine Struktur definiert: Er besitzt exponentielle Objekte (Verallgemeinerung von Funktionsräumen), alle endlichen Limiten und Kolimiten, sowie einen Subobjektklassifikator, der logische Aussagen beschreibt. Diese Eigenschaften ermöglichen die Entwicklung einer internen Logik, die klassisch oder intuitionistisch sein kann. Beispiele umfassen die Kategorie der Mengen und die Kategorien von Garben. Wie wir im Folgenden sehen werden, können wir Lokale kategorientechnisch über Topoi, genauer gesagt Grothendieck-Topoi beschreiben.
-
-    \begin{proposition}
-        Für einen Grothendieck-Topos $\mathcal{E}$ sind die folgenden Aussagen äquivalent:
-        \begin{itemize}
-            \item $ \mathcal{E} $ ist lokal, d. h. $ \mathcal{E} $ ist äquivalent zur Garbenkategorie $\text{Sh}(X)$ auf einer Lokale $X$
-            \item $ \mathcal{E} $ wird durch die Unterobjekte seines terminalen Objekts $ 1 $ erzeugt.
-        \end{itemize}
-    \end{proposition}
-
-    \begin{proposition}
-        Jede Einbettung $I: \mathcal{E} \to \text{Sh}(X) $ eines Topos in einen lokalen Topos erzwingt, dass der Ausgangstopos $ \mathcal{E} $ ebenfalls lokal ist.
-    \end{proposition}
-
-    Damit besitzen lokale Topoi eine intrinsische Struktur, die nicht verloren geht, wenn andere Topoi in sie eingebettet werden.
-    \begin{proposition}
-        Sei $ I: X \to Y $ eine Abbildung von Lokalen und $ I: \text{Sh}(X) \to \text{Sh}(Y) $ der entsprechende geometrische Morphismus.
-        \begin{itemize}
-
-            \item Die Abbildung $ I: X \to Y $ ist genau dann eine Surjektion von Lokalen, wenn $ I: \text{Sh}(X) \to \text{Sh}(Y) $ eine Surjektion von Topoi ist.
-
-            \item Die Abbildung $ I: X \to Y$ ist genau dann eine Einbettung von Lokalen, wenn $ I: \text{Sh}(X) \to \text{Sh}(Y) $ eine Einbettung von Topoi ist.
-        \end{itemize}
-    \end{proposition}
-
-    Aus diesen Äquivalenzen lässt sich folgern, dass die kategorialen Eigenschaften geometrischer Morphismen eine direkte Entsprechung in der lokalen Struktur der ursprünglichen Lokale haben.
-
-    \begin{proposition}
-        \label{prop24}
-        Für jedes Lokal $ X $ entsprechen die Unterlokale von $ X $ genau den Untertopoi von $ \text{Sh}(X) $; oder äquivalent dazu entsprechen die Kerne (Nuklei) auf dem Frame $ \mathcal{O}(X) $ genau den Lawvere-Tierney-Topologien im Topos $ \text{Sh}(X) $.
-    \end{proposition}
-
-    Hiermit wird deutlich, dass jede Teilstruktur eines Lokals, wie sie durch Unterlokale beschrieben wird, auf die Teilstrukturen des zugehörigen Topos übertragen werden kann. Dasselbe gilt für die Nuklei auf $\mathcal{O}(X)$, welche den durch Lawvere-Tierney-Topologien beschriebenen kategorialen Eigenschaften entsprechen.
-
-    Anhand dessen wird deutlich, dass wir die bisherige Arbeit über Lokale analog auf Topoi übertragen können. Diese formelle Übertragung der Maßtheorie über Lokale in die allgemeinere Welt der Topoi mithilfe von Lean ist ebenfalls Ziel dieser Jugend-forscht-Arbeit. Hierfür müssen wir aber zunächst die Grundgedanken der Maßtheorie über Lokale in Lean formalisieren, weshalb wir uns zuerst auf das Formalisieren des Manuskripts von Olivier Leroy konzentrieren.
-
-
     \section{Zusammenfassung der Ergebnisse und kritische Betrachtung}
     Ein wichtiger Teil unseres Projektes ist es, die Resultate nicht nur zu verstehen und zu Papier zu bringen, sondern parallel auch in Lean zu formalisieren. Das hat einerseits natürlich den Vorteil, dass Beweise mit Lean automatisch sicher verifiziert werden können. Ein weiterer wichtiger Aspekt, bei dem Lean großes Potenzial hat, ist die Zusammenarbeit zwischen Mathematikern. Hier spielt natürlich auch wieder die Verifizierung eine Rolle, da so vor allem in großen Teams nicht jedes Mitglied alle Beweise verstehen und überprüfen muss. Für unser Projekt war es allerdings von deutlich größerer Bedeutung, dass Lean dem Nutzer die Möglichkeit gibt, Definitionen mit einer formalen Sprache standardisiert zu verfassen und in der Mathlib \autocite{noauthor_leanprover-communitymathlib4_2025}
     zu veröffentlichen. Bei dem Aufnahmeprozess in die Mathlib werden Definitionen zudem ausführlich mit anderen Mitwirkenden der Mathlib diskutiert, was die Möglichkeit für wertvolles Feedback gibt. Da eine sogenannte \glqq Pull Request\grqq{} \autocite{noauthor_how_nodate}
