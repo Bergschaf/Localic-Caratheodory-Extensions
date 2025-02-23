@@ -234,9 +234,14 @@
 (Leroy theorem 3.3.1)
     \label{prop:strictly_additive}
     \uses{prop:commutes_with_inf,lem:regularity_of_sublocals}
+    \leanok
+    \lean{Measure.caratheodory.strictly_additive}
     For any measure on a local $X$, the caratheodory extension is
     strictly additive i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$
 \end{proposition}
+\begin{proof}
+    \leanok
+\end{proof}
 
 
 \begin{proposition}[reductive]
@@ -305,7 +310,7 @@
 
 \begin{definition}[Good enough topological space]
     \label{def:good_enough_topological_space}
-    blackbox to mathlib???? )
+    blackbox to mathlib???? 
 \end{definition}
 
 \begin{lemma}[Subset to sublocal Part 1]
@@ -331,7 +336,7 @@
         = [U] \cap [X]\\
         F = E \setminus U\\
         [F] = [E] \\ [U]\\
-        X \cap F] = [X] \cap [F]\\
+        [X \cap F] = [X] \cap [F]\\
     \end{gather*}
 
 \end{lemma}
