@@ -449,7 +449,7 @@
     werden.
 
     \subsubsection{Nuklei als Frame}
-    Die Nuklei wurden nicht nur bei Leroy verwendet, sie
+    Die Nuklei wurden nicht nur bei Leroy verwendet, daher haben wir uns bei den Folgenden Definitionen auch an Johnstone \autocite{johnstone_stone_1982} und MacLane \autocite{mac_lane_sheaves_1994} orientiert. \\
     Die Ordnungsrelation der Nuklei lässt sich punktweise definieren:
     \begin{definition}
         Für zwei Nuklei $n$ und $m$ gilt $n \le m$, genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$ gilt.
@@ -463,25 +463,29 @@
     $\top_E$ ist das größte Element von $E$ und existiert, da $E$ ein Frame bildet.
     Man sieht direkt, dass der größte Nukleus punktweise größer als alle anderen Nuklei ist.
     Der kleinste Nukleus ist punktweise kleiner als alle anderen Nuklei, da alle Nuklei $x$ die Bedingung $a\le x(a)$ erfüllen müssen. \\
-    Bei beliebigen Infima von Nuklei können wir uns an der Definition von Peter Johnstone in seinem Buch \glqq Stone spaces \grqq (TODO Quelle) orientieren:
+    Bei beliebigen Infima von Nuklei können wir uns an der Definition von Peter Johnstone in seinem Buch \glqq Stone spaces \grqq \autocite{johnstone_stone_1982} orientieren:
     \begin{definition}
         Das Infimum einer Menge $S$ an Nuklei auf $E$ bildet einen Nukleus mit folgender Funktion:
-        \[(\bigwedge_n S)(a) = \bigwedge_E \{j(a) \| j \in S\}\]
+        \[(\bigwedge_n S)(a) = \bigwedge_E \{j(a) \mid j \in S\}\]
         für alle $a \in O(E)$.
     \end{definition}
     Wir haben in Lean verifiziert, dass diese Definition tatsächlich ein Nukleus ist und die Bedingungen eines Infimums erfüllt. \mathlibok{Nucleus.instInfSet} \\
     Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben (TODO Quelle), daher verwenden wir das Infimum aller oberen Schranken:
     \begin{definition}
         Das Supremum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Infimum der oberen Schranken von $S$:
-        \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \| x \le w\})(a)\]
+        \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \mid x \le w\})(a)\]
         für alle $x \in S$.
     \end{definition}
     Diese Defintion ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
     Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden \mathlibok{Nucleus.instCompleteLattice}.
     Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra \mathlibok{HeytingAlgebra} bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet \mathlibok{Order.Frame}. \\
-
-    TODO Himp zuig
-
+    \begin{definition}
+        Die Heyting Implikation der Nuklei $j$ und $k$ wird durch folgenden Nukleus beschrieben:
+        \[(j \Rightarrow k)(a) = \bigwedge \{(j(b) \Rightarrow k(b)) \mid a \le b\})\]
+        Für alle $a, b \in E$.
+    \end{definition}
+    Wir haben in Lean verifiziert, dass diese Definition die Eigenschaften eines Nukleus \mathlibok{Nucleus.instHImp} und die der Heyting Implikation erfüllt, was die Nuklei zu einer Heyting Algebra \mathlibok{Nucleus.instHeytingAlgebra} und damit zu einem Frame macht. \\
+    Die Nuklei und deren Frame Struktur haben wir bereits zur Mathlib beigetragen.
     \subsubsection{Schnitt und Vereinigung von Unterlokalen}
     Wir bezeichenen den Nukleus, der mit der Unterlokalen $X$ zusammenhängt $n_X$.
     \begin{definition}
@@ -690,7 +694,7 @@
     Wir konnten zeigen, dass das Axiom der Distributivität, das vorher in der Definition enthalten war, nicht benötigt wurde, da es allein daraus folgt, dass ein vollständiger Verband in Kombination mit einer Heyting Algebra vorliegt. \\
     Neben der Arbeit für die Mathlib haben wir parallel in unserem eigenen Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025} große Teile der elementaren Lokalen-Theorie formalisiert. Dazu gehört die Definition eines Nukleus, die Ordnungsrelation des Nukleus, beliebige Suprema und Infima und schließlich die Verbandsstruktur der Nuklei. Außerdem haben wir die, zu den Nuklei dualen, Unterlokalen mit den entsprechenden Operationen formalisiert. Auch die offenen Unterlokalen und deren Komplemente, die abgeschlossenen Unterlokalen, haben wir bereits in Lean fertiggestellt. Es ist uns außerdem gelungen bereits erste Definitionen und Lemmata der Maßtheorie auf Lokalen zu formalisieren. Dazu gehört einerseits die Definition eines Maßes auf den offenen Unterlokalen, aber auch schon erste Eigenschaften der Caratheodory Erweiterung dieses Maßes. \\
 
-    Um die Arbeit mit Lean zu veranschaulichen, werden wir nun beispielhaft die Definition eines Nukleus betrachten. Unter folgendem Link man den Lean-Code auf Live-Lean, einer online Lean Plattform, nachvollziehen: \href{https://live.lean-lang.org/#codez=JYWwDg9gTgLgBAWQIYwBYBtgCMBQpKyIobYB0A8lACYCmUpCEAdhDMzaQEJIDOwAxjgD0AWhE4AKqhpwJATzAyIAMzgA5AK790NYHGZwkcAGJQkIDjhFCcPGFC0wNUGZu00NPOAAoAGnAAuWQUaACoASjgAbQBlGhBgdBQYARoASSZVXwBdOAB3aRccODhREVlpOGUNJn4UgxU4NBkmLR1PUmtipohjGsC4f0AkwkHusrgAQXU2jy9gOdpwVhomGE6bEuBFyBgV+G8ADwHfSKC2PqYfc/6DyMATIh6LuAOxsUnp9084ee/al15gEwAObrbqA/j/PjAnxHIInAZHB7XS4vErjKZudpeMAuHh0ABuNDmmVASFBJRxRIJRIA+oDVIc4HJjqdHv1GYBkoiZkQAvGyUXAucimThRTh8UgoMAkFgdHAAN7+ILyRShAC+0UotHopnMMhywjEOAAooDpgBrLFwc1IJiXJDoLy6JgyC7m+qXLA0exIfioXbwPJ0WhMUhWGyAuy2/gyIIXAAywHNMm8mNmg0i/n8BToNG6/Agsb5aY6yPzhbpTAAVjQ6sBCQByKpwIFwVCBPlYZn8XhEqoAbjgPbxXiBg4LwKghvEGJmXx+IGYbBd4ZwOhAICMJZ4pEXLGXKcuQW3GYGjH37DgR87cm6UDy0XPrHY2TBqygEEMcCwbe6qCQhJtgAjAMRhcj+fJGAEfL0jSNAAI40joyhrOAUC/iU/6AagABMHZXqQlJ4lAhI8JWqhGLgJT3tEqBAbkKBtjh3Q0AcvrwMhMBwYh9K7mATFAA}{livelean}. Während eines Beweises wird auf der rechten Seite der aktuelle Stand angezeigt.
+    Um die Arbeit mit Lean zu veranschaulichen, werden wir nun beispielhaft die Definition eines Nukleus betrachten. In der Mathlib haben wir den Nucleus als Erweiterung eines \lean{InfHom} definiert, diese Definition ist etwas anschaulicher, ändert aber nichts an der Bedeutung. Unter folgendem Link man den Lean-Code auf Live-Lean, einer online Lean Plattform, nachvollziehen: \href{https://live.lean-lang.org/#codez=JYWwDg9gTgLgBAWQIYwBYBtgCMBQpKyIobYB0A8lACYCmUpCEAdhDMzaQEJIDOwAxjgD0AWhE4AKqhpwJATzAyIAMzgA5AK790NYHGZwkcAGJQkIDjhFCcPGFC0wNUGZu00NPOAAoAGnAAuWQUaACoASjgAbQBlGhBgdBQYARoASSZVXwBdOAB3aRccODhREVlpOGUNJn4UgxU4NBkmLR1PUmtipohjGsC4f0AkwkHusrgAQXU2jy9gOdpwVhomGE6bEuBFyBgV+G8ADwHfSKC2PqYfc/6DyMATIh6LuAOxsUnp9084ee/al15gEwAObrbqA/j/PjAnxHIInAZHB7XS4vErjKZudpeMAuHh0ABuNDmmVASFBJRxRIJRIA+oDVIc4HJjqdHv1GYBkoiZkQAvGyUXAucimThRTh8UgoMAkFgdHAAN7+ILyRShAC+0UotHopnMMhywjEOAAooDpgBrLFwc1IJiXJDoLy6JgyC7m+qXLA0exIfioXbwPJ0WhMUhWGyAuy2/gyIIXAAywHNMm8mNmg0i/n8BToNG6/Agsb5aY6yPzhbpTAAVjQ6sBCQByKpwIFwVCBPlYZn8XhEqoAbjgPbxXiBg4LwKghvEGJmXx+IGYbBd4ZwOhAICMJZ4pEXLGXKcuQW3GYGjH37DgR87cm6UDy0XPrHY2TBqygEEMcCwbe6qCQhJtgAjAMRhcj+fJGAEfL0jSNAAI40joyhrOAUC/iU/6AagABMHZXqQlJ4lAhI8JWqhGLgJT3tEqBAbkKBtjh3Q0AcvrwMhMBwYh9K7mATFAA}{livelean}. Während eines Beweises wird auf der rechten Seite der aktuelle Stand angezeigt.
     \begin{leancode}
         /--
 The Type of Nuclei on a Frame.
