@@ -306,30 +306,20 @@
     %\noindent Das wohl bekannteste Beispiel eines Maßes ist das Lebesgue-Maß \autocite{noauthor_lebesgue-mas_2023}. Es ist das Maß im euklidischen Raum, welches geometrischen Objekten ihre Länge, ihren Flächeninhalt bzw. ihr Volumen zuordnet. Die Konstruktion des Lebesgue-Maß macht es uns bspw. möglich, die Länge von offenen Intervallen zu messen. Da man nun einen Längenbegriff für offene Intervalle hat, ist es naheliegend sich zu fragen, wie es denn mit der Länge von abgeschlossenen Intervallen und anderen beliebigen Mengen aussieht.
     Wie man erkennen kann, ist ein Maß aber auf ein bestimmtes Mengensystem begrenzt, d. h. Objekte, die nicht in diesem System enthalten sind, kann keine Größe zugeordnet werden. Hat man nun Objekte, die nicht im System vorhanden sind, vorliegen, welche eine ähnliche Struktur wie die Elemente des Systems haben, auf dem unser Maß operiert, so ist es naheliegend sich zu fragen, ob man das vorliegende Maß nicht sinnvoll auf diese Objekte erweitern könnte. Im Beispiel unseres Maßes, welches jedem Rechteck seinen Flächeninhalt zuordnet, entspräche ein solches zu den Rechtecken ähnliches Objekt zum Beispiel die Fläche des Landkreises Heilbronn. Um nun der Fläche des Landkreises eine sinnvolle Größe zuzuordnen, können wir diesen zunächst einmal mit Rechtecken überdecken. Für die Überdeckung verwenden wir nun immer kleinere Rechtecke und können so den Flächeninhalt des Landkreises approximieren, indem wir den Grenzwert der Summe der Flächeninhalte dieser kleinen Rechtecke betrachten.  
    % Um diesen wiederum eine sinnvolle Größe zuordnen zu können, betrachten wir die Fortsetzung des Lebesgue-Maßes auf den $\mathbb{R}^n$ mithilfe der Caratheodory-Erweiterung zu einem äußeren Maß \autocite{noauthor_auseres_2023} auf $\mathcal{P}(\mathbb{R}^n)$.\\
-   Diese Approximation von einer zunächst nicht-messbaren Menge mithilfe von messbaren Mengen und einer anschließenden Grenzwertbetrachtung entspricht allgemein genau dem Prinzip der Caratheodory-Erweiterung eines Maßes. 
+   Diese Approximation von einer zunächst nicht-messbaren Menge mithilfe von messbaren Mengen und einer anschließenden Grenzwertbetrachtung entspricht allgemein genau dem Prinzip der Caratheodory-Erweiterung eines Maßes<<<<<<<<<<<. 
    \noindent Unter einem äußeren Maß versteht man dabei allgemein Folgendes:
 
     \begin{definition}
-        Sei $X$ eine Menge und $\nu:\mathcal{P}(X)\to [0;\infty]$ eine Funktion. $\nu$ heißt äußeres Maß, wenn folgende Bedingungen erfüllt sind:
-        \begin{itemize}
-            \item $\nu(\emptyset) = 0$
-
-            \item $A \subseteq B \implies \nu(A) \leq \nu(B)~ \text{für alle}~A,B\in\mathcal{P}(X) \quad \text{(Monotonie)}$
-
-            \item $\nu\left(\bigcup_{i=1}^\infty A_i\right) \leq \sum_{i=1}^\infty \nu(A_i) \quad (\sigma\text{-Subadditivität)}$
-
-        \end{itemize}
+       Sei $\mu$ ein Maß auf einem Mengensystem $\mathcal{M}$. Die Caratheodory-Erweiterung des Maßes ist definiert als 
+       \[\mu*(Y)=\inf\{\sum_{i=1}^\infty \mu(A_i)~|~A_i\in\mathcal{M},~Y\subset\bigcup_{i=1}^\infty A_i\}\]
     \end{definition}
-    \noindent Da wir es nun mit einem äußeren Maß statt einem Maß auf der Potenzmenge von $\mathbb{R}^n$ zu tun haben,
-    gelten Eigenschaften wie bspw. die strikte Additivität ($\mu (A\cup B)=\mu (A)+\mu(B)-\mu(A\cap B)$), welche man bei
-    Maßen hat, allgemein nicht mehr. Die Folgen spiegeln sich unter anderem im Banach-Tarski-Paradoxon wider; eine Kugel
-    kann ausgehend von einer komplexen Zerlegung verdoppelt werden \autocite{noauthor_banach-tarski-paradoxon_2024}. Um solche Kuriositäten zu umgehen, schränkt
-    man sich üblicherweise auch beim äußeren Maß auf sog. messbare Mengen bzgl. dieses äußeren Maßes ein. Eine Menge $A$
-    heißt messbar bzgl. einem äußeren Maß $\mu^*$, wenn sie die Caratheodory Bedingung $\mu^*(E)=\mu^*(A\cap E)+\mu^*(A^c\cap E)$ ($E\subset X$ beliebig) erfüllt. Unserer Meinung nach ist diese Einschränkung jedoch nicht besonders elegant, da wir erneut Mengen haben, denen wir keine sinnvolle Größe zuordnen können. Zu diesen Mengen gehören insbesondere auch die Banach-Tarski-Mengen. Statt die Fortsetzung eines Maßes über die klassische Mengenlehre zu betrachten und sich dann auf messbare Mengen zu beschränken, wollen wir das Problem anders lösen. Die zugrundeliegende Idee ist dabei, das äußere Maß auf der Potenzmenge der zugrundeliegenden Menge zu einem Maß zu machen. Entsprechend benötigen wir eine bessere Definition von Teilmengen, Schnitten, Vereinigungen etc.. Eine Lösung für unser Ziel bietet dabei die Theorie der Lokale.
 
-
+    Jetzt haben wir zwar einen sinnvollen Größenbegriff für eine größere Ansammlung an Mengen, jedoch ist zu vermerken, dass bei der Caratheodory-Erweiterung Eigenschaften wie bspw. die allgemeine strikte Additivität verloren gehen. Dieser Verlust der strikten Additivität spiegelt sich bspw. im Banach-Tarski-Paradoxon wider. 
+    Dass man somit eine Kugel verdoppeln kann, hat uns ziemlich gestört und wir haben uns gefragt, ob es nicht eine Möglichkeit gibt, dass eine Caratheodory-Erweiterung eines Maßes die strikte Additivität des Ausgangsmaßes übernimmt.
+    Dabei sind wir auf die Theorie der Lokale gestoßen.
+ 
     \section{Die Theorie der Lokale und erste Ergebnisse unserer Arbeit}
-    \noindent Unsere Arbeit basiert auf dem Paper (\glqq Théorie de la mesure dans les lieux réguliers\grqq~(1995) \autocite{leroy_theorie_2013}), das behauptet, dass die caratheodory-Erweiterung eines Maßen auf die Unterlokalen eines Lokals ein Maß mit guten Eigenschaften (z.B: strikte Additivität) liefert und damit das Banach-Tarski-Paradoxon umgeht.\\
+    \noindent Unsere Arbeit basiert auf dem Paper (\glqq Théorie de la mesure dans les lieux réguliers\grqq~(1995) \autocite{leroy_theorie_2013}), das behauptet, dass die Caratheodory-Erweiterung eines Maßen auf die Unterlokalen eines Lokals ein Maß mit guten Eigenschaften (z.B: strikte Additivität) liefert und damit das Banach-Tarski-Paradoxon umgeht.\\
     \noindent Das Problem an diesem Paper ist allerdings, dass es lediglich aus den Notitzen von Olivier Leroy besteht,
     die nach seinem Tod im Jahr 1996 digitalisiert wurden.
     Daher wurde das Paper auch nie in einem mathematischen Journal veröffentlicht und damit auch nie peer-reviewed (also durch andere Mathematiker kontrolliert).
@@ -396,11 +386,12 @@
             \item Für jede Familie $(V_i)$ von Elementen aus $O(E)$ und für ein beliebiges $W\in O(E)$ gilt $W\wedge \bigvee_i V_i = \bigvee_i (W\wedge V_i)$.
         \end{itemize}
     \end{definition}
-    \begin{example}
-        Die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ bilden mit der Inklusion als Ordnungsrelation ein
-        Lokal \mathlibok{TopologicalSpace.Opens.instFrame}.
-    \end{example}
-    Um nun mit diesen Lokalen arbeiten zu können, müssen wir definieren, was wir unter einem Morphismus zwischen zwei Lokale verstehen.
+    Man kann daher erkennen, dass die Definition einer Lokale fast der Definition eines Topologischen Raums entspricht. Der einzige Unterschied besteht dabei darin, dass wir nun nicht mehr fordern, dass das Mengensystem $O(E)$ Teilmenge der Potenzmenge $\mathcal{P}(X)$ einer Ausgangsmenge $X$ ist.
+    %\begin{example}
+        %Die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ bilden mit der Inklusion als Ordnungsrelation ein
+        %Lokal \mathlibok{TopologicalSpace.Opens.instFrame}.
+    %\end{example}
+    Um irgendeine Operation auf Lokale durchführen zu können, müssen wir zunächst einmal definieren, was wir unter einem Morphismus zwischen zwei Lokale verstehen.
     \begin{definition}
         Seien $E$ und $F$ Lokale. Ein Morphismus $f:E\to F$ wird durch eine monotone Abbildung $f^*:O(F)\to O(E)$ erzeugt, für die gilt:
         \begin{itemize}
