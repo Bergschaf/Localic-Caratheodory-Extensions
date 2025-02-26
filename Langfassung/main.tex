@@ -373,7 +373,7 @@
     \leanok{Measure} bzw. \mathlibok{Nucleus}.
     Die Links zu unserer Lean-Dokumentation bzw. zu der Mathlib-Dokumentation sind im Quellenverzeichniss enthalten.
 
-    \subsection{Elementare Definitionen und Lemmata der Theorie der Lokale}
+    \subsection{Elementare Definitionen und Lemmata der Theorie der Lokale}\label{Einführung Lokale}
     Nun wollen wir aber die benötigte Theorie der Lokale besser verstehen. Allgemein besteht ein Lokal $E$ aus einer
     Teilgeordneten Menge $O(E)$ (mit einer Ordnungsrelation $\le$), die die Eigenschaften eines Frames (bzw. einer
     vollständigen Heyting Algebra) erfüllt \mathlibok{Order.Frame}.
@@ -723,6 +723,9 @@ lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
     Wir müssen zeigen, dass $n(a) \le n(b)$, wenn $a \le b$, um den Beweis der Monotonie abzuschließen. Daher wissen wir nun in unserem Lean-Beweis, dass $a \le b$ und müssen zeigen, dass $n(a) \le n(b)$. Zuerst zeigen wir  $a \cap b = a$ in \lean{h2}, mit einem Mathlib Lemma, das besagt, dass $a \cap b = a$, wenn $a \le b$. Nun betrachten wir mit \lean{h2} die dritte Eigenschaft von Nuklei, nämlich, dass Infima erhalten werden: $n(a \cap b) = n(a) \cap n(b)$. In dieser Gleichung ersetzen wir mithilfe von \lean{h1}, $a \cap b$ durch $a$. Zum Schluss verwenden wir die andere Richtung des vorherigen Mathlib Lemmas und zeigen, dass $n(a) \le n(b)$, da $n(a) = n(a) \cap n(b)$. \\
     Dies war nur ein sehr einfaches Beispiel für einen Lean-Beweis, unsere, teilweise deutlich komplexeren Beweise, befinden sich in unserem Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025}.
 
+\subsection{Der Zusammenhang von Lokale und Topologischen Räumen}
+Wie wir bereits in Kapitel \ref{Einführung Lokale} festgestellt haben, sind sich Topologische Räume und Lokale sehr ähnlich. Schaut man genauer hin, so kann man erkennen, dass Lokale eine Verallgemeinerung von Topologischen Räumen darstellen. Insbesondere induzieren Unterräume hinreichend guter Räume wie etwa Hausdorff Räume oder kompakte Räume, eine Unterlokale. Man kann zeigen, dass dabei die Ordnung der Unterräume in den induzierten Unterlokalen erhalten bleibt. Daraus resultiert, dass ein Maß auf einem hinreichend guten Topologischen Raum $X$ auch ein Maß auf der entsprechenden Lokale induziert, wobei die klassische Caratheodory-Erweiterung auf $\mathcal{P}(X)$ der Einschränkung der Caratheodory-Erweiterung des Maßes auf der induzierten Lokale entspricht.
+Dieser Zusammenhang zwischen Topologischen Räumen und Lokale ist aber nur nebensächlich, weshalb wir uns zunächst auf die Maßeigenschaften der Maße über Lokale konzentrieren. Entsprechend sind diese Zusammenhänge auch noch nicht in Lean formalisiert worden, weshalb vor allem der linke Teil unseres Blueprints verhältnismäßig weiß ist, d. h. wir diese Lemmata und Definitionen noch nicht in Lean formalisiert haben.
 
     \section{Ausblick}
     Zunächst einmal ist es unser Ziel, die Formalisierung des Manuskripts von Olivier Leroy in Lean fertigzustellen.
