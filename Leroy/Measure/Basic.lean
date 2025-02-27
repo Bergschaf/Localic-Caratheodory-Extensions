@@ -143,13 +143,29 @@ lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublo
       intro ε h_ε
       let ε_n (n : ℕ) : ℝ := ε / (2 ^ (n + 1))
       have h_ε_n (n : ℕ) : ε_n n > 0 := by sorry
+      have h_sum_1 : 0 < tsum ε_n := by sorry
       have h_sum : tsum ε_n < ε := by
         sorry
       let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon _ _ m (X_n n) ⟨(ε_n n), sorry⟩ (h_ε_n n))
       have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by sorry
       sorry
 
-    sorry
+    have h1 :  ∀ ε > 0, m.caratheodory (iSup X_n) - iSup (m.caratheodory ∘ X_n) ≤  ε := by
+      intro e h
+      exact tsub_le_iff_left.mpr (h0 e h)
+
+    have h2 :  m.caratheodory (iSup X_n) - iSup (m.caratheodory ∘ X_n) ≤ sInf {ε | ε > 0} := by
+      apply le_csInf
+      . use 42
+        simp
+      . exact fun b a => h1 b a
+    rw [sInf_epsilon_eq_zero'] at h2
+    apply_fun (. + iSup (m.caratheodory ∘ X_n)) at h2
+    dsimp at h2
+    rw [zero_add] at h2
+    apply le_trans' h2
+    exact le_tsub_add
+
   . apply ciSup_le
     intro n
     simp only [Function.comp_apply]
