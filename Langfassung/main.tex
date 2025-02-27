@@ -3,6 +3,7 @@
 % Language setting
 % Replace `english' with e.g. `spanish' to change the document language
 \usepackage[german]{babel}
+\usepackage{longtable}
 
 % Set page size and margins
 % Replace `letterpaper' with `a4paper' for UK/EU standard size
@@ -277,7 +278,7 @@
     \section{Motivation und Aufgabenstellung}
     \glqq Wir können eine Kugel allein durch Zerschneiden und anschließendem Drehen wieder zu zwei identischen Kopien der Ausgangskugel zusammenfügen.\grqq~Dass das mit der klassischen Mengenlehre gilt, folgt aus dem Satz von Banach-Tarski \autocite{noauthor_banach-tarski-paradoxon_2024}. Auch uns erschien diese Aussage anfänglich unglaublich, weshalb wir in unserem Jugend-forscht-Projekt des letzten Jahres den mathematischen Beweis des Banach-Tarski-Paradoxons näher beleuchteten. Indem wir den Beweis Stück für Stück durchdrangen, gingen wir automatisch den Weg einer klassischen Verifikation eines mathematischen Papers (siehe Abbildung \ref{Abb1}, linke Spalte). Da der Prozess der menschlichen Kontrolle aber durchaus fehleranfällig ist, stellten wir uns die Frage, ob man diese Fehlbarkeit nicht umgehen könnte. Dabei stießen wir auf den mathematischen Beweisassistenten Lean. Diese auf der gleichnamigen Programmiersprache Lean basierende Software erlaubt es uns, die entsprechenden mathematischen Objekte zu definieren, sowie deren Eigenschaften inkl. Beweis zu formalisieren. Ausgehend von der Typentheorie überprüft Lean die Standhaftigkeit des Beweises und markiert ggf. Fehler, was das Beweisen erleichtert. Dies bedeutet im Umkehrschluss aber auch, dass Lean den Anspruch einer absoluten mathematischen Korrektheit erheben kann (siehe Abbildung \ref{Abb1}, rechte Spalte). Die Lean Community, zu der wir nun seit einem Jahr gehören, hat bereits über die Hälfte des Grundstudiums der Mathematik, sowie einige sehr fortgeschrittene Konzepte in insgesamt über eine Million Zeilen Code digitalisiert.
 
-    
+
     \begin{wrapfigure}{R}{0.48\textwidth}
         \begin{center}
             \includegraphics[width=0.48\textwidth]{Formalisierung_Grafik.png}
@@ -286,8 +287,6 @@
         \label{Abb1}
     \end{wrapfigure}
     \noindent Bereits in Lean formalisierte mathematische Theoreme werden in einer allgemein zugänglichen Bibliothek, genannt Mathlib, gespeichert. Die Lean Community, zu der wir nun seit einem Jahr gehören, hat bereits über die Hälfte des Grundstudiums der Mathematik, sowie einige sehr fortgeschrittene Konzepte in insgesamt über eine Million Zeilen Code digitalisiert. Das ist auch der Grund, weshalb sich Mathematikerinnen und Mathematiker weltweit vernetzen, um weitere Sätze in Lean zu formalisieren. Hier erleben wir eine wunderbare und effektive Zusammenarbeit der Informatik und der Mathematik. \\
-
-
     \noindent Je länger wir uns jedoch mit dem Beweis des Satzes von Banach-Tarski beschäftigten, desto öfter kam die Frage auf, warum das Duplizieren einer Kugel allein durch Zerlegung der Ausgangskugel sowie anschließender Translationen und Zusammenfügen der einzelnen Teile in der Mathematik überhaupt erlaubt sein sollte, zumal dies der klassischen Physik widerspricht. Ein Ziel der Mathematik ist es, die Vorgänge um uns herum bestmöglich zu beschreiben und damit so gut wie es geht zu verstehen. Ein mathematisches Modell, das es uns erlaubt, in der Theorie Dinge zu tun, die in der Realität aber erwiesenermaßen nicht möglich sind, ist damit unvollständig. Da die Hauptaussage des Satzes von Banach-Tarski darin besteht, dass eine Kugel (insbesondere deren Volumen) verdoppelt werden kann, steht der Satz von Banach-Tarski im Gegensatz zum allgemein gültigen Erhaltungssatz in der Physik, nach dem das Gesamtvolumen nach dem Zerschneiden und Rotieren der Kugelteile zusammen wieder dem Volumen der Ausgangskugel entsprechen sollten. Da dies laut dem Satz von Banach-Tarski aber nicht der Fall ist, beschreibt das zugrundeliegende mathematische Modell des Satzes von Banach-Tarski die Realität nur unzureichend und es stellte sich uns die Frage, ob es nicht ein besseres mathematisches Modell gibt, welches genau solche Schlupflöcher nicht mehr zulässt. Um das aber sauber abgrenzen zu können, ist es essentiell, dass wir das mathematische Modell hinter dem Satz von Banach-Tarski, die klassische Maßtheorie, näher betrachten.
 
 
@@ -339,7 +338,6 @@
     Da die Notizen von Leroy zudem teilweise sehr vage formuliert sind, keine Quellenangaben enthalten und mit kleinen
     Fehlern behaftet sind, haben wir es uns zur Aufgabe gemacht, das Paper in Lean zu formalisieren und damit zu
     verifizieren.\\
-
     \noindent Dafür müssen wir zunächst aber etwas genauer auf die Theorie der Lokale, die eine spezielle Form der
     punktfreien Topologie darstellt, eingehen.
     Ein Lokal \autocite{noauthor_locale_nodate} verhält sich intuitiv wie ein topologischer Raum, der möglicherweise nicht genügend (oder sogar gar keine) Punkte besitzt.
@@ -431,14 +429,13 @@
     Eine zentrale Abbildung in der Theorie der Lokale ist der Nukleus, den wir im Folgenden definieren:
     \begin{definition}
         \label{def:nukleus}
-        Ein Nukleus \autocite[S. 485]{mac_lane_sheaves_1994} ist eine Abbildung $e:O(E)\to O(E)$ mit den folgenden drei Eigenschaften:
+        Ein Nukleus \autocite[S. 485]{mac_lane_sheaves_1994} ist eine Abbildung $e:O(E)\to O(E)$ mit den folgenden drei Eigenschaften \mathlibok{Nucleus}:
         \begin{itemize}
             \item $e$ ist idempotent, d. h. $e\circ e=e$
             \item $U\leq e(U)$ für alle $U\in O(E)$
             \item $e(U\cap V)=e(U)\cap e(V)$ für alle $U,V\in O(E)$
         \end{itemize}
     \end{definition}
-    \mathlibok{Nucleus}
 
     \subsection{Unterlokale}
     Ein wesentliches Konzept der klassischen Topologie sind die Teilengen bzw. Unterräume eines
@@ -461,7 +458,7 @@
     Die Nuklei wurden nicht nur bei Leroy verwendet, daher haben wir uns bei den Folgenden Definitionen auch an Johnstone \autocite{johnstone_stone_1982} und MacLane \autocite{mac_lane_sheaves_1994} orientiert. \\
     Die Ordnungsrelation der Nuklei lässt sich punktweise definieren:
     \begin{definition}
-        Für zwei Nuklei $n$ und $m$ gilt $n \le m$, genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$ gilt.
+        Für zwei Nuklei $n$ und $m$ gilt $n \le m$, genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$
     \end{definition}
     Die Nuklei bilden damit eine Halbordnung \mathlibok{Nucleus.instPartialOrder}. \\
     Zusätzlich dazu benötigt die Frame Struktur der Nuklei zwei besondere Nuklei; den größten und den kleisten Nukleus:
@@ -475,23 +472,21 @@
     Bei beliebigen Infima von Nuklei können wir uns an der Definition von Peter Johnstone in seinem Buch \glqq Stone spaces \grqq \autocite{johnstone_stone_1982} orientieren:
     \begin{definition}
         Das Infimum einer Menge $S$ an Nuklei auf $E$ bildet einen Nukleus mit folgender Funktion:
-        \[(\bigwedge_n S)(a) = \bigwedge_E \{j(a) \mid j \in S\}\]
-        für alle $a \in O(E)$.
+        \[(\bigwedge_n S)(a) = \bigwedge_E \{j(a) \mid j \in S\} \text{~~für alle $a \in O(E)$.}\]
     \end{definition}
     Wir haben in Lean verifiziert, dass diese Definition tatsächlich ein Nukleus ist und die Bedingungen eines Infimums erfüllt. \mathlibok{Nucleus.instInfSet} \\
     Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben, daher verwenden wir das Infimum aller oberen Schranken:
     \begin{definition}
         Das Supremum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Infimum der oberen Schranken von $S$:
-        \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \mid x \le w\})(a)\]
-        für alle $x \in S$.
+        \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \mid x \le w\})(a) \text{~~
+        für alle $x \in S$.}\]
     \end{definition}
     Diese Defintion ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
     Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden \mathlibok{Nucleus.instCompleteLattice}.
-    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra \mathlibok{HeytingAlgebra} bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet \mathlibok{Order.Frame}. \\
+    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra \mathlibok{HeytingAlgebra} bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet \mathlibok{Order.Frame}.
     \begin{definition}
         Die Heyting Implikation der Nuklei $j$ und $k$ wird durch folgenden Nukleus beschrieben:
-        \[(j \Rightarrow k)(a) = \bigwedge \{(j(b) \Rightarrow k(b)) \mid a \le b\})\]
-        Für alle $a, b \in E$.
+        \[(j \Rightarrow k)(a) = \bigwedge \{(j(b) \Rightarrow k(b)) \mid a \le b\}) \text{~~für alle $a, b \in E$.}\]
     \end{definition}
     Wir haben in Lean verifiziert, dass diese Definition die Eigenschaften eines Nukleus \mathlibok{Nucleus.instHImp} und die der Heyting Implikation erfüllt, was die Nuklei zu einer Heyting Algebra \mathlibok{Nucleus.instHeytingAlgebra} und damit zu einem Frame macht. \\
     Die Nuklei und deren Frame Struktur haben wir bereits zur Mathlib beigetragen.
@@ -514,11 +509,10 @@
     Johnstone hat das Supremum der Unterlokale implizit über das Infimum der Nuklei definiert, Leroy definiert das Supremum hingegen direkt über die Unterlokale:
     \begin{definition}
         Der Schnitt einer Menge $S$ an Unterlokalen von $E$ bildet einen Nukleus mit folgender Funktion:
-        $$(\bigcup_s S)(a) = \bigcup \{w \in E | \forall x \in S,w \subseteq x\} $$ für all $a \in E$
+        $$(\bigcup_s S)(a) = \bigcup \{w \in E | \forall x \in S,w \subseteq x\} \text{~~für alle $a \in E$}$$
     \end{definition}
 % TODO Quelle leroy seite 5
     Hier haben wir ebenfalls bereits in Lean verifiziert, dass die Funktion die Bedingungen für einen Nukleus und die Bedingungen des beliebigen Supremums erfüllt. \\
-
     \begin{lemma}
         Die Definitionen von Johnstone und Leroy \autocite[S. 5]{leroy_theorie_2013} sind äquivalent:
         $$(\bigwedge S) (a) = (\bigcup_s S) (a)$$ für alle Mengen an Nuklei $S$ und für alle $a \in E$ \\
@@ -535,12 +529,11 @@
     Da die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ immer eine Lokale bilden (siehe Beispiel \ref{bsp:offeneMengen}), hängen
     die offenen Unterlokalen mit den Elementen $O(E)$ der Lokale $E$ zusammen und entsprechen damit den offenen Mengen eines klassischen Topologischen Raumes.
     Die Komplemente dieser offenen Unterlokalen (bzw. offenen Mengen) bilden die abgeschlossenen Unterlokalen, die mit den abgeschlossenen Mengen eines Topologischen Raumes zusammenhängen. \\
-
     Johnstone \autocite[S. 50]{johnstone_stone_1982} und MacLane \autocite[S. 488]{mac_lane_sheaves_1994} definieren beide in ihren Büchern die offenen Unterlokalen folgendermaßen:
     \begin{definition}
         \label{def:open}
         Jedes Element $v$ einer Lokale $E$ erzeugt eine offene Unterlokale von $E$ mit der Funktion:
-        $$o_v(a) = v \Rightarrow a$$ für alle $a \in E$ \leanok{Open}. % ($\implies$ symbolisiert die Heyting Implikation)% TODO quelle heyting implication
+        \[o_v(a) = v \Rightarrow a \text{~~für alle $a \in E$ \leanok{Open}}\]
     \end{definition}
     Johnstone und MacLane verwenden hier $v \Rightarrow a$, die sogenannte Heyting-Implikation (auch relatives-Pseudokomplement)\autocite{noauthor_heyting-algebra_2024,noauthor_heyting_nodate}.
     \begin{definition}
@@ -563,17 +556,14 @@
     Wir haben außerdem gezeigt, dass die offenen Unterlokalen mit beliebigen Suprema kommutieren \leanok{Open.preserves\_sSup}:
     $$\bigcup_i [V_i] = [\bigcup_i V_i]$$
     Für alle Familien $V_i$ aus Elementen von $E$. \\
-    Die offenen Unterlokalen kommutieren zudem mit endlichen Infima \leanok{Open.preserves\_inf}:
-    $$[U \cap V] = [U] \cap [V]$$
+    Die offenen Unterlokalen kommutieren zudem mit endlichen Infima \leanok{Open.preserves\_inf}:\\
+    $[U \cap V] = [U] \cap [V]$
     für alle $U, V \in E$. Diese Eigenschaften haben wir bereits alle in Lean verifiziert. \\
-
-
     Johnstone, MacLane und Leroy definieren die abgeschlossenen Unterlokalen alle ähnlich:
 % TODO Definition Closed Sublocals (Mclane 488) (Stonespaces S.50)
     \begin{definition}
         Jedes Element $V \in E$ erzeugt eine geschlossene Unterlokale mit dem Nukleus:
-        \[c_v(a) = v \cap a\]
-        für alle a.
+        \[c_v(a) = v \cap a \text{~~ für alle $a \in E$}\]
     \end{definition}
     \leanok{Closed}
     Es lässt sich leicht verifizieren, dass es sich bei $c_v$ um einen Nukleus handelt. Leroy zeigt außerdem, dass es sich bei $c_v$ für alle $v \in E$ um das Komplement von $o_v$ handelt. Dies lässt sich anhand der folgenden Eigenschaften beweisen:
@@ -589,7 +579,6 @@
         Im Folgenden bezeichnen $O(E)$ und $C(E)$ die Menge der offenen bzw. abgeschlossenen Unterlokalen von $E$
     \end{definition}
     Wir können hier $O(E)$ für die offenen Unterlokalen verwenden, da sie mit den Elementen $O(E)$ eines Lokals übereinstimmen. \\
-
     Mit diesen Definitionen der offenen und geschlossenen Unterlokalen können wir nun einige klassische topologische Operationen auf den Unterlokalen definieren. Diese werden später oft in verschiedenen Beweisen verwendet.
     \begin{definition}
         Der Abschluss einer Unterlokalen $X$ entspricht der kleinsten geschlossenen Unterlokalen, die $X$ enthält \leanok{Sublocale.closure}:
@@ -655,7 +644,7 @@
     Um exemplarisch den Prozess des Beweisens einer solchen Eigenschaft zu zeigen, beschäftigen wir uns nun mit der folgenden Eigenschaft. Den Beweis dafür haben wir dabei eigenständig ausgearbeitet.
     \begin{lemma}
         Für alle offenen Unterlokalen $U$ von $E$ gilt:
-        $$\mu(U) + \mu(U^c) = \mu(\top_s)$$ % TODO ggf das umformulieren oder die anderen eigenschaften in der Notation anpassen
+        $\mu(U) + \mu(U^c) = \mu(\top_s)$ % TODO ggf das umformulieren oder die anderen eigenschaften in der Notation anpassen
     \end{lemma}
     \begin{proof}
 % TODO leroy quelle
@@ -686,7 +675,7 @@
     zu veröffentlichen. Bei dem Aufnahmeprozess in die Mathlib werden Definitionen zudem ausführlich mit anderen Mitwirkenden der Mathlib diskutiert, was die Möglichkeit für wertvolles Feedback gibt. Da eine sogenannte \glqq Pull Request\grqq{} \autocite{noauthor_how_nodate}
     dadurch (in Abhängigkeit von der Komplexität des hinzugefügten Materials) auch etwas länger dauern kann, haben wir uns vorgenommen, bereits vor dem Ende unseres Projektes erste Definitionen und Resultate in der Mathlib zu veröffentlichen.
     Daher haben wir bereits einige Pull Requests \autocite{noauthor_github_nodate} zu verschiedenen Themen erstellt, die auch schon zur Mathlib hinzugefügt wurden:
-    \begin{tabular}{c | p{17cm}}
+    \begin{longtable}{c | p{17cm}}
         \prok{21718} & fix(Order/Nucleus): Remove outdated comment                                                                             \\
         \prok{21560} & feat(Order/Nucleus): nuclei form a frame                                                                                \\
         \prok{21515} & feat(Order/Nucleus): nuclei form a complete lattice                                                                     \\
@@ -697,7 +686,7 @@
         \prok{20328} & feat(Order/CompleteBooleanAlgebra): Himp in terms of sSup                                                               \\
         \prok{20246} & feat(Order/CompleteLattice): instances for \newline CompleteSemilatticeInf/CompleteSemilatticeSup for Dual types        \\
         \prok{19440} & feat(Order/Nucleus): Nucleus                                                                                            \\
-    \end{tabular} \\
+    \end{longtable}
     Man sieht, dass wir einen wichtigen Teil unserer Arbeit; den Nukleus und dessen Frame-Struktur bereits in die Mathlib gebracht haben.
     So kann nun jeder, der die Mathlib benutzt, unsere Definition des Nukleus verwenden.
     In einer anderen Pull Request haben wir die Definition des Frames, die bereits in der Mathlib enthalten war, optimiert.
@@ -722,9 +711,6 @@ structure Nucleus (X : Type*) [SemilatticeInf X] where
     Das erste Feld der \lean{structure} enthält die Funktion des Nukleus, die vom Typ \lean{X → X} sein muss. Das nächste Feld \lean{idempotent} erwartet einen Beweis, der versichert, dass die Funktion idempotent ist. Die nächsten beiden Felder enthalten ebenfalls Beweise für die zwei anderen Eigenschaften des Nukleus. \\
     Nun zeigen wir exemplarisch, dass jeder Nukleus monoton ist:
     \begin{leancode}
-/--
-A Nucleus is monotone
--/
 lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
   rw [Monotone]
   intro a b h
