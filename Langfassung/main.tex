@@ -706,7 +706,7 @@
 
     Um die Arbeit mit Lean zu veranschaulichen, werden wir nun beispielhaft die Definition eines Nukleus betrachten. In der Mathlib haben wir den Nucleus als Erweiterung eines \lean{InfHom} definiert, diese Definition ist etwas anschaulicher, ändert aber nichts an der Bedeutung. Unter folgendem Link man den Lean-Code auf Live-Lean, einer online Lean Plattform, nachvollziehen: \href{https://live.lean-lang.org/#codez=JYWwDg9gTgLgBAWQIYwBYBtgCMBQpKyIobYB0A8lACYCmUpCEAdhDMzaQEJIDOwAxjgD0AWhE4AKqhpwJATzAyIAMzgA5AK790NYHGZwkcAGJQkIDjhFCcPGFC0wNUGZu00NPOAAoAGnAAuWQUaACoASjgAbQBlGhBgdBQYARoASSZVXwBdOAB3aRccODhREVlpOGUNJn4UgxU4NBkmLR1PUmtipohjGsC4f0AkwkHusrgAQXU2jy9gOdpwVhomGE6bEuBFyBgV+G8ADwHfSKC2PqYfc/6DyMATIh6LuAOxsUnp9084ee/al15gEwAObrbqA/j/PjAnxHIInAZHB7XS4vErjKZudpeMAuHh0ABuNDmmVASFBJRxRIJRIA+oDVIc4HJjqdHv1GYBkoiZkQAvGyUXAucimThRTh8UgoMAkFgdHAAN7+ILyRShAC+0UotHopnMMhywjEOAAooDpgBrLFwc1IJiXJDoLy6JgyC7m+qXLA0exIfioXbwPJ0WhMUhWGyAuy2/gyIIXAAywHNMm8mNmg0i/n8BToNG6/Agsb5aY6yPzhbpTAAVjQ6sBCQByKpwIFwVCBPlYZn8XhEqoAbjgPbxXiBg4LwKghvEGJmXx+IGYbBd4ZwOhAICMJZ4pEXLGXKcuQW3GYGjH37DgR87cm6UDy0XPrHY2TBqygEEMcCwbe6qCQhJtgAjAMRhcj+fJGAEfL0jSNAAI40joyhrOAUC/iU/6AagABMHZXqQlJ4lAhI8JWqhGLgJT3tEqBAbkKBtjh3Q0AcvrwMhMBwYh9K7mATFAA}{livelean}. Während eines Beweises wird auf der rechten Seite der aktuelle Stand angezeigt.
     \begin{leancode}
-        /--
+/--
 The Type of Nuclei on a Frame.
 -/
 structure Nucleus (X : Type*) [SemilatticeInf X] where
@@ -723,7 +723,7 @@ structure Nucleus (X : Type*) [SemilatticeInf X] where
     Das erste Feld der \lean{structure} enthält die Funktion des Nukleus, die vom Typ \lean{X → X} sein muss. Das nächste Feld \lean{idempotent} erwartet einen Beweis, der versichert, dass die Funktion idempotent ist. Die nächsten beiden Felder enthalten ebenfalls Beweise für die zwei anderen Eigenschaften des Nukleus. \\
     Nun zeigen wir exemplarisch, dass jeder Nukleus monoton ist:
     \begin{leancode}
-        /--
+/--
 A Nucleus is monotone
 -/
 lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
