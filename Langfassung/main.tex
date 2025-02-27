@@ -30,7 +30,7 @@
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=cyan,
-    pdftitle={Overleaf Example},
+    pdftitle={Localic Caratheodory Extensions},
     pdfpagemode=FullScreen,
 }
 \usepackage{svg}
@@ -269,8 +269,9 @@
 
 
     \section{Fachliche Kurzfassung}
-   % Als wir letztes Jahr dabei waren, den Satz von Banach-Tarski in Lean zu formalisieren, sind wir an die Grenzen der klassischen Maßtheorie gestoßen. Der Satz von Banach-Tarski besagt nämlich, dass es theoretisch möglich ist, eine Kugel allein durch Zerschneiden und Drehen zu verdoppeln. Das ist möglich, da während des Zerschneidungsprozesses nicht messbare Teilmengen des topologischen Raums erzeugt werden. Auf der Suche nach einer Lösung für dieses Problem sind wir auf ein nie formal veröffentlichtes Manuskript von Olivier Leroy gestoßen, das verspricht das Problem der nicht messbaren Mengen von Banach-Tarski in der Theorie der Lokalen zu lösen. Dabei werden Unterlokalen anstatt von Teilmengen von topologischen Räumen verwendet. Wir haben es uns zur Aufgabe gemacht, die Grundlagen der Lokalen-Theorie und das von Leroy postulierte Maß zu verstehen und in Lean zu verifizieren. Dafür haben wir bereits viele elementare topologische Definitionen (z.B. Inklusion, Schnitt, Vereinigung und Komplement) auf die Unterlokalen übertragen und in Lean formalisiert. Ausgehend davon arbeiten wir daran, zu zeigen, dass die Caratheodory Erweiterung eines Maßes der offenen Unterlokalen auf alle Unterlokalen einige wichtige maßtheorethische Eigenschaften erfüllt. Damit ist der Satz von Banach-Tarski dann kein Paradoxon mehr, da mit dieser neuen Maßtheorie das Verdoppeln einer Kugel in zwei identische Teile nicht mehr möglich ist.
-    Wenn man in der klassischen Maßtheorie ein Maß mithilfe der Caratheodory-Erweiterung erweitert, so besitzt diese Erweiterung im Allgemeinen nicht mehr dieselben nützlichen Eigenschaften wie bspw. die strikte Additivität. Die Folgen sind im Banach-Tarski-Paradoxon zu erkennen, welches eine Kugelverdopplung ermöglicht. Im Zuge dieses Projektes beschäftigen wir uns mit einer Theorie, bei der solche Kuriositäten ohne eine Einschränkung auf die zu messenden Mengen nicht mehr möglich ist und die insbesondere nie in einem mathematischen Journal veröffentlicht wurde. Es handelt sich dabei um die Theorie der Lokale, die Olivier Leroy in seinen Notizen beschrieb. Lokale sind dabei intuitiv als topologische Räume zu verstehen, wobei wir nicht mehr fordern, dass das zugrundeliegende geordnete Mengensystem eine Teilmenge einer gegebenen Menge ist. Daraus resultieren neue Definitionen von Konzepten wie der Vereinigung, dem Schnitt und der Teilmenge im allgemeinen Sinne. Damit lässt sich dann ebenfalls eine Maßtheorie konstruieren, wobei man ein Maß über Lokale ähnlich wie ein klassisches Maß verstehen kann. Betrachtet man allerdings die Caratheodory-Erweiterung eines Maßes über Lokale, so erhält man zusätzlich zu den Eigenschaften der Caratheodory-Erweiterung im klassischen Sinne u. a. eine Reduzibilität und eine strikte Additivität. Daher erhält man eine bessere Maßtheorie! Da dieses unglaubliche Resultat aber nie formal veröffentlicht und damit peer-reviewed wurde, besteht unsere Arbeit darin, genau das zu tun. Hierfür verwenden wir den mathematischen Beweisassistenten Lean, mit dessen Hilfe wir Ungenauigkeiten und Fehler im Beweis von Leroy aufdecken und beheben konnten und damit den Großteil seiner Theorie bereits in Lean formalisiert haben. Des Weiteren gelang es uns bereits, Teile des von uns formalisierten Beweises der Lean-Community zur Verfügung zu stellen. 
+    % Als wir letztes Jahr dabei waren, den Satz von Banach-Tarski in Lean zu formalisieren, sind wir an die Grenzen der klassischen Maßtheorie gestoßen. Der Satz von Banach-Tarski besagt nämlich, dass es theoretisch möglich ist, eine Kugel allein durch Zerschneiden und Drehen zu verdoppeln. Das ist möglich, da während des Zerschneidungsprozesses nicht messbare Teilmengen des topologischen Raums erzeugt werden. Auf der Suche nach einer Lösung für dieses Problem sind wir auf ein nie formal veröffentlichtes Manuskript von Olivier Leroy gestoßen, das verspricht das Problem der nicht messbaren Mengen von Banach-Tarski in der Theorie der Lokalen zu lösen. Dabei werden Unterlokalen anstatt von Teilmengen von topologischen Räumen verwendet. Wir haben es uns zur Aufgabe gemacht, die Grundlagen der Lokalen-Theorie und das von Leroy postulierte Maß zu verstehen und in Lean zu verifizieren. Dafür haben wir bereits viele elementare topologische Definitionen (z.B. Inklusion, Schnitt, Vereinigung und Komplement) auf die Unterlokalen übertragen und in Lean formalisiert. Ausgehend davon arbeiten wir daran, zu zeigen, dass die Caratheodory Erweiterung eines Maßes der offenen Unterlokalen auf alle Unterlokalen einige wichtige maßtheorethische Eigenschaften erfüllt. Damit ist der Satz von Banach-Tarski dann kein Paradoxon mehr, da mit dieser neuen Maßtheorie das Verdoppeln einer Kugel in zwei identische Teile nicht mehr möglich ist.
+    Wenn man in der klassischen Maßtheorie ein Maß mithilfe der Caratheodory-Erweiterung erweitert, so besitzt diese Erweiterung im Allgemeinen nicht mehr dieselben nützlichen Eigenschaften wie bspw. die strikte Additivität. Die Folgen sind im Banach-Tarski-Paradoxon zu erkennen, welches eine Kugelverdopplung ermöglicht. Im Zuge dieses Projektes beschäftigen wir uns mit einer Theorie, bei der solche Kuriositäten ohne eine Einschränkung auf die zu messenden Mengen nicht mehr möglich ist und die insbesondere nie in einem mathematischen Journal veröffentlicht wurde. Es handelt sich dabei um die Theorie der Lokale, die Olivier Leroy in seinen Notizen beschrieb. Lokale sind dabei intuitiv als topologische Räume zu verstehen, wobei wir nicht mehr fordern, dass das zugrundeliegende geordnete Mengensystem eine Teilmenge einer gegebenen Menge ist. Daraus resultieren neue Definitionen von Konzepten wie der Vereinigung, dem Schnitt und der Teilmenge im allgemeinen Sinne. Damit lässt sich dann ebenfalls eine Maßtheorie konstruieren, wobei man ein Maß über Lokale ähnlich wie ein klassisches Maß verstehen kann. Betrachtet man allerdings die Caratheodory-Erweiterung eines Maßes über Lokale, so erhält man zusätzlich zu den Eigenschaften der Caratheodory-Erweiterung im klassischen Sinne u. a. eine Reduzibilität und eine strikte Additivität. Daher erhält man eine bessere Maßtheorie! Da dieses unglaubliche Resultat aber nie formal veröffentlicht und damit peer-reviewed wurde, besteht unsere Arbeit darin, genau das zu tun. Hierfür verwenden wir den mathematischen Beweisassistenten Lean, mit dessen Hilfe wir Ungenauigkeiten und Fehler im Beweis von Leroy aufdecken und beheben konnten und damit den Großteil seiner Theorie bereits in Lean formalisiert haben. Des Weiteren gelang es uns bereits, Teile des von uns formalisierten Beweises der Lean-Community zur Verfügung zu stellen.
+
 
     \section{Motivation und Aufgabenstellung}
     \glqq Wir können eine Kugel allein durch Zerschneiden und anschließendem Drehen wieder zu zwei identischen Kopien der Ausgangskugel zusammenfügen.\grqq~Dass das mit der klassischen Mengenlehre gilt, folgt aus dem Satz von Banach-Tarski \autocite{noauthor_banach-tarski-paradoxon_2024}. Auch uns erschien diese Aussage anfänglich unglaublich, weshalb wir in unserem Jugend-forscht-Projekt des letzten Jahres den mathematischen Beweis des Banach-Tarski-Paradoxons näher beleuchteten. Indem wir den Beweis Stück für Stück durchdrangen, gingen wir automatisch den Weg einer klassischen Verifikation eines mathematischen Papers (siehe Abbildung \ref{Abb1}, linke Spalte). Da der Prozess der menschlichen Kontrolle aber durchaus fehleranfällig ist, stellten wir uns die Frage, ob man diese Fehlbarkeit nicht umgehen könnte. Dabei stießen wir auf den mathematischen Beweisassistenten Lean. Diese auf der gleichnamigen Programmiersprache Lean basierende Software erlaubt es uns, die entsprechenden mathematischen Objekte zu definieren, sowie deren Eigenschaften inkl. Beweis zu formalisieren. Ausgehend von der Typentheorie überprüft Lean die Standhaftigkeit des Beweises und markiert ggf. Fehler, was das Beweisen erleichtert. Dies bedeutet im Umkehrschluss aber auch, dass Lean den Anspruch einer absoluten mathematischen Korrektheit erheben kann (siehe Abbildung \ref{Abb1}, rechte Spalte).\\
@@ -290,8 +291,8 @@
 
 
     \section{Kurzer Einblick in die benötigte klassische Maßtheorie}
-    Das Grundprinzip der Maßtheorie besteht darin, einer Ansammlung an Mengen eine sinnvolle Größe zuzuordnen. Betrachten wir daher als Einführung ein Beispiel. Gegeben sei die Menge aller Rechtecke. Jedem dieser in der Menge enthaltenen Rechtecke wollen wir nun eine Größe bzw. einen sinnvollen Flächeninhalt zuordnen. Solch eine Größe definiert sich in unserem Beispiel als Produkt aus Länge mal Breite des entsprechenden Rechtecks. Durch diese Zuordnung wird ein sog. Maß definiert. Allgemein versteht man unter einem Maß allerdings folgendes: 
-   % Die Maßtheorie \autocite{noauthor_mastheorie_2023} entstand aus dem Versuch, eine Maßfunktion zu definieren, die jeder Teilmenge eines Raumes eine sinnvolle Größe (z. B. Flächeninhalt) zuordnet. Betrachtet man daher bspw. die Menge aller Rechtecke, so kann mithilfe eines Maßes jedem Rechteck das Produkt aus Länge mal Breite zugeordnet werden. Fordert man allerdings gleichzeitig $\sigma$-Additivität und Bewegungsinvarianz dieser Maßfunktion, so muss man sich auf eine bestimmte Ansammlung von Mengen beschränken, wie Giuseppe Vitali zeigte. Diese Mengen werden als messbar bezeichnet. Auf ihnen können wir daher sog. Maße definieren:
+    Das Grundprinzip der Maßtheorie besteht darin, einer Ansammlung an Mengen eine sinnvolle Größe zuzuordnen. Betrachten wir daher als Einführung ein Beispiel. Gegeben sei die Menge aller Rechtecke. Jedem dieser in der Menge enthaltenen Rechtecke wollen wir nun eine Größe bzw. einen sinnvollen Flächeninhalt zuordnen. Solch eine Größe definiert sich in unserem Beispiel als Produkt aus Länge mal Breite des entsprechenden Rechtecks. Durch diese Zuordnung wird ein sog. Maß definiert. Allgemein versteht man unter einem Maß allerdings folgendes:
+    % Die Maßtheorie \autocite{noauthor_mastheorie_2023} entstand aus dem Versuch, eine Maßfunktion zu definieren, die jeder Teilmenge eines Raumes eine sinnvolle Größe (z. B. Flächeninhalt) zuordnet. Betrachtet man daher bspw. die Menge aller Rechtecke, so kann mithilfe eines Maßes jedem Rechteck das Produkt aus Länge mal Breite zugeordnet werden. Fordert man allerdings gleichzeitig $\sigma$-Additivität und Bewegungsinvarianz dieser Maßfunktion, so muss man sich auf eine bestimmte Ansammlung von Mengen beschränken, wie Giuseppe Vitali zeigte. Diese Mengen werden als messbar bezeichnet. Auf ihnen können wir daher sog. Maße definieren:
 
     \begin{definition}
         Sei $\mathcal{M}$ ein Mengensystem und $\mu:\mathcal{M} \to \overline{\mathbb{R}}$
@@ -307,17 +308,17 @@
     Wie man erkennen kann, ist ein Maß aber auf ein bestimmtes Mengensystem begrenzt, d. h. Objekte, die nicht in diesem System enthalten sind, kann keine Größe zugeordnet werden. Hat man nun Objekte, die nicht im System vorhanden sind, vorliegen, welche eine ähnliche Struktur wie die Elemente des Systems haben, auf dem unser Maß operiert, so ist es naheliegend sich zu fragen, ob man das vorliegende Maß nicht sinnvoll auf diese Objekte erweitern könnte.
 
     \begin{minipage}{0.5\textwidth}
-     Im Beispiel unseres Maßes, welches jedem Rechteck seinen Flächeninhalt zuordnet, entspräche ein solches zu den Rechtecken ähnliches Objekt zum Beispiel die Fläche des Landkreises Tuttlingen. Um nun der Fläche des Landkreises eine sinnvolle Größe zuzuordnen, können wir diesen zunächst einmal mit Rechtecken überdecken. Für die Überdeckung verwenden wir nun immer kleinere Rechtecke und können so den Flächeninhalt des Landkreises approximieren, indem wir den Grenzwert der Summe der Flächeninhalte dieser kleinen Rechtecke betrachten.
-   \end{minipage}
-   \begin{minipage}{.5\textwidth}
-    \centering
-    \includegraphics[width=.9\linewidth]{Landkreis approximieren}
-    \captionof{figure}{Approximation der Fläche des Landkreises Tuttlingen}
-    \label{fig:fläche tut}
+        Im Beispiel unseres Maßes, welches jedem Rechteck seinen Flächeninhalt zuordnet, entspräche ein solches zu den Rechtecken ähnliches Objekt zum Beispiel die Fläche des Landkreises Tuttlingen. Um nun der Fläche des Landkreises eine sinnvolle Größe zuzuordnen, können wir diesen zunächst einmal mit Rechtecken überdecken. Für die Überdeckung verwenden wir nun immer kleinere Rechtecke und können so den Flächeninhalt des Landkreises approximieren, indem wir den Grenzwert der Summe der Flächeninhalte dieser kleinen Rechtecke betrachten.
+    \end{minipage}
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=.9\linewidth]{Landkreis approximieren}
+        \captionof{figure}{Approximation der Fläche des Landkreises Tuttlingen}
+        \label{fig:fläche tut}
     \end{minipage}
 
-   \noindent Diese Approximation von einer zunächst nicht-messbaren Menge mithilfe von messbaren Mengen und einer anschließenden Grenzwertbetrachtung entspricht allgemein genau dem Prinzip der Caratheodory-Erweiterung eines Maßes.
-   
+    \noindent Diese Approximation von einer zunächst nicht-messbaren Menge mithilfe von messbaren Mengen und einer anschließenden Grenzwertbetrachtung entspricht allgemein genau dem Prinzip der Caratheodory-Erweiterung eines Maßes.
+
 
     \begin{definition}
         Sei $\mu$ ein Maß auf einem Mengensystem $\mathcal{M}$. Die Caratheodory-Erweiterung des Maßes ist definiert als
@@ -344,7 +345,7 @@
     Stattdessen enthält ein Lokal offene Unterräume. Diese offenen Unterräume können so verstanden werden, dass sie eine
     endliche Menge an Informationen über die (hypothetischen) Punkte beinhalten. Zum Beispiel gibt es ein Lokal aller
     Surjektionen von den natürlichen Zahlen auf die reellen Zahlen. Dieses Lokal hat offensichtlich keine Punkte, da es
-    keine derartigen Surjektionen gibt, sie enthält jedoch viele nichttriviale offene Teilräume. (TODO Quelle Section C, example 1.2.8 im Elephant (aber bissle kompliziert:))\\
+    keine derartigen Surjektionen gibt, sie enthält jedoch viele nichttriviale offene Teilräume.
     Leroy zeigt nun durch die Anwendung der Theorie der Lokale, dass es möglich ist, das Auswahlaxiom zu verwenden und dennoch sicherzustellen, dass
     alle \glqq Teilmengen\grqq~messbar bleiben. Dies wird durch die Einführung von Unterlokalen erreicht, die als Unterräume fungieren. In diesem Kontext behauptet er, dass die Caratheodory-Erweiterung eines Maßes auf die Gesamtheit der Unterlokale immernoch strikt additiv, reduzibel und kommutativ bzgl. Infimumbilden ist. Dadurch werden die paradoxen Zerlegungen, wie sie bei Banach-Tarski zu finden sind und die in der klassischen Theorie zu nicht messbaren Mengen führen, in der Theorie der Lokale vermieden, da es versteckte Schnittmengen gibt, die in der klassischen Betrachtung nicht sichtbar sind.\\
 
@@ -399,10 +400,11 @@
         \end{itemize}
     \end{definition}
     Man kann daher erkennen, dass die Definition einer Lokale fast der Definition eines Topologischen Raums entspricht. Der einzige Unterschied besteht dabei darin, dass wir nun nicht mehr fordern, dass das Mengensystem $O(E)$ Teilmenge der Potenzmenge $\mathcal{P}(X)$ einer Ausgangsmenge $X$ ist.
-    %\begin{example}
-    %Die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ bilden mit der Inklusion als Ordnungsrelation ein
-    %Lokal \mathlibok{TopologicalSpace.Opens.instFrame}.
-    %\end{example}
+    \begin{example}
+        \label{bsp:offeneMengen}
+    Die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ bilden mit der Inklusion als Ordnungsrelation ein
+    Lokal \mathlibok{TopologicalSpace.Opens.instFrame}.
+    \end{example}
     Um irgendeine Operation auf Lokale durchführen zu können, müssen wir zunächst einmal definieren, was wir unter einem Morphismus zwischen zwei Lokale verstehen.
     \begin{definition}
         Seien $E$ und $F$ Lokale. Ein Morphismus $f:E\to F$ wird durch eine monotone Abbildung $f^*:O(F)\to O(E)$ erzeugt, für die gilt:
@@ -477,7 +479,7 @@
         für alle $a \in O(E)$.
     \end{definition}
     Wir haben in Lean verifiziert, dass diese Definition tatsächlich ein Nukleus ist und die Bedingungen eines Infimums erfüllt. \mathlibok{Nucleus.instInfSet} \\
-    Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben (TODO Quelle), daher verwenden wir das Infimum aller oberen Schranken:
+    Suprema von Nuklei lassen sich schwerer mit einer expliziten Formel beschrieben, daher verwenden wir das Infimum aller oberen Schranken:
     \begin{definition}
         Das Supremum einer Menge $S$ an Unterlokalen von $E$ entspricht dem Infimum der oberen Schranken von $S$:
         \[(\bigvee_n S)(a) = (\bigwedge_n \{w \in N(E) \mid x \le w\})(a)\]
@@ -508,8 +510,8 @@
     Das größte Element der Nuklei $\top_n$ ist somit das kleinste Unterlokal $\bot_s$ und umgekehrt ($\bot_n = \top_s$). \\
     Aufgrund der Dualen Ordnung der Nuklei können wir von der Frame-Struktur der Nuklei auf die Coframe Struktur \mathlibok{OrderDual.instCoframe} der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
     Wir wollen uns nun aber noch etwas genauer mit der Definition der Vereinigung von Unterlokalen beschäftigen, da
-    sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt: TODO ausformulieren
-    TODO Johnstone hat hier gemacht... Leroy hat aber ebenfalls ein Supremum auf den Unterlokalen definiert:
+    sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt:
+    Johnstone hat das Supremum der Unterlokale implizit über das Infimum der Nuklei definiert, Leroy definiert das Supremum hingegen direkt über die Unterlokale:
     \begin{definition}
         Der Schnitt einer Menge $S$ an Unterlokalen von $E$ bildet einen Nukleus mit folgender Funktion:
         $$(\bigcup_s S)(a) = \bigcup \{w \in E | \forall x \in S,w \subseteq x\} $$ für all $a \in E$
@@ -530,7 +532,7 @@
 
     \subsection{Offene und abgeschlossene Unterlokale}
     Wie in der klassischen Topologie gibt es auch in der Theorie der Lokalen offene und geschlossene Unterlokalen.
-    Da die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ immer eine Lokale bilden (TODO ref zum Beispiel), hängen
+    Da die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ immer eine Lokale bilden (siehe Beispiel \ref{bsp:offeneMengen}), hängen
     die offenen Unterlokalen mit den Elementen $O(E)$ der Lokale $E$ zusammen und entsprechen damit den offenen Mengen eines klassischen Topologischen Raumes.
     Die Komplemente dieser offenen Unterlokalen (bzw. offenen Mengen) bilden die abgeschlossenen Unterlokalen, die mit den abgeschlossenen Mengen eines Topologischen Raumes zusammenhängen. \\
 
@@ -608,7 +610,7 @@
     \begin{lemma}
         \label{lem:regular_sublocal}
         In einem regulären Lokal entspricht jedes Unterlokal $U$ dem Schnitt der offenen Umgebung von $U$.
-    \end{lemma} TODO lean
+    \end{lemma}
     Jetzt haben wir die notwendigen Voraussetzungen definiert und kleinere Lücken geschlossen, um mit der Maßtheorie über Lokalen zu beginnen.
 
 
