@@ -141,8 +141,8 @@ lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublo
   .
     have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
       intro ε h_ε
-      let ε_n (n : ℕ) : ℝ := ε / (2 ^ (n + 1))
-      have h_ε_n (n : ℕ) : ε_n n > 0 := by sorry
+      let ε_n (n : ℕ) : ℝ := ε / (2 * n ^ 2)
+      have h_ε_n (n : ℕ) : ε_n n > 0 := by simp [ε_n]; norm_cast; sorry
       have h_sum_1 : 0 < tsum ε_n := by sorry
       have h_sum : tsum ε_n < ε := by
         sorry
