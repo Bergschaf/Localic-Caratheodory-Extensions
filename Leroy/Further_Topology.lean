@@ -109,6 +109,8 @@ lemma compl_sup_eq_inf_compl {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.co
   exact injective_of_le_imp_le (fun (x : Closed E) => x.toSublocale) fun {x y} a => (by exact (Closed.le_iff x y).mpr a)
 
 
+lemma Sublocale.eq_intersection_open_closed (j : Sublocale E) : ∃ u : Open E, ∃ c : Closed E, a = u.toSublocale ⊓ c.toSublocale := by
+  sorry
 
 
 /-!

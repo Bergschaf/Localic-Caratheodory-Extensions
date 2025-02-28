@@ -30,6 +30,30 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
+-- TODO woanders
+lemma Sublocale.hneg_eq_compl_closure (V : Open E) : ⟨V.elementᶜ⟩ = V.closure.compl := by
+  sorry
+
+-- TODO woanders
+lemma hneg_le_compl (V : Open E) : (⟨V.elementᶜ⟩ : Open E)≤ V.compl.toSublocale := by
+  rw [Sublocale.hneg_eq_compl_closure]
+  sorry -- toSublocale ist monoton und compl ist monoton
+
+-- Zeigt in Kombination mit Sublocale.eq_intersection_open_closed, dass die Sublocale die intersection der Open_Neigbourhood ist
+-- Elephant S.501
+lemma Closed.eq_intersection_opens (c : Closed E) : ∃ s : Set (Open E), c = sInf (Open.toSublocale '' s) := by
+  use (fun x ↦ x.closure.compl) '' {V : Open E | V ≪ c.compl}
+  apply le_antisymm
+  . simp
+    intro v h
+    simp only [well_inside] at h
+    sorry -- ab in further topology
+  .
+    have h : sInf (Open.toSublocale '' ((fun x => x.closure.compl) '' {V | V ≪ c.compl})) ≤ sInf (Closed.toSublocale '' ((fun x => x.compl) '' {V | V ≪ c.compl})) := by
+      sorry
+    apply le_trans h
+    simp [sInf_le_iff, lowerBounds]
+    sorry
 
 /--
 Leroy Lemme 2.2
@@ -38,9 +62,11 @@ Seite 81. 1.2
 Maybe depends on:
 Nucleus.eq_join_open_closed
 -/
-lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (Sublocale.Open_Neighbourhood a) := by
-  sorry
-
+lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (Open.toSublocale '' Sublocale.Open_Neighbourhood a) := by
+  apply le_antisymm
+  . simp
+    exact fun a_1 a => a
+  . sorry -- mit Closed.eq_intersection_opens
 
 lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
