@@ -424,7 +424,7 @@
             \item  $f_*$ ist injektiv
             \item $f^* f_*=1_{O(E)}$
         \end{itemize}
-        \leanok{f_injective_one} Man nennt einen Morphismus von Lokalen, der diese Eigenschaften erfüllt, Einbettung.
+        \leanok{f\_injective\_one} Man nennt einen Morphismus von Lokalen, der diese Eigenschaften erfüllt, Einbettung.
     \end{lemma}
     Eine weitere zentrale Abbildung ist der Nukleus, welchen wir im Folgenden definieren:
     Eine zentrale Abbildung in der Theorie der Lokale ist der Nukleus, den wir im Folgenden definieren:
@@ -455,13 +455,13 @@
     werden.
 
     \subsubsection{Nuklei als Frame}
-    Die Nuklei wurden nicht nur bei Leroy verwendet, daher haben wir uns bei den Folgenden Definitionen auch an Johnstone \autocite{johnstone_stone_1982} und MacLane \autocite{mac_lane_sheaves_1994} orientiert. \\
+    Die Nuklei wurden nicht nur bei Leroy verwendet, daher haben wir uns bei den folgenden Definitionen auch an Johnstone \autocite{johnstone_stone_1982} und MacLane \autocite{mac_lane_sheaves_1994} orientiert. \\
     Die Ordnungsrelation der Nuklei lässt sich punktweise definieren:
     \begin{definition}
-        Für zwei Nuklei $n$ und $m$ gilt $n \le m$, genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$
+        Für zwei Nuklei $n$ und $m$ gilt $n \le m$ genau dann, wenn $n(V) \leq m(V)$ für alle $V\in O(E)$
     \end{definition}
     Die Nuklei bilden damit eine Halbordnung \mathlibok{Nucleus.instPartialOrder}. \\
-    Zusätzlich dazu benötigt die Frame Struktur der Nuklei zwei besondere Nuklei; den größten und den kleisten Nukleus:
+    Zusätzlich dazu benötigt die Frame-Struktur der Nuklei zwei besondere Nuklei; den größten und den kleinsten Nukleus:
     \begin{definition}
         Der größte Nukleus $\top_n$ ist definiert durch $\top_n(a)=\top_E$ für alle $a\in O(E)$ \mathlibok{Nucleus.instBot}.\\
         Der kleinste Nukleus $\bot_n$ ist definiert durch $\bot_n(a)= a$ für alle $a \in O(E)$ \mathlibok{Nucleus.instTop}.
@@ -482,17 +482,17 @@
         für alle $x \in S$.}\]
     \end{definition}
     Diese Defintion ist ebenfalls ein Nukleus und erfüllt definitionsgemäß die Eigenschaften eines Supremums. \\
-    Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen Vollständigen Verband bilden \mathlibok{Nucleus.instCompleteLattice}.
-    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es aus, zu zeigen, dass die Nuklei eine Heyting Algebra \mathlibok{HeytingAlgebra} bilden, da jeder Vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet \mathlibok{Order.Frame}.
+    Damit haben wir gezeigt, dass die Nuklei $N(E)$ einer Lokale $E$ einen vollständigen Verband bilden \mathlibok{Nucleus.instCompleteLattice}.
+    Um nun zu zeigen, dass die Nuklei einen Frame bilden, reicht es zu zeigen, dass die Nuklei eine Heyting Algebra \mathlibok{HeytingAlgebra} bilden, da jeder vollständige Verband, der eine Heyting Algebra ist, einen Frame bildet \mathlibok{Order.Frame}.
     \begin{definition}
-        Die Heyting Implikation der Nuklei $j$ und $k$ wird durch folgenden Nukleus beschrieben:
+        Die Heyting-Implikation der Nuklei $j$ und $k$ wird durch folgenden Nukleus beschrieben:
         \[(j \Rightarrow k)(a) = \bigwedge \{(j(b) \Rightarrow k(b)) \mid a \le b\}) \text{~~für alle $a, b \in E$.}\]
     \end{definition}
-    Wir haben in Lean verifiziert, dass diese Definition die Eigenschaften eines Nukleus \mathlibok{Nucleus.instHImp} und die der Heyting Implikation erfüllt, was die Nuklei zu einer Heyting Algebra \mathlibok{Nucleus.instHeytingAlgebra} und damit zu einem Frame macht. \\
-    Die Nuklei und deren Frame Struktur haben wir bereits zur Mathlib beigetragen.
+    Wir haben in Lean verifiziert, dass diese Definition die Eigenschaften eines Nukleus \mathlibok{Nucleus.instHImp} und die der Heyting-Implikation erfüllt, was die Nuklei zu einer Heyting Algebra \mathlibok{Nucleus.instHeytingAlgebra} und damit zu einem Frame macht. \\
+    Die Nuklei und deren Frame-Struktur haben wir bereits zur Mathlib beigetragen.
 
     \subsubsection{Schnitt und Vereinigung von Unterlokalen}
-    Wir bezeichenen den Nukleus, der mit der Unterlokalen $X$ zusammenhängt $n_X$.
+    Wir bezeichenen den Nukleus, der mit der Unterlokalen $X$ zusammenhängt, $n_X$.
     \begin{definition}
         Die Inklusion zweier Unterlokale $X$ und $Y$ von $E$ lässt sich folgendermaßen definieren:
         \[X \subseteq Y \iff n_Y \le n_X\]
@@ -500,16 +500,16 @@
     \end{definition}
     Die Unterlokale bilden daher eine Duale Ordnung zu den Nuklei. \autocite[S. 51]{johnstone_stone_1982} \autocite{noauthor_categorydual_nodate}
     Dadurch können Resultate auf der einen Ordnung zu der dualen Version auf der anderen Ordnung übertragen werden.
-    Um im Folgenden zwischen Unterlokalen und Nuklei zu Unterscheiden bezeichnen wir Nuklei mit $n$ und Unterlokale
-    mit $s$ (von engl. Sublocale).
+    Um im Folgenden zwischen Unterlokalen und Nuklei zu unterscheiden bezeichnen wir Nuklei mit $n$ und Unterlokale
+    mit $s$ (von engl. sublocale).
     Das größte Element der Nuklei $\top_n$ ist somit das kleinste Unterlokal $\bot_s$ und umgekehrt ($\bot_n = \top_s$). \\
-    Aufgrund der Dualen Ordnung der Nuklei können wir von der Frame-Struktur der Nuklei auf die Coframe Struktur \mathlibok{OrderDual.instCoframe} der Unterlokalen schließen und damit die Interaktionen von Unterlokalen definieren. \\
+    Aufgrund der Dualen Ordnung der Nuklei können wir von der Frame-Struktur der Nuklei auf die Coframe Struktur \mathlibok{OrderDual.instCoframe} der Unterlokale schließen und damit die Interaktionen zwischen Unterlokalen definieren. \\
     Wir wollen uns nun aber noch etwas genauer mit der Definition der Vereinigung von Unterlokalen beschäftigen, da
     sie einen Unterschied zwischen der Arbeit von Johnstone und Leroy darstellt:
-    Johnstone hat das Supremum der Unterlokale implizit über das Infimum der Nuklei definiert, Leroy definiert das Supremum hingegen direkt über die Unterlokale:
+    Johnstone hat das Supremum der Unterlokale implizit über das Infimum der Nuklei definiert; Leroy definiert das Supremum hingegen direkt über die Unterlokale:
     \begin{definition}
         Der Schnitt einer Menge $S$ an Unterlokalen von $E$ bildet einen Nukleus mit folgender Funktion:
-        $$(\bigcup_s S)(a) = \bigcup \{w \in E | \forall x \in S,w \subseteq x\} \text{~~für alle $a \in E$}$$
+        $$(\bigcup_s S)(a) = \bigcup \{w \in E \mid \forall x \in S,w \subseteq x\} \text{~~für alle $a \in E$}$$
     \end{definition}
 % TODO Quelle leroy seite 5
     Hier haben wir ebenfalls bereits in Lean verifiziert, dass die Funktion die Bedingungen für einen Nukleus und die Bedingungen des beliebigen Supremums erfüllt. \\
@@ -525,11 +525,11 @@
     \end{proof}
 
     \subsection{Offene und abgeschlossene Unterlokale}
-    Wie in der klassischen Topologie gibt es auch in der Theorie der Lokalen offene und geschlossene Unterlokalen.
+    Wie in der klassischen Topologie gibt es auch in der Theorie der Lokale offene und geschlossene Unterlokale.
     Da die offenen Mengen $O(E)$ eines Topologischen Raumes $E$ immer eine Lokale bilden (siehe Beispiel \ref{bsp:offeneMengen}), hängen
-    die offenen Unterlokalen mit den Elementen $O(E)$ der Lokale $E$ zusammen und entsprechen damit den offenen Mengen eines klassischen Topologischen Raumes.
-    Die Komplemente dieser offenen Unterlokalen (bzw. offenen Mengen) bilden die abgeschlossenen Unterlokalen, die mit den abgeschlossenen Mengen eines Topologischen Raumes zusammenhängen. \\
-    Johnstone \autocite[S. 50]{johnstone_stone_1982} und MacLane \autocite[S. 488]{mac_lane_sheaves_1994} definieren beide in ihren Büchern die offenen Unterlokalen folgendermaßen:
+    die offenen Unterlokale mit den Elementen $O(E)$ der Lokale $E$ zusammen und entsprechen damit den offenen Mengen eines klassischen Topologischen Raumes.
+    Die Komplemente dieser offenen Unterlokale (bzw. offenen Mengen) bilden die abgeschlossenen Unterlokale, die mit den abgeschlossenen Mengen eines Topologischen Raumes zusammenhängen. \\
+    Johnstone \autocite[S. 50]{johnstone_stone_1982} und MacLane \autocite[S. 488]{mac_lane_sheaves_1994} definieren beide in ihren Büchern die offenen Unterlokale folgendermaßen:
     \begin{definition}
         \label{def:open}
         Jedes Element $v$ einer Lokale $E$ erzeugt eine offene Unterlokale von $E$ mit der Funktion:
@@ -537,7 +537,7 @@
     \end{definition}
     Johnstone und MacLane verwenden hier $v \Rightarrow a$, die sogenannte Heyting-Implikation (auch relatives-Pseudokomplement)\autocite{noauthor_heyting-algebra_2024,noauthor_heyting_nodate}.
     \begin{definition}
-        Die Heyting-Implikation erfüllt die Bedingung $a \le b \Rightarrow c$ genau dann, wenn $a \cap b \le c$ für alle $a$, $b$ und $c$. Eine Heyting Algebra ist ein Verband, bei dem diese Operation für alle Elemente definiert ist.
+        Die Heyting-Implikation erfüllt die Bedingung $a \le b \Rightarrow c$ genau dann, wenn $a \cap b \le c$ für alle $a, b, c$. Eine Heyting Algebra ist ein Verband, bei dem diese Operation für alle Elemente definiert ist.
     \end{definition}
     Die Heyting-Implikation kann hier verwendet werden, da die Elemente einer Lokale einen Frame, also eine vollständige Heyting Algebra bilden.\\
     Anhand dieser Eigenschaften haben wir hier auch in Lean wieder verifiziert, dass es sich bei $o_v$ für alle $v \in E$ um einen Nukleus handelt \autocite{noauthor_leroyopen_sublocales_nodate}. % TODO lean link.
@@ -548,15 +548,15 @@
         \[o_v(a) = \bigcup \{ W \in E | W \cap V \le a \}\]
     \end{lemma}
     \begin{proof}
-        Es genügt hier zu zeigen, dass $v \Rightarrow a$ das größte Element in der Menge $S = \{ W \in E | W \cap V \le a \}$ ist.
-        Wir wissen, dass $c \le c \Rightarrow a$ genau dann, wenn $c \cap v \le a$, daher sind alle Elemente $S$ kleiner oder gleich wie $v \Rightarrow a$ \mathlibok{himp\_eq\_sSup}.
+        Es genügt hier zu zeigen, dass $v \Rightarrow a$ das größte Element in der Menge $S = \{ W \in E \mid W \cap V \le a \}$ ist.
+        Wir wissen, dass $c \le c \Rightarrow a$ genau dann, wenn $c \cap v \le a$, daher sind alle Elemente $S$ kleiner oder gleich $v \Rightarrow a$ \mathlibok{himp\_eq\_sSup}.
     \end{proof}
-    Wir können nun anhand einiger Eigenschaften der offenen Unterlokalen (analog zu Leroy \autocite[S. 10]{leroy_theorie_2013}) zeigen, dass die offenen Unterlokalen von $E$ nahezu austauschbar mit ihrem entsprechenden Element von $E$ verwendbar sind. Um den folgenden Teil etwas übersichtlicher darzustellen, verwenden wir die Notation $[V]$ für $o_v$. \\
+    Wir können nun anhand einiger Eigenschaften der offenen Unterlokale (analog zu Leroy \autocite[S. 10]{leroy_theorie_2013}) zeigen, dass die offenen Unterlokalen von $E$ nahezu austauschbar mit ihrem entsprechenden Element von $E$ verwendbar sind. Um den folgenden Teil etwas übersichtlicher darzustellen, verwenden wir die Notation $[V]$ für $o_v$. \\
     Uns ist es gelungen, zu verifizieren, dass $[V] \subseteq [U]$ genau dann, wenn $V \subseteq U$ für alle $u, v \in E$ \leanok{Open.le\_iff}.
     Wir haben außerdem gezeigt, dass die offenen Unterlokalen mit beliebigen Suprema kommutieren \leanok{Open.preserves\_sSup}:
-    $$\bigcup_i [V_i] = [\bigcup_i V_i]$$
+    $$\bigcup_i [V_i] = \left[\bigcup_i V_i\right]$$
     Für alle Familien $V_i$ aus Elementen von $E$. \\
-    Die offenen Unterlokalen kommutieren zudem mit endlichen Infima \leanok{Open.preserves\_inf}:\\
+    Die offenen Unterlokale kommutieren zudem mit endlichen Infima \leanok{Open.preserves\_inf}:\\
     $[U \cap V] = [U] \cap [V]$
     für alle $U, V \in E$. Diese Eigenschaften haben wir bereits alle in Lean verifiziert. \\
     Johnstone, MacLane und Leroy definieren die abgeschlossenen Unterlokalen alle ähnlich:
