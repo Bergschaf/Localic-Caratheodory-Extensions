@@ -354,10 +354,10 @@
     Es bietet die Möglichkeit, alle Definitionen und Lemmata für Menschen verständlich zu formulieren und zu dem
     entsprechenden Lean-Code zu verlinken. Eine der wichtigsten Funktionen des Lean-Blueprint-Tools ist wohl der
     interaktive Dependency-Graph (siehe Abbildung \ref{fig:test1}). Dieser stellt alle Beziehungen zwischen den Lemmata und Definitionen übersichtlich in einem Graph dar (also welche Lemmata und Definitionen müssen zuerst fertiggestellt werden). Außerdem kann man anhand der Farbe der Knoten erkennen, wie weit die Formalisierung bereits fortgeschritten ist. \\
-    Wir haben für unser Projekt einen solchen Blueprint erstellt, der unter folgender Internetadresse veröffentlicht ist: \url{https://bergschaf.github.io/Localic-Caratheodory-Extensions/blueprint/}.
+    Wir haben für unser Projekt einen solchen Blueprint erstellt, der unter folgender Internetadresse veröffentlicht ist: \url{https://bergschaf.github.io/Localic-Caratheodory-Extensions/blueprint/dep_graph_chapter_1.html}.
     \begin{figure}[h]
         \centering
-        \begin{minipage}{.5\textwidth}
+        \begin{minipage}{.4\textwidth}
             \centering
             \includegraphics[width=.9\linewidth]{Dependency_Graph_full}
             \captionof{figure}{Gesamtansicht des Blueprints}
@@ -512,12 +512,13 @@
         $$(\bigcup_s S)(a) = \bigcup \{w \in E \mid \forall x \in S,w \subseteq x\} \text{~~für alle $a \in E$}$$
     \end{definition}
 % TODO Quelle leroy seite 5
-    Hier haben wir ebenfalls bereits in Lean verifiziert, dass die Funktion die Bedingungen für einen Nukleus und die Bedingungen des beliebigen Supremums erfüllt. \\
+    Hier haben wir ebenfalls bereits in Lean verifiziert, dass die Funktion die Bedingungen für einen Nukleus und die Bedingungen des beliebigen Supremums erfüllt. 
     \begin{lemma}
         Die Definitionen von Johnstone und Leroy \autocite[S. 5]{leroy_theorie_2013} sind äquivalent:
         $$(\bigwedge S) (a) = (\bigcup_s S) (a)$$ für alle Mengen an Nuklei $S$ und für alle $a \in E$ \\
             %TODO hier müsste man eig definieren wie man Unterlokale zu Nuklei konvertiert und umgekehrt
     \end{lemma}
+    \vspace{-3em}
     \begin{proof}
         Da wir verifiziert haben, dass beide Suprema die Bedingungen für beliebige Suprema erfüllen, wissen wir, dass beide eine obere Schranke für $S$ bilden \autocite{noauthor_beschrankte_2021}.
         Wir wissen aber ebenfalls, dass beide Suprema die kleinste obere Schranke bilden, daher haben wir $(\bigwedge_n S) \le (\bigcup_s S)$ und  $(\bigcup_s S) \le (\bigwedge_n S)$, woraus die Gleichheit folgt.
@@ -540,7 +541,7 @@
         Die Heyting-Implikation erfüllt die Bedingung $a \le b \Rightarrow c$ genau dann, wenn $a \cap b \le c$ für alle $a, b, c$. Eine Heyting Algebra ist ein Verband, bei dem diese Operation für alle Elemente definiert ist.
     \end{definition}
     Die Heyting-Implikation kann hier verwendet werden, da die Elemente einer Lokale einen Frame, also eine vollständige Heyting Algebra bilden.\\
-    Anhand dieser Eigenschaften haben wir hier auch in Lean wieder verifiziert, dass es sich bei $o_v$ für alle $v \in E$ um einen Nukleus handelt \autocite{noauthor_leroyopen_sublocales_nodate}. % TODO lean link.
+    Anhand dieser Eigenschaften haben wir hier auch in Lean wieder verifiziert, dass es sich bei $o_v$ für alle $v \in E$ um einen Nukleus handelt.
 
     \begin{lemma}
         \label{lem:himp_eq}
@@ -576,31 +577,31 @@
         Das Komplement einer offenen Unterlokale $o_v$ entspricht $o_v^c = c_v$ für alle $v \in E$ \leanok{Open.compl}.
     \end{definition}
     \begin{definition}
-        Im Folgenden bezeichnen $O(E)$ und $C(E)$ die Menge der offenen bzw. abgeschlossenen Unterlokalen von $E$
+        Im Folgenden bezeichnen $O(E)$ und $C(E)$ die Menge der offenen bzw. abgeschlossenen Unterlokale von $E$
     \end{definition}
-    Wir können hier $O(E)$ für die offenen Unterlokalen verwenden, da sie mit den Elementen $O(E)$ eines Lokals übereinstimmen. \\
-    Mit diesen Definitionen der offenen und geschlossenen Unterlokalen können wir nun einige klassische topologische Operationen auf den Unterlokalen definieren. Diese werden später oft in verschiedenen Beweisen verwendet.
+    Wir können hier $O(E)$ für die offenen Unterlokale verwenden, da sie mit den Elementen $O(E)$ einer Lokale übereinstimmen. \\
+    Mit diesen Definitionen der offenen und abgeschlossenen Unterlokale können wir nun einige klassische topologische Operationen auf den Unterlokalen definieren. Diese werden später oft in verschiedenen Beweisen verwendet.
     \begin{definition}
-        Der Abschluss einer Unterlokalen $X$ entspricht der kleinsten geschlossenen Unterlokalen, die $X$ enthält \leanok{Sublocale.closure}:
+        Der Abschluss einer Unterlokale $X$ entspricht der kleinsten geschlossenen Unterlokale, die $X$ enthält \leanok{Sublocale.closure}:
         \[\overline{X} = \bigcap \{W \in C(E) \mid X \le W \}\]
     \end{definition}
     \begin{definition}
-        Das Äußere einer Unterlokalen $X$ entspricht der größten offenen Unterlokalen, die disjunkt zu $X$ ist \leanok{Sublocale.exterior}: \[Ext~X = \bigcap \{W \in O(E) \mid W \cap X = \bot_s \}\]
+        Das Äußere einer Unterlokalen $X$ entspricht der größten offenen Unterlokale, die disjunkt zu $X$ ist \leanok{Sublocale.exterior}: \[Ext~X = \bigcap \{W \in O(E) \mid W \cap X = \bot_s \}\]
     \end{definition}
 
     \begin{definition}
-        Die offene Umgebung eines Unterlokals $X$ ist die Menge aller offenen Unterlokalen $V$, für die gilt $X \subseteq V$ \leanok{Sublocale.Open\_Neighbourhood}.
+        Die offene Umgebung eines Unterlokals $X$ ist die Menge aller offenen Unterlokale $V$, für die $X \subseteq V$ gilt. \leanok{Sublocale.Open\_Neighbourhood}.
     \end{definition}
 
     \begin{definition}
-        Ein Lokal $E$ heißt regulär, wenn für alle offenen Unterlokale $U$ von $E$ die offenen Unterlokale $V$ von $E$ mit $\overline{V} \subseteq U$ ganz $U$ abdecken \leanok{regular}.
+        Eine Lokale $E$ heißt regulär, wenn für alle offenen Unterlokale $U$ von $E$ die offenen Unterlokale $V$ von $E$ mit $\overline{V} \subseteq U$ ganz $U$ abdecken \leanok{regular}.
     \end{definition}
-    Sei $E$ im Folgenden ein reguläres Lokal.
+    Sei $E$ im Folgenden eine reguläre Lokale.
     \begin{lemma}
         \label{lem:regular_sublocal}
-        In einem regulären Lokal entspricht jedes Unterlokal $U$ dem Schnitt der offenen Umgebung von $U$.
+        In einer regulären Lokale entspricht jede Unterlokale $U$ dem Schnitt ihrer offenen Umgebung.
     \end{lemma}
-    Jetzt haben wir die notwendigen Voraussetzungen definiert und kleinere Lücken geschlossen, um mit der Maßtheorie über Lokalen zu beginnen.
+    Jetzt haben wir die notwendigen Voraussetzungen definiert und kleinere Lücken geschlossen, um mit der Maßtheorie über Lokale zu beginnen.
 
 
     \section{Maßtheorie über Lokale, weitere Ergebnisse unserer Arbeit}\label{Maßtheorie über Lokale}
@@ -608,7 +609,7 @@
     Die Maßtheorie über Lokale bietet einen abstrakten Zugang zur Definition von Maßen, der direkt auf der Struktur offener Mengen bzw. offener Unterlokale basiert, ohne auf Punkte oder klassische Mengenoperationen angewiesen zu sein. Statt einzelner Punkte stehen hier offene Teilstrukturen und deren algebraische Beziehungen im Mittelpunkt. Dieser Ansatz erlaubt es, Maßbegriffe auf einer rein strukturellen Ebene zu formulieren. Entsprechend definieren wir ein Maß über Lokale wie folgt:
 
     \begin{definition}
-        Ein Maß auf einem Lokal $E$ ist eine Abbildung $\mu:O(E)\to \mathbb{R}^{+}$, die für alle Unterlokale $U$ und $V$ von $E$ die folgenden Eigenschaften erfüllt:
+        Ein Maß auf einer Lokale $E$ ist eine Abbildung $\mu:O(E)\to \mathbb{R}^{+}$, die für alle Unterlokale $U$ und $V$ von $E$ die folgenden Eigenschaften erfüllt:
         \begin{itemize}
             \item $\mu(\emptyset)=0$
             \item $U\subseteq V\implies\mu(U)\leq\mu(V) $
@@ -620,13 +621,13 @@
     Analog zu der klassischen Maßtheorie, können wir auch hier eine Erweiterung eines Maßes definieren.
 
     \begin{definition}
-        Sei $E$ ein Lokal und $\mu$ ein Maß über $E$. Sei $A$ ein beliebiges Unterlokal von $E$, also insbesondere nicht unbedingt offen. Dann ist $\mu (A)$ definiert durch $\mu (A):=\inf\{\mu (U)~|~A\subset U, U\in O(E)\}$.
+        Sei $E$ eine Lokale und $\mu$ ein Maß über $E$. Sei $A$ eine beliebige Unterlokale von $E$, also insbesondere nicht unbedingt offen. Dann ist $\mu (A)$ definiert durch $\mu (A):=\inf\{\mu (U)~|~A\subset U, U\in O(E)\}$.
     \end{definition}
 
     \subsection{Elementare Eigenschaften der Maßtheorie über Lokale}
     Wir haben bereits zu großen Teilen in Lean gezeigt, dass ein Maß über Lokale die Eigenschaften eines klassischen Maßes erfüllt, die da wären:
-    \begin{lemma}
-        Für jedes Maß $\mu$ mit Caratheodory-Erweiterung über ein Lokal $E$ werden folgende Eigenschaften erfüllt:
+    \begin{satz}
+        Jedes Maß $\mu$ mit Caratheodory-Erweiterung über ein Lokal $E$ erfüllt folgende Eigenschaften: 
         \begin{itemize}
             \item Für alle Unterlokale $A,B$ von $E$ gilt $A\subseteq B\Rightarrow\mu(A)\leq\mu(B)$ (\textbf{Monotonie})
             \item Für offene Unterlokale $U$ von $E$ gilt $\mu(U)+\mu(E\setminus U)=\mu(E)$
@@ -635,26 +636,27 @@
             \item Für eine monoton steigende Familie $(V_i)_{i\in\mathbb{N}}$ von offenen Unterlokalen von $E$ und für ein Unterlokal $A$ von $E$ gilt: $\mu(A\cap\sup_i V_i)=\sup_i\mu(A\cap V_i)$
             \item Für eine monoton fallende Familie $(V_i)_{i\in\mathbb{N}}$ von offenen Unterlokalen von $E$ gilt $\mu(\inf_i V_i)=\inf_i\mu(V_i)$
         \end{itemize}
-        Insbesondere gilt für zwei offene Unterlokale $U, V$ von $E$ und einem Unterlokal $A$ von $E$
+        Insbesondere gilt für zwei offene Unterlokale $U, V$ von $E$ und eine Unterlokale $A$ von $E$
         \[
             \mu(A\cap(U\cup V))=\mu(A\cap U)+\mu(A\cap V)-\mu(A\cap U\cap V)
         \]
-    \end{lemma}
+    \end{satz}
+    \leanok{Measure.caratheodory.monotonic} \leanok{Measure.add\_complement} \leanok{Measure.add\_complement\_inf} \leanok{Measure.inf\_filtered} \leanok{Measure.preserves\_inf} \leanok{Measure.preserves\_inf} \leanok{Measure.restrict\_subadditive}
     \noindent Dass wir die grundlegenden Bausteine der klassischen Maßtheorie übertragen können, hat zur Folge, dass auch andere fundamentale Konzepte in der Theorie der Lokale erhalten bleiben. Insbesondere wird es uns dadurch erleichtert, die Theorie der Lokale zu verstehen und bestehendes Wissen aus der klassischen Maßtheorie entsprechend anzupassen.\\
     Um exemplarisch den Prozess des Beweisens einer solchen Eigenschaft zu zeigen, beschäftigen wir uns nun mit der folgenden Eigenschaft. Den Beweis dafür haben wir dabei eigenständig ausgearbeitet.
     \begin{lemma}
-        Für alle offenen Unterlokalen $U$ von $E$ gilt:
+        Für alle offenen Unterlokale $U$ von $E$ gilt:
         $\mu(U) + \mu(U^c) = \mu(\top_s)$ % TODO ggf das umformulieren oder die anderen eigenschaften in der Notation anpassen
     \end{lemma}
     \begin{proof}
 % TODO leroy quelle
-        Sei $V$ die Familie der offenen Umgebungen von $U^c$. Sei $W$ die Familie der äußeren von $V$: $W_i := Ext(V_i)$ für alle $i$. Die Vereinigung von $W$ entspricht $U$, da $\bigcap_i V_i = U$ (siehe Lemma \ref{lem:regular_sublocal}). $W$ ist außerdem monoton filtriert, da $U \cup V$ für alle $U, V \in W$ ein Element bildet, das $U$ und $V$ enthält. $U \cup V$ ist in $W$ enthalten, da endliche Schnitte von offenen Umgebungen auch immer eine offene Umgebung bilden. Da $V$ also unter endlichen Schnitten abgeschlossen ist, sind die äußeren von $V$ (also $W$) unter endlichen Vereinigungen abgeschlossen. Da $W$ also monoton filtriert ist, können wir (aufgrund der Eigenschaften von $\mu$ auf den offenen Unterlokalen) folgende Umformung durchführen: $$\mu(U) = \mu(\bigcup_i W_i) = \sup_i \mu (W_i)$$
-        Des Weiteren zeigen wir, dass $\mu(W_i) + \mu(V_i) \le \mu(\top_s)$ für alle $i$. Aufgrund der Definition des äußeren wissen wir, dass $W_i \cap V_i = \bot_s$ und $W_i \cup V_i \le \top_s$. Da $\mu(\bot_s) = 0$ und da $\mu$ monoton ist, können wir zeigen:
+        Sei $V$ die Familie der offenen Umgebungen von $U^c$. Sei $W$ die Familie der Äußeren von $V$: $W_i := Ext(V_i)$ für alle $i$. Die Vereinigung von $W$ entspricht $U$, da $\bigcap_i V_i = U$ (siehe Lemma \ref{lem:regular_sublocal}). $W$ ist außerdem monoton filtriert, da $U \cup V$ für alle $U, V \in W$ ein Element bildet, das $U$ und $V$ enthält. $U \cup V$ ist in $W$ enthalten, da endliche Schnitte von offenen Umgebungen auch immer eine offene Umgebung bilden. Da $V$ also unter endlichen Schnitten abgeschlossen ist, sind die äußeren von $V$ (also $W$) unter endlichen Vereinigungen abgeschlossen. Da $W$ also monoton filtriert ist, können wir (aufgrund der Eigenschaften von $\mu$ auf den offenen Unterlokalen) folgende Umformung durchführen: $$\mu(U) = \mu(\bigcup_i W_i) = \sup_i \mu (W_i)$$
+        Des Weiteren zeigen wir, dass $\mu(W_i) + \mu(V_i) \le \mu(\top_s)$ für alle $i$ gilt. Aufgrund der Definition des Äußeren wissen wir, dass $W_i \cap V_i = \bot_s$ und $W_i \cup V_i \le \top_s$. Da $\mu(\bot_s) = 0$ und da $\mu$ monoton ist, können wir zeigen:
         $$\mu(W_i) + \mu(V_i) = \mu(W_i) + \mu(V_i) + \mu(W_i \cap V_i) = \mu(W_i \cup V_i) \le \mu(\top_s)$$ für alle $i$.
         Da $U^c \le V_i$ (also $\mu(U^c) \le \mu (V_i)$) wissen wir: $\mu(W_i) + \mu(U^c) \le \mu(\top_s)$. Da dies für alle $i$ gilt und wir vorher gezeigt haben, dass $\mu(U) = \sup_i \mu (W_i)$, haben wir die eine Richtung gezeigt: $\mu(U) + \mu(U^c) \le \mu(\top_s)$. \\
-        Um die andere Richtung der Inklusion zu zeigen, beginnen wir mit der Definition der Caratheodory Erweiterung: $\mu(U^c) = \inf_i \mu(V_i)$. Daher wissen wir, dass $\mu(U^c) + \epsilon > \inf_i \mu(V_i)$ für alle $\epsilon > 0$. Es gibt also für alle $\epsilon > 0$ ein $W \in V_i$, sodass $\mu(U^c) + \epsilon > \mu(w)$. Da $W$ eine offene Umgebung von $U^c$ ist, haben wir: $W \cup U^c \ge \top_s$ und daher: $\mu(W) \cup \mu(U) \ge \mu(\top_s)$. Daraus folgt: $$\mu(\top_s) \le \mu(U) + \mu(U^c) + \mu(\epsilon)$$ Da dies für alle $\epsilon > 0$ gilt, können wir $\mu(\epsilon)$ auch mit $inf \{ \mu(\epsilon) | \epsilon > 0\} = 0$ ersetzen und können damit den Beweis abschließen.
+        Um die andere Richtung der Inklusion zu zeigen, beginnen wir mit der Definition der Caratheodory Erweiterung: $\mu(U^c) = \inf_i \mu(V_i)$. Daher wissen wir, dass $\mu(U^c) + \epsilon > \inf_i \mu(V_i)$ für alle $\epsilon > 0$. Es gibt also für alle $\epsilon > 0$ ein $W \in V_i$, sodass $\mu(U^c) + \epsilon > \mu(w)$. Da $W$ eine offene Umgebung von $U^c$ ist, haben wir: $W \cup U^c \ge \top_s$ und daher: $\mu(W) \cup \mu(U) \ge \mu(\top_s)$. Daraus folgt: $$\mu(\top_s) \le \mu(U) + \mu(U^c) + \mu(\epsilon)$$ Da dies für alle $\epsilon > 0$ gilt, können wir $\mu(\epsilon)$ auch mit $inf \{ \mu(\epsilon) \mid \epsilon > 0\} = 0$ ersetzen und können damit den Beweis abschließen.
     \end{proof}
-    Unsere (nicht verkürzte) Lean Formalisierung dieses Beweises nimmt ungefähr 200 Code-Zeilen ein \autocite{noauthor_leroy_lemme3_nodate}. Am Vergleich zu den vier Zeilen im Originaldokument von Leroy \autocite[S. 25]{leroy_theorie_2013} erkennt man gut, dass es, vor allem in diesem Fall, oft ein signifikanter Aufwand ist, schriftliche Beweise in Lean zu formalisieren. Es ist nämlich nicht nur nötig, den Text in Code zu übersetzen, sondern es müssen oft auch wichtige Teile des Beweises \glqq neu gefunden\grqq{} werden, da sie im Originaldokument nicht enthalten sind. Dafür erhalten wir aber die absolute Sicherheit, dass der Beweis korrekt ist, was den einmaligen Aufwand rechtfertigt.
+    Unsere (noch nicht gerkürzte) Lean Formalisierung dieses Beweises nimmt ungefähr 200 Code-Zeilen ein \autocite{noauthor_leroy_lemme3_nodate} \leanok{Measure.add\_complement}. Im Vergleich zu den vier Zeilen im Originaldokument von Leroy \autocite[S. 25]{leroy_theorie_2013} erkennt man gut, dass es, vor allem in diesem Fall oft ein signifikanter Aufwand ist, schriftliche Beweise in Lean zu formalisieren. Es ist nämlich nicht nur nötig, den Text in Code zu übersetzen, sondern es müssen oft auch wichtige Teile des Beweises \glqq neu gefunden\grqq{} werden, da sie im Originaldokument nicht enthalten sind. Dafür erhalten wir aber die absolute Sicherheit, dass der Beweis korrekt ist, was den einmaligen Aufwand rechtfertigt.
 
     \subsection{Neue Eigenschaften der Maßtheorie über Lokale}
     Um den Banach-Tarski-Mengen eine sinnvolle Größe in der Theorie der Lokale zuordnen zu können, braucht es selbstverständlich mehr als nur die auch in klassischen Maßen auffindbaren elementaren Eigenschaften. Aktuell sind wir dabei in Lean zu zeigen, dass ein Maß über Lokale mit Caratheodory-Erweiterung folgende neue Eigenschaften aufweist:
@@ -666,8 +668,7 @@
             \item Sei $A$ ein Unterlokal von $E$. Die Menge $\{A'\subset A~\text{Unterlokal von}~E~|~\mu(A')=\mu(A)\}$ hat ein minimales Element (\textbf{Reduzierbarkeit}).
         \end{itemize}
     \end{lemma}
-
-    \noindent Insbesondere gilt nun die strikte Additivität des Maßes mit Caratheodory-Erweiterung für alle Unterlokale eines gegebenen Lokals. Da jede Teilmenge einer gegebenen Menge ein Unterlokal induziert, lässt sich die strikte Additivität auf diese Teilmengen übertragen. Entsprechend können wir festhalten, dass die Caratheodory-Erweiterung nun bessere Eigenschaften hat, die es zusammen mit der besseren Definition des Schnitts möglich machen, den Banach-Tarski-Mengen eine sinnvolle Größe zuzuordnen und dem \glqq Banach-Tarski-Paradoxon\grqq~seinen paradoxen Charakter entziehen, indem ein Duplizieren einer Kugel im Sinne des Satzes von Banach-Tarski nicht mehr möglich ist.
+    \leanok{Measure.strictly\_additive} Insbesondere gilt nun die strikte Additivität des Maßes mit Caratheodory-Erweiterung für alle Unterlokale eines gegebenen Lokals. Da jede Teilmenge einer gegebenen Menge ein Unterlokal induziert, lässt sich die strikte Additivität auf diese Teilmengen übertragen. Entsprechend können wir festhalten, dass die Caratheodory-Erweiterung nun bessere Eigenschaften hat, die es zusammen mit der besseren Definition des Schnitts möglich machen, den Banach-Tarski-Mengen eine sinnvolle Größe zuzuordnen und dem \glqq Banach-Tarski-Paradoxon\grqq~seinen paradoxen Charakter entziehen, indem ein Duplizieren einer Kugel im Sinne des Banach-Tarski Paradoxons nicht mehr möglich ist.
 
 
     \section{Zusammenfassung der Ergebnisse in Lean}
@@ -687,14 +688,14 @@
         \prok{20246} & feat(Order/CompleteLattice): instances for \newline CompleteSemilatticeInf/CompleteSemilatticeSup for Dual types        \\
         \prok{19440} & feat(Order/Nucleus): Nucleus                                                                                            \\
     \end{longtable}
-    Man sieht, dass wir einen wichtigen Teil unserer Arbeit; den Nukleus und dessen Frame-Struktur bereits in die Mathlib gebracht haben.
+    Man sieht, dass wir einen wichtigen Teil unserer Arbeit (den Nukleus und dessen Frame-Struktur) bereits in die Mathlib gebracht haben.
     So kann nun jeder, der die Mathlib benutzt, unsere Definition des Nukleus verwenden.
     In einer anderen Pull Request haben wir die Definition des Frames, die bereits in der Mathlib enthalten war, optimiert.
     Wir konnten zeigen, dass das Axiom der Distributivität, das vorher in der Definition enthalten war, nicht benötigt wurde, da es allein daraus folgt, dass ein vollständiger Verband in Kombination mit einer Heyting Algebra vorliegt. \\
-    Neben der Arbeit für die Mathlib haben wir parallel in unserem eigenen Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025} große Teile der elementaren Lokalen-Theorie formalisiert. Dazu gehört die Definition eines Nukleus, die Ordnungsrelation des Nukleus, beliebige Suprema und Infima und schließlich die Verbandsstruktur der Nuklei. Außerdem haben wir die, zu den Nuklei dualen, Unterlokalen mit den entsprechenden Operationen formalisiert. Auch die offenen Unterlokalen und deren Komplemente, die abgeschlossenen Unterlokalen, haben wir bereits in Lean fertiggestellt. Es ist uns außerdem gelungen bereits erste Definitionen und Lemmata der Maßtheorie auf Lokalen zu formalisieren. Dazu gehört einerseits die Definition eines Maßes auf den offenen Unterlokalen, aber auch schon erste Eigenschaften der Caratheodory Erweiterung dieses Maßes. \\
-    Um die Arbeit mit Lean zu veranschaulichen, werden wir nun beispielhaft die Definition eines Nukleus betrachten. In der Mathlib haben wir den Nucleus als Erweiterung eines \lean{InfHom} definiert, diese Definition ist etwas anschaulicher, ändert aber nichts an der Bedeutung. Unter folgendem Link man den Lean-Code auf Live-Lean, einer online Lean Plattform, nachvollziehen: \href{https://live.lean-lang.org/#codez=JYWwDg9gTgLgBAWQIYwBYBtgCMB0B5KAEwFMocBhCcdYmYgIQghqQDsBBdAc2KyiQBQAegC0IgQBVUxOBICeYGRABmcAHIBXAMY1gcCKzhI4AMX4hiOASKECAzjCjaYGqDM07iGu3AAUADTgALlkFYgAqAEo4AG0AZWIQYHQUGGAtYgBJVlV/AF04AHdpNwE4OFERWWk4ZQ1WLTSDfVU0GVZtGm8cGzK4GAgTeuC4QMAkwlG+yrh2dU6vH2BFknAIOlYYHtty4BXIdfhfAA8R/2iQgaHDX0vho+jAEyJ+wbupsRm5z284JZ+GtyQdmArC4Wz6wK0AKBIL8JxCZxGJyet0MRzeVVmHi6PjAbjspAAbsRFjlQEgweVccTCcSAPrA1THOByU7nZ5XWFwQDJRMzogBedl3bmCwxyATigQEpBQYBILA0OAAb0CIXkinCAF9YgQSGQzEgLKM8sIxAIAKLAuYAa2xcCtbEMSHQPmIwJkVytTUMWFo/C0qDo8EKpBIrCsvWBDjYGRGVwAMsArTJfFiFqNooFAsVSMQ+loIDIggLU90UXmC/TWAArYiNYBEgDktTgXDgqGCAqwLK0gOJtQA3HAe/ifFxB/mQVATeJMfNvr8QAYBqxc70aCAQMYS3YcIvWGsDMnDCFt+mRggDAeV3Bj52xeUoIVYhf98viMadhsoBAjHAsG2+lQJAiTbABGEZjB5f8BWMIs/mUWliAAR1pGhlE2cAoAA8ogJA1AACYOxvHAqXxKAiTsStVGMLA+kfWJUFAgoUDbfC+mII4kEaOA0JgRCUIZXcwFYoA}{livelean}. Während eines Beweises wird auf der rechten Seite der aktuelle Stand angezeigt.
+    Neben der Arbeit für die Mathlib haben wir parallel in unserem eigenen Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025} große Teile der elementaren Theorie der Lokale formalisiert. Dazu gehören zum Beispiel die zu den Nuklei dualen Unterlokale mit den entsprechenden Operationen. Auch die offenen Unterlokale und deren Komplemente, die abgeschlossenen Unterlokale, haben wir bereits in Lean fertiggestellt. Es ist uns außerdem gelungen bereits viele der Definitionen und Lemmata der Maßtheorie auf Lokalen zu formalisieren. Dazu gehört einerseits die Definition eines Maßes auf den offenen Unterlokalen, aber auch einige Eigenschaften der Caratheodory Erweiterung dieses Maßes. \\
+    Um die Arbeit mit Lean zu veranschaulichen, werden wir nun beispielhaft die Definition eines Nukleus betrachten. In der Mathlib haben wir den Nucleus als Erweiterung eines \lean{InfHom} definiert. Die folgendeDefinition ist etwas anschaulicher, ändert aber nichts an der Bedeutung. Unter folgendem Link kann man den Lean-Code auf Live-Lean, einer online Lean Plattform, nachvollziehen: \href{https://live.lean-lang.org/#codez=JYWwDg9gTgLgBAWQIYwBYBtgCMB0B5KAEwFMocBhCcdYmYgIQghqQDsBBdAc2KyiQBQAegC0IgQBVUxOBICeYGRABmcAHIBXAMY1gcCKzhI4AMX4hiOASKECAzjCjaYGqDM07iGu3AAUADTgALlkFYgAqAEo4AG0AZWIQYHQUGGAtYgBJVlV/AF04AHdpNwE4OFERWWk4ZQ1WLTSDfVU0GVZtGm8cGzK4GAgTeuC4QMAkwlG+yrh2dU6vH2BFknAIOlYYHtty4BXIdfhfAA8R/2iQgaHDX0vho+jAEyJ+wbupsRm5z284JZ+GtyQdmArC4Wz6wK0AKBIL8JxCZxGJyet0MRzeVVmHi6PjAbjspAAbsRFjlQEgweVccTCcSAPrA1THOByU7nZ5XWFwQDJRMzogBedl3bmCwxyATigQEpBQYBILA0OAAb0CIXkinCAF9YgQSGQzEgLKM8sIxAIAKLAuYAa2xcCtbEMSHQPmIwJkVytTUMWFo/C0qDo8EKpBIrCsvWBDjYGRGVwAMsArTJfFiFqNooFAsVSMQ+loIDIggLU90UXmC/TWAArYiNYBEgDktTgXDgqGCAqwLK0gOJtQA3HAe/ifFxB/mQVATeJMfNvr8QAYBqxc70aCAQMYS3YcIvWGsDMnDCFt+mRggDAeV3Bj52xeUoIVYhf98viMadhsoBAjHAsG2+lQJAiTbABGEZjB5f8BWMIs/mUWliAAR1pGhlE2cAoAA8ogJA1AACYOxvHAqXxKAiTsStVGMLA+kfWJUFAgoUDbfC+mII4kEaOA0JgRCUIZXcwFYoA}{livelean}. Während eines Beweises wird auf der rechten Seite der aktuelle Stand angezeigt.
     \begin{leancode}
-        /--
+/--
 The Type of Nuclei on a Frame.
 -/
 structure Nucleus (X : Type*) [SemilatticeInf X] where
@@ -711,7 +712,7 @@ structure Nucleus (X : Type*) [SemilatticeInf X] where
     Das erste Feld der \lean{structure} enthält die Funktion des Nukleus, die vom Typ \lean{X → X} sein muss. Das nächste Feld \lean{idempotent} erwartet einen Beweis, der versichert, dass die Funktion idempotent ist. Die nächsten beiden Felder enthalten ebenfalls Beweise für die zwei anderen Eigenschaften des Nukleus. \\
     Nun zeigen wir exemplarisch, dass jeder Nukleus monoton ist:
     \begin{leancode}
-        lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
+lemma Nucleus.monotone (n : Nucleus X) : Monotone n := by
   rw [Monotone]
   intro a b h
   have h1 : a ⊓ b = a := inf_eq_left.mpr h
@@ -719,18 +720,18 @@ structure Nucleus (X : Type*) [SemilatticeInf X] where
   rw [h1] at h2
   exact left_eq_inf.mp h2
     \end{leancode}
-    Wir müssen zeigen, dass $n(a) \le n(b)$, wenn $a \le b$, um den Beweis der Monotonie abzuschließen. Daher wissen wir nun in unserem Lean-Beweis, dass $a \le b$ und müssen zeigen, dass $n(a) \le n(b)$. Zuerst zeigen wir  $a \cap b = a$ in \lean{h2}, mit einem Mathlib Lemma, das besagt, dass $a \cap b = a$, wenn $a \le b$. Nun betrachten wir mit \lean{h2} die dritte Eigenschaft von Nuklei, nämlich, dass Infima erhalten werden: $n(a \cap b) = n(a) \cap n(b)$. In dieser Gleichung ersetzen wir mithilfe von \lean{h1}, $a \cap b$ durch $a$. Zum Schluss verwenden wir die andere Richtung des vorherigen Mathlib Lemmas und zeigen, dass $n(a) \le n(b)$, da $n(a) = n(a) \cap n(b)$. \\
-    Dies war nur ein sehr einfaches Beispiel für einen Lean-Beweis, unsere, teilweise deutlich komplexeren Beweise, befinden sich in unserem Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025}.
+    Wir müssen zeigen, dass $n(a) \le n(b)$, wenn $a \le b$, um den Beweis der Monotonie abzuschließen. Daher wissen wir nun in unserem Lean-Beweis, dass $a \le b$ und müssen zeigen, dass $n(a) \le n(b)$. Zuerst zeigen wir  $a \cap b = a$ in \lean{h2}, mit einem Mathlib-Lemma, das besagt, dass $a \cap b = a$, wenn $a \le b$. Nun betrachten wir mit \lean{h2} die dritte Eigenschaft von Nuklei, nämlich dass Infima erhalten bleiben: $n(a \cap b) = n(a) \cap n(b)$. In dieser Gleichung ersetzen wir mithilfe von \lean{h1} $a \cap b$ durch $a$. Zum Schluss verwenden wir die andere Richtung des vorherigen Mathlib Lemmas und zeigen, dass $n(a) \le n(b)$, da $n(a) = n(a) \cap n(b)$. \\
+    Dies war nur ein sehr einfaches Beispiel für einen Lean-Beweis unsere, teilweise deutlich komplexeren Beweise befinden sich in unserem Github Repository \autocite{bergschaf_bergschaflocalic-caratheodory-extensions_2025}.
 
 
     \section{Ausblick und kritische Betrachtung der Ergebnisse}
-    Das Naheliegenste Ziel ist es, die Resultate von Leroy vollständig in Lean zu formalisieren und anschließend, gemeinsam mit den Grundlagen der Theorie der Lokalen in die Mathlib zu übertragen.
+    Das Naheliegenste Ziel ist es, die Resultate von Leroy vollständig in Lean zu formalisieren und anschließend, gemeinsam mit den Grundlagen der Theorie der Lokale in die Mathlib zu übertragen.
     Da wir dann einen Begriff für das Maß über Lokale haben, könnten wir uns damit beschäftigen, ob auch eine Integrationstheorie über Lokale möglich ist und man könnte betrachten, wie mathematische Standard-Sätze in die Theorie der Lokale übertragen werden können.
     Um die Erkenntnisse aus unserer Arbeit in noch allgemeineren Strukturen betrachten zu können, wäre es zudem eine interessante Möglichkeit, u.a. die von uns in Abschnitt \ref{Maßtheorie über Lokale} beschriebene Maßtheorie über Lokale in die Topostheorie einzubetten, um potentiell bessere und allgemeiner geltende Resultate zu erhalten.
 
     \subsection{Der Zusammenhang von Lokale und Topologischen Räumen}
     Wie wir bereits in Kapitel \ref{Einführung Lokale} festgestellt haben, sind sich Topologische Räume und Lokale sehr ähnlich. Schaut man genauer hin, so kann man erkennen, dass Lokale eine Verallgemeinerung von Topologischen Räumen darstellen. Insbesondere induzieren Unterräume hinreichend guter Räume wie etwa Hausdorff Räume oder kompakte Räume, eine Unterlokale. Man kann zeigen, dass dabei die Ordnung der Unterräume in den induzierten Unterlokalen erhalten bleibt. Daraus resultiert, dass ein Maß auf einem hinreichend guten Topologischen Raum $X$ auch ein Maß auf der entsprechenden Lokale induziert, wobei die klassische Caratheodory-Erweiterung auf $\mathcal{P}(X)$ der Einschränkung der Caratheodory-Erweiterung des Maßes auf der induzierten Lokale entspricht.
-    Dieser Zusammenhang zwischen Topologischen Räumen und Lokale ist aber nur nebensächlich, weshalb wir uns zunächst auf die Maßeigenschaften der Maße über Lokale konzentrieren. Entsprechend sind diese Zusammenhänge auch noch nicht in Lean formalisiert worden, weshalb der zugehörige Blueprint verhältnismäßig weiß ist.
+    Dieser Zusammenhang zwischen Topologischen Räumen und Lokale ist aber nur nebensächlich, weshalb wir uns zunächst auf die Maßeigenschaften der Maße über Lokale konzentrieren. Wir haben für diesen Teil des Projekts schon, einen Blueprint erstellt \autocite{blueprint_part_2}, ihn aber noch nicht in Lean formalisiert.
 
 
 %\section{Rückbezug auf Banach-Tarski}
