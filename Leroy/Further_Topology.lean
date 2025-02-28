@@ -20,17 +20,39 @@ lemma Sublocale.Open_Neighbourhood.top_mem {x : Sublocale X}: ⊤ ∈ Open_Neigh
   simp [Open_Neighbourhood]
 
 lemma Sublocale.Open_Neighbourhood.Nonempty (x : Sublocale X) : (Open_Neighbourhood x).Nonempty := by
-  simp [Set.Nonempty]
   use ⊤
   exact top_mem
 
+lemma Sublocale.Nonempty_Open_Neighbourhood (x : Sublocale X) : Nonempty (Open_Neighbourhood x) := by
+  use ⊤
+  exact Open_Neighbourhood.top_mem
 
+-- TODO restliche Neighbourhood lemmas
+lemma Sublocale.Neighbourhood.top_mem (x : Sublocale X) : ⊤ ∈ Neighbourhood x := by
+  simp [Neighbourhood]
+  use ⊤
+  exact Open_Neighbourhood.top_mem
+
+lemma Sublocale.Nonempty_Neighbourhood (x : Sublocale X) : Nonempty (Neighbourhood x) := by
+  use ⊤
+  exact Neighbourhood.top_mem x
 
 lemma Sublocale.Open_Neighbourhood.inf_closed {x : Sublocale E} : ∀ U ∈ Open_Neighbourhood x, ∀ V ∈ Open_Neighbourhood x, U ⊓ V ∈ Open_Neighbourhood x := by
   simp [Open_Neighbourhood]
   intro U h1 V h2
   rw [Open.preserves_inf]
   exact le_inf h1 h2
+
+lemma Sublocale.Neighbourhood.inf_closed (x : Sublocale E) : ∀ U ∈ Neighbourhood x, ∀ V ∈ Neighbourhood x, U ⊓ V ∈ Neighbourhood x := by
+  simp only [Neighbourhood, Open_Neighbourhood, Set.mem_setOf_eq, le_inf_iff, forall_exists_index,
+    and_imp, OrderDual.forall]
+  intro a x1 h1 h2 n x2 h3 h4
+  use x1 ⊓ x2
+  simp_all only [Open.preserves_inf, le_inf_iff, and_self, true_and]
+  apply And.intro
+  . exact inf_le_of_left_le h2
+  . exact inf_le_of_right_le h4
+
 /-!
 Properties of Complement
 -/
@@ -87,6 +109,8 @@ lemma compl_sup_eq_inf_compl {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.co
   exact injective_of_le_imp_le (fun (x : Closed E) => x.toSublocale) fun {x y} a => (by exact (Closed.le_iff x y).mpr a)
 
 
+lemma Sublocale.eq_intersection_open_closed (j : Sublocale E) : ∃ u : Open E, ∃ c : Closed E, a = u.toSublocale ⊓ c.toSublocale := by
+  sorry
 
 
 /-!

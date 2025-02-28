@@ -2,8 +2,8 @@ import Mathlib.Data.Real.Basic
 import Leroy.Basic
 import Leroy.Further_Topology
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Leroy.Measure.Aux
-
 
 -----
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
@@ -19,14 +19,13 @@ structure Measure where
   toFun : (Open X) → NNReal --
   empty : toFun ⊥ = 0
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
-  pseudosymm : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
+  strictly_additive (U V : Open X) : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set  (Open X)), increasingly_filtered s → toFun (sSup s) = sSup (toFun '' s)
 open Sublocale
 
 variable {m : @Measure E e_frm}
 
 namespace Measure
-
 
 lemma monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
   exact congrArg m.toFun h
@@ -80,7 +79,6 @@ lemma monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.carathe
     use m.toFun ⊤
     use ⊤
     simp
-
   . simp [Open_Neighbourhood, Nucleus.toFun_eq_coe, Set.image_subset_iff]
     rw [@Set.setOf_subset]
     intro x h1
@@ -99,17 +97,18 @@ end caratheodory
 end Measure
 
 
-lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε  := by
+lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
       have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
         refine Real.lt_sInf_add_pos ?_ hε
         exact h
 
-      have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < sInf s + ε := by
+      have h_aux' (ε : Real) (hε : ε > 0) (s : Set NNReal) (h : s.Nonempty): ∃ W ∈ s, W < (sInf s) + ε := by
         let h1 := h_aux ε hε (NNReal.toReal '' s) (by simp only [Set.image_nonempty, h])
         simp at h1
         rcases h1 with ⟨x, ⟨h1, h2⟩⟩
         use x
         simp only [h1, true_and]
+
         apply LT.lt.trans_le h2
         simp only [add_le_add_iff_right]
         rw [← NNReal.coe_sInf]
@@ -121,7 +120,8 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0, ∃ w ∈ Ope
         simp only [and_true]
         exact Open_Neighbourhood.top_mem
       intro ε hε
-      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) h_nonempty
+
+      let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) (by use m.toFun ⊤; rw [Set.mem_image]; use ⊤;simp;exact Open_Neighbourhood.top_mem)
       rcases h with ⟨V, h⟩
       simp at h
       rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
@@ -136,8 +136,84 @@ def Rpos := {r : NNReal // 0 < r}
 Leroy Lemme 1
 -> Magie
 -/
-lemma preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
-  sorry
+lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
+  apply le_antisymm
+  .
+    have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
+      intro ε h_ε
+      let ε_n (n : ℕ) : ℝ := ε / (2 * n ^ 2)
+      have h_ε_n (n : ℕ) : ε_n n > 0 := by simp [ε_n]; norm_cast; sorry
+      have h_sum_1 : 0 < tsum ε_n := by sorry
+      have h_sum : tsum ε_n < ε := by
+        sorry
+      let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon _ _ m (X_n n) ⟨(ε_n n), sorry⟩ (h_ε_n n))
+      have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by sorry
+
+      have W_n (n : ℕ) := ⨆ m ∈ {i : ℕ | i ≤ n}, V_n m
+
+      have W := iSup W_n
+
+      -- sorry
+
+      have h1 (n : ℕ) : m.caratheodory (W_n n) - m.caratheodory (X_n n) ≤ ∑ m : {i : ℕ | i ≤ n}, ε_n m := by
+        induction n with
+        | zero =>
+          sorry
+        | succ n ih =>
+
+          have h2 : m.caratheodory (W_n (n + 1)) ≤ m.caratheodory (W_n n) - m.caratheodory (X_n n) + m.caratheodory (X_n (n + 1)) + ε_n (n + 1) := by
+            have h_w_n : (W_n (n + 1)) = W_n n ⊔ V_n (n + 1) := by
+              sorry
+            rw [h_w_n, Measure.caratheodory.open_eq_toFun]
+            rw [Measure.strictly_additive]
+            sorry
+
+
+          have h3 : m.caratheodory (W_n (n + 1)) - m.caratheodory (X_n (n + 1)) ≤ m.caratheodory (W_n n) - m.caratheodory (X_n n) + ε_n (n + 1) := by
+            sorry
+
+          have h4 : m.caratheodory (W_n (n + 1)) - m.caratheodory (X_n (n + 1)) ≤ ε_n n + ε_n (n + 1) := by
+            sorry -- induktionsvorraussetzung
+
+          have h5 : ε_n n + ε_n (n + 1) ≤ ∑ m : ↑{i | i ≤ n + 1}, ε_n ↑m := by
+            sorry
+
+          apply le_trans h4 h5
+
+      have h2 (n : ℕ) : m.caratheodory (W_n n)  ≤ m.caratheodory (X_n n) + ∑ m : {i : ℕ | i ≤ n}, ε_n m := by sorry
+
+      have h3 : iSup (fun n ↦ m.caratheodory (W_n n)) ≤ iSup (fun n ↦ m.caratheodory (X_n n) + ∑ m : {i : ℕ | i ≤ n}, ε_n m) := by
+        sorry
+      simp at h3
+
+      have h4 : m.caratheodory (iSup X_n) ≤ ⨆ i : ℕ, ↑(m.caratheodory (W_n i).toSublocale) := by
+        sorry
+      apply le_trans h4
+
+      sorry
+
+
+    have h1 :  ∀ ε > 0, m.caratheodory (iSup X_n) - iSup (m.caratheodory ∘ X_n) ≤  ε := by
+      intro e h
+      exact tsub_le_iff_left.mpr (h0 e h)
+
+    have h2 :  m.caratheodory (iSup X_n) - iSup (m.caratheodory ∘ X_n) ≤ sInf {ε | ε > 0} := by
+      apply le_csInf
+      . use 42
+        simp
+      . exact fun b a => h1 b a
+    rw [sInf_epsilon_eq_zero'] at h2
+    apply_fun (. + iSup (m.caratheodory ∘ X_n)) at h2
+    dsimp at h2
+    rw [zero_add] at h2
+    apply le_trans' h2
+    exact le_tsub_add
+    exact add_right_mono
+  . apply ciSup_le
+    intro n
+    simp only [Function.comp_apply]
+    apply Measure.caratheodory.monotonic
+    exact le_iSup X_n n
 
 lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
@@ -156,7 +232,7 @@ lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a 
       exact sup_le_sup ha1 hb1
     apply le_trans h1
     rw [Measure.caratheodory.open_eq_toFun]
-    rw [Measure.pseudosymm]
+    rw [Measure.strictly_additive]
     simp only [tsub_le_iff_right]
     have h2 : (m.caratheodory a + ε) + (m.caratheodory b +  ε) ≤ m.caratheodory a + m.caratheodory b + 2 * ε + m.toFun (w_a ⊓ w_b) := by
       ring_nf

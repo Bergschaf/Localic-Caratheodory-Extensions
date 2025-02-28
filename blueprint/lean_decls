@@ -35,4 +35,5 @@ Measure.restrict_measure
 Measure.add_complement_inf
 Measure.inf_filtered
 Measure.restrict_sublocale_measure
+Measure.caratheodory.strictly_additive
 Measure.caratheodory.preserves_sInf

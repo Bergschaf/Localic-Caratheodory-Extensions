@@ -58,8 +58,8 @@
 \end{theorem}
 
 \end{comment}
-\chapter{Leroy Chapter III}\label{sec:leroy-chapter-iii}
-\begin{definition}[Measure on Locals]
+\section{Caratheodory Extnesion on Locales}\label{sec:leroy-chapter-iii}
+\begin{definition}[Measure on Locales]
     \label{def:measure_on_locals}
     \uses{def:open_sublocal,lem:sublocal_properties} 
     \lean{Measure}
@@ -196,6 +196,9 @@
     For a increasing family $V_{\alpha}$ of open sublocals of $E$ and any sublocal $A$, we have:
     \[\mu(A \cap(\bigcup V_{\alpha})) = \sup_\alpha \mu(A\cap V_\alpha)\]
 \end{lemma}
+\begin{proof}
+    \leanok
+\end{proof}
 
 \begin{lemma}[Restriction to a Sublocale]
     Let $A$ be a sublocale of $E$ with the embedding $i : A \rightarrow E$. The restriction of a measure $\mu$ on $E$ to $A$ is a measure on $A$:
@@ -231,9 +234,14 @@
 (Leroy theorem 3.3.1)
     \label{prop:strictly_additive}
     \uses{prop:commutes_with_inf,lem:regularity_of_sublocals}
+    \leanok
+    \lean{Measure.caratheodory.strictly_additive}
     For any measure on a local $X$, the caratheodory extension is
     strictly additive i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$
 \end{proposition}
+\begin{proof}
+    \leanok
+\end{proof}
 
 
 \begin{proposition}[reductive]
@@ -275,104 +283,4 @@
         \item reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
     \end{enumerate}
 \end{theorem}
-
-
-\chapter{Leroy Chapter V}\label{sec:leroy-chapter-v}
-
-
-\begin{lemma}[Regular Top to regular local]
-    \label{lem:regular_top_to_regular_local}
-    \uses{def:good_enough_topological_space, def:regular_local}
-    Any regular topological space induces a regular local.
-\end{lemma}
-
-\begin{lemma}[Opens]
-(Leroy V.1 Remarque 2)
-    \label{lem:opens_correspond}
-    \uses{def:open_sublocal}
-    The Open subsets of any good enough topological space correspond precisely to the open sublocals of the corresponding local.
-\end{lemma}
-
-\begin{lemma}[Subset Sublocal]
-(leroy V.1 Remarque 3)
-    \label{lem:subset_sublocal}
-    \uses{def:good_enough_topological_space}
-    Any subset $X$ of a good enough topological space $E$ induces a sublocal $[X]$ of the corresponding local. This is an order preserving embedding.
-\end{lemma}
-
-\begin{definition}[Good enough topological space]
-    \label{def:good_enough_topological_space}
-    blackbox to mathlib???? )
-\end{definition}
-
-\begin{lemma}[Subset to sublocal Part 1]
-(Leroy Proposition 5.1.1)
-    \label{lem:subset_to_sublocal_part_1}
-    \uses{lem:opens_correspond,lem:subset_sublocal,def:good_enough_topological_space}
-
-    For two subspaces $X$ and $Y$ of $E$ and an open subspaces $U$ of $E$, we have:
-    \begin{enumerate}
-        \item $X \subset Y \implies [X] \subset [Y]$
-        \item $X \subset U \iff [X] \subset [U]$
-        \item If $E$ is a good enough topological space, then \[X \subset Y \iff [X] \subset [Y]\]
-    \end{enumerate}
-\end{lemma}
-
-\begin{lemma}[Subset to sublocal Part 2]
-(Leroy Proposition 5.1.2, 5.1.3)
-    \label{lem:subset_to_sublocal_part_2}
-    \uses{lem:open_closed_intersection}
-    For an open subspace $U$ of $E$ and a subspace $X$ of $E$, we have:
-    \begin{gather*}
-    [U \cap X]
-        = [U] \cap [X]\\
-        F = E \setminus U\\
-        [F] = [E] \\ [U]\\
-        X \cap F] = [X] \cap [F]\\
-    \end{gather*}
-
-\end{lemma}
-
-%\begin{lemma}[(Prop 4) Unions of subspaces]
-%(Leroy Proposition 5.1.4)
-%    \label{lem:unions_of_subspaces}
-%    For a family $X_i$ of subspaces of $E$, we have:
-%    \[\bigcup_i [X_i] = [\bigcup_i X_i]\]
-%\end{lemma}
-
-\begin{lemma}[Part 3]
-    \label{lem:subspaces_part_3}
-    \uses{lem:open_closed_intersection,lem:subset_to_sublocal_part_2,def:further_topology}
-    For any subspaces $X$ of E, we have:
-    \begin{enumerate}
-        \item \[Ext[X] = [Ext X]\]
-        \item \[\bar{[X]} = [\bar{X}]\]
-        \item \[[Int X] \subset Int[X]\]
-        \item \[\partial[X] \subset [Fr(X)]\]
-    \end{enumerate}
-    For a good enough topological space $E$, we have equality in 3 and 4.
-\end{lemma}
-
-
-\begin{proposition}[Subset to sublocal preserves structure]
-    \label{prop:subset_to_sublocal_structure}
-    \uses{lem:subset_to_sublocal_part_1,lem:subset_to_sublocal_part_2,lem:subspaces_part_3}
-    For two subspaces $X$ and $Y$ of $E$ and an open subspaces $U$ of $E$, we have:
-    \begin{enumerate}
-        \item $X \subset Y \implies [X] \subset [Y]$
-        \item $X \subset U \iff [X] \subset [U]$
-        \item If $E$ is a good enough topological space, then \[X \subset Y \iff [X] \subset [Y]\]
-        \item \[[U \cap X] = [U] \cap [X]\]
-        \item $\dots$
-    \end{enumerate}
-
-\end{proposition}
-
-\begin{theorem}[Measure top to loc]
-    \label{thm:measure_top_to_loc}
-    \uses{lem:opens_correspond,lem:subset_sublocal,prop:subset_to_sublocal_structure,lem:regular_top_to_regular_local}
-    Any measure on a good enough topological space $X$ induces a measure on the corresponding local. Furthermore, the classical caratheodory extension onto $\mathcal{P}(X)$ agrees with the restriction of the caratheodory extension of the induced measure on the local.
-\end{theorem}
-
-
 

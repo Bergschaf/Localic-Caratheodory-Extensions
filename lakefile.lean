@@ -11,8 +11,6 @@ lean_lib «Leroy» where
 lean_exe "leroy" where
   root := `Leroy
 
-
-
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4"
 
