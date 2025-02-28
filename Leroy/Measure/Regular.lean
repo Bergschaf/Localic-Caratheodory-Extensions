@@ -117,7 +117,7 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
           rw [← tsub_zero (m.toFun v_a.exterior + m.toFun v_a)]
           rw [← h1]
       rw [h]
-      rw [← @pseudosymm]
+      rw [← @strictly_additive]
       have h1 : v_a.exterior ⊔ v_a ≤ ⊤ := by
         simp only [le_top]
       apply_fun m.toFun at h1
@@ -214,7 +214,7 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       have h3 : ↑(m.toFun U) + ↑(m.toFun W) - ↑(m.toFun (U ⊓ W)) ≤ ↑(m.toFun U) + ↑(m.toFun W) := by
         simp only [tsub_le_iff_right, le_add_iff_nonneg_right, zero_le]
       apply le_trans' h3
-      rw [← @pseudosymm]
+      rw [← @strictly_additive]
       refine m.mono ⊤ (U ⊔ W) ?_
       simp only [Sublocale.Open_Neighbourhood, Set.mem_setOf_eq] at h1
       refine Open.le_iff.mpr ?_
@@ -256,7 +256,7 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
   have h : u ⊓ v ⊓ w = (u ⊓ w) ⊓ (v ⊓ w) := by
     exact inf_inf_distrib_right u v w
   rw [h]
-  rw [← Measure.pseudosymm]
+  rw [← Measure.strictly_additive]
 
   have h : (u ⊔ v) ⊓ w = u ⊓ w ⊔  v ⊓ w := by
     apply_fun (fun x ↦ Open.toSublocale x)
@@ -313,7 +313,7 @@ noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E) 
   toFun := Measure.restrict m w
   empty := (by simp[Measure.restrict];exact m.empty)
   mono := restrict_mono
-  pseudosymm (U V) := restrict_pseudosymm
+  strictly_additive (U V) := restrict_pseudosymm
   filtered := Measure.restrict_filtered
 
 
@@ -647,5 +647,5 @@ def Measure.restrict_sublocale_measure (m : @Measure E _) (A : Sublocale E) : @M
   toFun := Measure.restrict_sublocale m A
   empty := sorry
   mono := sorry
-  pseudosymm := sorry
+  strictly_additive := sorry
   filtered := sorry
