@@ -410,7 +410,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
     have h5 : ∀ a b : Open E, m.toFun (a ⊔ b) + m.toFun (a ⊓ b) = m.toFun a + m.toFun b := by
       intro a b
       rw [add_comm]
-      rw [m.pseudosymm]
+      rw [m.strictly_additive]
       rw [@add_tsub_cancel_iff_le]
       have h : m.toFun a ≤ m.toFun a + m.toFun b := by
         simp
