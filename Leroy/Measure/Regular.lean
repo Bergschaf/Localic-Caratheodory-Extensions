@@ -20,7 +20,6 @@ def well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c ⊔ 
 Leroy definition
 TODO Stone spaces als quelle anschauen
 Steht auch in Sketches of an Elephant 501
-da steht covered -> Muss da U ≤ sSup ... stehen?
 -/
 def regular (E : Type*)  [Order.Frame E]: Prop :=
   ∀ (U : Open E), U = sSup {V : Open E | V ≪ U}
@@ -30,61 +29,17 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
--- TODO woanders
-lemma Sublocale.compl_element_eq_compl_closure (V : Open E) : ⟨V.elementᶜ⟩ = V.closure.compl := by
-  simp [Open.closure, Closed.compl, Closed.sInf_def]
-  rw [← himp_bot, himp_eq_sSup]
-  apply le_antisymm
-  . simp only [le_bot_iff, le_sSup_iff, upperBounds, Set.mem_image, Set.mem_setOf_eq,
-    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, sSup_le_iff]
-    intro b h1 b1 h2
-    have h4 :V.toSublocale ≤ (⟨b1⟩:Closed E).toSublocale := by
-      simp [Closed.toSublocale, complement]
-      rw [Sublocale.le_iff]
-      intro i
-      rw [Nucleus.coe_mk, InfHom.coe_mk]
-      simp [Open.toSublocale]
-      repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-      apply And.intro <;> simp [h2]
-    exact h1 ⟨b1⟩ h4
-  . simp only [le_bot_iff, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
-    and_imp, forall_apply_eq_imp_iff₂]
-    intro a h
-    simp [le_sSup_iff, upperBounds]
-    intro b h1
-    simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff] at h
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h
-    have h3 : a.element ⊓ V.element = ⊥ := by
-      let h2 := h ⊥
-      simp at h2
-      apply_fun (. ⊓ V.element) at h2
-      simp at h2
-      exact h2
-      rw [Monotone]
-      exact fun ⦃a b⦄ a_1 => inf_le_inf_right V.element a_1
-    exact h1 h3
 
--- TODO woanders
-lemma compl_element_le_compl (V : Open E) : (⟨V.elementᶜ⟩ : Open E) ≤ V.compl.toSublocale := by
-  simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff]
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-  simp [@inf_sup_right]
 
 -- Zeigt in Kombination mit Sublocale.eq_intersection_open_closed, dass die Sublocale die intersection der Open_Neigbourhood ist
 -- Elephant S.501
-lemma Closed.eq_intersection_opens (c : Closed E) : ∃ s : Set (Open E), c = sInf (Open.toSublocale '' s) := by
-  use (fun x ↦ x.closure.compl) '' {V : Open E | V ≪ c.compl}
-  apply le_antisymm
-  . simp
-    intro v h
-    simp only [well_inside] at h
-    sorry -- ab in further topology
-  .
-    have h : sInf (Open.toSublocale '' ((fun x => x.closure.compl) '' {V | V ≪ c.compl})) ≤ sInf (Closed.toSublocale '' ((fun x => x.compl) '' {V | V ≪ c.compl})) := by
-      sorry
-    apply le_trans h
-    simp [sInf_le_iff, lowerBounds]
-    intro a h
+lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : {V : Open E // V ≪ c.compl}, V.val.closure.compl.toSublocale := by
+  sorry
+
+lemma Sublocale.intersection_Opens (j : Sublocale E) : ∃ s : Set (Open E), j = sInf (Open.toSublocale '' s)  := by
+  rw [Sublocale.eq_intersection_open_closed j]
+  rw [iInf]
+  sorry --
 
 
 /--
@@ -98,7 +53,7 @@ lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (O
   apply le_antisymm
   . simp
     exact fun a_1 a => a
-  . sorry -- mit Closed.eq_intersection_opens
+  . sorry -- mit Closed.eq_intersection_opens (Wie soll das Funktionieren?? )
 
 lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
