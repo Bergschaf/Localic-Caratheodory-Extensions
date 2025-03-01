@@ -31,13 +31,44 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
 -- TODO woanders
-lemma Sublocale.hneg_eq_compl_closure (V : Open E) : ⟨V.elementᶜ⟩ = V.closure.compl := by
-  sorry
+lemma Sublocale.compl_element_eq_compl_closure (V : Open E) : ⟨V.elementᶜ⟩ = V.closure.compl := by
+  simp [Open.closure, Closed.compl, Closed.sInf_def]
+  rw [← himp_bot, himp_eq_sSup]
+  apply le_antisymm
+  . simp only [le_bot_iff, le_sSup_iff, upperBounds, Set.mem_image, Set.mem_setOf_eq,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, sSup_le_iff]
+    intro b h1 b1 h2
+    have h4 :V.toSublocale ≤ (⟨b1⟩:Closed E).toSublocale := by
+      simp [Closed.toSublocale, complement]
+      rw [Sublocale.le_iff]
+      intro i
+      rw [Nucleus.coe_mk, InfHom.coe_mk]
+      simp [Open.toSublocale]
+      repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+      apply And.intro <;> simp [h2]
+    exact h1 ⟨b1⟩ h4
+  . simp only [le_bot_iff, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
+    and_imp, forall_apply_eq_imp_iff₂]
+    intro a h
+    simp [le_sSup_iff, upperBounds]
+    intro b h1
+    simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff] at h
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h
+    have h3 : a.element ⊓ V.element = ⊥ := by
+      let h2 := h ⊥
+      simp at h2
+      apply_fun (. ⊓ V.element) at h2
+      simp at h2
+      exact h2
+      rw [Monotone]
+      exact fun ⦃a b⦄ a_1 => inf_le_inf_right V.element a_1
+    exact h1 h3
 
 -- TODO woanders
-lemma hneg_le_compl (V : Open E) : (⟨V.elementᶜ⟩ : Open E)≤ V.compl.toSublocale := by
-  rw [Sublocale.hneg_eq_compl_closure]
-  sorry -- toSublocale ist monoton und compl ist monoton
+lemma compl_element_le_compl (V : Open E) : (⟨V.elementᶜ⟩ : Open E) ≤ V.compl.toSublocale := by
+  simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff]
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  simp [@inf_sup_right]
 
 -- Zeigt in Kombination mit Sublocale.eq_intersection_open_closed, dass die Sublocale die intersection der Open_Neigbourhood ist
 -- Elephant S.501
@@ -53,7 +84,8 @@ lemma Closed.eq_intersection_opens (c : Closed E) : ∃ s : Set (Open E), c = sI
       sorry
     apply le_trans h
     simp [sInf_le_iff, lowerBounds]
-    sorry
+    intro a h
+
 
 /--
 Leroy Lemme 2.2
