@@ -4,6 +4,7 @@ import Leroy.Further_Topology
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Leroy.Measure.Aux
+import Mathlib.Algebra.Order.Group.CompleteLattice
 
 -----
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
@@ -14,6 +15,9 @@ def increasingly_filtered {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
 
 def increasing {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
   ∀ U ∈ s, ∃ V ∈ s, U ≤ V
+
+def increasing'{Z : Type*} [PartialOrder Z] (f : ℕ → Z) : Prop :=
+  ∀ n, f n ≤ f (n + 1)
 
 structure Measure where
   toFun : (Open X) → NNReal --
@@ -130,6 +134,15 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) : ∀ ε > 0,  ∃ w ∈ Op
       rw [h2]
       exact le_of_lt h3
 
+lemma Exists_Neighbourhood_epsilon_lt (a : Sublocale E) : ∀ ε > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w < m.caratheodory a + ε := by
+  intro ε h_ε
+  obtain ⟨w, ⟨h1, h2⟩⟩ := @Exists_Neighbourhood_epsilon _ _ m a (ε / 2) (by exact half_pos h_ε)
+  use w
+  use h1
+  apply LE.le.trans_lt h2
+  simp only [add_lt_add_iff_left, half_lt_self_iff]
+  exact h_ε
+
 def ℕpos := {n : ℕ // 0 < n}
 def Rpos := {r : NNReal // 0 < r}
 /--
@@ -137,6 +150,9 @@ Leroy Lemme 1
 -> Magie
 -/
 lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
+  sorry
+
+lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing' X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   apply le_antisymm
   .
     have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
@@ -144,54 +160,183 @@ lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublo
       let ε_n (n : ℕ) : ℝ := ε / (2 * n ^ 2)
       have h_ε_n (n : ℕ) : ε_n n > 0 := by simp [ε_n]; norm_cast; sorry
       have h_sum_1 : 0 < tsum ε_n := by sorry
-      have h_sum : tsum ε_n < ε := by
+      have h_sum (n : ℕ) : ∑ m ∈ Finset.range (n), ε_n m ≤ ε := by
+        simp only [ε_n]
         sorry
-      let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon _ _ m (X_n n) ⟨(ε_n n), sorry⟩ (h_ε_n n))
-      have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by sorry
 
-      have W_n (n : ℕ) := ⨆ m ∈ {i : ℕ | i ≤ n}, V_n m
 
-      have W := iSup W_n
+      let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n), (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
+      have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by
+        obtain ⟨h1, h2⟩ := Classical.choose_spec (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n), (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
+        simp only [V_n]
+        rw [Measure.caratheodory.open_eq_toFun]
+        apply_fun NNReal.toReal at h2
+        simp at h2
+        exact sub_left_lt_of_lt_add h2
+        exact fun ⦃a b⦄ a => a
 
-      -- sorry
+      have h_V_n' (n : ℕ) : m.caratheodory (V_n n) < m.caratheodory (X_n n) + ε_n n := by
+        exact lt_add_of_tsub_lt_left (h_V_n n)
 
-      have h1 (n : ℕ) : m.caratheodory (W_n n) - m.caratheodory (X_n n) ≤ ∑ m : {i : ℕ | i ≤ n}, ε_n m := by
+      have X_n_le_V_n (n : ℕ) : X_n n ≤ V_n n := by
+        obtain ⟨h1, h2⟩ := Classical.choose_spec (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n), (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
+        simp [V_n]
+        simp [Open_Neighbourhood] at h1
+        exact h1
+
+      let W_n (n : ℕ) := ⨆ m ∈ {i : ℕ | i ≤ n}, V_n m
+      have V_n_le_W_n (n : ℕ) : V_n n ≤ W_n n := by
+        simp [W_n, le_iSup_iff]
+        intro b h
+        exact h n (by rfl)
+
+      let W := iSup W_n
+
+      have h1 (n : ℕ) : m.caratheodory (W_n n) - m.caratheodory (X_n n) ≤ ∑ m ∈ Finset.range (n+1), ε_n m := by
         induction n with
         | zero =>
-          sorry
-        | succ n ih =>
+          simp only [Set.mem_setOf_eq, nonpos_iff_eq_zero, iSup_iSup_eq_left, zero_add,
+            Finset.range_one, Finset.sum_singleton, W_n]
+          exact le_of_lt (h_V_n 0)
 
-          have h2 : m.caratheodory (W_n (n + 1)) ≤ m.caratheodory (W_n n) - m.caratheodory (X_n n) + m.caratheodory (X_n (n + 1)) + ε_n (n + 1) := by
+        | succ n ih =>
+          have h2 : m.caratheodory (W_n (n + 1)) ≤
+              m.caratheodory (W_n n) - m.caratheodory (X_n n) + m.caratheodory (X_n (n + 1)) + ε_n (n + 1) := by
             have h_w_n : (W_n (n + 1)) = W_n n ⊔ V_n (n + 1) := by
-              sorry
+              simp [W_n]
+              have h_help : (⨆ m, ⨆ (_ : m ≤ n), V_n m) ⊔ V_n (n + 1) =⨆ m, ⨆ (_ : m ≤ n), V_n m ⊔ V_n (n + 1) := by
+                refine biSup_sup ?_
+                use 0
+                exact Nat.zero_le n
+              apply le_antisymm
+              . rw [h_help]
+                simp
+                intro i h
+                simp [le_iSup_iff]
+                rintro b h1
+                by_cases hC : i ≤ n
+                . obtain ⟨h2, _⟩ := h1 i hC
+                  exact h2
+                . have h_help : i = n + 1 := by
+                    simp at hC
+                    exact Nat.le_antisymm h hC
+                  rw [h_help]
+                  obtain ⟨_ , h2⟩ := h1 0 (by exact Nat.zero_le n)
+                  exact h2
+              . rw [h_help]
+                simp only [iSup_le_iff, sup_le_iff]
+                intro i h
+                apply And.intro
+                . simp [le_iSup_iff]
+                  intro b h1
+                  exact h1 i (by exact Nat.le_add_right_of_le h)
+                . simp [le_iSup_iff]
+                  intro b h1
+                  exact h1 (n + 1) (by exact Nat.le_refl (n + 1))
+
             rw [h_w_n, Measure.caratheodory.open_eq_toFun]
             rw [Measure.strictly_additive]
-            sorry
+            have h2 : ↑((m.toFun (W_n n) + m.toFun (V_n (n + 1)) - m.toFun (W_n n ⊓ V_n (n + 1)))) ≤
+                ↑(m.toFun (W_n n) + m.toFun (V_n (n + 1)) - m.caratheodory (X_n n)) := by
+              apply tsub_le_tsub
+              . rfl
+              . rw [← Measure.caratheodory.open_eq_toFun]
+                apply Measure.caratheodory.monotonic
+                rw [Open.preserves_inf]
+                apply le_inf
+                . let h2 := V_n_le_W_n n
+                  rw [Open.le_iff] at h2
+                  apply le_trans' h2 (X_n_le_V_n n)
+                . apply le_trans (h (n)) -- Hier wird increasing benutzt
+                  exact X_n_le_V_n (n + 1)
+
+            apply_fun NNReal.toReal at h2
+            apply le_trans h2
+            rw [Measure.caratheodory.open_eq_toFun]
+            rw [NNReal.coe_sub, NNReal.coe_add]
+            repeat rw [sub_eq_add_neg]
+            conv =>
+              enter [1]
+              rw [add_assoc]
+            rw [add_assoc]
+            rw [add_assoc]
+            apply add_le_add
+            . rfl
+            . rw [add_comm]
+              apply add_le_add
+              . rfl
+              . rw [← Measure.caratheodory.open_eq_toFun]
+                exact le_of_lt (h_V_n' (n + 1))
+            . apply le_add_of_le_left
+              rw [← Measure.caratheodory.open_eq_toFun]
+              apply Measure.caratheodory.monotonic
+              let h2 := V_n_le_W_n n
+              rw [Open.le_iff] at h2
+              apply le_trans' h2 (X_n_le_V_n n)
+
+            . exact fun ⦃a b⦄ a => a
 
 
-          have h3 : m.caratheodory (W_n (n + 1)) - m.caratheodory (X_n (n + 1)) ≤ m.caratheodory (W_n n) - m.caratheodory (X_n n) + ε_n (n + 1) := by
-            sorry
+          have h3 : m.caratheodory (W_n (n + 1)) - m.caratheodory (X_n (n + 1)) ≤
+              m.caratheodory (W_n n) - m.caratheodory (X_n n) + ε_n (n + 1) := by
+            simp
+            apply le_trans h2
+            linarith
 
-          have h4 : m.caratheodory (W_n (n + 1)) - m.caratheodory (X_n (n + 1)) ≤ ε_n n + ε_n (n + 1) := by
-            sorry -- induktionsvorraussetzung
+          have h4 : m.caratheodory (W_n (n + 1)) - m.caratheodory (X_n (n + 1)) ≤(∑ m ∈ Finset.range (n+1), ε_n ↑m) + ε_n (n + 1) := by
+            apply le_trans h3
+            simp only [add_le_add_iff_right]
+            exact ih
 
-          have h5 : ε_n n + ε_n (n + 1) ≤ ∑ m : ↑{i | i ≤ n + 1}, ε_n ↑m := by
-            sorry
+          have h5 : (∑ m ∈ Finset.range (n+1), ε_n ↑m) + ε_n (n + 1) ≤ ∑ m ∈ Finset.range (n+2), ε_n ↑m := by
+            rw [← Finset.sum_range_succ]
 
           apply le_trans h4 h5
 
-      have h2 (n : ℕ) : m.caratheodory (W_n n)  ≤ m.caratheodory (X_n n) + ∑ m : {i : ℕ | i ≤ n}, ε_n m := by sorry
+      have h2 (n : ℕ) : m.caratheodory (W_n n) ≤ m.caratheodory (X_n n) + ∑ m ∈ Finset.range (n+1), ε_n m := by
+        exact tsub_le_iff_left.mp (h1 n)
 
-      have h3 : iSup (fun n ↦ m.caratheodory (W_n n)) ≤ iSup (fun n ↦ m.caratheodory (X_n n) + ∑ m : {i : ℕ | i ≤ n}, ε_n m) := by
-        sorry
+      have h3 : iSup (fun n ↦ m.caratheodory (W_n n)) ≤ iSup (fun n ↦ m.caratheodory (X_n n) + ∑ m ∈ Finset.range (n+1), ε_n m) := by
+        simp only [NNReal.coe_iSup]
+        apply ciSup_le
+        intro n
+        apply le_trans (h2 n)
+        refine le_ciSup_of_le ?_ n ?_
+        . simp [BddAbove, upperBounds, Set.Nonempty]
+          use m.caratheodory ⊤ + ε
+          intro a
+          apply add_le_add
+          . norm_cast
+            exact le_top m (X_n a)
+          . sorry -- stimmt mit der summe
+        . rfl
       simp at h3
 
+
       have h4 : m.caratheodory (iSup X_n) ≤ ⨆ i : ℕ, ↑(m.caratheodory (W_n i).toSublocale) := by
-        sorry
+        sorry -- wie??
+
+
       apply le_trans h4
+      refine (ciSup_le_iff ?_).mpr ?_
+      . use m.caratheodory ⊤
+        simp [upperBounds]
+        exact fun a => le_top m (W_n a).toSublocale
+      . intro i
+        have h_help : iSup (m.caratheodory ∘ X_n)  = ⨆ i : ℕ, m.caratheodory (X_n i) := by
+          rfl
+        have h_help' : (⨆ i : ℕ, m.caratheodory (X_n i)) + ε = ⨆ i : ℕ, m.caratheodory (X_n i) + ε := by
+          apply_fun NNReal.toReal
+          simp
+          rw [ciSup_add]
+          . use m.caratheodory ⊤
+            simp [upperBounds]
+            exact fun a => le_top m (X_n a)
+          . exact NNReal.coe_injective
 
-      sorry
-
+        rw [h_help, h_help']
+        simp [W_n]
+        sorry -- wie??
 
     have h1 :  ∀ ε > 0, m.caratheodory (iSup X_n) - iSup (m.caratheodory ∘ X_n) ≤  ε := by
       intro e h
