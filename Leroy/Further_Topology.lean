@@ -216,23 +216,33 @@ lemma compl_element_le_compl (V : Open E) : (⟨V.elementᶜ⟩ : Open E) ≤ V.
   repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
   simp [@inf_sup_right]
 
+/--
+Quelle: Johnstone Lemma C 1.1.17 (S. 485)
+-/
+lemma Sublocale.eq_intersection_open_closed (j : Sublocale E) : j = ⨅ a : E, (⟨a⟩ : Open E).toSublocale ⊔ (⟨j a⟩ : Closed E) := by
+    simp [Open.toSublocale, Closed.toSublocale, complement]
+    apply le_antisymm
+    . simp only [le_iInf_iff, le_iff, sup_apply]
+      intro i l
+      repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+      rw [inf_sup_left]
+      simp
+      apply And.intro
+      . have h2 : (i ⇨ l) ⊓ j i ≤ j (i ⇨ l) ⊓ j i := inf_le_inf j.le_apply (by rfl)
+        apply le_trans h2
+        rw [← Nucleus.map_inf]
+        apply Nucleus.monotone
+        simp
+      . apply j.le_apply
 
-lemma Sublocale.eq_intersection_open_closed (j : Sublocale E) : ∃ u : Open E, ∃ c : Closed E, a = u.toSublocale ⊓ c.toSublocale := by
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    . simp [iInf_le_iff]
+      intro a h
+      intro i
+      let h1 := h i i
+      rw [Sublocale.sup_apply] at h1
+      repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
+      simp at h1
+      exact h1.left
 
 
 /-
