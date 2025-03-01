@@ -30,15 +30,29 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
 
-
+/-
+TODO eigene tactic, die Nucleus.coe_mk und sowas simplified
+-/
 -- Zeigt in Kombination mit Sublocale.eq_intersection_open_closed, dass die Sublocale die intersection der Open_Neigbourhood ist
 -- Elephant S.501
-lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : {V : Open E // V ≪ c.compl}, V.val.closure.compl.toSublocale := by
-  sorry
+lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : Open E, ⨅ h : V ≪ c.compl, (⟨V.elementᶜ⟩ : Open E).toSublocale := by
+  apply le_antisymm
+  . simp only [le_iInf_iff]
+    intro a h
+    rw [Sublocale.compl_element_eq_compl_closure]
+    sorry -- komisch
+  .
+
 
 lemma Sublocale.intersection_Opens (j : Sublocale E) : ∃ s : Set (Open E), j = sInf (Open.toSublocale '' s)  := by
   rw [Sublocale.eq_intersection_open_closed j]
-  rw [iInf]
+  conv =>
+    enter [1, s, 1, 1, a, 2]
+    rw [Closed.eq_intersection_opens {element := j a}]
+  conv =>
+    enter [1, s, 1, 1, a]
+    rw [sup_iInf_eq]
+  rw [iInf_iInf]
   sorry --
 
 
@@ -53,7 +67,8 @@ lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (O
   apply le_antisymm
   . simp
     exact fun a_1 a => a
-  . sorry -- mit Closed.eq_intersection_opens (Wie soll das Funktionieren?? )
+  .
+    sorry -- mit Closed.eq_intersection_opens (Wie soll das Funktionieren?? -- sup_inf_eq)
 
 lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
