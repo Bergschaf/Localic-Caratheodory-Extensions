@@ -29,73 +29,68 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
-lemma Closed.eq_intersection_opens (U : Open E) : U.compl.toSublocale = ⨅ V : Open E, ⨅ h : V ≪ U, (⟨V.elementᶜ⟩ : Open E).toSublocale := by
-  apply le_antisymm
-  . simp only [le_iInf_iff]
-    intro i h
-    let h1 := h
-    rw [well_inside] at h1
-    rw [Sublocale.compl_element_eq_compl_closure]
-    rw [well_inside_iff] at h
-    -----
-    sorry --WIE??
-
-    -- das ist eigentlich eine eigenschaft von einer Heyting algebra (https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/Heyting/Basic.html#compl_anti)
-  . sorry
-
-
-
-
 /-
 TODO eigene tactic, die Nucleus.coe_mk und sowas simplified
 -/
 -- Zeigt in Kombination mit Sublocale.eq_intersection_open_closed, dass die Sublocale die intersection der Open_Neigbourhood ist
 -- Elephant S.501
-lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : Open E, ⨅ h : V ≪ c.compl, (⟨V.elementᶜ⟩ : Open E).toSublocale := by
+lemma Closed.eq_intersection_opens (U : Open E) : U.compl.toSublocale = ⨅ V : Open E, ⨅ _ : V ≪ U, (⟨V.elementᶜ⟩ : Open E).toSublocale := by
   apply le_antisymm
   . simp only [le_iInf_iff]
-
-    intro a h
-    rw [Sublocale.compl_element_eq_compl_closure]
-    --- TODO ab hier woanders?
+    intro i h
     let h1 := h
-    rw [well_inside_iff] at h1
-    rcases h1 with ⟨d, ⟨hc1, hc2⟩⟩
+    rw [well_inside] at h1
+    rw [well_inside_iff] at h
+    rw [Open.compl_element_eq_exterior] --- uuuuuu
+    -- vlt woanders...
 
-    simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff, Open.closure, Closed.sInf_def]
+    simp [Open.compl, Closed.toSublocale, complement, Open.exterior, Open.sSup_def, Open.toSublocale, Sublocale.le_iff]
     repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-    intro i
-    conv =>
-      enter [1, 1, 1, 2, 1, z, i, 1]
-      repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-    rw [sSup_image]
-    simp
-
-
-    simp only [himp_eq_sSup, sSup_le_iff, Set.mem_setOf_eq]
-
+    intro j
+    simp [himp_eq_sSup]
     intro b h2
-    rw [inf_iSup₂_eq] at h2
+    rw [inf_sSup_eq] at h2
     simp at h2
-
-    simp only [well_inside, Closed.toSublocale, complement, Open.closure, Open.toSublocale,
-      Sublocale.le_iff, sInf_def, sSup_image', Set.coe_setOf, Set.mem_setOf_eq, element_compl] at h
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]at h
-
-    sorry -- komisch
+    rcases h with ⟨w, ⟨hw1, hw2⟩⟩
+    let h3 := h2 w hw1
+    apply_fun (U.element ⊔ .) at h3
+    . simp only at h3
+      rw [sup_inf_left] at h3
+      have h4 : U.element ⊔ w.element = ⊤ := by
+        simp [Open.sup_def, Open.ext_iff] at hw2
+        rw [sup_comm]
+        exact hw2
+      rw [h4] at h3
+      simp only [le_top, inf_of_le_left, sup_le_iff, le_sup_left, true_and] at h3
+      exact h3
+    . rw [Monotone]
+      exact fun ⦃a b⦄ a_1 => sup_le_sup_left a_1 U.element
   .
+    have h1 : ⨅ V, ⨅ (_ : V ≪ U), ({ element := V.elementᶜ } : Open E).toSublocale ≤ ⨅ V, ⨅ (_ : V ≪ U), V.compl.toSublocale := by
+      apply iInf₂_mono
+      intro i h
+      exact compl_element_le_compl i
 
+    apply le_trans h1
+    conv =>
+      enter [2]
+      rw [e_regular.elim U]
+    simp [Open.sSup_def, Open.compl, Closed.toSublocale, complement, Sublocale.le_iff]
+    intro i
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+    simp
+    refine ⟨?_ , Nucleus.le_apply⟩
+    simp [iInf, sInf]
+    rw [Nucleus.sSup_apply]
+    simp [upperBounds]
+    intro a ha j h1
+    conv at h1 =>
+      enter [2, 2]
+      rw [← Nucleus.coe_le_coe]
+      simp only [Nucleus.coe_mk, InfHom.coe_mk]
+      simp [LE.le]
+    exact (h1 a ha i).left
 
-lemma Sublocale.intersection_Opens (j : Sublocale E) : ∃ s : Set (Open E), j = sInf (Open.toSublocale '' s)  := by
-  rw [Sublocale.eq_intersection_open_closed j]
-  conv =>
-    enter [1, s, 1, 1, a, 2]
-    rw [Closed.eq_intersection_opens {element := j a}]
-  conv =>
-    enter [1, s, 1, 1, a]
-    rw [sup_iInf_eq]
-  rw [iInf_iInf]
-  sorry --
 
 
 /--
@@ -109,7 +104,70 @@ lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (O
   apply le_antisymm
   . simp
     exact fun a_1 a => a
-  .
+  . conv =>
+      enter [2]
+      rw [Sublocale.eq_intersection_open_closed a]
+    conv =>
+      enter [2, 1, a, 2, 1]
+
+    have h_help (a_1 : E): ({ element := a a_1 } : Closed E) = ({ element := a a_1 } : Open E).compl := by
+      simp [Open.compl]
+    conv =>
+      enter [2, 1, a, 2]
+      rw [h_help a]
+      rw [Closed.eq_intersection_opens]
+    conv =>
+      enter [2, 1, a]
+      rw [sup_iInf₂_eq]
+    conv =>
+      enter [2, 1, a, 1, i, 1, j]
+      rw [← Open.preserves_sup]
+
+    have h_help : ⨅ (a_1 : E), ⨅ (i : Open E), ⨅ (_ : i ≪ { element := a a_1 }), ({ element := a_1 } ⊔ { element := i.elementᶜ }).toSublocale =
+       sInf (Set.range (fun x : (E × {i : Open E | })))
+
+    simp_rw [iInf_prod']
+    rw [sInf_image]
+
+    apply iInf₂_mono'
+    simp only [exists_prop, Prod.forall]
+    intro b1 b2 h1
+    ---
+    simp [well_inside_iff] at h1
+
+    use (({ element := b1 } ⊔ { element := b2.elementᶜ }))
+    simp [Open_Neighbourhood]
+    simp [Open.toSublocale, Sublocale.le_iff]
+    intro i
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    simp [Open.sup_def]
+    simp [himp_eq_sSup]
+
+
+
+
+
+    simp only [le_iInf_iff]
+    intro i j h1
+    simp [Sublocale.Open_Neighbourhood, sInf_image, iInf_le_iff]
+    intro b h2
+    let h3 := h2 ({ element := i } ⊔ { element := j.elementᶜ })
+    apply h3
+    simp [Open.sup_def, Open.toSublocale]
+    intro x
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    rw [sup_himp_distrib]
+    let h4 := h1
+    simp [well_inside, Open.closure, Closed.toSublocale, complement, Open.toSublocale, Sublocale.le_iff, Closed.sInf_def] at h4
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h4
+
+
+
+
+
+
+
+
     sorry -- mit Closed.eq_intersection_opens (Wie soll das Funktionieren?? -- sup_inf_eq)
 
 lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Sublocale.Neighbourhood a) := by
