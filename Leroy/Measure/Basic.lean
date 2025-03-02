@@ -6,7 +6,7 @@ import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Leroy.Measure.Aux
 import Mathlib.Algebra.Order.Group.CompleteLattice
 import Mathlib.Algebra.GeomSum
-
+import Mathlib.Data.Complex.Exponential
 -----
 variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
@@ -181,19 +181,51 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
   .
     have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
       intro ε h_ε
-      let ε_n (n : ℕ) : ℝ := (ε.val / 2)⁻¹ ^ n
+      let ε_n (n : ℕ) : ℝ := ε / (2 ^ (n + 1))
       have h_ε_n (n : ℕ) : ε_n n > 0 := by
-        simp [ε_n]
-        norm_cast
-        exact pow_pos sorry n
+        simp [ε_n, h_ε]
 
       have h_sum (n : ℕ) : ∑ m ∈ Finset.range (n), ε_n m ≤ ε := by
+        --- v TODO vlt Mathlib
+        have h_geometric_sum (n : ℕ) : ∑ m ∈ Finset.range (n), ε_n m = ε - ε * 2 ^ (- ↑(n : ℤ)) := by
+          induction n with
+          | zero => simp
+          | succ n ih =>
+            rw [Finset.sum_range_succ]
+            rw [ih]
+            simp [ε_n]
+            have h_left : ↑ε - ↑ε * (2 ^ n)⁻¹ + ↑ε / 2 ^ (n + 1) = ε.val - ε / (2 ^ (n + 1)) := by
+              have h1 : ↑ε.toReal * (2 ^ n)⁻¹ = ↑ε.toReal / 2 ^ n := by
+                exact rfl
+              rw [h1]
+              rw [sub_add_eq_add_sub]
+              rw [add_sub_assoc]
+              have h2 : ↑ε.toReal / 2 ^ (n + 1) - ↑ε.toReal / 2 ^ n = ↑ε.toReal / 2 ^ n * (1 / 2 - 1) := by
+                rw [mul_sub]
+                ring
+              rw [h2]
+              have h3 : ((1 / 2 - 1) : ℝ) = (-1 / 2) := by ring
+              rw [h3]
+              rw [mul_div]
+              simp only [mul_neg, mul_one, NNReal.val_eq_coe, ε_n]
+              ring
 
-        simp only [NNReal.coe_inv, ε_n]
-        let h1 := @geom_sum_eq ℝ _ ((ε.val / 2)⁻¹) (sorry) n
-        let h2 := @geom_sum_inv ℝ _ (ε.val / 2) sorry sorry n
-        rw [h2]
-        sorry
+            rw [h_left]
+            have h_right : ↑ε - ↑ε * 2 ^ (-1 + -↑(n : ℤ)) = ε.val - ε / (2 ^ (n + 1)) := by
+              have h4 : ↑ε.toReal * 2 ^ (-1 + -↑(n : ℤ)) = ↑ε.toReal / 2 ^ (n + 1) := by
+                have h5 : (-(1 : ℤ) + -↑(n : ℤ)) = -(((n + 1) : ℕ) : ℤ) := by
+                  simp only [Int.reduceNeg, Nat.cast_add, Nat.cast_one, neg_add_rev, ε_n]
+                rw [h5]
+                have h6 (a b : ℝ) (n : ℕ) : a * b ^ (-(n : ℤ)) = a / b ^ n := by
+                  simp only [zpow_neg, zpow_natCast, ε_n]
+                  rfl
+                rw [h6]
+
+              rw [h4]
+              rfl
+            rw [h_right]
+        rw [h_geometric_sum]
+        simp
 
       let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n), (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
       have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by
@@ -423,6 +455,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
     simp only [Function.comp_apply]
     apply Measure.caratheodory.monotonic
     exact le_iSup X_n n
+
 
 lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by

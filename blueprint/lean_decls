@@ -29,7 +29,7 @@ Measure.caratheodory.monotonic
 Measure.caratheodory.subadditive
 regular
 Sublocale.Neighbourhood
-sublocal_intersection_of_neighbours
+Sublocale.intersection_Open_Neighbourhhood
 Measure.add_complement
 Measure.restrict_measure
 Measure.add_complement_inf
