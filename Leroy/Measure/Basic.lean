@@ -5,10 +5,12 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Leroy.Measure.Aux
 import Mathlib.Algebra.Order.Group.CompleteLattice
+import Mathlib.Algebra.GeomSum
 
 -----
-variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
+variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 
+--- Ist increasing oder increasingly filtered stärker?
 
 def increasingly_filtered {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
   ∀ U ∈ s, ∀ V ∈ s, ∃ W ∈ s, U ≤ W ∧ V ≤ W
@@ -18,6 +20,21 @@ def increasing {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
 
 def increasing'{Z : Type*} [PartialOrder Z] (f : ℕ → Z) : Prop :=
   ∀ n, f n ≤ f (n + 1)
+
+lemma increasing'' {Z : Type*} [PartialOrder Z] (f : ℕ → Z) :∀ n m, increasing' f →  n ≤ m → f n ≤ f m := by
+  intro n m h1 h2
+  rw [increasing'] at h1
+  induction m with
+  | zero =>
+    simp at h2
+    rw [h2]
+  | succ m ih =>
+    by_cases hC : n = m + 1
+    . rw [hC]
+    . have h3 : n ≤ m := by
+        omega
+      apply le_trans (ih h3)
+      exact h1 m
 
 structure Measure where
   toFun : (Open X) → NNReal --
@@ -30,6 +47,13 @@ open Sublocale
 variable {m : @Measure E e_frm}
 
 namespace Measure
+
+lemma iSup_filtered : ∀ (f : ι → Open E), increasingly_filtered (Set.range f) → m.toFun (iSup f) = iSup (m.toFun ∘ f) := by
+  intro f h
+  repeat rw [iSup]
+  rw [m.filtered (Set.range f) h]
+  rw [Set.range_comp]
+
 
 lemma monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
   exact congrArg m.toFun h
@@ -157,13 +181,19 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
   .
     have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
       intro ε h_ε
-      let ε_n (n : ℕ) : ℝ := ε / (2 * n ^ 2)
-      have h_ε_n (n : ℕ) : ε_n n > 0 := by simp [ε_n]; norm_cast; sorry
-      have h_sum_1 : 0 < tsum ε_n := by sorry
-      have h_sum (n : ℕ) : ∑ m ∈ Finset.range (n), ε_n m ≤ ε := by
-        simp only [ε_n]
-        sorry
+      let ε_n (n : ℕ) : ℝ := (ε.val / 2)⁻¹ ^ n
+      have h_ε_n (n : ℕ) : ε_n n > 0 := by
+        simp [ε_n]
+        norm_cast
+        exact pow_pos sorry n
 
+      have h_sum (n : ℕ) : ∑ m ∈ Finset.range (n), ε_n m ≤ ε := by
+
+        simp only [NNReal.coe_inv, ε_n]
+        let h1 := @geom_sum_eq ℝ _ ((ε.val / 2)⁻¹) (sorry) n
+        let h2 := @geom_sum_inv ℝ _ (ε.val / 2) sorry sorry n
+        rw [h2]
+        sorry
 
       let V_n (n : ℕ) := Classical.choose (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n), (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
       have h_V_n (n : ℕ) : m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by
@@ -183,6 +213,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
         simp [V_n]
         simp [Open_Neighbourhood] at h1
         exact h1
+
 
       let W_n (n : ℕ) := ⨆ m ∈ {i : ℕ | i ≤ n}, V_n m
       have V_n_le_W_n (n : ℕ) : V_n n ≤ W_n n := by
@@ -308,14 +339,40 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
           apply add_le_add
           . norm_cast
             exact le_top m (X_n a)
-          . sorry -- stimmt mit der summe
+          . exact h_sum (a + 1)
         . rfl
       simp at h3
 
 
       have h4 : m.caratheodory (iSup X_n) ≤ ⨆ i : ℕ, ↑(m.caratheodory (W_n i).toSublocale) := by
-        sorry -- wie??
+        conv =>
+          enter [2, 1, i]
+          rw [Measure.caratheodory.open_eq_toFun]
+        have h_filtered : increasingly_filtered (Set.range W_n) := by -- geht das auch anders??
+          simp [increasingly_filtered]
+          intro i j
+          use i + j
+          refine ⟨?_, ?_⟩
+          <;>have h_increasing' : increasing' W_n := by
+            simp only [increasing', Set.mem_setOf_eq, le_iSup_iff, iSup_le_iff, W_n, V_n, ε_n]
+            intro n b h
+            intro m h2
+            apply h m (by exact Nat.le_add_right_of_le h2)
+          . apply increasing'' W_n i (i + j) h_increasing' (by simp)
+          . apply increasing'' W_n j (i + j) h_increasing' (by simp)
 
+        let h := m.iSup_filtered W_n h_filtered
+        rw [Function.comp_def] at h
+        rw [← h]
+        rw [← Measure.caratheodory.open_eq_toFun]
+        apply Measure.caratheodory.monotonic
+        simp [Open.preserves_iSup, le_iSup_iff, upperBounds]
+        intro a h i
+        apply le_trans' (h i)
+        let h1 := (V_n_le_W_n i)
+        rw [Open.le_iff] at h1
+        apply le_trans' h1
+        exact X_n_le_V_n i
 
       apply le_trans h4
       refine (ciSup_le_iff ?_).mpr ?_
@@ -335,9 +392,16 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
           . exact NNReal.coe_injective
 
         rw [h_help, h_help']
-        simp [W_n]
-        sorry -- wie??
-
+        rw [le_ciSup_iff']
+        intro b h
+        apply le_trans' (h i)
+        apply le_trans (h2 i)
+        simp only [NNReal.val_eq_coe, NNReal.coe_add, add_le_add_iff_left, W_n, V_n]
+        exact h_sum (i + 1)
+        . use m.caratheodory ⊤ + ε
+          simp only [upperBounds, Set.mem_range, forall_exists_index, forall_apply_eq_imp_iff,
+            Set.mem_setOf_eq, add_le_add_iff_right, W_n, V_n, ε_n]
+          exact fun a => le_top m (X_n a)
     have h1 :  ∀ ε > 0, m.caratheodory (iSup X_n) - iSup (m.caratheodory ∘ X_n) ≤  ε := by
       intro e h
       exact tsub_le_iff_left.mpr (h0 e h)
