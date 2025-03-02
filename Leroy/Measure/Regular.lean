@@ -40,6 +40,33 @@ lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : Open
   . simp only [le_iInf_iff]
     intro a h
     rw [Sublocale.compl_element_eq_compl_closure]
+    --- TODO ab hier woanders?
+    let h1 := h
+    rw [well_inside_iff] at h1
+    simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff, Open.closure, Closed.sInf_def]
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+    intro i
+    conv =>
+      enter [1, 1, 1, 2, 1, z, i, 1]
+      repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+    rw [sSup_image]
+    simp
+
+
+    simp only [himp_eq_sSup, sup_le_iff, sSup_le_iff, Set.mem_setOf_eq]
+    simp [inf_sSup_eq, le_sSup_iff, upperBounds, Set.mem_setOf_eq] at h2
+
+    intro b h2
+    rw [inf_sSup_eq] at h2
+    simp at h2
+    rcases h1 with ⟨d, ⟨hc1, hc2⟩⟩
+
+
+
+
+
+
+
     sorry -- komisch
   .
 
