@@ -173,9 +173,6 @@ def Rpos := {r : NNReal // 0 < r}
 Leroy Lemme 1
 -> Magie
 -/
-lemma Measure.caratheodory.preserves_sup (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing (Set.range X_n)) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
-  sorry
-
 lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing' X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   apply le_antisymm
   .

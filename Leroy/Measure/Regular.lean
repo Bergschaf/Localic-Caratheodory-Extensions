@@ -232,7 +232,7 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
           simp at x
           exact x
         . rw [← hu2,← hv2]
-          exact Open.exterior_inf_eq_sup
+          sorry --exact Open.exterior_inf_eq_sup
       . apply And.intro
         . exact le_sup_left
         . exact le_sup_right
