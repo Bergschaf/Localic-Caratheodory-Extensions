@@ -155,17 +155,16 @@ lemma Measure.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       rw [le_csSup_iff]
       . simp [upperBounds]
         intro b h2
-        have h : increasing (Set.range F_n) := by
+        have h : increasing' F_n := by
           simp [increasing, F_n]
           intro a
-          use a + 1
           simp [decroissante'] at h
           rw [← Closed.le_iff]
           rw [Closed.le_def]
           simp
           exact h _ _ (Nat.le_add_right _ _)
         rw [sSup_range]
-        rw [Measure.caratheodory.preserves_sup]
+        rw [Measure.caratheodory.preserves_sup']
         apply ciSup_le
         exact h2
         exact h
