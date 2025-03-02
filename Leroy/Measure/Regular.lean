@@ -29,6 +29,22 @@ variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 variable {m : @Measure E e_frm}(X_n : ℕ → Sublocale E)
 
+lemma Closed.eq_intersection_opens (U : Open E) : U.compl.toSublocale = ⨅ V : Open E, ⨅ h : V ≪ U, (⟨V.elementᶜ⟩ : Open E).toSublocale := by
+  apply le_antisymm
+  . simp only [le_iInf_iff]
+    intro i h
+    let h1 := h
+    rw [well_inside] at h1
+    rw [Sublocale.compl_element_eq_compl_closure]
+    rw [well_inside_iff] at h
+    -----
+    sorry --WIE??
+
+    -- das ist eigentlich eine eigenschaft von einer Heyting algebra (https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/Heyting/Basic.html#compl_anti)
+  . sorry
+
+
+
 
 /-
 TODO eigene tactic, die Nucleus.coe_mk und sowas simplified
@@ -38,11 +54,14 @@ TODO eigene tactic, die Nucleus.coe_mk und sowas simplified
 lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : Open E, ⨅ h : V ≪ c.compl, (⟨V.elementᶜ⟩ : Open E).toSublocale := by
   apply le_antisymm
   . simp only [le_iInf_iff]
+
     intro a h
     rw [Sublocale.compl_element_eq_compl_closure]
     --- TODO ab hier woanders?
     let h1 := h
     rw [well_inside_iff] at h1
+    rcases h1 with ⟨d, ⟨hc1, hc2⟩⟩
+
     simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff, Open.closure, Closed.sInf_def]
     repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
     intro i
@@ -53,19 +72,15 @@ lemma Closed.eq_intersection_opens (c : Closed E) : c.toSublocale = ⨅ V : Open
     simp
 
 
-    simp only [himp_eq_sSup, sup_le_iff, sSup_le_iff, Set.mem_setOf_eq]
-    simp [inf_sSup_eq, le_sSup_iff, upperBounds, Set.mem_setOf_eq] at h2
+    simp only [himp_eq_sSup, sSup_le_iff, Set.mem_setOf_eq]
 
     intro b h2
-    rw [inf_sSup_eq] at h2
+    rw [inf_iSup₂_eq] at h2
     simp at h2
-    rcases h1 with ⟨d, ⟨hc1, hc2⟩⟩
 
-
-
-
-
-
+    simp only [well_inside, Closed.toSublocale, complement, Open.closure, Open.toSublocale,
+      Sublocale.le_iff, sInf_def, sSup_image', Set.coe_setOf, Set.mem_setOf_eq, element_compl] at h
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]at h
 
     sorry -- komisch
   .
@@ -114,29 +129,17 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
     have sSup_W_a_eq_U : sSup W_a = U := by
       rw [e_regular.elim U]
       apply le_antisymm
-      . simp only [sSup_le_iff]
-        intro b h
-        apply le_sSup
-        simp [Set.mem_setOf_eq, well_inside]
-        simp [W_a] at h
-        rcases h with ⟨a, ⟨h1, h2⟩⟩
-        rw [← h2]
-        simp only [V_a] at h1
-        simp only [Sublocale.Open_Neighbourhood, Set.mem_setOf_eq] at h1
-        rw [closure_eq_compl_exterior_compl]
-        rw [Open.exterior_exterior_eq_self]
-        apply le_compl_iff.mp
-        exact h1
-      . simp only [well_inside, Sublocale.Open_Neighbourhood, sSup_le_iff, Set.mem_setOf_eq, W_a, V_a]
-        intro b h
+      . simp [le_sSup_iff, upperBounds, W_a, V_a]
+        intro b h a ha
+        simp only [Sublocale.Open_Neighbourhood, Set.mem_setOf_eq, V_a, W_a] at ha
 
-        apply le_sSup
-        simp only [Set.mem_image, Set.mem_setOf_eq]
-        use b.exterior
-        apply And.intro
-        . apply compl_le_iff.mpr
-          exact h
-        . exact Open.exterior_exterior_eq_self b
+        sorry
+      . simp [le_sSup_iff, upperBounds, W_a, V_a, Sublocale.Open_Neighbourhood]
+        intro b h b1 h2
+        sorry
+
+
+
 
     apply_fun m.caratheodory at sSup_W_a_eq_U
     have W_a_filtered_croissant : increasingly_filtered W_a := by

@@ -214,6 +214,12 @@ lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSu
     simp only [Set.mem_image, iSup_exists, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂]
     exact h
 
+lemma preserves_iSup (f : ι → Open E) : (iSup f).toSublocale = ⨆ i : ι, (f i).toSublocale := by
+  rw [iSup]
+  rw [preserves_sSup]
+  rw [sSup_image']
+  exact iSup_range' Open.toSublocale f
+
 lemma preserves_sup : (U ⊔ V).toSublocale = U.toSublocale ⊔ V.toSublocale := by
   rw [← sSup_pair, preserves_sSup, Set.image_pair, sSup_pair]
 
