@@ -8,13 +8,32 @@ def well_inside (U V : Open E) := U.closure ≤ V.toSublocale
 
 infix:100 " ≪ " => well_inside
 
+
+
+def well_inside_iff' (U V : Open E) : U ≪ V ↔ V ⊔ ⟨V.elementᶜ⟩ = ⊤ := by
+  sorry
+
 /--
 Stone spaces s.80
 und auch Sketches of an Elephant 501...
 -/
 def well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c ⊔ V = ⊤ := by
   rw [well_inside]
-  sorry
+  apply Iff.intro
+  . intro h
+    use U.exterior
+    apply And.intro
+    . sorry -- stimmt eig
+    . sorry
+
+  . intro h
+    sorry
+
+
+
+
+
+
 
 /--
 Leroy definition
@@ -91,6 +110,45 @@ lemma Closed.eq_intersection_opens (U : Open E) : U.compl.toSublocale = ⨅ V : 
       simp [LE.le]
     exact (h1 a ha i).left
 
+lemma Sublocale.intersection_Opens (a : Sublocale E) : ∃ s : Set (Open E), a = sInf (Open.toSublocale '' s) := by
+  use (Set.range (fun x : {w : E × Open E | w.snd ≪ { element := a w.fst }} ↦ ((⟨x.val.fst⟩ : Open E) ⊔ ⟨x.val.sndᶜ⟩)))
+  conv =>
+    enter [1]
+    rw [Sublocale.eq_intersection_open_closed a]
+
+  have h_help (a_1 : E): ({ element := a a_1 } : Closed E) = ({ element := a a_1 } : Open E).compl := by
+    simp [Open.compl]
+  conv =>
+    enter [1, 1, a, 2]
+    rw [h_help a]
+    rw [Closed.eq_intersection_opens]
+
+  conv =>
+    enter [1, 1, a]
+    rw [sup_iInf₂_eq]
+  conv =>
+    enter [1, 1, a, 1, i, 1, j]
+    rw [← Open.preserves_sup]
+
+
+  have h_help : ⨅ (a_1 : E), ⨅ (i : Open E), ⨅ (_ : i ≪ { element := a a_1 }), (({ element := a_1 } : Open E) ⊔ { element := i.elementᶜ }).toSublocale =
+        sInf (Open.toSublocale '' Set.range (fun x : {w : E × Open E | w.snd ≪ { element := a w.fst }} ↦ ((⟨x.val.fst⟩ : Open E) ⊔ ⟨x.val.sndᶜ⟩))) := by
+      simp [sInf_image]
+      conv =>
+        enter [2, 1, a, 1, i, 1, i]
+        rw [iInf_and]
+      apply le_antisymm
+      . simp only [le_iInf_iff, iInf_le_iff, OrderDual.forall]
+        intro i i_1 i_2 i_3 i_4 a_1 a_2
+        subst i_4
+        simp_all only
+      . simp only [le_iInf_iff, iInf_le_iff, OrderDual.forall]
+        intro i i_1 i_2 a_1 a_2
+        apply a_2
+        on_goal 2 => {rfl
+        }
+        · simp_all only
+  rw [h_help]
 
 
 /--
@@ -104,77 +162,35 @@ lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) : a = sInf (O
   apply le_antisymm
   . simp
     exact fun a_1 a => a
-  . conv =>
+  . obtain ⟨s, h1⟩ := Sublocale.intersection_Opens a
+    conv =>
       enter [2]
-      rw [Sublocale.eq_intersection_open_closed a]
-    conv =>
-      enter [2, 1, a, 2, 1]
+      rw [h1]
+    simp only [Open_Neighbourhood, le_sInf_iff, Set.mem_image, sInf_le_iff, lowerBounds,
+      Set.mem_setOf_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, OrderDual.forall]
+    intro a1 ha1 a2 h2
+    apply h2
+    rw [h1]
+    apply sInf_le
+    exact Set.mem_image_of_mem Open.toSublocale ha1
 
-    have h_help (a_1 : E): ({ element := a a_1 } : Closed E) = ({ element := a a_1 } : Open E).compl := by
-      simp [Open.compl]
-    conv =>
-      enter [2, 1, a, 2]
-      rw [h_help a]
-      rw [Closed.eq_intersection_opens]
-    conv =>
-      enter [2, 1, a]
-      rw [sup_iInf₂_eq]
-    conv =>
-      enter [2, 1, a, 1, i, 1, j]
-      rw [← Open.preserves_sup]
-
-    have h_help : ⨅ (a_1 : E), ⨅ (i : Open E), ⨅ (_ : i ≪ { element := a a_1 }), ({ element := a_1 } ⊔ { element := i.elementᶜ }).toSublocale =
-       sInf (Set.range (fun x : (E × {i : Open E | })))
-
-    simp_rw [iInf_prod']
-    rw [sInf_image]
-
-    apply iInf₂_mono'
-    simp only [exists_prop, Prod.forall]
-    intro b1 b2 h1
-    ---
-    simp [well_inside_iff] at h1
-
-    use (({ element := b1 } ⊔ { element := b2.elementᶜ }))
-    simp [Open_Neighbourhood]
-    simp [Open.toSublocale, Sublocale.le_iff]
-    intro i
-    rw [Nucleus.coe_mk, InfHom.coe_mk]
-    simp [Open.sup_def]
-    simp [himp_eq_sSup]
-
-
-
-
-
-    simp only [le_iInf_iff]
-    intro i j h1
-    simp [Sublocale.Open_Neighbourhood, sInf_image, iInf_le_iff]
-    intro b h2
-    let h3 := h2 ({ element := i } ⊔ { element := j.elementᶜ })
-    apply h3
-    simp [Open.sup_def, Open.toSublocale]
-    intro x
-    rw [Nucleus.coe_mk, InfHom.coe_mk]
-    rw [sup_himp_distrib]
-    let h4 := h1
-    simp [well_inside, Open.closure, Closed.toSublocale, complement, Open.toSublocale, Sublocale.le_iff, Closed.sInf_def] at h4
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h4
-
-
-
-
-
-
-
-
-    sorry -- mit Closed.eq_intersection_opens (Wie soll das Funktionieren?? -- sup_inf_eq)
 
 lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Sublocale.Neighbourhood a) := by
   apply le_antisymm
   . apply le_sInf
     exact fun b a_1 => Sublocale.Neighourhood.le b a_1
-  sorry
+  . conv =>
+      enter [2]
+      rw [Sublocale.intersection_Open_Neighbourhhood a]
+    refine sInf_le_sInf ?_
+    simp only [Open_Neighbourhood, Neighbourhood, Set.mem_setOf_eq, Set.image_subset_iff,
+      Set.preimage_setOf_eq, Set.setOf_subset_setOf]
+    intro a_1 a_2
+    apply Exists.intro
+    · apply And.intro
+      on_goal 2 => {rfl
+      }
+      · simp_all only
 /--
 Leroy Lemme 3
 -/
