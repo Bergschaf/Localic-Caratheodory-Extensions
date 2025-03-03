@@ -58,9 +58,18 @@ Properties of Complement
 -/
 
 /--
+Leroy Lemme 8
+-/
+lemma sup_eq_top_iff_compl_le (V : Open E) (x : Sublocale E) : V.toSublocale ⊔ x = ⊤ ↔ V.compl ≤ x := by
+  sorry
+
+lemma inf_eq_bot_iff_le_compl (V : Open E) (x : Sublocale E) : V.toSublocale ⊓ x = ⊥ ↔ x ≤ V.compl := by
+  sorry
+
+/--
 Leroy Lemme 8 bis
 -/
-def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.compl) = ⊤ := by
+lemma sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.compl) = ⊤ := by
   apply Iff.intro
   . intro h
     apply le_antisymm
@@ -79,9 +88,15 @@ def sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u.c
 
     simp [Open.compl,Closed.toSublocale, complement] at h1
     rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
-    sorry
+    rw [inf_sup_left] at h1
+    simp [Open.toSublocale]
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    simp only [le_himp_iff]
+    apply le_trans' (le_of_eq h1)
+    simp
 
-def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.compl) = ⊥ := by
+
+lemma inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.compl) = ⊥ := by
   apply Iff.intro
   . intro h
     apply le_antisymm
@@ -95,8 +110,29 @@ def inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.c
       exact fun a a_1 a_2 => inf_le_of_left_le a_2
     . exact OrderBot.bot_le (x ⊓ u.compl.toSublocale)
   .
-    intro h
+    intro h i
+    rw [Nucleus.ext_iff] at h
+
+    simp [Open.compl, Closed.toSublocale, complement] at h
+    conv at h =>
+      enter [2]
+      rw [Sublocale.inf_apply]
+      rw [Sublocale.bot_apply]
+
+    simp [Sublocale.le_iff, Sublocale.bot_apply] at h
+
+
+    rw [Nucleus.coe_mk, InfHom.coe_mk] at h
+    let h1 := h i x
+    simp at h1
     sorry
+
+
+
+
+
+
+
 
 
 lemma compl_sup_eq_inf_compl {U V : Open E} : (U ⊔ V).compl = U.compl ⊓ V.compl := by
@@ -137,7 +173,7 @@ def Sublocale.exterior (x : Sublocale E) := sSup {z : Open E | z.toSublocale ⊓
 def Open.exterior (x : Open E) := sSup {z : Open E | z ⊓ x = ⊥}
 def Closed.exterior (x : Closed E) := sSup {z : Open E | z.toSublocale ⊓ x = ⊥}
 
-lemma inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
+lemma Open.inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
   simp [Open.exterior]
   ext
   simp [Open.inf_def,Open.sSup_def]
