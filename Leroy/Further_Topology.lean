@@ -1,7 +1,7 @@
 import Leroy.Sublocale
 import Mathlib.Order.CompleteSublattice
 import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Tactic.ApplyFun
+import Mathlib.Tactic
 
 variable {X Y E: Type u} [Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
 open Sublocale
@@ -61,10 +61,57 @@ Properties of Complement
 Leroy Lemme 8
 -/
 lemma sup_eq_top_iff_compl_le (V : Open E) (x : Sublocale E) : V.toSublocale ⊔ x = ⊤ ↔ V.compl ≤ x := by
-  sorry
+  apply Iff.intro
+  . intro h
+    simp [Open.compl, Closed.toSublocale, complement, Sublocale.le_iff, Open.toSublocale] at *
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at *
+    rw [Nucleus.ext_iff] at h
+    conv at h =>
+      enter [i]
+      rw [Sublocale.top_apply, Sublocale.sup_apply, Nucleus.coe_mk, InfHom.coe_mk]
+    intro i
+    ----
+    let h3 := h (i ⊔ V.element)
+    simp at h3
+    rw [sup_comm]
+    rw [← h3]
+    simp only [le_inf_iff, le_himp_iff]
+    apply And.intro
+    . exact inf_le_of_right_le le_sup_right
+    . exact x.monotone le_sup_left
+  . intro h
+    rw [eq_top_iff]
+    have h1 : V.toSublocale ⊔ V.compl.toSublocale ≤ V.toSublocale ⊔ x := by
+     exact sup_le_sup_left h V.toSublocale
+    apply le_trans' h1
+    rw [@Open.sup_compl_eq_top]
+
 
 lemma inf_eq_bot_iff_le_compl (V : Open E) (x : Sublocale E) : V.toSublocale ⊓ x = ⊥ ↔ x ≤ V.compl := by
-  sorry
+  apply Iff.intro
+  . intro h
+    simp [Open.compl, Closed.toSublocale, complement, Sublocale.le_iff, Open.toSublocale] at *
+    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at *
+    rw [Nucleus.ext_iff] at h
+
+    conv at h =>
+      enter [i]
+      rw [Sublocale.bot_apply, Sublocale.inf_apply]
+    simp [lowerBounds] at h
+    conv at h =>
+      enter [i, i]
+      rw [Sublocale.le_iff, Nucleus.coe_mk, InfHom.coe_mk]
+    intro i
+    sorry
+
+
+  . intro h
+    have h1 : V.toSublocale ⊓ x ≤ V.toSublocale ⊓ V.compl := by
+      exact inf_le_inf_left V.toSublocale h
+    rw [eq_bot_iff]
+    apply le_trans h1
+    rw [@Open.inf_compl_eq_bot]
+
 
 /--
 Leroy Lemme 8 bis

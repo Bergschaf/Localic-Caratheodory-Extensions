@@ -282,7 +282,7 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       have h : m.toFun v_a.exterior + m.toFun v_a = m.toFun v_a.exterior + m.toFun v_a - m.toFun (v_a.exterior ⊓ v_a) := by
         have h1 :  m.toFun (v_a.exterior ⊓ v_a) = 0 := by
           rw [inf_comm]
-          rw [@inf_Exterior_eq_bot]
+          rw [@Open.inf_Exterior_eq_bot]
           exact m.empty
         conv =>
           enter [1]
