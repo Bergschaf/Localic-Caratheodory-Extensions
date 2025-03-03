@@ -71,7 +71,7 @@ def μ_Reduction (m : @Measure E' _): Nucleus E' where
   toFun := e_μ m
   idempotent' x := e_μ_idempotent m x
   le_apply' x := e_μ_le_apply m x
-  map_inf' x y:= e_μ_map_inf m x y
+  map_inf' x y := e_μ_map_inf m x y
 
 
 variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
@@ -233,8 +233,27 @@ lemma Measure.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
 lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
-  let V_n (n : ι) := Sublocale.Open_Neighbourhood (A_i n)
-  admit -- TODO noha fragen
+  let V_n' := Set.range fun n => (Sublocale.Open_Neighbourhood (A_i n))
+  let V_n : ι → (Open E) := sorry --  TODO flatten V_n
+
+  have h1 : iInf V_n = iInf A_i := by sorry
+
+  --have h2 : ⨅ v_n ∈ V_n, m.toFun v_n = iInf (m.caratheodory ∘ A_i) := by
+  --  sorry
+
+  let α_n : ℕ → ι := sorry
+
+  -- have h3 : limit n → ∞, m.toFun (V_n α_n n) = iInf (m.caratheodory ∘ A_i)
+
+  let I := ⨅ n : ℕ, V_n (α_n n)
+
+  let lambda := m.caratheodory I
+
+  have h4 : iInf V_n ≤ I := by sorry
+
+  --- TODO μ Reduction
+  sorry
+
 
 lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
   m.caratheodory (sInf s) = ⨅ x : s, m.caratheodory x := by sorry

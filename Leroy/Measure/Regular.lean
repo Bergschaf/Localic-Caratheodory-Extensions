@@ -23,17 +23,58 @@ def well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c ⊔ 
   . intro h
     use U.exterior
     apply And.intro
-    . sorry -- stimmt eig
-    . sorry
-
+    . rw [inf_comm]
+      exact Open.inf_Exterior_eq_bot U
+    . -- TODO vlt als extra lemma
+      have h_nonempty : Nonempty { x // x ⊓ U = ⊥ } := by use ⊥; simp
+      simp [Open.exterior, sSup_eq_iSup']
+      rw [iSup_sup, eq_top_iff, le_iSup_iff]
+      simp only [sup_le_iff, Subtype.forall, top_le_iff]
+      intro b h1
+      have h2 : U.exterior ⊔ V = ⊤ := by
+        rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale]
+        rw [sup_eq_top_iff_compl_le]
+        apply le_trans' h
+        -- TODO vlt als extra lemma
+        simp only [Closed.toSublocale, complement, Open.exterior, Open.sSup_def, Open.compl_element,
+          Open.closure, Sublocale.le_iff, Open.toSublocale_apply, le_himp_iff, Closed.sInf_def]
+        repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+        simp only [sup_le_iff, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
+          and_imp, forall_apply_eq_imp_iff₂, le_sup_right, and_true]
+        intro i a h2
+        rw [Nucleus.coe_mk, InfHom.coe_mk] at h2
+        --
+        have h_nonempty : Nonempty ↑(Open.element '' {z | z ⊓ U = ⊥}) := by
+          use ⊥
+          use ⊥
+          simp only [Set.mem_setOf_eq, bot_le, inf_of_le_left, Open.bot_element, and_self]
+        rw [sSup_eq_iSup']
+        rw [iSup_sup]
+        simp [le_iSup_iff]
+        intro b1 h3
+        conv at h2 =>
+          enter [2, 1]
+          rw [inf_sup_right]
+        simp only [sup_le_iff, inf_le_left, and_true] at h2
+        let h3 := h3 ⟨a.element⟩ (by exact le_bot_iff.mp (h2 ⊥))
+        simp only at h3
+        exact h3.left
+      rw [eq_top_iff, ← h2,sup_le_iff]
+      apply h1
+      rw [inf_comm]
+      exact Open.inf_Exterior_eq_bot U
   . intro h
-    sorry
-
-
-
-
-
-
+    rcases h with ⟨c, ⟨h1, h2⟩⟩
+    let h1' := h1
+    rw [Open.eq_iff, Open.preserves_inf, Open.bot_toSublocale, inf_eq_bot_iff_le_compl] at h1'
+    let h2' := h2
+    rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale, sup_eq_top_iff_compl_le] at h2'
+    apply le_trans' h2'
+    simp only [Open.closure, Closed.preserves_sInf, sInf_le_iff, lowerBounds, Set.mem_image,
+      Set.mem_setOf_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, OrderDual.forall]
+    intro a h
+    apply h
+    exact h1'
 
 /--
 Leroy definition
@@ -188,8 +229,7 @@ lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Subloca
     intro a_1 a_2
     apply Exists.intro
     · apply And.intro
-      on_goal 2 => {rfl
-      }
+      on_goal 2 => {rfl}
       · simp_all only
 /--
 Leroy Lemme 3
