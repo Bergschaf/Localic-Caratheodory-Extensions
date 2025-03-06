@@ -822,7 +822,6 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
     . rw [Open.preserves_sSup]
       apply le_sSup
       exact Set.mem_image_of_mem Open.toSublocale hb
-
 def Image (A : Sublocale E) := {x : E // A x = x}
 instance (A : Sublocale E)  : Order.Frame (Image A) := sorry
 
