@@ -102,8 +102,20 @@ lemma inf_eq_bot_iff_le_compl (V : Open E) (x : Sublocale E) : V.toSublocale ⊓
       enter [i, i]
       rw [Sublocale.le_iff, Nucleus.coe_mk, InfHom.coe_mk]
     intro i
-    sorry
+    simp [himp_eq_sSup] at h
+    apply sup_le
+    .
+      let h1 := h i (V.toSublocale ⊔ x)
+      simp at h1
+      sorry
 
+
+
+
+
+
+
+    . exact x.le_apply
 
   . intro h
     have h1 : V.toSublocale ⊓ x ≤ V.toSublocale ⊓ V.compl := by
@@ -170,8 +182,13 @@ lemma inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u
 
 
     rw [Nucleus.coe_mk, InfHom.coe_mk] at h
-    let h1 := h i x
+    let h1 := h i (x)
     simp at h1
+    simp [Open.toSublocale, himp_eq_sSup]
+    intro b h2
+
+
+
     sorry
 
 
@@ -234,12 +251,6 @@ lemma Open.inf_Exterior_eq_bot (x : Open E) : x ⊓ x.exterior = ⊥ := by
     exact h
   . exact OrderBot.bot_le _
 
-/-
-lemma Open.exterior_exterior_eq_self (x : Open E) : x.exterior.exterior = x := by
-  simp [Open.exterior]
-  rw [@sSup_eq_iSup']
-  sorry
---/
 
 --lemma Open.compl_le_exterior_iff {U V : Open E} : U.compl ≤ V.exterior.toSublocale ↔ V.closure ≤ U.toSublocale := by sorry
 
@@ -311,6 +322,22 @@ lemma Sublocale.compl_element_eq_compl_closure (V : Open E) : ⟨V.elementᶜ⟩
 lemma Open.compl_element_eq_exterior (U : Open E) : ⟨U.elementᶜ⟩ = U.exterior := by
   rw [Sublocale.compl_element_eq_compl_closure]
   rw [@Closure_compl_eq_exterior]
+
+lemma Open.le_exterior_exterior (x : Open E) : x ≤ x.exterior.exterior := by
+  rw [← Open.compl_element_eq_exterior, ← Open.compl_element_eq_exterior]
+  simp only [le_def]
+  exact le_compl_compl
+
+lemma Open_compl_le_Closed_compl (U : Open E) (c : Closed E) (h : c.toSublocale ≤ U.toSublocale) :U.compl.toSublocale ≤ c.compl.toSublocale := by
+  simp only [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff, Closed.compl,
+    Open.compl] at *
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at *
+  intro i
+  simp [himp_eq_sSup] at *
+  intro b h1
+  let h1' := h U.element b
+  simp at h1'
+  sorry
 
 
 /-

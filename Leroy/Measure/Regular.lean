@@ -10,8 +10,7 @@ infix:100 " ≪ " => well_inside
 
 
 
-def well_inside_iff' (U V : Open E) : U ≪ V ↔ V ⊔ ⟨V.elementᶜ⟩ = ⊤ := by
-  sorry
+
 
 /--
 Stone spaces s.80
@@ -76,9 +75,11 @@ def well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c ⊔ 
     apply h
     exact h1'
 
+/-
+def well_inside_iff' (U V : Open E) : U ≪ V ↔ V ⊔ ⟨V.elementᶜ⟩ = ⊤ := by
+  sorry-/
 /--
 Leroy definition
-TODO Stone spaces als quelle anschauen
 Steht auch in Sketches of an Elephant 501
 -/
 def regular (E : Type*)  [Order.Frame E]: Prop :=
@@ -246,37 +247,51 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       . simp [le_sSup_iff, upperBounds, W_a, V_a]
         intro b h a ha
         simp only [Sublocale.Open_Neighbourhood, Set.mem_setOf_eq, V_a, W_a] at ha
+        have h1 : a.exterior ≪ U := by
+          refine (well_inside_iff a.exterior U).mpr ?_
+          use a
+          refine ⟨(by exact Open.inf_Exterior_eq_bot a), ?_⟩
+          rw [sup_comm]
+          rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale]
+          rw [@sup_eq_top_iff_compl_le]
+          exact ha
+        exact h h1
 
-        sorry
-      . simp [le_sSup_iff, upperBounds, W_a, V_a, Sublocale.Open_Neighbourhood]
+      . simp only [Sublocale.Open_Neighbourhood, le_sSup_iff, upperBounds, Set.mem_image,
+        Set.mem_setOf_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, sSup_le_iff, W_a,
+        V_a]
         intro b h b1 h2
-        sorry
-
-
-
+        let h2' := h2
+        rw [well_inside] at h2'
+        rw [well_inside_iff] at h2
+        rcases h2 with ⟨c, ⟨h2, h3⟩⟩
+        let h' := h b1.exterior
+        apply le_trans (Open.le_exterior_exterior _)
+        apply h'
+        rw [← Closure_compl_eq_exterior]
+        apply Open_compl_le_Closed_compl
+        apply h2'
 
     apply_fun m.caratheodory at sSup_W_a_eq_U
     have W_a_filtered_croissant : increasingly_filtered W_a := by
       rw [increasingly_filtered]
       intro u hu v hv
-      use u ⊔ v
+      rcases hu with ⟨u1, ⟨hu1, hu2⟩⟩
+      rcases hv with ⟨v1, ⟨hv1, hv2⟩⟩
+      simp [W_a, V_a]
+      use u1 ⊓ v1
       apply And.intro
-      . simp only [Sublocale.Open_Neighbourhood, Set.mem_image, Set.mem_setOf_eq, W_a, V_a]
-        simp [W_a,V_a] at hu hv
-        rcases hu with ⟨u1, ⟨hu1, hu2⟩⟩
-        rcases hv with ⟨v1, ⟨hv1, hv2⟩⟩
-        use (u1 ⊓ v1)
-        apply And.intro
-        . let x := Sublocale.Open_Neighbourhood.inf_closed u1 hu1 v1 hv1
-          simp_rw [Sublocale.Open_Neighbourhood] at x
-          simp at x
-          exact x
-        . rw [← hu2,← hv2]
-          sorry --exact Open.exterior_inf_eq_sup
+      . exact Sublocale.Open_Neighbourhood.inf_closed u1 hu1 v1 hv1
       . apply And.intro
-        . exact le_sup_left
-        . exact le_sup_right
-
+        .
+          simp [← hu2,← Open.compl_element_eq_exterior, Open.le_def, Open.inf_def]
+          apply le_trans' compl_sup_compl_le
+          --- genial ^^^
+          exact le_sup_left
+        . simp [← hv2,← Open.compl_element_eq_exterior, Open.le_def, Open.inf_def]
+          apply le_trans' compl_sup_compl_le
+          --- genial ^^^
+          exact le_sup_right
     have h1 : ∀ v_a ∈ V_a, m.toFun (v_a.exterior) + m.toFun v_a ≤ m.caratheodory ⊤ := by
       intro v_a h_v_a
       have h : m.toFun v_a.exterior + m.toFun v_a = m.toFun v_a.exterior + m.toFun v_a - m.toFun (v_a.exterior ⊓ v_a) := by
