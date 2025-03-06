@@ -11,7 +11,7 @@ open Sublocale
 -- TODO Infrastruktur, dass man Sublocals als Local ansehen kann
 
 def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | u ≥ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
----                                                                 ^ eigentlich steht hier u ≤ w bei leroy, so gehts aber irgendwie besser
+---                                                                 ^ eigentlich steht hier u ≤ w bei leroy
 
 lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
   simp [e_μ, Open.sSup_def]
@@ -107,13 +107,20 @@ lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ
     apply le_trans' h1'
     apply inf_le_inf <;> simp_all
 
-
-
-def μ_Reduction (m : @Measure E' _): Nucleus E' where
+def μ_Reduction (m : @Measure E' _) : Sublocale E' where
   toFun := e_μ m
   idempotent' x := e_μ_idempotent m x
   le_apply' x := e_μ_le_apply m x
   map_inf' x y := e_μ_map_inf m x y
+
+def Measure_Neighbourhood_μ_eq_top (m : @Measure E' _) : ∀ V ∈ Open_Neighbourhood (μ_Reduction m), m.toFun V = m.toFun ⊤ := by
+  intro V h
+  apply le_antisymm
+  . simp [Measure.mono]
+  have h1 : μ_Reduction m V.element = ⊤ := by sorry
+  sorry
+
+
 
 
 variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
@@ -126,7 +133,6 @@ def decroissante (V : Set (Open E')) : Prop :=
   decroissante' (fun (x : V) ↦ x.val)
 
 
---- TODO bis zum Landeswettbewerb gescheit definieren
 def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
   ∀ n m : ι, ∃ l, V l ≤ V n ∧ V l ≤ V m
 
