@@ -353,3 +353,21 @@ lemma Open.sup_compl_eq_top (U : Open E) : U.toSublocale ⊔ U.compl = ⊤ := by
   rw [inf_sup_left]
   simp only [sup_le_iff, inf_le_right, and_true]
   exact h
+
+lemma Open.compl_le_compl (U V : Open E) (h : U ≤ V) : V.compl ≤ U.compl := by
+  exact h
+
+lemma Closed.compl_le_compl (c d : Closed E) (h : c ≤ d) : d.compl ≤ c.compl := by
+  exact h
+
+lemma Closed_compl_le_Open_compl (U : Open E) (c : Closed E) (h : U.toSublocale ≤ c.toSublocale) : c.compl.toSublocale ≤ U.compl.toSublocale := by
+  simp only [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff, Closed.compl,
+    Open.compl] at *
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at *
+  intro i
+  simp only [le_himp_iff] at *
+  simp only [inf_sup_right, sup_le_iff, inf_le_left, and_true]
+  let h1 := h i
+  simp only [inf_sup_right, sup_le_iff, inf_le_left, and_true] at h1
+  rw [inf_comm]
+  exact h1
