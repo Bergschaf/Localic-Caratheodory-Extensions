@@ -830,21 +830,10 @@ def Measure.restrict_sublocale : Open (Image A) → NNReal :=
   fun x ↦ m.toFun ⟨x.element.val⟩
 
 
-/-
+
 def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale m A
-  empty := by
-    simp [Measure.restrict_sublocale]
-    rw [← m.empty]
-    apply Measure.monotone
-    ext
-    simp
-
-
-    sorry
-
-
+  empty := sorry
   mono := sorry
   strictly_additive := sorry
   filtered := sorry
--/
