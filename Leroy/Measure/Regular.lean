@@ -1,4 +1,5 @@
 import Leroy.Measure.Basic
+import Leroy.Nucleus_Image
 import Mathlib.Algebra.Order.Group.CompleteLattice
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
@@ -822,16 +823,28 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
     . rw [Open.preserves_sSup]
       apply le_sSup
       exact Set.mem_image_of_mem Open.toSublocale hb
-def Image (A : Sublocale E) := {x : E // A x = x}
-instance (A : Sublocale E)  : Order.Frame (Image A) := sorry
 
-def Measure.restrict_sublocale (m : @Measure E _) (A : Sublocale E) : Open (Image A) → NNReal :=
+variable (m : @Measure E _) (A : Sublocale E)
+
+def Measure.restrict_sublocale : Open (Image A) → NNReal :=
   fun x ↦ m.toFun ⟨x.element.val⟩
 
 
-def Measure.restrict_sublocale_measure (m : @Measure E _) (A : Sublocale E) : @Measure (Image A) _ where
+/-
+def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale m A
-  empty := sorry
+  empty := by
+    simp [Measure.restrict_sublocale]
+    rw [← m.empty]
+    apply Measure.monotone
+    ext
+    simp
+
+
+    sorry
+
+
   mono := sorry
   strictly_additive := sorry
   filtered := sorry
+-/
