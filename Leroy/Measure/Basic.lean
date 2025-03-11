@@ -121,6 +121,12 @@ lemma le_top (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.carathe
   intro a
   apply caratheodory.monotonic
   exact OrderTop.le_top a
+
+lemma le_top_toFun (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.toFun ⊤ := by
+  intro a
+  rw [← top_eq_toFun]
+  exact le_top m a
+
 end caratheodory
 end Measure
 

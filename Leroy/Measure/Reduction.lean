@@ -117,11 +117,35 @@ def Measure_Neighbourhood_μ_eq_top (m : @Measure E' _) : ∀ V ∈ Open_Neighbo
   intro V h
   apply le_antisymm
   . simp [Measure.mono]
-  have h1 : μ_Reduction m V.element = ⊤ := by sorry
-  sorry
+  simp only [Open_Neighbourhood, Set.mem_setOf_eq] at h
+  simp only [μ_Reduction, le_iff, Open.toSublocale_apply] at h
+  conv at h =>
+    enter [2]
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    simp [e_μ]
+  let h1 := h V.element
+  simp at h1
+  apply_fun fun x ↦ (⟨x⟩ : Open E') at h1
+  simp only [Open.mk_element] at h1
+  rw [← Open.top_element] at h1
+  rw [Open.mk_element] at h1
+  rw [← h1]
+  apply Measure.mono
+  simp only [sSup_le_iff, Set.mem_setOf_eq, and_imp]
+  exact fun b a a_1 => a
 
-
-
+def Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reduction m) = m.toFun ⊤ := by
+  apply le_antisymm
+  . apply Measure.caratheodory.le_top_toFun
+  simp [Measure.caratheodory]
+  apply le_csInf
+  . use m.toFun ⊤
+    use ⊤
+    simp only [and_true]
+    exact Open_Neighbourhood.top_mem
+  simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+  intro a h
+  apply le_of_eq (Measure_Neighbourhood_μ_eq_top m a h).symm
 
 variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
 

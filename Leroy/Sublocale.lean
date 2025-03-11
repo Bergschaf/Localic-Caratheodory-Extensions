@@ -121,6 +121,8 @@ lemma sup_def (u v : Open E) : u ⊔ v = ⟨u.element ⊔ v.element⟩ := by
 
 lemma inf_def (u v : Open E) : u ⊓ v = ⟨u ⊓ v⟩ := rfl
 
+@[simp] lemma mk_element (U : Open E) : ⟨U.element⟩ = U := rfl
+
 @[simp] lemma toSublocale_apply (U : Open E) (x : E) : U.toSublocale x = U.element ⇨ x := rfl
 
 @[simp] lemma apply_self (U : Open E) : U.toSublocale U.element = ⊤ := by simp
