@@ -14,7 +14,10 @@ instance : Coe (Nucleus X) (Set X) where
   coe  := fun x ↦ Image x
 -- TODO ggf le sSup und so als instance definieren
 
-def image_frame (n : Nucleus E) : Order.Frame (Image n) := by
+variable {n : Nucleus E}
+
+
+instance image_frame (n : Nucleus E) : Order.Frame (Image n) := by
   let img := Image n
 
   let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; exact
@@ -315,6 +318,8 @@ def image_frame (n : Nucleus E) : Order.Frame (Image n) := by
   exact frame
 
 instance inst_frame (n : Nucleus E): Order.Frame (Image n) := image_frame n
+
+
 
 lemma nucleus_frameHom_exists (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) :=  by
   let img := Image n

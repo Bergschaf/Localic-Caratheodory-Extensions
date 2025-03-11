@@ -86,36 +86,96 @@ lemma sup_eq_top_iff_compl_le (V : Open E) (x : Sublocale E) : V.toSublocale ⊔
     apply le_trans' h1
     rw [@Open.sup_compl_eq_top]
 
-
 lemma inf_eq_bot_iff_le_compl (V : Open E) (x : Sublocale E) : V.toSublocale ⊓ x = ⊥ ↔ x ≤ V.compl := by
   apply Iff.intro
   . intro h
-    simp [Open.compl, Closed.toSublocale, complement, Sublocale.le_iff, Open.toSublocale] at *
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at *
-    rw [Nucleus.ext_iff] at h
-
-    conv at h =>
-      enter [i]
-      rw [Sublocale.bot_apply, Sublocale.inf_apply]
-    simp [lowerBounds] at h
-    conv at h =>
-      enter [i, i]
-      rw [Sublocale.le_iff, Nucleus.coe_mk, InfHom.coe_mk]
+    simp only [Closed.toSublocale, complement, Open.compl, le_iff]
     intro i
-    simp [himp_eq_sSup] at h
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    rw [Nucleus.ext_iff] at h
+    conv at h =>
+      enter [2]
+      rw [Sublocale.bot_apply]
+      rw [Sublocale.inf_apply]
+    simp [lowerBounds] at h
     apply sup_le
     .
-      let h1 := h i (V.toSublocale ⊔ x)
-      simp at h1
-      sorry
+      simp [Open.toSublocale, Sublocale.le_iff] at h
+      have h1 (x : Nucleus E) : OrderDual.toDual x = x := by
+        rfl
+      rw [Nucleus.coe_mk, InfHom.coe_mk] at h
+      conv at h =>
+        enter [2, 2, 1, 2, 2, 1]
+        rw [h1]
+      conv at h =>
+        enter [2, 2, 2, 1, 2, 2, 1]
+        rw [h1]
+      conv at h =>
+        enter [2, 2, 2, 2, 1]
+        rw [h1]
+
+      have h_nucleus1 : ∀ (a b : E),
+          (fun a => V.toSublocale (x a)) (a ⊓ b) = (fun a => V.toSublocale (x a)) a ⊓ (fun a => V.toSublocale (x a)) b := by
+        simp only [Open.toSublocale_apply]
+        intro a b
+        apply le_antisymm
+        .
+          simp_all only [le_inf_iff, le_himp_iff, himp_inf_self]
+          apply And.intro
+          · apply inf_le_of_left_le
+            apply Nucleus.monotone
+            exact inf_le_left
+
+          · apply inf_le_of_left_le
+            apply Nucleus.monotone
+            exact inf_le_right
+        . simp only [le_himp_iff]
+          rw [← himp_inf_distrib]
+          rw [x.map_inf]
+          exact himp_inf_le
+
+      have h_nucleus2 : ∀ (x_1 : E), x (V.element ⇨ x x_1) ⊓ V.element ≤ x x_1 := by
+        intro i
+        have h : x (V.element ⇨ x i) ⊓ V.element ≤ x (V.element ⇨ x i) ⊓  x V.element := by
+          simp only [le_inf_iff, inf_le_left, true_and]
+          apply inf_le_of_right_le
+          apply x.le_apply
+        apply le_trans h
+        rw [← x.map_inf]
+        conv =>
+          enter [2]
+          rw [← x.idempotent]
+        apply x.monotone
+        exact himp_inf_le
+
+      have h_nucleus3 : ∀ (x_1 : E), x_1 ⊓ V.element ≤ x x_1 := by
+        intro i
+        apply inf_le_of_left_le
+        apply x.le_apply
+
+      --- TODO Nucleus composition vlt woanders
+      let help_nucleus : Nucleus E :=
+       ⟨⟨fun a ↦ V.toSublocale (x a), h_nucleus1⟩,by simp [h_nucleus2], by simp [h_nucleus3]⟩
+
+      have h_help1 : (∀ (a : E), V.element ⇨ a ≤ help_nucleus a) := by
+        intro a
+        simp [help_nucleus]
+        apply inf_le_of_left_le
+        exact x.le_apply
 
 
+      let h_help2 : (∀ (a : E), x a ≤ help_nucleus a) := by
+        intro a
+        simp [help_nucleus]
 
+      let h1 := h (i) help_nucleus h_help1 h_help2
 
+      simp [help_nucleus, Open.toSublocale] at h1
+      repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
 
-
-
-    . exact x.le_apply
+      rw [himp_eq_top_iff] at h1
+      exact h1
+    . apply x.le_apply
 
   . intro h
     have h1 : V.toSublocale ⊓ x ≤ V.toSublocale ⊓ V.compl := by
@@ -154,7 +214,7 @@ lemma sup_compl_eq_top_iff {x : Sublocale E} {u : Open E} : u ≤ x ↔ x ⊔ (u
     apply le_trans' (le_of_eq h1)
     simp
 
-
+/-
 lemma inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u.compl) = ⊥ := by
   apply Iff.intro
   . intro h
@@ -189,7 +249,8 @@ lemma inf_compl_eq_bot_iff {x : Sublocale E} {u : Open E} : x ≤ u ↔ x ⊓ (u
 
 
 
-    sorry
+
+    sorry-/
 
 
 
@@ -328,48 +389,24 @@ lemma Open.le_exterior_exterior (x : Open E) : x ≤ x.exterior.exterior := by
   simp only [le_def]
   exact le_compl_compl
 
-lemma Open_compl_le_Closed_compl (U : Open E) (c : Closed E) (h : c.toSublocale ≤ U.toSublocale) :U.compl.toSublocale ≤ c.compl.toSublocale := by
+lemma Open_compl_le_Closed_compl (U : Open E) (c : Closed E) (h : c.toSublocale ≤ U.toSublocale) : U.compl.toSublocale ≤ c.compl.toSublocale := by
   simp only [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff, Closed.compl,
     Open.compl] at *
   repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at *
   intro i
   simp [himp_eq_sSup] at *
   intro b h1
-  let h1' := h U.element b
-  simp at h1'
-  sorry
-
-
-/-
-lemma Open_closed_compl_le_iff (u : Open E) (c : Closed E) : u ≤ c.toSublocale ↔ c.compl ≤ u.compl.toSublocale := by
-  apply Iff.intro
-  . intro h
-    simp [Open.compl, Closed.compl, Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff]
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-    simp [Open.compl, Closed.compl, Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff] at h
-    repeat rw [Nucleus.coe_mk, InfHom.coe_mk]  at h
-    simp at h
-    simp only [le_himp_iff]
-    intro i
-
-
-    rw [inf_sup_right]
-    let h1 := h (i ⊓ u.element)
-    rw [inf_sup_right] at h1
-    simp at h1
-
-    let h2 := h (i ⊓ c.element ⊓ u.element)
-    simp at h2
-    obtain ⟨h2, h3⟩ := h2
-    simp at
-
--/
-
-
-
-
-
-
+  -- c.element ⊔ u.element = ⊤
+  have h2 : U.element ⊔ (b ⊓ c.element) ≤ U.element ⊔ i := by
+    simp only [sup_le_iff, le_sup_left, true_and]
+    exact le_sup_of_le_right h1
+  apply le_trans' h2
+  rw [@sup_inf_left]
+  simp only [le_inf_iff, le_sup_right, true_and]
+  let h' := h U.element b
+  simp only [inf_le_right, forall_const] at h'
+  rw [sup_comm]
+  exact h'
 
 /-
 Dependency: Leroy lemma 8
@@ -380,7 +417,6 @@ lemma closure_eq_compl_ext (x : Sublocale E) : x.closure = x.exterior.compl := b
   sorry
 -/
 
--- TODO woanders
 lemma compl_element_le_compl (V : Open E) : (⟨V.elementᶜ⟩ : Open E) ≤ V.compl.toSublocale := by
   simp [Open.toSublocale, Closed.toSublocale, complement, Sublocale.le_iff]
   repeat rw [Nucleus.coe_mk, InfHom.coe_mk]

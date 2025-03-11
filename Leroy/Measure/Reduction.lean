@@ -10,8 +10,8 @@ open Sublocale
 
 -- TODO Infrastruktur, dass man Sublocals als Local ansehen kann
 
-def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | u ≤ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
-
+def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | u ≥ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
+---                                                                 ^ eigentlich steht hier u ≤ w bei leroy
 
 lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
   simp [e_μ, Open.sSup_def]
@@ -44,34 +44,83 @@ lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.
     use ⟨u⟩
   . simp only [increasingly_filtered, Set.mem_setOf_eq, and_imp]
     intro v h1 h2 w h4 h5
-    use ⟨u⟩
-    simp only [le_refl, and_self, true_and]
-    sorry
 
-
-
+    use w ⊔ v
+    simp [le_refl, and_self, true_and]
+    apply And.intro
+    · simp_all [Open.sup_def]
+    · apply le_antisymm
+      . apply Measure.mono
+        simp_all only [sup_le_iff]
+        apply And.intro
+        · exact h4
+        · exact h1
+      . rw [← h5]
+        apply Measure.mono
+        exact le_sup_left
 
 lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ e_μ m x := by
   intro x
-  sorry
-
+  simp [e_μ, Open.sSup_def]
+  intro b x_1 a a_1 a_2
+  subst a_2
+  simp_all only
 
 lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
   intro x
-  simp [e_μ]
-  sorry
+  simp [e_μ, Open.sSup_def]
+  apply le_sSup
+  simp
+  use ⟨x⟩
 
 lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ m x ⊓ e_μ m y := by
   intro x y
   apply le_antisymm
-  . sorry
-  . sorry
+  . simp_all [e_μ, Open.sSup_def]
+    apply And.intro
+    · intro b x_1 a a_1 a_2 a_3
+      subst a_3
+      ---
+      simp only [le_sSup_iff, upperBounds, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
+        and_imp]
+      intro b1 h
+      let h' := @h x ⟨x⟩
+      simp only [le_refl, forall_const] at h'
+      exact le_trans' h' a
+    · intro b x_1 a a_1 a_2 a_3
+      subst a_3
+      simp only [le_sSup_iff, upperBounds, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
+        and_imp]
+      intro b1 h
+      let h' := @h y ⟨y⟩
+      simp only [le_refl, forall_const] at h'
+      exact le_trans' h' a_1
 
-def μ_Reduction (m : @Measure E' _): Nucleus E' where
+  . simp only [e_μ, ge_iff_le, Open.sSup_def, le_inf_iff]
+    rw [sSup_inf_sSup]
+    simp only [Set.mem_prod, Set.mem_image, Set.mem_setOf_eq, le_sSup_iff, upperBounds,
+      forall_exists_index, and_imp, iSup_le_iff, Prod.forall]
+    intro a h1 b c d h2 h3 h4 e h5 h6 h7
+    subst h4 h7
+    let h1' := @h1 (x ⊓ y) ⟨x ⊓ y⟩
+    simp only [inf_le_left, inf_le_right, forall_const] at h1'
+    apply le_trans' h1'
+    apply inf_le_inf <;> simp_all
+
+def μ_Reduction (m : @Measure E' _) : Sublocale E' where
   toFun := e_μ m
   idempotent' x := e_μ_idempotent m x
   le_apply' x := e_μ_le_apply m x
   map_inf' x y := e_μ_map_inf m x y
+
+def Measure_Neighbourhood_μ_eq_top (m : @Measure E' _) : ∀ V ∈ Open_Neighbourhood (μ_Reduction m), m.toFun V = m.toFun ⊤ := by
+  intro V h
+  apply le_antisymm
+  . simp [Measure.mono]
+  have h1 : μ_Reduction m V.element = ⊤ := by sorry
+  sorry
+
+
 
 
 variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
@@ -84,7 +133,6 @@ def decroissante (V : Set (Open E')) : Prop :=
   decroissante' (fun (x : V) ↦ x.val)
 
 
---- TODO bis zum Landeswettbewerb gescheit definieren
 def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
   ∀ n m : ι, ∃ l, V l ≤ V n ∧ V l ≤ V m
 
@@ -501,6 +549,7 @@ elab "#axiom_blame " id:ident : command => Elab.Command.liftTermElabM do
     logInfo m!"'{n}' depends on axioms:\n\n{MessageData.joinSep msgs.toList "\n\n"}"
   logInfo m!"{n}"
 
---#axiom_blame Measure.preserves_sInf
+#axiom_blame Measure.inf_filtered
+
 
 end
