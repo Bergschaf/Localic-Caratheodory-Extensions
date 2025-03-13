@@ -76,6 +76,14 @@ instance : PartialOrder (Open E) where
 lemma le_def : U ≤ V ↔ U.element ≤ V.element := by rfl
 lemma lt_def : U < V ↔ U.element < V.element := lt_iff_lt_of_le_iff_le' le_def le_def
 
+lemma toSublocale.mono : Monotone (@Open.toSublocale E _) := by
+  simp only [Monotone, Open.toSublocale, Sublocale.le_iff]
+  intro a b h i
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  exact himp_le_himp_right h
+
+lemma mk_mono : Monotone (@Open.mk E _) := by
+  simp [Monotone, Open.le_def]
 
 instance instBoundedOrder : BoundedOrder (Open E) where
   top := ⟨⊤⟩

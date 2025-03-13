@@ -427,20 +427,20 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
     simp only [tsub_le_iff_right, zero_add] at h1
     apply h1
 
-noncomputable def Measure.restrict (m : @Measure E e_frm) (w : Open E) : Open E → NNReal :=
+noncomputable def Measure.restrict_open (m : @Measure E e_frm) (w : Open E) : Open E → NNReal :=
   fun x ↦ m.toFun (x ⊓ w)
 
 omit e_regular in
-lemma Measure.restrict_mono : ∀ (U V : Open E), U ≤ V → m.restrict w U ≤ m.restrict w V := by
+lemma Measure.restrict_mono : ∀ (U V : Open E), U ≤ V → m.restrict_open w U ≤ m.restrict_open w V := by
   intro u v h
-  simp [Measure.restrict]
+  simp [Measure.restrict_open]
   apply Measure.mono
   exact inf_le_inf_right w h
 
 omit e_regular in
-lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) = m.restrict w U + m.restrict w V - m.restrict w (U ⊓ V) := by
+lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict_open w (U ⊔ V) = m.restrict_open w U + m.restrict_open w V - m.restrict_open w (U ⊓ V) := by
   intro u v
-  simp [Measure.restrict]
+  simp [Measure.restrict_open]
   have h : u ⊓ v ⊓ w = (u ⊓ w) ⊓ (v ⊓ w) := by
     exact inf_inf_distrib_right u v w
   rw [h]
@@ -454,9 +454,9 @@ lemma Measure.restrict_pseudosymm : ∀ {U V : Open E}, m.restrict w (U ⊔ V) =
   rw [h]
 
 omit e_regular in
-lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict w (sSup s) = sSup (m.restrict w '' s) := by
+lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered s → m.restrict_open w (sSup s) = sSup (m.restrict_open w '' s) := by
   intro s h
-  simp [Measure.restrict]
+  simp [Measure.restrict_open]
   rw [Open.inf_def]
   rw [Open.sSup_def]
 
@@ -497,9 +497,9 @@ lemma Measure.restrict_filtered : ∀ (s : Set (Open E)), increasingly_filtered 
     . exact inf_le_inf_right w h2
 
 
-noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E)  : @Measure E e_frm where
-  toFun := Measure.restrict m w
-  empty := (by simp[Measure.restrict];exact m.empty)
+noncomputable def Measure.restrict_open_measure  (m : @Measure E e_frm) (w : Open E)  : @Measure E e_frm where
+  toFun := Measure.restrict_open m w
+  empty := (by simp[Measure.restrict_open];exact m.empty)
   mono := restrict_mono
   strictly_additive (U V) := restrict_pseudosymm
   filtered := Measure.restrict_filtered
@@ -510,8 +510,8 @@ noncomputable def Measure.restrict_measure  (m : @Measure E e_frm) (w : Open E) 
 
 def Open_Interiors  (u : Sublocale E) := {w : Open E | w ≤ u}
 /--
-leroy Lemme 4
--/
+leroy Lemme 4: -/
+
 lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory a = m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) := by
   apply le_antisymm
   .
@@ -523,12 +523,12 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
     apply le_trans' (Measure.caratheodory.subadditive _ _)
     rw [← h]
   .
-    have h : ∀ w ∈ Sublocale.Open_Neighbourhood a, (m.restrict_measure w).toFun ⊤  = (m.restrict_measure w).toFun (u) + (m.restrict_measure w).caratheodory (u.compl) := by
+    have h : ∀ w ∈ Sublocale.Open_Neighbourhood a, (m.restrict_open_measure w).toFun ⊤  = (m.restrict_open_measure w).toFun (u) + (m.restrict_open_measure w).caratheodory (u.compl) := by
       intro w h
       exact Eq.symm (add_complement u)
-    simp [Measure.restrict_measure,Measure.restrict] at h
+    simp [Measure.restrict_open_measure,Measure.restrict_open] at h
 
-    have h1 :  ∀ w ∈ Sublocale.Open_Neighbourhood a, m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) ≤  m.toFun (u ⊓ w) + (m.restrict_measure w).caratheodory u.compl.toSublocale  := by
+    have h1 :  ∀ w ∈ Sublocale.Open_Neighbourhood a, m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) ≤  m.toFun (u ⊓ w) + (m.restrict_open_measure w).caratheodory u.compl.toSublocale  := by
         intro w h
         simp [Sublocale.Open_Neighbourhood] at h
         apply add_le_add
@@ -545,7 +545,7 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
           --
           simp [Monotone]
           exact fun a a_1 a_2 => inf_le_of_left_le a_2
-        . simp [Measure.caratheodory, Measure.restrict_measure,Measure.restrict]
+        . simp [Measure.caratheodory, Measure.restrict_open_measure,Measure.restrict_open]
           rw [csInf_le_iff]
           simp [lowerBounds]
           intro b h1
@@ -826,14 +826,33 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
 
 variable (m : @Measure E _) (A : Sublocale E)
 
+
 def Measure.restrict_sublocale : Open (Image A) → NNReal :=
-  fun x ↦ m.toFun ⟨x.element.val⟩
-
-
+  fun x ↦ m.toFun ⟨(f_untenstern A.frameHom).obj x⟩
 
 def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale m A
-  empty := sorry
-  mono := sorry
-  strictly_additive := sorry
+  empty := by
+    simp [Measure.restrict_sublocale]
+    rw [← m.empty]
+    congr
+    simp only [f_untenstern, le_bot_iff, sSup_eq_bot, Set.mem_setOf_eq]
+    sorry
+
+
+
+  mono := by
+    simp [Measure.restrict_sublocale]
+    intro u v h
+    apply Measure.mono
+    apply Open.mk_mono
+    apply f_untenstern.mono
+    exact h
+
+  strictly_additive := by
+    intro u v
+    simp [Measure.restrict_sublocale]
+
+
+
   filtered := sorry

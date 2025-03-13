@@ -42,6 +42,10 @@ def f_untenstern (f_o: FrameHom Y X) : X ⥤ Y where
   obj x := sSup {y :  Y | f_o y ≤ x}
   map := f_untenstern_map f_o
 
+def f_untenstern.mono (f_o: FrameHom Y X) : Monotone (f_untenstern f_o).obj := by
+  simp [Monotone, f_untenstern, le_sSup_iff, upperBounds]
+  intro a b h c h1 d h2
+  exact h1 (le_trans h2 h)
 
 def ig_obenstern (i : FrameHom E X) (g : FrameHom X Y) : (f_obenstern i) ⋙ (f_obenstern g) = (f_obenstern (FrameHom.comp g i)) := by
   rfl

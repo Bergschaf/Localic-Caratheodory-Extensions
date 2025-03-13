@@ -319,9 +319,7 @@ instance image_frame (n : Nucleus E) : Order.Frame (Image n) := by
 
 instance inst_frame (n : Nucleus E): Order.Frame (Image n) := image_frame n
 
-
-
-lemma nucleus_frameHom_exists (n : Nucleus E) : (∃ f : FrameHom E (Image n), n = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) :=  by
+def Nucleus.frameHom (n : Nucleus E) : FrameHom E (Image n) := by
   let img := Image n
 
   let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; apply n.idempotent)
@@ -417,57 +415,41 @@ lemma nucleus_frameHom_exists (n : Nucleus E) : (∃ f : FrameHom E (Image n), n
       exact h1
 
   let imgtype := ↑img
+  exact ⟨⟨⟨e_schlange, e_schlange_preserves_inf⟩, (by simp[e_schlange,inst_frame];exact rfl)⟩, aux43⟩
 
+def Nucleus.eq_f_obenstern_f_untenstern (n : Nucleus E) : n = ((f_obenstern n.frameHom) ⋙ (f_untenstern n.frameHom)).obj := by
+  ext x
+  simp only [f_obenstern, frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk, f_untenstern,
+    Functor.comp_obj]
+  apply le_antisymm
+  . apply le_sSup
+    simp only [Set.mem_setOf_eq]
+    have h : ∀ a b : (Image n), (a : E) ≤ (b : E) → a ≤ b := by
+      simp only [Subtype.coe_le_coe, imp_self, implies_true]
+    apply h
+    simp only [Set.val_codRestrict_apply]
+    rw [Nucleus.idempotent]
 
-  let frameHom : FrameHom E imgtype := ⟨⟨⟨e_schlange, e_schlange_preserves_inf⟩, (by simp[e_schlange,inst_frame];exact rfl)⟩, aux43⟩
-  use frameHom
-  apply And.intro
-  . ext x
-    simp [f_obenstern, f_untenstern, Functor.comp_obj, frameHom, e_schlange]
-    apply le_antisymm_iff.mpr
-    apply And.intro
-    . apply le_sSup
-      simp
-      have h : ∀ a b : ↑img, (a : E) ≤ (b : E) → a ≤ b := by
-        simp only [Subtype.coe_le_coe, imp_self, implies_true]
-      apply h
-      simp only [Subtype.coe_le_coe, inf, e_schlange, img, supSet, frameHom]
-      repeat rw [FrameHom.coe_mk]
-      simp only [InfTopHom.coe_mk, InfHom.coe_mk, inf, e_schlange, img, supSet, frameHom]
-      exact le_of_eq (e_schlange_idempotent x)
+  . apply sSup_le
+    simp
+    intro b h
+    apply_fun (fun (x : Image n) ↦ (x : E)) at h
+    simp at h
+    have h1: b ≤ n b := by
+      exact n.le_apply
+    exact Preorder.le_trans b (n b) (n x) h1 h
+    exact fun ⦃a b⦄ a => a
 
-    . apply sSup_le
-      simp
-      intro b h
-      apply_fun (fun (x : ↑img) ↦ (x : E)) at h
-      simp at h
-      have h1: b ≤ n b := by
-        exact n.le_apply
-      exact Preorder.le_trans b (n b) (n x) h1 h
-      exact fun ⦃a b⦄ a => a
-  . have h : Function.Surjective (f_obenstern frameHom).obj := by
-      simp [Function.Surjective, frameHom]
-      intro a h
-      simp[imgtype,img,Image] at h
-      use a
-      simp [f_obenstern, e_schlange]
-      exact SetCoe.ext h
-    let embedding : Leroy_Embedding frameHom := ⟨f_surjective_one frameHom h⟩
-    use embedding
-
-
-noncomputable def nucleus_frameHom (n : Nucleus E) : {f : FrameHom E (Image n) // n.toFun = (f_untenstern f).obj ∘ (f_obenstern f).obj ∧ Fact (Leroy_Embedding f)} := by
-  let f := Classical.choose (nucleus_frameHom_exists n)
-  let p := Classical.choose_spec (nucleus_frameHom_exists n)
-  let p1 := p.right
-  let p2 := Classical.choose p1
-  let pl := p.left
-  let pr := p.right
-  refine ⟨?val, ?property⟩
-  exact f
-  apply And.intro
-  . exact pl
-  . exact { out := p2 }
+def Nucleus.frameHom_Leroy_Embedding (n : Nucleus E) : Leroy_Embedding n.frameHom := by
+  have h : Function.Surjective (f_obenstern n.frameHom).obj := by
+    simp [Function.Surjective, frameHom]
+    intro a h
+    simp [Image] at h
+    use a
+    simp [f_obenstern]
+    exact SetCoe.ext h
+  refine { comp_id := ?_ }
+  exact f_surjective_one n.frameHom h
 
 
 lemma nucleus_equiv_subframe_1 : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e = ((f_obenstern f) ⋙ (f_untenstern f)).obj ∧ ∃ _ : Leroy_Embedding f, true) → (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameHom E X, e =((f_obenstern f) ⋙ (f_untenstern f)).obj) := by
