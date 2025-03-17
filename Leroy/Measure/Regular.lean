@@ -585,7 +585,8 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
 
 /--
 Leroy Corollary 1 -/
-lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheodory (A ⊓ (U ⊔ V)) = m.caratheodory (A ⊓ U) + m.caratheodory (A ⊓ V) - m.caratheodory (A ⊓ U ⊓ V) := by
+lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheodory (A ⊓ (U ⊔ V)) =
+    m.caratheodory (A ⊓ U) + m.caratheodory (A ⊓ V) - m.caratheodory (A ⊓ U ⊓ V) := by
   have h : m.caratheodory (A ⊓ (U ⊔ V).toSublocale) = m.caratheodory A - m.caratheodory (A ⊓ (U ⊔ V).compl) := by
       apply eq_tsub_of_add_eq
       rw [← Measure.add_complement_inf]
@@ -828,16 +829,18 @@ variable (m : @Measure E _) (A : Sublocale E)
 
 
 def Measure.restrict_sublocale : Open (Image A) → NNReal :=
-  fun x ↦ m.toFun ⟨(f_untenstern A.frameHom).obj x⟩
+  fun x ↦ m.toFun ⟨(f_untenstern A.frameHom).obj x⟩ -- ist das richtig?
 
 def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale m A
   empty := by
     simp [Measure.restrict_sublocale]
     rw [← m.empty]
-    congr
-    simp only [f_untenstern, le_bot_iff, sSup_eq_bot, Set.mem_setOf_eq]
+    simp [f_untenstern]
+
+    -- des ist falsch
     sorry
+
 
 
 
@@ -852,7 +855,6 @@ def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   strictly_additive := by
     intro u v
     simp [Measure.restrict_sublocale]
-
-
+    sorry
 
   filtered := sorry

@@ -8,7 +8,7 @@ import Mathlib.Algebra.Order.Group.CompleteLattice
 import Mathlib.Algebra.GeomSum
 import Mathlib.Data.Complex.Exponential
 -----
-variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
+variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [PartialOrder ι]
 
 --- Ist increasing oder increasingly filtered stärker?
 
@@ -20,6 +20,7 @@ def increasing {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
 
 def increasing'{Z : Type*} [PartialOrder Z] (f : ℕ → Z) : Prop :=
   ∀ n, f n ≤ f (n + 1)
+
 
 lemma increasing'' {Z : Type*} [PartialOrder Z] (f : ℕ → Z) :∀ n m, increasing' f →  n ≤ m → f n ≤ f m := by
   intro n m h1 h2

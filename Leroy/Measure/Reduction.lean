@@ -1,6 +1,8 @@
 import Leroy.Measure.Regular
 
 variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
+
+section
 variable {E' : Type*} [Order.Frame E']
 
 --variable {m : @Measure E' _}
@@ -300,31 +302,105 @@ lemma Measure.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
   simp_rw [h4, I] at h3
   exact h3
 
+/- Source: https://github.com/ImperialCollegeLondon/formalising-mathematics-2024/blob/0eb9abdd52bde8f2ebb6fc1d4568d7f8f559c32a/FormalisingMathematics2024/Section02reals/Sheet3.lean
+## Limit of a sequence.
+
+Here's the definition of the limit of a sequence.
+-/
+/-- If `a(n)` is a sequence of reals and `t` is a real, `TendsTo a t`
+is the assertion that the limit of `a(n)` as `n → ∞` is `t`. -/
+def TendsTo (a : ℕ → ℝ) (t : ℝ) : Prop :=
+  ∀ ε > 0, ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε
+
+/-
+
+We've made a definition, so it's our job to now make the API
+for the definition, i.e. prove some basic theorems about it.
+
+-/
+-- If your goal is `TendsTo a t` and you want to replace it with
+-- `∀ ε > 0, ∃ B, …` then you can do this with `rw tendsTo_def`.
+theorem tendsTo_def {a : ℕ → ℝ} {t : ℝ} :
+    TendsTo a t ↔ ∀ ε, 0 < ε → ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε := by
+  rfl
+
+
 
 /-- Leroy lemme 7-/
-lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E) (h : filtrante_decroissante A_i) :
+lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  : -- (h : filtrante_decroissante A_i)
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
-  let V_n' := Set.range fun n => (Sublocale.Open_Neighbourhood (A_i n))
-  let V_n : ι → (Open E) := sorry --  TODO flatten V_n
+  let V_n := Sublocale.Open_Neighbourhood (iInf A_i)
 
-  have h1 : iInf V_n = iInf A_i := by sorry
+  have h1 : sInf (Open.toSublocale '' V_n) = iInf A_i := by
+    rw [← @intersection_Open_Neighbourhhood]
 
-  --have h2 : ⨅ v_n ∈ V_n, m.toFun v_n = iInf (m.caratheodory ∘ A_i) := by
-  --  sorry
+  have h2 : sInf (m.toFun '' V_n) = iInf (m.caratheodory ∘ A_i) := by
+    apply le_antisymm
+    . rw [le_ciInf_iff]
+      . intro i
+        rw [csInf_le_iff]
+        . simp [lowerBounds]
+          intro b h
+          rw [← add_zero (caratheodory (A_i i))]
+          rw [← sInf_epsilon_eq_zero']
+          rw [← tsub_le_iff_left]
+          rw [le_csInf_iff]
+          . simp only [gt_iff_lt, Set.mem_setOf_eq, tsub_le_iff_right]
+            intro c hc
+            sorry
+          . use 0
+            simp [lowerBounds]
+          . use 42
+            simp
+        .
+          use m.toFun ⊥
+          simp [lowerBounds]
+          intro _ _
+          apply Measure.mono
+          exact OrderBot.bot_le _
+        . simp [V_n]
+          exact Open_Neighbourhood.Nonempty (iInf A_i)
+      . use m.caratheodory ⊥
+        simp [lowerBounds]
+        intro _
+        apply Measure.caratheodory.monotonic
+        exact OrderBot.bot_le (A_i _)
 
-  let α_n : ℕ → ι := sorry
+    . simp [V_n]
+      sorry -- nicht falsch aber bled
 
-  -- have h3 : limit n → ∞, m.toFun (V_n α_n n) = iInf (m.caratheodory ∘ A_i)
 
-  let I := ⨅ n : ℕ, V_n (α_n n)
 
-  let lambda := m.caratheodory I
+  apply le_antisymm
+  . simp only [OrderBot.bddBelow, le_ciInf_iff, Function.comp_apply]
+    intro i
+    apply Measure.caratheodory.monotonic
+    exact iInf_le A_i i
+  rw [← h2]
 
-  have h4 : iInf V_n ≤ I := by sorry
+  --
+  have h3 : ∀ ε > 0, sInf (m.toFun '' V_n) ≤ m.caratheodory (iInf A_i) + ε := by
+    intro ε hε
+    rw [csInf_le_iff]
+    simp [lowerBounds, V_n]
+    intro b h
+    obtain ⟨w, ⟨hw1, hw2⟩⟩ := @Exists_Neighbourhood_epsilon _ _ m (iInf A_i) ε hε
+    let h1 := h w hw1
+    exact Preorder.le_trans b (m.toFun w) (caratheodory (iInf A_i) + ε) (h w hw1) hw2
+    . use 0
+      simp [lowerBounds]
+    . simp [V_n]
+      exact Open_Neighbourhood.Nonempty (iInf A_i)
 
-  --- TODO μ Reduction
-  sorry
+  rw [← add_zero (caratheodory (iInf A_i))]
+  rw [← sInf_epsilon_eq_zero']
+  rw [← tsub_le_iff_left]
+  apply le_csInf
+  . use 42
+    simp
+  exact fun b a => (tsub_le_iff_left.mpr) (h3 b a)
+
 
 
 lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
