@@ -8,7 +8,7 @@ import Mathlib.Algebra.Order.Group.CompleteLattice
 import Mathlib.Algebra.GeomSum
 import Mathlib.Data.Complex.Exponential
 -----
-variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [PartialOrder ι]
+variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [PartialOrder ι] [Nonempty ι]
 
 --- Ist increasing oder increasingly filtered stärker?
 

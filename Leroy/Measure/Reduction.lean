@@ -168,7 +168,7 @@ def filtrante_decroissante' (s : Set (Sublocale E)) : Prop :=
 /--
 Leroy Lemma 6
 -/
-lemma Measure.preserves_sInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
+lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
     m.caratheodory (iInf (Open.toSublocale ∘ V_n)) = iInf (m.toFun ∘ V_n) := by
   let I :=  (iInf (Open.toSublocale ∘ V_n))
 
@@ -312,6 +312,13 @@ is the assertion that the limit of `a(n)` as `n → ∞` is `t`. -/
 def TendsTo (a : ℕ → ℝ) (t : ℝ) : Prop :=
   ∀ ε > 0, ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε
 
+
+lemma tendsto_inf (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) : iInf a = t := by
+  simp [TendsTo] at h
+  apply le_antisymm
+  .
+
+
 /-
 
 We've made a definition, so it's our job to now make the API
@@ -327,7 +334,7 @@ theorem tendsTo_def {a : ℕ → ℝ} {t : ℝ} :
 
 
 /-- Leroy lemme 7-/
-lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  : -- (h : filtrante_decroissante A_i)
+lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filtrante_decroissante A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
   let V_n := Sublocale.Open_Neighbourhood (iInf A_i)
@@ -335,76 +342,62 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  : -- (h :
   have h1 : sInf (Open.toSublocale '' V_n) = iInf A_i := by
     rw [← @intersection_Open_Neighbourhhood]
 
-  have h2 : sInf (m.toFun '' V_n) = iInf (m.caratheodory ∘ A_i) := by
-    apply le_antisymm
-    . rw [le_ciInf_iff]
-      . intro i
-        rw [csInf_le_iff]
-        . simp [lowerBounds]
-          intro b h
-          rw [← add_zero (caratheodory (A_i i))]
-          rw [← sInf_epsilon_eq_zero']
-          rw [← tsub_le_iff_left]
-          rw [le_csInf_iff]
-          . simp only [gt_iff_lt, Set.mem_setOf_eq, tsub_le_iff_right]
-            intro c hc
-            sorry
-          . use 0
-            simp [lowerBounds]
-          . use 42
-            simp
-        .
-          use m.toFun ⊥
-          simp [lowerBounds]
-          intro _ _
-          apply Measure.mono
-          exact OrderBot.bot_le _
-        . simp [V_n]
-          exact Open_Neighbourhood.Nonempty (iInf A_i)
-      . use m.caratheodory ⊥
-        simp [lowerBounds]
-        intro _
-        apply Measure.caratheodory.monotonic
-        exact OrderBot.bot_le (A_i _)
-
-    . simp [V_n]
-      sorry -- nicht falsch aber bled
-
-
-
   apply le_antisymm
   . simp only [OrderBot.bddBelow, le_ciInf_iff, Function.comp_apply]
     intro i
     apply Measure.caratheodory.monotonic
     exact iInf_le A_i i
-  rw [← h2]
 
-  --
-  have h3 : ∀ ε > 0, sInf (m.toFun '' V_n) ≤ m.caratheodory (iInf A_i) + ε := by
-    intro ε hε
-    rw [csInf_le_iff]
-    simp [lowerBounds, V_n]
-    intro b h
-    obtain ⟨w, ⟨hw1, hw2⟩⟩ := @Exists_Neighbourhood_epsilon _ _ m (iInf A_i) ε hε
-    let h1 := h w hw1
-    exact Preorder.le_trans b (m.toFun w) (caratheodory (iInf A_i) + ε) (h w hw1) hw2
-    . use 0
-      simp [lowerBounds]
-    . simp [V_n]
-      exact Open_Neighbourhood.Nonempty (iInf A_i)
 
-  rw [← add_zero (caratheodory (iInf A_i))]
+  rw [← add_zero (m.caratheodory _)]
   rw [← sInf_epsilon_eq_zero']
   rw [← tsub_le_iff_left]
   apply le_csInf
   . use 42
     simp
-  exact fun b a => (tsub_le_iff_left.mpr) (h3 b a)
+  simp only [gt_iff_lt, Set.mem_setOf_eq, tsub_le_iff_right]
+  intro ε hε
+
+  let ε_n (n : ℕ) : ℝ := ε / (2 ^ (n + 1))
+
+  let W : ℕ → Open E := fun n ↦ Classical.choose  (@Exists_Neighbourhood_epsilon _ _ m (iInf A_i) ⟨(ε_n n), by simp [ε_n]; positivity⟩ (by simp [ε_n]; sorry))
+
+  have hW (n : ℕ) := Classical.choose_spec (@Exists_Neighbourhood_epsilon _ _ m (iInf A_i) ⟨(ε_n n), by simp [ε_n]; positivity⟩ (by simp [ε_n]; sorry))
+
+  have hw1 : ⨅ n : ℕ, m.toFun (W n) = iInf (m.caratheodory ∘ A_i) := by
+    apply le_antisymm
+    . sorry
+    rw [le_ciInf_iff]
+    intro i
+
+
+    sorry -- tendsto??
 
 
 
-lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
-  m.caratheodory (sInf s) = ⨅ x : s, m.caratheodory x := by sorry
+
+  have h_W_n : ∃ W : ℕ → Open E, ⨅ n : ℕ, m.toFun (W n) = iInf (m.caratheodory ∘ A_i) ∧ (∀ n, W n ∈ (iInf A_i).Open_Neighbourhood) ∧ decroissante' W:= by
+    sorry
+
+  --rcases h_W_n with ⟨W, ⟨hw1, hw2, hw3⟩⟩
+
+  rw [← hw1]
+  rw [← Function.comp_def]
+  rw [← Measure.preserves_iInf]
+
+
+
+
+
+
+
+
+  ----------
+
+
+
+--lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
+--  m.caratheodory (sInf s) = ⨅ x : s, m.caratheodory x := by sorry
 
 
 
