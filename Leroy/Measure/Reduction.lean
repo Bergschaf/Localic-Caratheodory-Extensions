@@ -315,8 +315,7 @@ def TendsTo (a : ℕ → ℝ) (t : ℝ) : Prop :=
 
 lemma tendsto_inf (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) : iInf a = t := by
   simp [TendsTo] at h
-  apply le_antisymm
-  .
+  sorry
 
 
 /-
@@ -330,6 +329,157 @@ for the definition, i.e. prove some basic theorems about it.
 theorem tendsTo_def {a : ℕ → ℝ} {t : ℝ} :
     TendsTo a t ↔ ∀ ε, 0 < ε → ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε := by
   rfl
+
+lemma ENNReal.tendsto_atTop' {β : Type u_2} [Nonempty β] [SemilatticeSup β] {f : β → ENNReal} {a : ENNReal} (ha : a ≠ ⊤) :
+        Filter.Tendsto f Filter.atTop (nhds a) ↔ ∀ ε > 0,(h : ε ≠ ⊤) → ∃ (N : β), ∀ n ≥ N, f n ∈ Set.Icc (a - ε) (a + ε) := by
+  apply Iff.intro
+  . intro h
+    let x := (ENNReal.tendsto_atTop ha).mp h
+    intro e he h1
+    apply x e he
+  . intro h
+    have h1 : ∀ ε > 0, ∃ N, ∀ n ≥ N, f n ∈ Set.Icc (a - ε) (a + ε) := by
+      intro e he
+      by_cases hC : e = ⊤
+      . subst hC
+        simp
+      apply h e he hC
+    exact (ENNReal.tendsto_atTop ha).mpr h1
+
+
+
+/-- Leroy lemme 7-/
+lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filtrante_decroissante A_i) :
+  m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
+
+  apply le_antisymm
+  . simp only [OrderBot.bddBelow, le_ciInf_iff, Function.comp_apply]
+    intro i
+    apply Measure.caratheodory.monotonic
+    exact iInf_le A_i i
+
+  let V_a := {w : Open E | ∃ i, w ∈ (A_i i).Open_Neighbourhood}
+
+  have hvn_1 : iInf A_i = sInf (Open.toSublocale '' V_a) := by
+    apply le_antisymm
+    . simp
+      intro a h
+      simp [V_a] at h
+      rcases h with ⟨i, h⟩
+      simp [Open_Neighbourhood] at h
+      exact iInf_le_of_le i h
+    simp
+    intro i
+    have h1 : sInf (Open.toSublocale '' V_a) ≤  sInf (Open.toSublocale '' ((A_i i ).Open_Neighbourhood)) := by
+      apply sInf_le_sInf
+      refine Set.image_mono ?_
+      simp only [V_a]
+      refine Set.subset_setOf.mpr ?_
+      exact fun x a => Exists.intro i a
+    apply le_trans h1
+    rw [← @intersection_Open_Neighbourhhood]
+
+  have V_n_nonempty : Nonempty V_a := by
+    use ⊤
+    simp only [Open_Neighbourhood, Set.mem_setOf_eq, Open.top_toSublocale, le_top, exists_const,
+      V_a]
+
+  have hvn_2 : ⨅ i, m.caratheodory (A_i i) = ⨅ w : V_a, m.toFun w := by
+    apply le_antisymm
+    . apply le_ciInf
+      intro x
+      simp only [Set.coe_setOf, V_a] at x
+      rcases x with ⟨x, hx⟩
+      rcases hx with ⟨y, hx⟩
+      simp [Open_Neighbourhood] at hx
+      refine ciInf_le_of_le ?_ y ?_
+      . use 0
+        simp [lowerBounds]
+      rw [← Measure.caratheodory.open_eq_toFun]
+      apply Measure.caratheodory.monotonic
+      apply hx
+    apply le_ciInf
+    intro i
+
+    rw [← add_zero (m.caratheodory _)]
+    rw [← sInf_epsilon_eq_zero']
+    rw [← tsub_le_iff_left]
+    apply le_csInf
+    . use 42
+      simp
+    simp only [gt_iff_lt, Set.mem_setOf_eq, tsub_le_iff_right, V_a]
+    intro b hb
+    obtain ⟨w, ⟨hw1, hw2⟩⟩ := (@Exists_Neighbourhood_epsilon _ _ m (A_i i) b (by exact hb))
+    refine ciInf_le_of_le ?_ ⟨w, (by use i)⟩ ?_
+    . use 0
+      simp [lowerBounds]
+    simp only [V_a]
+    apply le_trans hw2
+    rw [add_comm]
+
+  rw [Function.comp_def]
+  rw [hvn_2]
+  have h_V_a_nonempty : ((m.toFun '' V_a)).Nonempty := by exact Set.Nonempty.of_subtype
+  ------------- Wichitig
+  obtain ⟨u, hu1, hu2, hu3⟩ := exists_seq_tendsto_sInf (h_V_a_nonempty) (by use 0;simp[lowerBounds])
+  -------------
+  simp at hu3
+  let V_n (n : ℕ) := Classical.choose (hu3 n)
+
+  have h_iInf_V_n : iInf (m.toFun ∘ V_n) = sInf (m.toFun '' V_a) := by
+    have h_help : m.toFun ∘ V_n = u  := by
+      ext x
+      simp
+      obtain ⟨_, V_n_spec⟩ :=Classical.choose_spec (hu3 x)
+      rw [V_n_spec]
+    rw [h_help]
+    apply_fun ENNReal.ofNNReal
+    rw [ENNReal.coe_iInf]
+    rw [← Function.comp_def]
+    rw [@iInf_eq_of_tendsto ℕ ENNReal _ _ _ _ _  (ENNReal.ofNNReal ∘ u) ↑(sInf (m.toFun '' V_a)) (by apply Monotone.comp_antitone; simp [Monotone]; exact hu1)]
+
+    refine (ENNReal.tendsto_atTop' ?_).mpr ?_
+    . simp
+    . simp only [gt_iff_lt, ge_iff_le, Function.comp_apply, Set.mem_Icc, tsub_le_iff_right]
+      intro e he he1
+      ----
+      rw [@Metric.tendsto_atTop] at hu2
+      obtain ⟨n ,hn ⟩ := hu2 e.toReal (by rw [ENNReal.toReal, ENNReal.toNNReal, WithTop.untop', WithTop.recTopCoe.eq_def];simp; cases e; simp; contradiction; simp; exact ENNReal.coe_pos.mp he)
+      use n
+      intro n1 hn1
+      let hn := hn n1 hn1
+      rw [NNReal.dist_eq] at hn
+      apply And.intro
+      .
+        sorry
+      . sorry
+
+    . exact ENNReal.coe_injective
+
+  rw [sInf_image'] at h_iInf_V_n
+  rw [← h_iInf_V_n]
+  rw [← Measure.preserves_iInf] -- lemme 6
+  .
+    have h1 : ∀ b ∈ V_a, m.caratheodory (b ⊓ (iInf (Open.toSublocale ∘ V_n))) = m.caratheodory (iInf (Open.toSublocale ∘ V_n)) := by
+      intro b hb
+      rw [inf_iInf]
+      simp only [Function.comp_apply]
+      conv =>
+        enter [1, 1, 1, x]
+        rw [← Open.preserves_inf]
+
+      rw [← Function.comp_def]
+      rw [Measure.preserves_iInf] -- lemme 6
+      . sorry
+      . sorry -- gleich wie unten (siehe "bissle bled")
+
+
+
+    sorry -- μ-reduction dinge
+
+
+  . simp [decroissante']
+    sorry -- bissle bled
 
 
 
@@ -375,15 +525,10 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
 
 
 
-
-  have h_W_n : ∃ W : ℕ → Open E, ⨅ n : ℕ, m.toFun (W n) = iInf (m.caratheodory ∘ A_i) ∧ (∀ n, W n ∈ (iInf A_i).Open_Neighbourhood) ∧ decroissante' W:= by
-    sorry
-
-  --rcases h_W_n with ⟨W, ⟨hw1, hw2, hw3⟩⟩
-
   rw [← hw1]
   rw [← Function.comp_def]
   rw [← Measure.preserves_iInf]
+
 
 
 
