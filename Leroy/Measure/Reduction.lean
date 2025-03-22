@@ -208,7 +208,7 @@ lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       F_n, G]
     intro n
     rw [← Measure.caratheodory.open_eq_toFun]
-    apply Measure.caratheodory.monotonic
+    apply Measure.caratheodory.mono
     apply sInf_le
     simp only [Set.mem_range, Function.comp_apply, exists_apply_eq_apply, I, F_n, G]
 
@@ -252,7 +252,7 @@ lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       . exact Set.range_nonempty (Measure.caratheodory ∘ F_n)
       simp
       intro n
-      apply Measure.caratheodory.monotonic
+      apply Measure.caratheodory.mono
       apply le_sSup
       simp only [Set.mem_range, exists_apply_eq_apply, I, F_n, G]
 
@@ -355,7 +355,7 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
   apply le_antisymm
   . simp only [OrderBot.bddBelow, le_ciInf_iff, Function.comp_apply]
     intro i
-    apply Measure.caratheodory.monotonic
+    apply Measure.caratheodory.mono
     exact iInf_le A_i i
 
   let V_a := {w : Open E | ∃ i, w ∈ (A_i i).Open_Neighbourhood}
@@ -396,7 +396,7 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
       . use 0
         simp [lowerBounds]
       rw [← Measure.caratheodory.open_eq_toFun]
-      apply Measure.caratheodory.monotonic
+      apply Measure.caratheodory.mono
       apply hx
     apply le_ciInf
     intro i
@@ -483,63 +483,6 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
 
 
 
-/-- Leroy lemme 7-/
-lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filtrante_decroissante A_i) :
-  m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
-
-  let V_n := Sublocale.Open_Neighbourhood (iInf A_i)
-
-  have h1 : sInf (Open.toSublocale '' V_n) = iInf A_i := by
-    rw [← @intersection_Open_Neighbourhhood]
-
-  apply le_antisymm
-  . simp only [OrderBot.bddBelow, le_ciInf_iff, Function.comp_apply]
-    intro i
-    apply Measure.caratheodory.monotonic
-    exact iInf_le A_i i
-
-
-  rw [← add_zero (m.caratheodory _)]
-  rw [← sInf_epsilon_eq_zero']
-  rw [← tsub_le_iff_left]
-  apply le_csInf
-  . use 42
-    simp
-  simp only [gt_iff_lt, Set.mem_setOf_eq, tsub_le_iff_right]
-  intro ε hε
-
-  let ε_n (n : ℕ) : ℝ := ε / (2 ^ (n + 1))
-
-  let W : ℕ → Open E := fun n ↦ Classical.choose  (@Exists_Neighbourhood_epsilon _ _ m (iInf A_i) ⟨(ε_n n), by simp [ε_n]; positivity⟩ (by simp [ε_n]; sorry))
-
-  have hW (n : ℕ) := Classical.choose_spec (@Exists_Neighbourhood_epsilon _ _ m (iInf A_i) ⟨(ε_n n), by simp [ε_n]; positivity⟩ (by simp [ε_n]; sorry))
-
-  have hw1 : ⨅ n : ℕ, m.toFun (W n) = iInf (m.caratheodory ∘ A_i) := by
-    apply le_antisymm
-    . sorry
-    rw [le_ciInf_iff]
-    intro i
-
-
-    sorry -- tendsto??
-
-
-
-  rw [← hw1]
-  rw [← Function.comp_def]
-  rw [← Measure.preserves_iInf]
-
-
-
-
-
-
-
-
-
-  ----------
-
-
 
 --lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
 --  m.caratheodory (sInf s) = ⨅ x : s, m.caratheodory x := by sorry
@@ -560,7 +503,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
     . simp [le_ciInf_iff]
       intro a ha b hb
       rw [← Measure.caratheodory.open_eq_toFun]
-      apply Measure.caratheodory.monotonic
+      apply Measure.caratheodory.mono
       rw [Open.preserves_sup]
       exact sup_le_sup ha hb
     .
@@ -613,7 +556,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             simp [lowerBounds]
           simp only
           rw [← Measure.caratheodory.open_eq_toFun]
-          apply Measure.caratheodory.monotonic
+          apply Measure.caratheodory.mono
           rw [Open.preserves_inf]
 
         . simp [le_ciInf_iff]
@@ -626,7 +569,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             simp [lowerBounds]
           . simp
             rw [← Measure.caratheodory.open_eq_toFun]
-            apply Measure.caratheodory.monotonic
+            apply Measure.caratheodory.mono
             simp [Open.preserves_inf]
             exact ⟨(by exact inf_le_of_left_le ha2),(by exact inf_le_of_right_le hb2)⟩
 
@@ -735,7 +678,13 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       use 0
       simp [lowerBounds]
     rw [h6]
-    have h7 : m.caratheodory (A ⊓ B) + (m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B)) = (m.caratheodory A + m.caratheodory B) := by sorry
+    have h7 : m.caratheodory (A ⊓ B) + (m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B)) = (m.caratheodory A + m.caratheodory B) := by
+      rw [@add_tsub_cancel_iff_le]
+      have h : m.caratheodory A ≤ m.caratheodory A + m.caratheodory B := by
+        exact le_self_add
+      apply le_trans' h
+      apply Measure.caratheodory.mono
+      exact inf_le_left
     rw [h7]
     rw [add_eq_add_iff_eq_and_eq] <;> simp [Measure.caratheodory, sInf_image']
 

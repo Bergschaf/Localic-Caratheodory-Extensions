@@ -43,6 +43,7 @@ structure Measure where
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   strictly_additive (U V : Open X) : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
   filtered : ∀ (s : Set  (Open X)), increasingly_filtered s → toFun (sSup s) = sSup (toFun '' s)
+
 open Sublocale
 
 variable {m : @Measure E e_frm}
@@ -95,7 +96,7 @@ lemma top_eq_toFun {m : @Measure X h} : m.caratheodory ⊤ = m.toFun ⊤ := by
   simp only [Set.image_singleton, csInf_singleton]
 
 
-lemma monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
+lemma mono {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory B := by
   intro h
   simp_rw [Measure.caratheodory]
   apply csInf_le_csInf
@@ -120,7 +121,7 @@ lemma monotonic {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.carathe
 
 lemma le_top (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.caratheodory ⊤ := by
   intro a
-  apply caratheodory.monotonic
+  apply caratheodory.mono
   exact OrderTop.le_top a
 
 lemma le_top_toFun (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.toFun ⊤ := by
@@ -308,7 +309,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
               apply tsub_le_tsub
               . rfl
               . rw [← Measure.caratheodory.open_eq_toFun]
-                apply Measure.caratheodory.monotonic
+                apply Measure.caratheodory.mono
                 rw [Open.preserves_inf]
                 apply le_inf
                 . let h2 := V_n_le_W_n n
@@ -336,7 +337,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
                 exact le_of_lt (h_V_n' (n + 1))
             . apply le_add_of_le_left
               rw [← Measure.caratheodory.open_eq_toFun]
-              apply Measure.caratheodory.monotonic
+              apply Measure.caratheodory.mono
               let h2 := V_n_le_W_n n
               rw [Open.le_iff] at h2
               apply le_trans' h2 (X_n_le_V_n n)
@@ -401,7 +402,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
         rw [Function.comp_def] at h
         rw [← h]
         rw [← Measure.caratheodory.open_eq_toFun]
-        apply Measure.caratheodory.monotonic
+        apply Measure.caratheodory.mono
         simp [Open.preserves_iSup, le_iSup_iff, upperBounds]
         intro a h i
         apply le_trans' (h i)
@@ -457,7 +458,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
   . apply ciSup_le
     intro n
     simp only [Function.comp_apply]
-    apply Measure.caratheodory.monotonic
+    apply Measure.caratheodory.mono
     exact le_iSup X_n n
 
 lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
@@ -472,7 +473,7 @@ lemma Measure.caratheodory.subadditive (a b : Sublocale E ) : m.caratheodory (a 
     rcases h_b with ⟨w_b, ⟨hb1, hb2⟩⟩
     simp [Open_Neighbourhood] at ha1 hb1
     have h1 : m.caratheodory (a ⊔ b) ≤ m.caratheodory ((w_a ⊔ w_b).toSublocale) := by
-      apply Measure.caratheodory.monotonic
+      apply Measure.caratheodory.mono
       rw [Open.preserves_sup]
       exact sup_le_sup ha1 hb1
     apply le_trans h1

@@ -321,7 +321,7 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       rw [Measure.caratheodory.open_eq_toFun] at hva
       exact hva
       rw [Monotone]
-      exact fun ⦃a b⦄ a_1 => caratheodory.monotonic a_1
+      exact fun ⦃a b⦄ a_1 => caratheodory.mono a_1
     rw [Measure.caratheodory.top_eq_toFun] at h1
     have h3 : ∀ v_a ∈ V_a, m.toFun v_a.exterior + m.caratheodory (U.compl) ≤ m.toFun ⊤ := by
       intro va hva
@@ -541,7 +541,7 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
           rw [Measure.caratheodory.open_eq_toFun]
           rw [inf_comm]
           --
-          apply Measure.caratheodory.monotonic
+          apply Measure.caratheodory.mono
           --
           simp [Monotone]
           exact fun a a_1 a_2 => inf_le_of_left_le a_2
@@ -695,7 +695,7 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
           rw [← Measure.add_complement_inf]
           have h' : m.caratheodory (W.toSublocale ⊓ v.compl.toSublocale)  ≤
             m.caratheodory W.toSublocale := by
-            apply Measure.caratheodory.monotonic
+            apply Measure.caratheodory.mono
             exact inf_le_left
           apply le_trans h'
           rw [Measure.caratheodory.open_eq_toFun]
@@ -710,13 +710,13 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
         . rfl
         . rw [add_comm]
           simp only [add_le_add_iff_left]
-          apply Measure.caratheodory.monotonic
+          apply Measure.caratheodory.mono
           simp only [le_inf_iff, inf_le_right, and_true]
           apply inf_le_of_left_le
           exact h2
 
       have h5 : m.caratheodory (A ⊓ (sSup s).toSublocale) ≤ m.caratheodory (W ⊓ (sSup s).toSublocale) := by
-        apply Measure.caratheodory.monotonic
+        apply Measure.caratheodory.mono
         exact inf_le_inf h2 (by rfl)
       have h6 : m.caratheodory (W ⊓ (sSup s).toSublocale) = ⨆ b ∈ s, m.caratheodory (W ⊓ b) := by
         conv =>
@@ -795,7 +795,7 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
         intro a ha
         apply Measure.caratheodory.le_top
       . intro a
-        apply Measure.caratheodory.monotonic
+        apply Measure.caratheodory.mono
         exact inf_le_inf (by rfl) (by simp only [Open.top_toSublocale, le_top])
 
 
@@ -818,7 +818,7 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
 
     intro b
     intro hb
-    apply Measure.caratheodory.monotonic
+    apply Measure.caratheodory.mono
     apply inf_le_inf
     . rfl
     . rw [Open.preserves_sSup]
