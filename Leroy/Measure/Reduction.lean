@@ -302,33 +302,9 @@ lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
   simp_rw [h4, I] at h3
   exact h3
 
-/- Source: https://github.com/ImperialCollegeLondon/formalising-mathematics-2024/blob/0eb9abdd52bde8f2ebb6fc1d4568d7f8f559c32a/FormalisingMathematics2024/Section02reals/Sheet3.lean
-## Limit of a sequence.
-
-Here's the definition of the limit of a sequence.
--/
-/-- If `a(n)` is a sequence of reals and `t` is a real, `TendsTo a t`
-is the assertion that the limit of `a(n)` as `n → ∞` is `t`. -/
-def TendsTo (a : ℕ → ℝ) (t : ℝ) : Prop :=
-  ∀ ε > 0, ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε
 
 
-lemma tendsto_inf (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) : iInf a = t := by
-  simp [TendsTo] at h
-  sorry
 
-
-/-
-
-We've made a definition, so it's our job to now make the API
-for the definition, i.e. prove some basic theorems about it.
-
--/
--- If your goal is `TendsTo a t` and you want to replace it with
--- `∀ ε > 0, ∃ B, …` then you can do this with `rw tendsTo_def`.
-theorem tendsTo_def {a : ℕ → ℝ} {t : ℝ} :
-    TendsTo a t ↔ ∀ ε, 0 < ε → ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε := by
-  rfl
 
 lemma ENNReal.tendsto_atTop' {β : Type u_2} [Nonempty β] [SemilatticeSup β] {f : β → ENNReal} {a : ENNReal} (ha : a ≠ ⊤) :
         Filter.Tendsto f Filter.atTop (nhds a) ↔ ∀ ε > 0,(h : ε ≠ ⊤) → ∃ (N : β), ∀ n ≥ N, f n ∈ Set.Icc (a - ε) (a + ε) := by
@@ -449,11 +425,34 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
       intro n1 hn1
       let hn := hn n1 hn1
       rw [NNReal.dist_eq] at hn
+      rw [abs_lt] at hn
+      simp at hn
+      rcases hn with ⟨hn1 ,hn2⟩
       apply And.intro
       .
-        sorry
-      . sorry
-
+        refine ENNReal.coe_le_iff.mpr ?_
+        intro p hp
+        refine NNReal.coe_le_coe.mp ?_
+        apply le_trans (le_of_lt hn1)
+        apply_fun ENNReal.toReal at hp
+        simp only [ENNReal.coe_toReal, V_a] at hp
+        rw [← hp]
+        rw [ENNReal.toReal_add]
+        simp only [ENNReal.coe_toReal, add_comm, le_refl, V_a]
+        . exact ENNReal.coe_ne_top
+        . exact he1
+      .
+        refine ENNReal.coe_le_iff.mpr ?_
+        intro p hp
+        refine NNReal.coe_le_coe.mp ?_
+        rw [@sub_lt_iff_lt_add'] at hn2
+        apply le_trans (le_of_lt hn2)
+        apply_fun ENNReal.toReal at hp
+        simp at hp
+        rw [← hp, ENNReal.toReal_add]
+        simp only [ENNReal.coe_toReal, le_refl, V_a]
+        . exact ENNReal.coe_ne_top
+        . exact he1
     . exact ENNReal.coe_injective
 
   rw [sInf_image'] at h_iInf_V_n
@@ -480,13 +479,6 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
 
   . simp [decroissante']
     sorry -- bissle bled
-
-
-
-
---lemma Measure.caratheodory.preserves_sInf (s : Set (Sublocale E)) (h : filtrante_decroissante' s) :
---  m.caratheodory (sInf s) = ⨅ x : s, m.caratheodory x := by sorry
-
 
 
 theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
