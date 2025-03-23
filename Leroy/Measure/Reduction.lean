@@ -322,7 +322,9 @@ lemma ENNReal.tendsto_atTop' {β : Type u_2} [Nonempty β] [SemilatticeSup β] {
       apply h e he hC
     exact (ENNReal.tendsto_atTop ha).mpr h1
 
-
+def rec' (seq : ℕ → Open E)
+  | 0 => seq 0
+  | Nat.succ n => seq (n + 1) ⊓ (rec' seq n)
 
 /-- Leroy lemme 7-/
 lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filtrante_decroissante A_i) :
@@ -400,10 +402,26 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
   obtain ⟨u, hu1, hu2, hu3⟩ := exists_seq_tendsto_sInf (h_V_a_nonempty) (by use 0;simp[lowerBounds])
   -------------
   simp at hu3
-  let V_n (n : ℕ) := Classical.choose (hu3 n)
+  let V_n' (n : ℕ) := Classical.choose (hu3 n)
+  let V_n := rec' (fun n ↦ Classical.choose (hu3 n))
 
-  have h_iInf_V_n : iInf (m.toFun ∘ V_n) = sInf (m.toFun '' V_a) := by
-    have h_help : m.toFun ∘ V_n = u  := by
+  have V_n_decroissante : decroissante' V_n := by
+    simp [decroissante']
+    intro i j hij
+    induction j with
+    | zero =>
+      simp_all
+    | succ j hj =>
+      rw [← Nat.succ_eq_add_one, Nat.le_succ_iff] at hij
+      cases hij with
+      | inl hij =>
+        apply le_trans' (hj hij)
+        simp [V_n, rec']
+      | inr hij =>
+        rw [hij]
+
+  have h_iInf_V_n : iInf (m.toFun ∘ V_n') = sInf (m.toFun '' V_a) := by
+    have h_help : m.toFun ∘ V_n' = u  := by
       ext x
       simp
       obtain ⟨_, V_n_spec⟩ :=Classical.choose_spec (hu3 x)
@@ -454,31 +472,86 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
         . exact ENNReal.coe_ne_top
         . exact he1
     . exact ENNReal.coe_injective
+  have iInf_V_n'_eq_iInf_V_n : iInf (m.toFun ∘ V_n') = iInf (m.toFun ∘ V_n) := by
+    apply le_antisymm
+    . apply le_ciInf
+      intro n
+      rw [h_iInf_V_n]
+      rw [csInf_le_iff]
+      . simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp,
+        forall_apply_eq_imp_iff₂, Set.mem_setOf_eq, Function.comp_apply, V_a]
+        intro b hb
+        obtain ⟨i, hi⟩ : ∃ i, V_n n ∈ (A_i i).Open_Neighbourhood := by
+          simp [V_n]
+          induction n with
+          | zero =>
+            simp [V_a]
+            obtain ⟨spec, _⟩ := Classical.choose_spec (hu3 0)
+            simp [V_a] at spec
+            exact spec
+          | succ n hn =>
+            simp [Open_Neighbourhood] at hn
+            rcases hn with ⟨i,hn⟩
+            simp [add_tsub_cancel_right, V_a, V_n, rec', Sublocale.Open_Neighbourhood, Open.preserves_inf]
+            obtain ⟨spec2, _⟩ := Classical.choose_spec (hu3 (n + 1))
+            simp [V_a] at spec2
+            obtain ⟨j, spec2⟩ := spec2
+            obtain ⟨k, hk⟩ := (h i j)
+            use k
+            simp [Open_Neighbourhood] at spec2
+            exact And.intro (le_trans hk.right spec2) (le_trans hk.left hn)
+
+        exact hb (V_n n) i hi rfl
+
+      . use 0
+        simp [lowerBounds]
+      . simp
+        use ⊤
+        simp [V_a, Sublocale.Open_Neighbourhood]
+
+    . apply le_ciInf
+      intro n
+      refine ciInf_le_of_le ?_ n ?_
+      . use 0
+        simp [lowerBounds]
+      . simp only [Function.comp_apply, V_n, V_n', V_a]
+        cases n
+        . simp [rec']
+        . simp only [add_tsub_cancel_right, V_a, V_n', V_n, rec']
+          apply Measure.mono
+          simp
 
   rw [sInf_image'] at h_iInf_V_n
   rw [← h_iInf_V_n]
+  rw [iInf_V_n'_eq_iInf_V_n]
   rw [← Measure.preserves_iInf] -- lemme 6
   .
     have h1 : ∀ b ∈ V_a, m.caratheodory (b ⊓ (iInf (Open.toSublocale ∘ V_n))) = m.caratheodory (iInf (Open.toSublocale ∘ V_n)) := by
       intro b hb
+      apply le_antisymm
+      . apply Measure.caratheodory.mono
+        exact inf_le_right
+
       rw [inf_iInf]
-      simp only [Function.comp_apply]
+      simp [Function.comp_apply]
       conv =>
-        enter [1, 1, 1, x]
+        enter [2, 1, 1, x]
         rw [← Open.preserves_inf]
 
       rw [← Function.comp_def]
       rw [Measure.preserves_iInf] -- lemme 6
       . sorry
-      . sorry -- gleich wie unten (siehe "bissle bled")
+
+
+      . sorry -- V_n decroissante
+
+
 
 
 
     sorry -- μ-reduction dinge
 
-
-  . simp [decroissante']
-    sorry -- bissle bled
+  . exact V_n_decroissante
 
 
 theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
