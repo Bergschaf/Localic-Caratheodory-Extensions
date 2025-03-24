@@ -214,13 +214,35 @@ lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodor
       exact Open_Neighbourhood.Nonempty b
     simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     intro a h
+    --
+    rw [csInf_le_iff]
+    . simp [lowerBounds]
+      intro c hc
+      rw [Measure.restrict_sublocale]
+      apply hc
+      simp [Open_Neighbourhood]
+      --
+      simp [embed, Open.toSublocale]
+      intro i
+      repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+
+      simp [himp_eq_sSup]
+      intro j h2
+      sorry -- bled
     sorry
+    sorry
+
   . apply le_csInf
     . simp
       exact Open_Neighbourhood.Nonempty (embed b)
     simp
     intro a h
-    sorry
+    rw [csInf_le_iff]
+    . simp [lowerBounds]
+      intro c h1
+      sorry -- stimmt glaub
+    . simp
+    . simp [Open_Neighbourhood.Nonempty]
 
 
 def R_μ (A : Sublocale E') : Sublocale E' := Sublocale.embed (μ_Reduction (m.restrict_sublocale_measure A))
