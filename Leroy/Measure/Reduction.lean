@@ -6,7 +6,7 @@ section
 variable {E' : Type*} [Order.Frame E']
 
 --variable {m : @Measure E' _}
-variable {m : @Measure E _}
+variable {m : @Measure E' _}
 
 open Sublocale
 
@@ -149,13 +149,59 @@ def Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reducti
   intro a h
   apply le_of_eq (Measure_Neighbourhood_μ_eq_top m a h).symm
 
+
+
+def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A)) : Sublocale E' where
+  toFun x := (b ((Nucleus.frameHom A) x))
+  idempotent' := by
+    simp [Nucleus.frameHom]
+    intro x
+    sorry
+  map_inf' c d := by
+    simp
+    sorry
+  le_apply' a := by
+    simp [Nucleus.frameHom]
+    sorry
+
+lemma embed_top (A : Sublocale E') : A.embed ⊤ = A := by
+  simp [Sublocale.embed]
+  ext x
+  rw [Nucleus.coe_mk, InfHom.coe_mk]
+  simp [Nucleus.frameHom]
+
+
+lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (Sublocale.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
+  rw [Measure.restrict_sublocale_measure, Sublocale.embed]
+  simp only [Measure.caratheodory, Measure.restrict_sublocale]
+  apply le_antisymm
+  . apply le_csInf
+    . sorry
+    sorry
+  sorry
+
+
+def R_μ (A : Sublocale E') : Sublocale E' := Sublocale.embed (μ_Reduction (m.restrict_sublocale_measure A))
+
+lemma μ_R_μ_eq (A : Sublocale E') : m.caratheodory A = m.caratheodory (@R_μ _ _ m A) := by
+  rw [R_μ]
+  rw [embed_measure]
+  rw [Measure_μ_Reduction_eq_top]
+  rw [← Measure.caratheodory.open_eq_toFun]
+  rw [← embed_measure]
+  rw [Open.top_toSublocale]
+  rw [embed_top]
+
+end
+
+
 variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
 
 
 def decroissante' (V : ι → Open E) : Prop :=
   ∀ i j : ι, i ≤ j → V j ≤ V i
 
-def decroissante (V : Set (Open E')) : Prop :=
+def decroissante (V : Set (Open E)) : Prop :=
   decroissante' (fun (x : V) ↦ x.val)
 
 
@@ -164,6 +210,9 @@ def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
 
 def filtrante_decroissante' (s : Set (Sublocale E)) : Prop :=
   ∀ n ∈ s, ∀ m ∈ s, ∃ l ∈ s, l ≤ n ∧ l ≤ m
+
+open Sublocale
+variable {m : @Measure E _}
 
 /--
 Leroy Lemma 6
@@ -532,20 +581,14 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
       . apply Measure.caratheodory.mono
         exact inf_le_right
 
-      rw [inf_iInf]
-      simp [Function.comp_apply]
-      conv =>
-        enter [2, 1, 1, x]
-        rw [← Open.preserves_inf]
-
-      rw [← Function.comp_def]
       rw [Measure.preserves_iInf] -- lemme 6
-      . sorry
+      . rw [← iInf_V_n'_eq_iInf_V_n, h_iInf_V_n]
 
+        have h_help : ∃ w ∈ V_a,w ≤ (iInf (Open.toSublocale ∘ (fun x => b ⊓ V_n x)))  := by
+          sorry
+        sorry
 
       . sorry -- V_n decroissante
-
-
 
 
 

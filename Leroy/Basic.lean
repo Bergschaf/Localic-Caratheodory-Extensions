@@ -39,7 +39,7 @@ def f_untenstern_map (f_o: FrameHom Y X) : {X_1 Y_1 : X} → (X_1 ⟶ Y_1) → (
   apply le_trans h1 h2
 
 def f_untenstern (f_o: FrameHom Y X) : X ⥤ Y where
-  obj x := sSup {y :  Y | f_o y ≤ x}
+  obj x := sSup {y : Y | f_o y ≤ x} -- kommutiert mit endlichen vereinigungen und unendlichen schnitten wegen adjunktion
   map := f_untenstern_map f_o
 
 def f_untenstern.mono (f_o: FrameHom Y X) : Monotone (f_untenstern f_o).obj := by

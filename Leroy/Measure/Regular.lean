@@ -837,8 +837,20 @@ def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
     simp [Measure.restrict_sublocale]
     rw [← m.empty]
     simp [f_untenstern]
+    congr
+    have h : A = ⊥ := by sorry
+    rw [h]
 
-    -- des ist falsch
+    simp [Nucleus.frameHom, Image]
+
+    intro a h
+    rw [@Subtype.ext_iff_val] at h
+    simp only [Set.mem_setOf_eq, Set.val_codRestrict_apply] at h
+    rw [eq_bot_iff]
+    rw [Sublocale.bot_apply] at h
+
+
+
     sorry
 
 
@@ -854,7 +866,8 @@ def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
 
   strictly_additive := by
     intro u v
-    simp [Measure.restrict_sublocale]
+    simp [Measure.restrict_sublocale, f_untenstern, Nucleus.frameHom, Open.sup_def, Open.inf_def]
+
     sorry
 
   filtered := sorry
