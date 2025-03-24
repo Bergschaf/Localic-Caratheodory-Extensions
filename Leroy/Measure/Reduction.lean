@@ -150,35 +150,77 @@ def Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reducti
   apply le_of_eq (Measure_Neighbourhood_μ_eq_top m a h).symm
 
 
-
 def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A)) : Sublocale E' where
-  toFun x := (b ((Nucleus.frameHom A) x))
-  idempotent' := by
-    simp [Nucleus.frameHom]
-    intro x
-    sorry
+  toFun x := (f_untenstern (Nucleus.frameHom A)).obj (b ((Nucleus.frameHom A) x))
+  idempotent' x := by
+    simp only [f_untenstern, map_sSup, sSup_le_iff, Set.mem_setOf_eq]
+    intro c h
+    --
+    simp only [le_sSup_iff, upperBounds, Set.mem_setOf_eq]
+    intro d h1'
+    apply h1'
+    apply le_trans h
+    conv =>
+      enter [2]
+      rw [← b.idempotent]
+    apply b.monotone
+    simp only [sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, imp_self, implies_true]
+
   map_inf' c d := by
     simp
-    sorry
+    rw [b.map_inf]
+    sorry --stimmt weil f_untenstern mit inf kommutiert (GaloisConnection)
+
   le_apply' a := by
-    simp [Nucleus.frameHom]
-    sorry
+    simp [Nucleus.frameHom, f_untenstern]
+    apply le_sSup
+    simp
+    exact b.le_apply
 
 lemma embed_top (A : Sublocale E') : A.embed ⊤ = A := by
   simp [Sublocale.embed]
   ext x
   rw [Nucleus.coe_mk, InfHom.coe_mk]
   simp [Nucleus.frameHom]
+  simp [f_untenstern]
+  apply le_antisymm
+  . simp
+    intro b h
+    apply le_trans A.le_apply h
+  . simp [le_sSup_iff, upperBounds]
+    intro b h
+    apply h
+    refine Subtype.coe_le_coe.mp ?_
+    simp
+    rw [A.idempotent]
+
+
+lemma embed_bot (A : Sublocale E') : A.embed ⊥ = ⊥ := by
+  ext x
+  simp [Sublocale.embed]
+  rw [Nucleus.coe_mk, InfHom.coe_mk]
+  simp [f_untenstern]
 
 
 lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (Sublocale.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
-  rw [Measure.restrict_sublocale_measure, Sublocale.embed]
-  simp only [Measure.caratheodory, Measure.restrict_sublocale]
+  rw [Measure.restrict_sublocale_measure]
+  simp only [Measure.caratheodory]
+
   apply le_antisymm
-  . apply le_csInf
-    . sorry
+  .
+    apply le_csInf
+    . simp
+      exact Open_Neighbourhood.Nonempty b
+    simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    intro a h
     sorry
-  sorry
+  . apply le_csInf
+    . simp
+      exact Open_Neighbourhood.Nonempty (embed b)
+    simp
+    intro a h
+    sorry
 
 
 def R_μ (A : Sublocale E') : Sublocale E' := Sublocale.embed (μ_Reduction (m.restrict_sublocale_measure A))
