@@ -1,7 +1,8 @@
-import Leroy.Basic
+--import Leroy.Basic
+import Mathlib.Tactic
 import Leroy.Nucleus
 
-variable {X E : Type*} [Order.Frame X] [Order.Frame E]
+variable {X Y E : Type*} [Order.Frame X] [Order.Frame E] [Order.Frame Y]
 open CategoryTheory
 
 
@@ -417,6 +418,33 @@ def Nucleus.frameHom (n : Nucleus E) : FrameHom E (Image n) := by
   let imgtype := ↑img
   exact ⟨⟨⟨e_schlange, e_schlange_preserves_inf⟩, (by simp[e_schlange,inst_frame];exact rfl)⟩, aux43⟩
 
+def f_untenstern (f : FrameHom X Y) := fun y : Y ↦ sSup {w : X | f w ≤ y}
+
+lemma Nucleus.gc (n : Nucleus E) : GaloisConnection (n.frameHom) (f_untenstern n.frameHom) := by
+  simp [GaloisConnection,f_untenstern, Nucleus.frameHom]
+  intro a a_1 b
+  apply Iff.intro
+  · intro a_2
+    simp only [le_sSup_iff, upperBounds, Set.mem_setOf_eq]
+    intro c h1
+    apply h1
+    exact a_2
+  · intro a_2
+    simp only [le_sSup_iff, upperBounds, Set.mem_setOf_eq] at a_2
+    refine Subtype.coe_le_coe.mp ?_
+    simp only [Set.val_codRestrict_apply]
+    simp [Image] at b
+    rw [← b]
+    apply n.monotone
+    apply a_2
+    intro c h
+    rw [← Subtype.coe_le_coe] at h
+    simp only [Set.val_codRestrict_apply] at h
+    apply le_trans n.le_apply h
+
+
+
+/-
 def Nucleus.eq_f_obenstern_f_untenstern (n : Nucleus E) : n = ((f_obenstern n.frameHom) ⋙ (f_untenstern n.frameHom)).obj := by
   ext x
   simp only [f_obenstern, frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk, f_untenstern,
@@ -522,3 +550,4 @@ lemma frameHom_nucleus : (∃ (X : Type u),∃ _ : Order.Frame X, ∃ f : FrameH
         exact inf_le_of_right_le h3
   use ⟨⟨e, n_3⟩, n_1, n_2⟩
   rfl
+-/

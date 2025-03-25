@@ -1,5 +1,5 @@
 import Mathlib.Data.Real.Basic
-import Leroy.Basic
+--import Leroy.Basic
 import Leroy.Further_Topology
 import Mathlib.Order.BoundedOrder.Basic
 

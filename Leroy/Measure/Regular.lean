@@ -829,28 +829,25 @@ variable (m : @Measure E _) (A : Sublocale E)
 
 
 def Measure.restrict_sublocale : Open (Image A) → NNReal :=
-  fun x ↦ m.toFun ⟨(f_untenstern A.frameHom).obj x⟩ -- ist das richtig?
+  fun x ↦ m.toFun ⟨(f_untenstern A.frameHom) x⟩ -- ist das richtig?
 
 def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale m A
   empty := by
-    simp [Measure.restrict_sublocale]
+    rw [restrict_sublocale]
+    simp only [restrict_sublocale, Open.bot_element]
     rw [← m.empty]
-    simp [f_untenstern]
-    congr
-    have h : A = ⊥ := by sorry
-    rw [h]
-
-    simp [Nucleus.frameHom, Image]
-
+    simp only [f_untenstern, le_bot_iff]
+    apply Measure.monotone
+    ext
+    simp only [Open.bot_element, sSup_eq_bot, Set.mem_setOf_eq]
+    simp only [Image, Set.coe_setOf, Nucleus.frameHom, FrameHom.coe_mk, InfTopHom.coe_mk,
+      InfHom.coe_mk, Set.mem_setOf_eq]
     intro a h
-    rw [@Subtype.ext_iff_val] at h
-    simp only [Set.mem_setOf_eq, Set.val_codRestrict_apply] at h
-    rw [eq_bot_iff]
-    rw [Sublocale.bot_apply] at h
-
-
-
+    rw [Subtype.eq_iff] at h
+    simp  at h
+    simp_rw [Bot.bot] at h
+    simp at h
     sorry
 
 
@@ -861,7 +858,7 @@ def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
     intro u v h
     apply Measure.mono
     apply Open.mk_mono
-    apply f_untenstern.mono
+    apply (A.gc.monotone_u)
     exact h
 
   strictly_additive := by

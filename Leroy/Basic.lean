@@ -202,7 +202,7 @@ def f_one_injective (f: FrameHom Y X) :  (f_untenstern f) ⋙ (f_obenstern f) = 
   exact Function.HasLeftInverse.injective h6
 
 
-class Leroy_Embedding (f : FrameHom Y X) where
+class Leroy_Embedding (f : FrameHom Y X) where -- Galois Insertion
   comp_id : (f_untenstern f) ⋙ (f_obenstern f) = 𝟭 X
 
 
