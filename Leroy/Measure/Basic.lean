@@ -128,6 +128,10 @@ lemma le_top_toFun (m : Measure) : ∀ a : Sublocale E, m.caratheodory a ≤ m.t
   rw [← top_eq_toFun]
   exact le_top m a
 
+lemma bot_eq_0 (m : @Measure E _) : m.caratheodory ⊥ = 0 := by
+  rw [← Open.bot_toSublocale, open_eq_toFun, empty]
+
+
 end caratheodory
 end Measure
 

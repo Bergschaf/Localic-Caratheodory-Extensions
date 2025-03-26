@@ -442,6 +442,26 @@ lemma Nucleus.gc (n : Nucleus E) : GaloisConnection (n.frameHom) (f_untenstern n
     simp only [Set.val_codRestrict_apply] at h
     apply le_trans n.le_apply h
 
+lemma Nucleus.gc' (n : Nucleus E) : GaloisConnection (n.frameHom) (Subtype.val) := by
+  intro a b
+  apply Iff.intro
+  . intro h
+    simp_rw [← Subtype.coe_le_coe, Nucleus.frameHom] at h
+    simp at h
+    apply le_trans n.le_apply h
+  . intro h
+    rw [← Subtype.coe_le_coe, Nucleus.frameHom]
+    simp
+    have h_help : ↑b = n ↑b := by
+      simp [Image] at b
+      obtain ⟨val, property⟩ := b
+      simp_all only
+    rw [h_help]
+    exact n.monotone h
+
+lemma f_untenstern_eq_val (n : Nucleus E) : (f_untenstern n.frameHom) = Subtype.val := by
+  ext i
+  exact GaloisConnection.u_unique n.gc n.gc' (by simp)
 
 
 /-
