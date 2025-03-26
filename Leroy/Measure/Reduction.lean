@@ -1,16 +1,15 @@
 import Leroy.Measure.Regular
+import Leroy.Measure.Restrict
 
 variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
 
 section
 variable {E' : Type*} [Order.Frame E']
 
---variable {m : @Measure E' _}
 variable {m : @Measure E' _}
 
 open Sublocale
 
--- TODO Infrastruktur, dass man Sublocals als Local ansehen kann
 
 def e_μ (m : @Measure E' _) (u : E') : E' := (sSup {w : Open E' | u ≥ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
 ---                                                                 ^ eigentlich steht hier u ≤ w bei leroy
@@ -149,9 +148,76 @@ def Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reducti
   intro a h
   apply le_of_eq (Measure_Neighbourhood_μ_eq_top m a h).symm
 
-def R_μ (A : Sublocale E') : Sublocale E' := Sublocale.embed (μ_Reduction (m.restrict_sublocale_measure A))
+variable [Fact (regular E')]
 
-lemma μ_R_μ_eq (A : Sublocale E') : m.caratheodory A = m.caratheodory (@R_μ _ _ m A) := by
+lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (Sublocale.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
+
+  simp [Measure.restrict_sublocale_measure, Measure.caratheodory, Measure.restrict_sublocale]
+  apply le_antisymm
+  . apply le_csInf
+    . sorry --stimmt
+    simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    intro a h
+    apply le_csInf
+    . sorry --stimmt
+    . simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+      intro c h1
+      simp [Sublocale.Open_Neighbourhood] at h h1
+      rw [csInf_le_iff]
+      . simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp,
+        forall_apply_eq_imp_iff₂, Set.mem_setOf_eq]
+        intro d h2
+        simp only [Open_Neighbourhood, Set.mem_setOf_eq] at h2
+        apply h2
+        apply le_trans' h1
+        apply_fun A.embed at h
+        exact h
+        exact embed.mono A
+      . use 0
+        simp [lowerBounds]
+      . sorry --stimmt
+  . apply le_csInf
+    . sorry --stimmt
+    . simp
+      intro a h
+
+      rw [csInf_le_iff]
+      simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
+        Set.mem_setOf_eq]
+      intro c h1
+      .
+        have h_help (a : Open (Image A)): m.caratheodory (A.embed a) = sInf (m.toFun '' (embed a.toSublocale).Open_Neighbourhood)  := by
+          rw [Measure.caratheodory]
+        conv at h1 =>
+          enter [2, 2, 2]
+          rw [← h_help]
+          rw [Sublocale.embed_open_eq_inf]
+        have h_help : (⟨A.frameHom a.element⟩ : Open (Image A)) ∈ b.Open_Neighbourhood := by
+          simp [Open_Neighbourhood]
+          let h := h
+          simp [Sublocale.Open_Neighbourhood] at h
+          intro i
+          simp [Open.toSublocale]
+          simp [embed, Open.toSublocale, Sublocale.le_iff] at h
+          repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h
+          rw [f_untenstern_eq_val] at h
+          sorry -- stimmt nd
+        sorry
+
+
+
+      . use 0
+        simp [lowerBounds]
+      . simp
+        exact Open_Neighbourhood.Nonempty b
+
+
+
+
+
+noncomputable def R_μ (A : Sublocale E') : Sublocale E' := Sublocale.embed (μ_Reduction (m.restrict_sublocale_measure A))
+
+lemma μ_R_μ_eq (A : Sublocale E') : m.caratheodory A = m.caratheodory (@R_μ _ _ m _ A) := by
   rw [R_μ]
   rw [embed_measure]
   rw [Measure_μ_Reduction_eq_top]
