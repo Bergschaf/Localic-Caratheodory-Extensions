@@ -4,6 +4,14 @@ import Leroy.Measure.Regular
 variable {E' : Type*} [Order.Frame E']
 
 
+def Sublocale.restrict_open (A : Sublocale E') (u : Open E') : Sublocale (Image A) where
+  toFun i := (A.frameHom u.element) ⇨ i
+  map_inf' x y := by
+    sorry
+  idempotent' := sorry
+  le_apply' := sorry
+
+
 def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A)) : Sublocale E' where
   toFun x := (f_untenstern (Nucleus.frameHom A)) (b ((Nucleus.frameHom A) x))
   idempotent' x := by
@@ -122,6 +130,8 @@ lemma Sublocale.embed_open_sup (A : Sublocale E') (u v : Open (Image A)) : A.emb
 
   rw [GaloisConnection.u_inf A.gc']
 
+
+
 -- sSup analaog
 
 lemma Sublocale.embed_open_sSup (A : Sublocale E') (s : Set (Open (Image A))) : A.embed (sSup s).toSublocale = ⨆ a ∈ s, embed a.toSublocale := by
@@ -179,6 +189,35 @@ lemma Sublocale.embed_open_sSup (A : Sublocale E') (s : Set (Open (Image A))) : 
     intro j
     rw [Nucleus.coe_mk, InfHom.coe_mk]
 
+lemma Sublocale.embed_open_sSup' (A : Sublocale E') (s : Set (Open (Image A))) : A.embed (sSup s).toSublocale = A ⊓ sSup (A.embed '' (Open.toSublocale '' s)) := by
+  ext i
+  simp_rw [Sublocale.embed, f_untenstern_eq_val]
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  rw [Open.preserves_sSup, Sublocale.sSup_apply]
+  --------
+  rw [GaloisConnection.u_iInf₂ A.gc']
+  ---------
+  simp [Sublocale.inf_apply]
+  have h_help : ⨅ (i_1 : Sublocale (Image A)), ⨅ i_2 : Open (Image A), ⨅ (_ : i_2 ∈ s ∧ i_2.toSublocale = i_1), ↑((i_1 ((Nucleus.frameHom A) i)) : E') = ⨅ b ∈ s, ↑(b.toSublocale (A.frameHom i)) := by
+    apply le_antisymm
+    . simp only [Open.toSublocale_apply, le_iInf_iff, iInf_le_iff, and_imp,
+      forall_apply_eq_imp_iff₂]
+      intro i_1 i_2 b a
+      simp_all only
+    . simp only [Open.toSublocale_apply, le_iInf_iff, iInf_le_iff, and_imp,
+      forall_apply_eq_imp_iff₂]
+      intro a a_1 b a_2
+      simp_all only
+
+  rw [h_help]
+  apply le_antisymm
+  . simp [iInf_le_iff]
+    intro b h1 h2 c h3
+    sorry
+  sorry
+
+
+
 
 
 lemma Sublocale.embed.mono (A : Sublocale E') : Monotone A.embed := by
@@ -201,7 +240,60 @@ noncomputable def Measure.restrict_sublocale : Open (Image A) → NNReal :=
 
 noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale A m
-  empty := by
+
+  filtered s h := by
+    simp_rw [Measure.restrict_sublocale]
+    rw [csSup_image]
+    .
+      conv =>
+        enter [2, 1, a, 1]
+        rw [Sublocale.embed_open_eq_inf]
+      have h_help : ⨆ a ∈ s, m.caratheodory (A ⊓ (⟨↑a.element⟩ : Open E').toSublocale) = ⨆ a ∈ (Open.mk '' (Subtype.val '' (Open.element '' s))), m.caratheodory (A ⊓ a.toSublocale) := by
+        apply le_antisymm
+        . rw [ciSup_le_iff']
+          . intro u
+            rw [ciSup_le_iff']
+            intro h
+            . refine le_ciSup_of_le ?_ ⟨u.element.val⟩ ?_
+              . sorry
+              . refine le_ciSup_of_le ?_ ?_ ?_
+                . sorry
+                . simp
+                  use u
+                rfl
+            . use m.caratheodory ⊤
+              simp [upperBounds]
+              intro h
+              apply Measure.caratheodory.mono
+              apply OrderTop.le_top
+          . sorry --stimmt
+        . rw [ciSup_le_iff']
+          . intro i
+            rw [ciSup_le_iff']
+            . simp
+              sorry -- stimmt
+            . sorry -- stimmt
+          . sorry
+
+      rw [h_help]
+      ---
+      rw [← Measure.inf_filtered]
+      ----
+      congr
+      rw [Sublocale.embed_open_sSup']
+
+      conv =>
+        enter [1, 1, a, 1]
+        rw [Sublocale.embed_open_eq_inf]
+
+
+
+    . sorry --by_cases oder so
+    . use m.caratheodory ⊤
+      simp [upperBounds]
+      sorry
+    . simp only [csSup_empty, bot_eq_zero', zero_le]
+  /-empty := by
     rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
     --todo lemma
     rw [Measure.caratheodory.bot_eq_0]
@@ -234,16 +326,4 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ wher
     rw [← inf_assoc]
     rw [← Measure.restrict_subadditive] -- wichtig
     apply congrArg
-    rw [@inf_sup_left]
-
-  filtered s h := by
-    simp_rw [Measure.restrict_sublocale]
-
-    rw [A.embed_open_sSup]
-
-    conv =>
-      enter [1, 1, 1, a, 1]
-      rw [Sublocale.embed_open_eq_inf]
-
-    let test := @Measure.inf_filtered _ _ _ m
-    sorry -- geht safe
+    rw [@inf_sup_left]-/

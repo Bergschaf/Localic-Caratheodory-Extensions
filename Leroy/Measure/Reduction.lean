@@ -151,7 +151,6 @@ def Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reducti
 variable [Fact (regular E')]
 
 lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (Sublocale.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
-
   simp [Measure.restrict_sublocale_measure, Measure.caratheodory, Measure.restrict_sublocale]
   apply le_antisymm
   . apply le_csInf
@@ -191,21 +190,8 @@ lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodor
         conv at h1 =>
           enter [2, 2, 2]
           rw [← h_help]
-          rw [Sublocale.embed_open_eq_inf]
-        have h_help : (⟨A.frameHom a.element⟩ : Open (Image A)) ∈ b.Open_Neighbourhood := by
-          simp [Open_Neighbourhood]
-          let h := h
-          simp [Sublocale.Open_Neighbourhood] at h
-          intro i
-          simp [Open.toSublocale]
-          simp [embed, Open.toSublocale, Sublocale.le_iff] at h
-          repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h
-          rw [f_untenstern_eq_val] at h
-          sorry -- stimmt nd
-        sorry
-
-
-
+          --rw [Sublocale.embed_open_eq_inf]
+        sorry --geht wahrsceinlich irgendwie
       . use 0
         simp [lowerBounds]
       . simp
