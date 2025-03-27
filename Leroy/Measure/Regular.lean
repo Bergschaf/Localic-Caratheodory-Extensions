@@ -670,6 +670,7 @@ lemma iSup_mem_eq (s : Set (Open E)) (f : Open E → NNReal) (h_top : ∀ a, f a
     use f ⊤
     exact fun a => ciSup_le' fun i => h_top a
   . exact ENNReal.coe_injective
+
 /--
 Leroy Lemme5
 -/

@@ -189,7 +189,7 @@ lemma Sublocale.embed_open_sSup (A : Sublocale E') (s : Set (Open (Image A))) : 
     intro j
     rw [Nucleus.coe_mk, InfHom.coe_mk]
 
-lemma Sublocale.embed_open_sSup' (A : Sublocale E') (s : Set (Open (Image A))) : A.embed (sSup s).toSublocale = A ⊓ sSup (A.embed '' (Open.toSublocale '' s)) := by
+/-lemma Sublocale.embed_open_sSup' (A : Sublocale E') (s : Set (Open (Image A))) : A.embed (sSup s).toSublocale = A ⊓ sSup (A.embed '' (Open.toSublocale '' s)) := by
   ext i
   simp_rw [Sublocale.embed, f_untenstern_eq_val]
   repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
@@ -214,7 +214,7 @@ lemma Sublocale.embed_open_sSup' (A : Sublocale E') (s : Set (Open (Image A))) :
   . simp [iInf_le_iff]
     intro b h1 h2 c h3
     sorry
-  sorry
+  sorry-/
 
 
 
@@ -279,12 +279,17 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ wher
       ---
       rw [← Measure.inf_filtered]
       ----
-      congr
-      rw [Sublocale.embed_open_sSup']
-
+      rw [Sublocale.embed_open_sSup]
+      ---
       conv =>
-        enter [1, 1, a, 1]
+        enter [1, 1, 1, a, 1]
         rw [Sublocale.embed_open_eq_inf]
+
+      sorry
+
+
+
+
 
 
 
