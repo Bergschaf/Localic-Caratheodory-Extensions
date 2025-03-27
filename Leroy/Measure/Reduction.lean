@@ -182,40 +182,49 @@ lemma Image_himp_closed (A : Sublocale E') (a b : E') (h1 : a ∈ Image A) (h2 :
     rw [← le_himp_iff]
   . exact Nucleus.le_apply
 
-lemma Nucleus.map_himp (A : Nucleus E') (a b : E') : A (a ⇨ b) = A a ⇨ A b := by
-  apply le_antisymm
-  . simp
-    rw [← A.map_inf]
-    apply A.monotone
-    rw [← le_himp_iff]
-  .
-    simp [himp_eq_sSup]
-
-    intro c h1
-    --
-    let h2 := h1
-    apply_fun A.toFun at h2
-    simp [A.idempotent] at h2
-
-    apply le_trans' (A.le_apply)
-    simp [le_sSup_iff, upperBounds]
-    intro d h2
-    apply h2
-
-
 
 
 def Sublocale.restrict_open (A : Sublocale E') (u : Open E') : Open (Image A) where
   element := A.frameHom u
 
-lemma Sublocale.restrict_embed (A : Sublocale E') (u : Open E') (h : u ≤ A): A.embed (A.restrict_open u) = u := by
-  simp [embed, f_untenstern_eq_val]
-  ext i
-  simp [Open.toSublocale, Sublocale.le_iff]
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-  simp [Sublocale.restrict_open]
+lemma Sublocale.restrict_embed (A : Sublocale E') (u : Open E') : A.embed (A.restrict_open u) = A ⊓ u := by
+  rw [Sublocale.embed_open_eq_inf]
+  apply le_antisymm
+  . simp only [le_inf_iff, inf_le_left, true_and]
+    intro i
+    rw [Sublocale.inf_apply]
+    simp [Open.toSublocale, Sublocale.le_iff, Sublocale.restrict_open]
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    intro a ha h1
+    have h2 := h1 ↑((Nucleus.frameHom A) i)
+    simp at h2
+    have h_help : OrderDual.toDual a = a := by rfl
+    simp [h_help] at *
+    --rw [← a.idempotent]
+    --apply le_trans' (ha (a i))
+    simp [Nucleus.frameHom] at h2 h1
+    let h3 := h1 (a i)
+    rw [a.idempotent] at h3
+    --
+    apply le_trans A.le_apply
+    apply le_trans' h3
+    simp
+    rw [← A.map_inf]
+    apply le_trans' (ha _)
+    apply A.monotone
+    simp only [himp_inf_self, inf_le_left]
 
-
+  . simp only [le_inf_iff, inf_le_left, true_and]
+    intro i
+    rw [Sublocale.inf_apply]
+    simp [Open.toSublocale, Sublocale.le_iff, Sublocale.restrict_open]
+    rw [Nucleus.coe_mk, InfHom.coe_mk]
+    intro a ha h1
+    apply le_trans' (h1 i)
+    apply himp_le_himp
+    simp [Nucleus.frameHom]
+    . exact A.le_apply
+    . rfl
 
 
 
@@ -227,9 +236,10 @@ lemma embed_measure_open (A : Sublocale E') (b : Open (Image A)) : m.caratheodor
 
 
 lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
-  simp [Measure.restrict_sublocale_measure, Measure.caratheodory, Measure.restrict_sublocale]
   apply le_antisymm
-  . apply le_csInf
+  . simp [Measure.restrict_sublocale_measure, Measure.caratheodory, Measure.restrict_sublocale]
+
+    apply le_csInf
     . sorry --stimmt
     simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     intro a h
@@ -251,21 +261,42 @@ lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodor
       . use 0
         simp [lowerBounds]
       . sorry --stimmt
-  . apply le_csInf
+  . simp [Measure.restrict_sublocale_measure,Measure.caratheodory, Measure.restrict_sublocale]
+
+
+
+    apply le_csInf
     . sorry --stimmt
     . simp
       intro a h
+
+
 
       rw [csInf_le_iff]
       simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
         Set.mem_setOf_eq]
       intro c h1
       .
-
         conv at h1 =>
-          enter [2, 2, 2]
-          rw [← Measure.caratheodory]
-          --rw [Sublocale.embed_open_eq_inf]
+          enter [2, 2]
+          rw [le_csInf_iff'' (by simp; exact Open_Neighbourhood.Nonempty _)]
+        simp at h1
+        ---- Man braucht die restriction für offene
+        have h2 : A.restrict_open a ∈ b.Open_Neighbourhood := by
+          simp [Open_Neighbourhood] at h
+          sorry -- irgendwas mit restrict_embed, ggf mehr über restrict zeigen
+
+
+
+
+
+
+
+
+
+
+
+
         sorry
       . use 0
         simp [lowerBounds]
