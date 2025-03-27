@@ -167,13 +167,66 @@ lemma μ_Reduction_eq_sInf (m : @Measure E' _) : μ_Reduction m = sInf {w : Subl
     sorry
 
 
+lemma Image_himp_closed (A : Sublocale E') (a b : E') (h1 : a ∈ Image A) (h2 : b ∈ Image A) : a ⇨ b ∈ Image A := by
+  simp [Image] at *
+  apply le_antisymm
+  . simp
+    conv =>
+      enter [1, 2]
+      rw [← h1]
+    conv =>
+      enter [2]
+      rw [← h2]
+    rw [← A.map_inf]
+    apply A.monotone
+    rw [← le_himp_iff]
+  . exact Nucleus.le_apply
+
+lemma Nucleus.map_himp (A : Nucleus E') (a b : E') : A (a ⇨ b) = A a ⇨ A b := by
+  apply le_antisymm
+  . simp
+    rw [← A.map_inf]
+    apply A.monotone
+    rw [← le_himp_iff]
+  .
+    simp [himp_eq_sSup]
+
+    intro c h1
+    --
+    let h2 := h1
+    apply_fun A.toFun at h2
+    simp [A.idempotent] at h2
+
+    apply le_trans' (A.le_apply)
+    simp [le_sSup_iff, upperBounds]
+    intro d h2
+    apply h2
+
+
+
+
+def Sublocale.restrict_open (A : Sublocale E') (u : Open E') : Open (Image A) where
+  element := A.frameHom u
+
+lemma Sublocale.restrict_embed (A : Sublocale E') (u : Open E') (h : u ≤ A): A.embed (A.restrict_open u) = u := by
+  simp [embed, f_untenstern_eq_val]
+  ext i
+  simp [Open.toSublocale, Sublocale.le_iff]
+  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
+  simp [Sublocale.restrict_open]
+
+
+
 
 
 
 
 variable [Fact (regular E')]
+lemma embed_measure_open (A : Sublocale E') (b : Open (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).toFun b := by
+  simp [Measure.restrict_sublocale_measure,Measure.restrict_sublocale]
 
-lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (Sublocale.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
+
+lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
   simp [Measure.restrict_sublocale_measure, Measure.caratheodory, Measure.restrict_sublocale]
   apply le_antisymm
   . apply le_csInf
@@ -621,17 +674,13 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
   . rw [hvn_1]
 
     -----
-
-
-
-
-
     ---
     rw [μ_R_μ_eq (iInf _)]
     apply Measure.caratheodory.mono
     ---
     simp
     intro a ha
+
 
 
     /-

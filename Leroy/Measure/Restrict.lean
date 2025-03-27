@@ -5,7 +5,7 @@ variable {E' : Type*} [Order.Frame E']
 
 
 def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A)) : Sublocale E' where
-  toFun x := (f_untenstern (Nucleus.frameHom A)) (b ((Nucleus.frameHom A) x))
+  toFun x := (f_untenstern (Nucleus.frameHom A)) (b ((Nucleus.frameHom A) x)) -- TODO ohne f_untenstern
   idempotent' x := by
     simp only [f_untenstern, map_sSup, sSup_le_iff, Set.mem_setOf_eq]
     intro c h
@@ -202,6 +202,42 @@ noncomputable def Measure.restrict_sublocale : Open (Image A) → NNReal :=
 noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ where
   toFun := Measure.restrict_sublocale A m
 
+  empty := by
+    rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
+    --todo lemma
+    rw [Measure.caratheodory.bot_eq_0]
+
+
+  mono := by
+    simp [Measure.restrict_sublocale]
+    intro u v h
+    apply Measure.caratheodory.mono
+    apply Sublocale.embed.mono
+    exact Open.le_iff.mp h
+
+  strictly_additive u v := by
+    rw [Measure.restrict_sublocale, Open.preserves_sup]
+    rw [Sublocale.embed_open_sup]
+    simp_rw [Measure.restrict_sublocale,Sublocale.embed_open_eq_inf]
+    simp_rw [Open.inf_def]
+    conv =>
+      enter [2, 2, 1, 2, 1]
+      simp [min,SemilatticeInf.inf]
+    simp_rw [Lattice.inf]
+    simp only [Set.val_codRestrict_apply, map_inf]
+    rw [← Open.inf_def, Open.preserves_inf]
+    let h_fix1 := Subtype.coe_prop u.element
+    simp only [Image, Set.mem_setOf_eq] at h_fix1
+    rw [h_fix1]
+    let h_fix2 := Subtype.coe_prop v.element
+    simp only [Image, Set.mem_setOf_eq] at h_fix2
+    rw [h_fix2]
+    rw [← inf_assoc]
+    rw [← Measure.restrict_subadditive] -- wichtig
+    apply congrArg
+    rw [@inf_sup_left]
+
+
   filtered s h := by
     by_cases hC : Nonempty s
     . simp_rw [Measure.restrict_sublocale]
@@ -337,37 +373,3 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ wher
       simp [h]
       rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
       rw [Measure.caratheodory.bot_eq_0]
-  empty := by
-    rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
-    --todo lemma
-    rw [Measure.caratheodory.bot_eq_0]
-
-
-  mono := by
-    simp [Measure.restrict_sublocale]
-    intro u v h
-    apply Measure.caratheodory.mono
-    apply Sublocale.embed.mono
-    exact Open.le_iff.mp h
-
-  strictly_additive u v := by
-    rw [Measure.restrict_sublocale, Open.preserves_sup]
-    rw [Sublocale.embed_open_sup]
-    simp_rw [Measure.restrict_sublocale,Sublocale.embed_open_eq_inf]
-    simp_rw [Open.inf_def]
-    conv =>
-      enter [2, 2, 1, 2, 1]
-      simp [min,SemilatticeInf.inf]
-    simp_rw [Lattice.inf]
-    simp only [Set.val_codRestrict_apply, map_inf]
-    rw [← Open.inf_def, Open.preserves_inf]
-    let h_fix1 := Subtype.coe_prop u.element
-    simp only [Image, Set.mem_setOf_eq] at h_fix1
-    rw [h_fix1]
-    let h_fix2 := Subtype.coe_prop v.element
-    simp only [Image, Set.mem_setOf_eq] at h_fix2
-    rw [h_fix2]
-    rw [← inf_assoc]
-    rw [← Measure.restrict_subadditive] -- wichtig
-    apply congrArg
-    rw [@inf_sup_left]
