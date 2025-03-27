@@ -825,3 +825,61 @@ lemma Measure.inf_filtered (A : Sublocale E) (s : Set (Open E)) (h : increasingl
     . rw [Open.preserves_sSup]
       apply le_sSup
       exact Set.mem_image_of_mem Open.toSublocale hb
+
+lemma Measure.inf_commutes_sSup (A : Sublocale E) (s : Set (Open E)) (h : increasingly_filtered s) :
+    m.caratheodory (A ⊓ (sSup s).toSublocale) = m.caratheodory (⨆ b ∈ s,A ⊓ b) := by
+  apply le_antisymm
+  .
+    -----
+    rw [← add_zero (m.caratheodory (⨆ i ∈ s, _))]
+    rw [← sInf_epsilon_eq_zero']
+    rw [← tsub_le_iff_left]
+    apply le_csInf
+    . use 42
+      norm_num
+    simp only [gt_iff_lt, Set.mem_setOf_eq, tsub_le_iff_right]
+    intro ε h_ε
+    let h2 := @Exists_Neighbourhood_epsilon _ _ m A ε h_ε
+    rcases h2 with ⟨W, ⟨h2, h3⟩⟩
+    have h4 : m.caratheodory (⨆ i ∈ s, W ⊓ i.toSublocale) ≤ ε + m.caratheodory (⨆ i ∈ s, A ⊓ i.toSublocale) := by
+      sorry
+
+
+    apply le_trans' h4
+    conv =>
+      enter [2, 1, 1, i, 1]
+      rw [← Open.preserves_inf]
+    have h_help : ⨆ i ∈ s, (W ⊓ i).toSublocale = (⨆ i ∈ s, (W ⊓ i)).toSublocale := by
+      rw [@Open.preserves_iSup]
+      conv =>
+        enter [2, 1, i]
+        rw [@Open.preserves_iSup]
+    rw [h_help]
+    have h_help_2 : ⨆ i ∈ s, W ⊓ i = W ⊓ sSup s := by
+      rw [Open.inf_def, Open.sSup_def]
+      simp only
+      rw [inf_sSup_eq]
+      rw [iSup_image]
+      ext
+      simp only
+      conv =>
+        enter [1, 1, 1, i]
+        rw [iSup]
+      rw [iSup]
+      simp [Open.sSup_def, Open.inf_def]
+      apply le_antisymm
+      . simp [le_iSup_iff]
+      . simp [le_sSup_iff, upperBounds]
+    rw [h_help_2]
+    apply Measure.caratheodory.mono
+    rw [Open.preserves_inf]
+    apply inf_le_inf
+    . exact h2
+    . rfl
+
+  . apply Measure.caratheodory.mono
+    rw [Open.preserves_sSup]
+    simp [le_sSup_iff, upperBounds]
+    intro a h1 i hi
+    apply le_trans' (h1 i hi)
+    exact inf_le_right

@@ -189,36 +189,6 @@ lemma Sublocale.embed_open_sSup (A : Sublocale E') (s : Set (Open (Image A))) : 
     intro j
     rw [Nucleus.coe_mk, InfHom.coe_mk]
 
-/-lemma Sublocale.embed_open_sSup' (A : Sublocale E') (s : Set (Open (Image A))) : A.embed (sSup s).toSublocale = A ⊓ sSup (A.embed '' (Open.toSublocale '' s)) := by
-  ext i
-  simp_rw [Sublocale.embed, f_untenstern_eq_val]
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-  rw [Open.preserves_sSup, Sublocale.sSup_apply]
-  --------
-  rw [GaloisConnection.u_iInf₂ A.gc']
-  ---------
-  simp [Sublocale.inf_apply]
-  have h_help : ⨅ (i_1 : Sublocale (Image A)), ⨅ i_2 : Open (Image A), ⨅ (_ : i_2 ∈ s ∧ i_2.toSublocale = i_1), ↑((i_1 ((Nucleus.frameHom A) i)) : E') = ⨅ b ∈ s, ↑(b.toSublocale (A.frameHom i)) := by
-    apply le_antisymm
-    . simp only [Open.toSublocale_apply, le_iInf_iff, iInf_le_iff, and_imp,
-      forall_apply_eq_imp_iff₂]
-      intro i_1 i_2 b a
-      simp_all only
-    . simp only [Open.toSublocale_apply, le_iInf_iff, iInf_le_iff, and_imp,
-      forall_apply_eq_imp_iff₂]
-      intro a a_1 b a_2
-      simp_all only
-
-  rw [h_help]
-  apply le_antisymm
-  . simp [iInf_le_iff]
-    intro b h1 h2 c h3
-    sorry
-  sorry-/
-
-
-
-
 
 lemma Sublocale.embed.mono (A : Sublocale E') : Monotone A.embed := by
   intro b c h i
@@ -242,63 +212,141 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ wher
   toFun := Measure.restrict_sublocale A m
 
   filtered s h := by
-    simp_rw [Measure.restrict_sublocale]
-    rw [csSup_image]
-    .
-      conv =>
-        enter [2, 1, a, 1]
-        rw [Sublocale.embed_open_eq_inf]
-      have h_help : ⨆ a ∈ s, m.caratheodory (A ⊓ (⟨↑a.element⟩ : Open E').toSublocale) = ⨆ a ∈ (Open.mk '' (Subtype.val '' (Open.element '' s))), m.caratheodory (A ⊓ a.toSublocale) := by
-        apply le_antisymm
-        . rw [ciSup_le_iff']
-          . intro u
-            rw [ciSup_le_iff']
-            intro h
-            . refine le_ciSup_of_le ?_ ⟨u.element.val⟩ ?_
-              . sorry
-              . refine le_ciSup_of_le ?_ ?_ ?_
-                . sorry
-                . simp
-                  use u
-                rfl
-            . use m.caratheodory ⊤
-              simp [upperBounds]
+    by_cases hC : Nonempty s
+    . simp_rw [Measure.restrict_sublocale]
+      rw [csSup_image]
+      .
+        conv =>
+          enter [2, 1, a, 1]
+          rw [Sublocale.embed_open_eq_inf]
+        have h_help : ⨆ a ∈ s, m.caratheodory (A ⊓ (⟨↑a.element⟩ : Open E').toSublocale) = ⨆ a ∈ (Open.mk '' (Subtype.val '' (Open.element '' s))), m.caratheodory (A ⊓ a.toSublocale) := by
+          apply le_antisymm
+          . rw [ciSup_le_iff']
+            . intro u
+              rw [ciSup_le_iff']
               intro h
-              apply Measure.caratheodory.mono
-              apply OrderTop.le_top
-          . sorry --stimmt
-        . rw [ciSup_le_iff']
-          . intro i
-            rw [ciSup_le_iff']
-            . simp
-              sorry -- stimmt
-            . sorry -- stimmt
-          . sorry
+              . refine le_ciSup_of_le ?_ ⟨u.element.val⟩ ?_
+                . use m.caratheodory ⊤
+                  simp only [upperBounds, Set.mem_image, exists_exists_and_eq_and, Set.mem_range,
+                    forall_exists_index, forall_apply_eq_imp_iff, Set.mem_setOf_eq]
+                  intro a
+                  by_cases hC :  Nonempty (∃ a_1 ∈ s, { element := ↑a_1.element } = a)
+                  . apply ciSup_le
+                    intro _
+                    exact caratheodory.le_top m (A ⊓ a.toSublocale)
+                  . rw [not_nonempty_iff] at hC
+                    rw [@ciSup_of_empty]
+                    . exact bot_le
 
-      rw [h_help]
-      ---
-      rw [← Measure.inf_filtered]
-      ----
-      rw [Sublocale.embed_open_sSup]
-      ---
-      conv =>
-        enter [1, 1, 1, a, 1]
-        rw [Sublocale.embed_open_eq_inf]
+                . refine le_ciSup_of_le ?_ ?_ ?_
+                  . use m.caratheodory ⊤
+                    simp only [upperBounds, Set.mem_range, Set.mem_image, exists_exists_and_eq_and,
+                      Open.mk.injEq, exists_eq_right, exists_prop, and_imp, forall_exists_index,
+                      Set.mem_setOf_eq]
+                    intro _ _ _ _ h
+                    rw [← h]
+                    apply caratheodory.le_top
 
-      sorry
+                  . simp
+                    use u
+                  rfl
+              . use m.caratheodory ⊤
+                simp [upperBounds]
+                intro h
+                apply Measure.caratheodory.mono
+                apply OrderTop.le_top
+            . use m.caratheodory ⊤
+              simp only [upperBounds, Set.mem_range, forall_exists_index, forall_apply_eq_imp_iff,
+                Set.mem_setOf_eq]
+              intro a
+              apply ciSup_le'
+              intro h
+              apply caratheodory.le_top
+
+          . rw [ciSup_le_iff']
+            . intro i
+              rw [ciSup_le_iff']
+              . simp
+                intro x hx h1
+                rw [← h1]
+                refine le_ciSup_of_le ?_ x ?_
+                . use m.caratheodory ⊤
+                  simp only [upperBounds, Set.mem_range, forall_exists_index, forall_apply_eq_imp_iff,
+                    Set.mem_setOf_eq]
+                  intro a
+                  apply ciSup_le'
+                  intro _
+                  apply caratheodory.le_top
+
+                refine le_ciSup_of_le ?_ hx ?_
+                . use m.caratheodory ⊤
+                  simp [upperBounds]
+                  intro _
+                  apply caratheodory.le_top
+                rfl
+              . use m.caratheodory ⊤
+                simp only [upperBounds, Set.mem_range, Set.mem_image, exists_exists_and_eq_and,
+                  exists_prop, and_imp, forall_exists_index, Function.const_apply, Set.mem_setOf_eq]
+                intro _ _ _ _ h
+                rw [← h]
+                apply caratheodory.le_top
+            . use m.caratheodory ⊤
+              simp only [upperBounds, Set.mem_image, exists_exists_and_eq_and, Set.mem_range,
+                forall_exists_index, forall_apply_eq_imp_iff, Set.mem_setOf_eq]
+              intro a
+              apply ciSup_le'
+              intro _
+              apply caratheodory.le_top
+
+        rw [h_help]
+        ---
+        rw [← Measure.inf_filtered]
+        ----
+        rw [Sublocale.embed_open_sSup]
+        ---
+        conv =>
+          enter [1, 1, 1, a, 1]
+          rw [Sublocale.embed_open_eq_inf]
+        rw [Measure.inf_commutes_sSup]
+        apply congrArg
+        apply le_antisymm <;> simp [le_iSup_iff]
+        rw [increasingly_filtered] at *
+        simp only [Set.mem_image, exists_exists_and_eq_and, forall_exists_index, and_imp,
+          forall_apply_eq_imp_iff₂]
+
+        intro a ha b hb
+        obtain ⟨w, ⟨h1, h2, h3⟩⟩ := h a ha b hb
+        use w
+        simp only [h1, true_and]
+        apply And.intro
+        . exact h2
+        . exact h3
+
+        rw [increasingly_filtered] at *
+        simp only [Set.mem_image, exists_exists_and_eq_and, forall_exists_index, and_imp,
+          forall_apply_eq_imp_iff₂]
+
+        intro a ha b hb
+        obtain ⟨w, ⟨h1, h2, h3⟩⟩ := h a ha b hb
+        use w
+        simp only [h1, true_and]
+        apply And.intro
+        . exact h2
+        . exact h3
 
 
-
-
-
-
-
-    . sorry --by_cases oder so
-    . use m.caratheodory ⊤
-      simp [upperBounds]
-      sorry
-    . simp only [csSup_empty, bot_eq_zero', zero_le]
-  /-empty := by
+      . exact Set.Nonempty.of_subtype
+      . use m.caratheodory ⊤
+        simp [upperBounds]
+        intro _ _
+        apply caratheodory.le_top
+      . simp only [csSup_empty, bot_eq_zero', zero_le]
+    . have h : s = ∅ := by
+        exact Set.not_nonempty_iff_eq_empty'.mp hC
+      simp [h]
+      rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
+      rw [Measure.caratheodory.bot_eq_0]
+  empty := by
     rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
     --todo lemma
     rw [Measure.caratheodory.bot_eq_0]
@@ -331,4 +379,4 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A) _ wher
     rw [← inf_assoc]
     rw [← Measure.restrict_subadditive] -- wichtig
     apply congrArg
-    rw [@inf_sup_left]-/
+    rw [@inf_sup_left]
