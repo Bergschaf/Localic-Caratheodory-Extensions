@@ -842,7 +842,22 @@ lemma Measure.inf_commutes_sSup (A : Sublocale E) (s : Set (Open E)) (h : increa
     let h2 := @Exists_Neighbourhood_epsilon _ _ m A ε h_ε
     rcases h2 with ⟨W, ⟨h2, h3⟩⟩
     have h4 : m.caratheodory (⨆ i ∈ s, W ⊓ i.toSublocale) ≤ ε + m.caratheodory (⨆ i ∈ s, A ⊓ i.toSublocale) := by
-      sorry
+      conv =>
+        enter [1, 1, 1, i, 1]
+        rw [← Open.preserves_inf]
+      rw [iSup_subtype']
+      rw [← Open.preserves_iSup]
+      rw [iSup, Measure.caratheodory.open_eq_toFun]
+      rw [Measure.filtered]
+      apply csSup_le
+      . sorry -- by cases oder so
+      . sorry
+
+
+
+
+
+      sorry -- ähnlich wie bei Leroy lemme 5 (des nach donc)
 
 
     apply le_trans' h4

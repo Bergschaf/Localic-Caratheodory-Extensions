@@ -4,14 +4,6 @@ import Leroy.Measure.Regular
 variable {E' : Type*} [Order.Frame E']
 
 
-def Sublocale.restrict_open (A : Sublocale E') (u : Open E') : Sublocale (Image A) where
-  toFun i := (A.frameHom u.element) ⇨ i
-  map_inf' x y := by
-    sorry
-  idempotent' := sorry
-  le_apply' := sorry
-
-
 def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A)) : Sublocale E' where
   toFun x := (f_untenstern (Nucleus.frameHom A)) (b ((Nucleus.frameHom A) x))
   idempotent' x := by
@@ -129,7 +121,6 @@ lemma Sublocale.embed_open_sup (A : Sublocale E') (u v : Open (Image A)) : A.emb
   repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
 
   rw [GaloisConnection.u_inf A.gc']
-
 
 
 -- sSup analaog
