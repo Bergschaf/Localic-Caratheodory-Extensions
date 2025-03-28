@@ -799,16 +799,28 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
   rw [sInf_image'] at h_iInf_V_n
   rw [← h_iInf_V_n]
   rw [iInf_V_n'_eq_iInf_V_n]
-  rw [← Measure.preserves_iInf] -- lemme 6
-  . rw [hvn_1]
+  rw [hvn_1]
 
-    -----
+  rw [← Measure.preserves_iInf] -- lemme 6
+  . let I := (iInf (Open.toSublocale ∘ V_n))
+    have hI : (iInf (Open.toSublocale ∘ V_n)) = I := rfl
+    rw [hI]
     ---
-    rw [μ_R_μ_eq (iInf _)]
+    rw [μ_R_μ_eq I]
+
+
+
     apply Measure.caratheodory.mono
     ---
     simp
     intro a ha
+
+
+    rw [R_μ]
+
+
+
+
 
 
 
