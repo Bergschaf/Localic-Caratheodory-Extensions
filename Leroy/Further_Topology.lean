@@ -19,10 +19,12 @@ lemma Sublocale.Neighourhood.le {a : Sublocale E} : ∀ x ∈ Neighbourhood a, a
 lemma Sublocale.Open_Neighbourhood.top_mem {x : Sublocale X}: ⊤ ∈ Open_Neighbourhood x := by
   simp [Open_Neighbourhood]
 
+@[simp]
 lemma Sublocale.Open_Neighbourhood.Nonempty (x : Sublocale X) : (Open_Neighbourhood x).Nonempty := by
   use ⊤
   exact top_mem
 
+@[simp]
 lemma Sublocale.Nonempty_Open_Neighbourhood (x : Sublocale X) : Nonempty (Open_Neighbourhood x) := by
   use ⊤
   exact Open_Neighbourhood.top_mem

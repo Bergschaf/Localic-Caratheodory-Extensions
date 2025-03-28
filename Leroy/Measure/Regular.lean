@@ -573,7 +573,6 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) : m.caratheodory
 
     apply le_csInf
     . simp
-      exact Sublocale.Open_Neighbourhood.Nonempty a
     . intro b h3
       simp at h3
       rcases h3 with ⟨w, ⟨h3, h4⟩⟩
