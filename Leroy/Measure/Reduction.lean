@@ -194,177 +194,36 @@ lemma μ_Reduction_eq_sInf [Fact (regular E')] (m : @Measure E' _) : μ_Reductio
     simp only [and_true]
     exact Measure_Neighbourhood_μ_eq_top m a h
 
+lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E')] (m : @Measure E' _) : μ_Reduction m = sInf ({w : Sublocale E' | m.caratheodory w = m.toFun ⊤}) := by
+  apply le_antisymm
+  . rw [μ_Reduction_eq_sInf]
+
+    simp only [le_sInf_iff, Set.mem_setOf_eq, OrderDual.forall]
+    intro a h
+    rw [csInf_le_iff]
+    . simp [lowerBounds]
+
+      intro b h1
+      sorry -- todo vlt epsilon
+    . sorry
+    . use ⊤
+      simp_all only [Set.mem_image, Set.mem_setOf_eq]
+      apply Exists.intro
+      · apply And.intro
+        · rfl
+        · simp_all only [Open.top_toSublocale]
+
+
+  . apply csInf_le
+    . sorry
+    . simp
+      apply Measure_μ_Reduction_eq_top
+
+
 lemma μ_Reduction_le_of_top [Fact (regular E')] (m : @Measure E' _) (A : Sublocale E') (h : m.caratheodory A = m.toFun ⊤) :
-  μ_Reduction m ≤ A := by sorry
-
-lemma Image_himp_closed (A : Sublocale E') (a b : E') (h1 : a ∈ Image A) (h2 : b ∈ Image A) : a ⇨ b ∈ Image A := by
-  simp [Image] at *
-  apply le_antisymm
-  . simp
-    conv =>
-      enter [1, 2]
-      rw [← h1]
-    conv =>
-      enter [2]
-      rw [← h2]
-    rw [← A.map_inf]
-    apply A.monotone
-    rw [← le_himp_iff]
-  . exact Nucleus.le_apply
+    μ_Reduction m ≤ A := by
 
 
-
-@[simp] -- Wichtig, TODO woanders
-lemma Nucleus.frameHom.of_coe (A : Sublocale E') (i : Image A) : A.frameHom i = i := by
-  simp [Nucleus.frameHom]
-  rw [@Subtype.ext_iff_val]
-  simp only [Set.val_codRestrict_apply]
-  let test := i.prop
-  simp only [Image, Set.mem_setOf_eq] at test
-  exact test
-
-
-def Sublocale.restrict (A : Sublocale E') (b : Sublocale E') (h : b ≤ A): Sublocale (Image A) where
-  toFun x := A.frameHom (b x)
-  map_inf' x y := by
-    simp
-    rw [GaloisConnection.u_inf A.gc', b.map_inf,map_inf]
-  idempotent' x := by
-    simp
-    simp [Nucleus.frameHom]
-    rw [← Subtype.coe_le_coe]
-    simp only [Set.val_codRestrict_apply]
-    conv =>
-      enter [2, 2]
-      rw [← b.idempotent]
-      rw [← b.idempotent]
-
-    apply A.monotone
-    apply b.monotone
-    simp [Sublocale.le_iff] at h
-    apply h
-
-  le_apply' x := by
-    simp [Nucleus.frameHom]
-    rw [← Subtype.coe_le_coe]
-    simp only [Set.val_codRestrict_apply]
-    apply le_trans b.le_apply
-    apply le_trans A.le_apply
-    rfl
-
--- TODO woanders
-lemma Sublocale.embed_le (A : Sublocale E') (b : Sublocale (Image A)) : A.embed b ≤ A := by
-  have h : A.embed b ≤ A.embed ⊤ := by
-    apply Sublocale.embed.mono
-    apply le_top
-  apply le_trans h
-  rw [Sublocale.embed_top]
-
-lemma Sublocale.restrict_mono (A : Sublocale E') (b a : Sublocale E') (h1: b ≤ A) (h2 : a ≤ A) : a ≤ b → A.restrict a h2 ≤ A.restrict b h1 := by
-  intro h3
-  simp [Sublocale.restrict]
-  intro i
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-  gcongr
-  apply h3
-
-lemma Sublocale.restrict_embed (A : Sublocale E') (b : Sublocale (Image A)) : A.restrict (A.embed b) (Sublocale.embed_le _ _)= b := by
-  ext i
-  simp [Sublocale.restrict, Sublocale.embed, f_untenstern_eq_val]
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-  simp only [Nucleus.frameHom.of_coe]
-
-lemma Sublocale.embed_restrict (A : Sublocale E') (b : Sublocale E') (h : b ≤ A) : A.embed (A.restrict b h) = b := by
-  simp [embed, f_untenstern_eq_val, restrict]
-  ext i
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
-  simp [Nucleus.frameHom]
-  simp [Sublocale.le_iff] at h
-  apply le_antisymm
-  . conv =>
-      enter [2]
-      rw [← b.idempotent]
-    apply le_trans' (h (b i))
-    apply A.monotone
-    conv =>
-      enter [2]
-      rw[ ← b.idempotent]
-    apply b.monotone
-    exact h _
-  . apply le_trans' A.le_apply
-    apply b.monotone
-    exact A.le_apply
-
-
-def Sublocale.restrict_open (A : Sublocale E') (u : Open E') : Open (Image A) where
-  element := A.frameHom u
-
-
-lemma Sublocale.embed_restrict_open (A : Sublocale E') (u : Open E') : A.embed (A.restrict_open u) = A ⊓ u := by
-  rw [Sublocale.embed_open_eq_inf]
-  apply le_antisymm
-  . simp only [le_inf_iff, inf_le_left, true_and]
-    intro i
-    rw [Sublocale.inf_apply]
-    simp [Open.toSublocale, Sublocale.le_iff, Sublocale.restrict_open]
-    rw [Nucleus.coe_mk, InfHom.coe_mk]
-    intro a ha h1
-    have h2 := h1 ↑((Nucleus.frameHom A) i)
-    simp at h2
-    have h_help : OrderDual.toDual a = a := by rfl
-    simp [h_help] at *
-    --rw [← a.idempotent]
-    --apply le_trans' (ha (a i))
-    simp [Nucleus.frameHom] at h2 h1
-    let h3 := h1 (a i)
-    rw [a.idempotent] at h3
-    --
-    apply le_trans A.le_apply
-    apply le_trans' h3
-    simp
-    rw [← A.map_inf]
-    apply le_trans' (ha _)
-    apply A.monotone
-    simp only [himp_inf_self, inf_le_left]
-
-  . simp only [le_inf_iff, inf_le_left, true_and]
-    intro i
-    rw [Sublocale.inf_apply]
-    simp [Open.toSublocale, Sublocale.le_iff, Sublocale.restrict_open]
-    rw [Nucleus.coe_mk, InfHom.coe_mk]
-    intro a ha h1
-    apply le_trans' (h1 i)
-    apply himp_le_himp
-    simp [Nucleus.frameHom]
-    . exact A.le_apply
-    . rfl
-
-lemma Sublocale.embed_orderiso (A : Sublocale E') (a b : Sublocale (Image A)) : A.embed a ≤ A.embed b → a ≤ b := by
-  intro h
-  simp [embed, f_untenstern_eq_val, Sublocale.le_iff] at h
-  repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h
-  intro i
-  let h1 := h i
-  simp at h1
-  exact h1
-
-lemma Sublocale.restrict_orderiso (A : Sublocale E') (a b : Sublocale E') (h1 : a ≤ A) (h2 : b ≤ A): A.restrict a h1 ≤ A.restrict b h2 → a ≤ b := by
-  intro h
-  apply_fun A.embed at h
-  repeat rw [Sublocale.embed_restrict] at h
-  exact h
-  exact embed.mono A
-
-lemma Sublocale.restrict_open_eq_restrict (A : Sublocale E') (u : Open E') : (A.restrict_open u).toSublocale = A.restrict (A ⊓ u) (by simp) := by
-  --- TODO eleganter damit, dass embed injective ist
-  apply le_antisymm
-  . apply  Sublocale.embed_orderiso
-    rw [Sublocale.embed_restrict_open]
-    rw [Sublocale.embed_restrict]
-
-  . apply  Sublocale.embed_orderiso
-    rw [Sublocale.embed_restrict_open]
-    rw [Sublocale.embed_restrict]
 
 
 
