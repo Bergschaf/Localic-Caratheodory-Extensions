@@ -49,6 +49,30 @@ variable {m : @Measure E e_frm}
 
 namespace Measure
 
+lemma strictly_additive'' (U V : Open E) : m.toFun U + m.toFun V = m.toFun (U ⊓ V) + m.toFun (U ⊔ V) := by
+  rw [m.strictly_additive]
+  have h1 : (m.toFun U + m.toFun V - m.toFun (U ⊓ V)) = (m.toFun U + (m.toFun V - m.toFun (U ⊓ V))) := by
+    sorry
+  rw [h1]
+  rw [← add_assoc]
+  ring
+  sorry
+
+
+
+lemma strictly_additive' (U V : Open E) : m.toFun (U ⊓ V) = m.toFun U + m.toFun V - m.toFun (U ⊔ V) := by
+  apply_fun NNReal.toReal
+  . rw [NNReal.coe_sub]
+    simp
+    rw [m.strictly_additive]
+    rw [NNReal.coe_sub]
+    simp only [NNReal.coe_add, sub_sub_cancel]
+    . rw [strictly_additive'']
+      simp
+    . rw [strictly_additive'']
+      simp
+  . exact NNReal.coe_injective
+
 lemma iSup_filtered : ∀ (f : ι → Open E), increasingly_filtered (Set.range f) → m.toFun (iSup f) = iSup (m.toFun ∘ f) := by
   intro f h
   repeat rw [iSup]

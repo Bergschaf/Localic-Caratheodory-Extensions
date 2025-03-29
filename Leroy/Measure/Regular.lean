@@ -10,6 +10,10 @@ def well_inside (U V : Open E) := U.closure ≤ V.toSublocale
 infix:100 " ≪ " => well_inside
 
 
+lemma le_of_well_inside (U V : Open E) (h : U ≪ V) : U ≤ V := by
+  rw [Open.le_iff]
+  apply le_trans' h
+  simp [Open.closure, Closed.preserves_sInf]
 
 
 
@@ -85,6 +89,9 @@ Steht auch in Sketches of an Elephant 501
 -/
 def regular (E : Type*)  [Order.Frame E]: Prop :=
   ∀ (U : Open E), U = sSup {V : Open E | V ≪ U}
+
+
+
 
 
 variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
@@ -233,6 +240,7 @@ lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) : a = sInf (Subloca
     · apply And.intro
       on_goal 2 => {rfl}
       · simp_all only
+
 /--
 Leroy Lemme 3
 -/
