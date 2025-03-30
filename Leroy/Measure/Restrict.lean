@@ -362,6 +362,97 @@ lemma Sublocale.restrict_open_eq_restrict (A : Sublocale E') (u : Open E') : (A.
     rw [Sublocale.embed_restrict_open]
     rw [Sublocale.embed_restrict]
 
+/-lemma commutes leider nicht [e_regular : Fact (regular E')] (A : Sublocale E') (s : Set (Open E')) : A ⊓ (sSup s).toSublocale = ⨆ b : (Open.toSublocale '' s), A ⊓ b := by
+  apply le_antisymm
+
+
+
+
+    rw [← Sublocale.restrict_open_eq_inf]
+
+
+    rw [← Sublocale.embed_open_sSup]
+    apply Sublocale.embed.mono
+    rw [← Open.le_iff]
+    simp only [sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂]
+    intro a h2
+    rw [Sublocale.restrict_open]
+    apply le_sSup
+    simp only [Set.mem_setOf_eq]
+    rw [well_inside_iff] at h2 ⊢
+    rcases h2 with ⟨c, ⟨h2, h3⟩⟩
+    use A.restrict_open c
+    simp [Sublocale.restrict_open]
+    apply And.intro
+    . simp [Open.inf_def, Open.ext_iff]
+      rw [eq_bot_iff] at h2 ⊢
+      sorry
+    . rw [eq_top_iff] at h3 ⊢
+      apply_fun A.frameHom.toFun at h3
+      simp  [Open.top_element, InfHom.toFun_eq_coe, InfTopHom.coe_toInfHom, map_top,
+        FrameHom.coe_toInfTopHom, top_le_iff] at h3
+      rw [Open.le_def]
+      simp
+      rw [← h3]
+      simp [Open.sup_def]
+      simp only [Monotone, Nucleus.frameHom, InfHom.toFun_eq_coe, InfHom.coe_mk]
+      intro a b h
+      rw [← Subtype.coe_le_coe]
+      simp only [Set.val_codRestrict_apply]
+      apply A.monotone h
+
+  .
+    conv =>
+      enter [1, 1]
+      rw [Sublocale.intersection_Open_Neighbourhhood A]
+    rw [sInf_image]
+    rw [biInf_inf]
+    conv =>
+      enter [1, 1, i, 1, h]
+      rw [← Open.preserves_inf]
+    have h1 (i : Open E') : i ⊓ sSup s = ⨆ a : s, i ⊓ a := by
+      ext
+      simp [Open.inf_def, Open.sSup_def]
+      rw [inf_sSup_eq]
+      simp
+      conv =>
+        enter [2, 1]
+        rw [iSup]
+      simp [Open.sSup_def, sSup_image]
+      apply le_antisymm
+      . simp_all only [le_iSup_iff, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂, implies_true]
+      . simp_all only [le_iSup_iff, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂, implies_true]
+    conv =>
+      enter [1, 1, i, 1, h, 1]
+      rw [h1]
+    rw [Sublocale.intersection_Open_Neighbourhhood (iSup _)]
+    simp only [le_sInf_iff, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    intro a h2
+    simp only [iInf_le_iff, le_iInf_iff, OrderDual.forall]
+    intro b h3
+
+
+    have h4 : a ∈ A.Open_Neighbourhood := by
+      simp [Sublocale.Open_Neighbourhood] at h2 ⊢
+
+
+
+
+
+
+
+
+
+
+  . simp only [Open.preserves_sSup, le_inf_iff, iSup_le_iff, inf_le_left, implies_true,
+    Subtype.forall, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, true_and]
+    intro a ha
+    apply le_trans inf_le_right
+    apply le_sSup
+    simp
+    use a-/
+
 
 
 
@@ -373,12 +464,41 @@ lemma Sublocale.Image_regular' [e_regular : Fact (regular E')] (A : Sublocale E'
   . rw [Open.le_iff]
     refine Sublocale.embed_orderiso A u _ ?_
     have h_regular : regular E' := by
-      sorry
+      apply e_regular.elim
     rw [Sublocale.embed_open_eq_inf]
+
     rw [h_regular ⟨_⟩]
-    rw [Sublocale.embed_open_eq_inf]
+    refine Sublocale.restrict_orderiso A _ _ (by simp) (by exact embed_le A (sSup {V | V ≪ u}).toSublocale) ?_
+    rw [← Sublocale.restrict_open_eq_restrict]
+    rw [Sublocale.restrict_embed]
+    simp [← Open.le_iff, Sublocale.restrict_open, Open.le_def, Open.sSup_def]
+    intro a h
     --
-    sorry
+    apply le_sSup
+    simp only [Set.mem_image, Set.mem_setOf_eq]
+    use ⟨A.frameHom a.element⟩
+    simp [well_inside_iff] at h ⊢
+    rcases h with ⟨c, ⟨h1, h2⟩⟩
+    use A.restrict_open c
+    apply And.intro
+    . simp [Sublocale.restrict_open, Open.inf_def, Open.ext_iff]
+      rw [eq_bot_iff] at h1
+      apply_fun A.frameHom.toFun at h1
+      simp at h1
+      rw [← h1]
+      rw [Open.inf_def, map_inf]
+      simp
+      exact OrderHomClass.mono (Nucleus.frameHom A)
+    . simp [Sublocale.restrict_open, Open.sup_def, Open.ext_iff] at h2
+      rw [eq_top_iff] at h2 ⊢
+      apply_fun A.frameHom.toFun at h2
+      simp at h2
+      rw [eq_top_iff] at h2
+      apply le_trans h2
+      simp [Open.sup_def, Sublocale.restrict_open]
+      simp
+      exact OrderHomClass.mono (Nucleus.frameHom A)
+
   . simp
     intro b h
     exact le_of_well_inside _ _ h

@@ -201,11 +201,22 @@ lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E')] (m : @Measure E' _) : �
     simp only [le_sInf_iff, Set.mem_setOf_eq, OrderDual.forall]
     intro a h
     rw [csInf_le_iff]
-    . simp [lowerBounds]
+    . simp only [lowerBounds, Set.mem_image, Set.mem_setOf_eq, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, OrderDual.forall]
 
       intro b h1
-      sorry -- todo vlt epsilon
-    . sorry
+      rw [Sublocale.intersection_Open_Neighbourhhood (OrderDual.toDual a)]
+      simp [Open_Neighbourhood]
+      intro c h2
+      apply h1
+      apply le_antisymm
+      . exact Measure.all_le_top c
+      . rw [← h]
+        rw [← Measure.caratheodory.open_eq_toFun]
+        apply Measure.caratheodory.mono
+        exact h2
+
+    . sorry -- trivial
     . use ⊤
       simp_all only [Set.mem_image, Set.mem_setOf_eq]
       apply Exists.intro
@@ -222,7 +233,9 @@ lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E')] (m : @Measure E' _) : �
 
 lemma μ_Reduction_le_of_top [Fact (regular E')] (m : @Measure E' _) (A : Sublocale E') (h : m.caratheodory A = m.toFun ⊤) :
     μ_Reduction m ≤ A := by
-
+  rw [μ_Reduction_eq_sInf_Sublocale]
+  apply sInf_le
+  . simp [h]
 
 
 
@@ -710,7 +723,46 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
     intro a ha
     --- ....
     have h2 : m.caratheodory (a ⊓ I) = m.caratheodory I := by
-      sorry
+      apply le_antisymm
+      . apply Measure.caratheodory.mono
+        simp
+
+      rw [← hI]
+      rw [inf_iInf]
+      simp
+      conv =>
+        enter [2, 1, 1, x]
+        rw [← Open.preserves_inf]
+      conv =>
+        enter [2]
+        rw [← Function.comp_def]
+        rw [Measure.preserves_iInf _ sorry]
+      apply le_ciInf
+      intro n
+      simp
+      rw [Measure.preserves_iInf]
+      rw [← iInf_V_n'_eq_iInf_V_n]
+      rw [h_iInf_V_n]
+      apply csInf_le
+      . sorry
+      . simp
+        use a ⊓ V_n n
+        simp
+        have h_v_n : V_n n ∈ V_a := by sorry
+
+        simp [V_a, Open_Neighbourhood] at ha h_v_n ⊢
+        rcases ha with ⟨i, ha⟩
+        rcases h_v_n with ⟨j, h_v_n⟩
+        rw [Open.preserves_inf]
+        rw [filtrante_decroissante] at h
+        obtain ⟨l, ⟨h1, h2⟩⟩ := h i j
+        use l
+        apply le_inf
+        . apply le_trans h1 ha
+        . apply le_trans h2 h_v_n
+      . exact V_n_decroissante
+
+
     have test := @embed_measure E _ m _ I (I.restrict (a ⊓ I) (by simp))
     rw [Sublocale.embed_restrict] at test
 
@@ -720,7 +772,6 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
     apply Sublocale.restrict_orderiso I _ _ (by rw [R_μ];exact embed_le I (μ_Reduction (restrict_sublocale_measure I m))) (by simp)
     simp_rw [R_μ]
     rw [Sublocale.restrict_embed]
-    -- TODO ≥ mu reduction wenn top als extra lemma
     have h : Fact (regular (Image I)) := by
       sorry -- Sublocale.Image_regular
 
@@ -935,6 +986,10 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
     rw [add_eq_add_iff_eq_and_eq] <;> simp [Measure.caratheodory, sInf_image']
 
   . exact add_left_injective (caratheodory (A ⊓ B))
+
+/-
+theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
+  m.caratheodory (A ⊔ B) = m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B) := by -/
 
 lemma Beispiel : False := by sorry
 
