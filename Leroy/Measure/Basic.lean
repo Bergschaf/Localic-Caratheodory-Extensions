@@ -4,35 +4,14 @@ import Mathlib.Algebra.Order.Group.CompleteLattice
 -----
 variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [PartialOrder ι] [Nonempty ι]
 
---- Ist increasing oder increasingly filtered stärker?
-
 def increasingly_filtered {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
   ∀ U ∈ s, ∀ V ∈ s, ∃ W ∈ s, U ≤ W ∧ V ≤ W
 
-def increasing {Z : Type*} [PartialOrder Z] (s : Set Z) : Prop :=
-  ∀ U ∈ s, ∃ V ∈ s, U ≤ V
-
-def increasing'{Z : Type*} [PartialOrder Z] (f : ℕ → Z) : Prop :=
-  ∀ n, f n ≤ f (n + 1)
-
-
-lemma increasing'' {Z : Type*} [PartialOrder Z] (f : ℕ → Z) :∀ n m, increasing' f →  n ≤ m → f n ≤ f m := by
-  intro n m h1 h2
-  rw [increasing'] at h1
-  induction m with
-  | zero =>
-    simp at h2
-    rw [h2]
-  | succ m ih =>
-    by_cases hC : n = m + 1
-    . rw [hC]
-    . have h3 : n ≤ m := by
-        omega
-      apply le_trans (ih h3)
-      exact h1 m
+def decreasingly_filtered (V : ι → Sublocale E) : Prop :=
+  ∀ n m : ι, ∃ l, V l ≤ V n ∧ V l ≤ V m
 
 structure Measure where
-  toFun : (Open X) → NNReal --
+  toFun : (Open X) → NNReal
   empty : toFun ⊥ = 0
   mono : ∀ (U V : Open X), U ≤ V → toFun U ≤ toFun V
   strictly_additive (U V : Open X) : toFun (U ⊔ V) = toFun U + toFun V - toFun (U ⊓ V)
@@ -59,7 +38,6 @@ lemma strictly_additive'' (U V : Open E) : m.toFun U + m.toFun V = m.toFun (U �
   . exact sub_left_injective
 
 
-
 lemma strictly_additive' (U V : Open E) : m.toFun (U ⊓ V) = m.toFun U + m.toFun V - m.toFun (U ⊔ V) := by
   apply_fun NNReal.toReal
   . rw [NNReal.coe_sub]
@@ -73,7 +51,7 @@ lemma strictly_additive' (U V : Open E) : m.toFun (U ⊓ V) = m.toFun U + m.toFu
       simp
   . exact NNReal.coe_injective
 
-lemma iSup_filtered : ∀ (f : ι → Open E), increasingly_filtered (Set.range f) → m.toFun (iSup f) = iSup (m.toFun ∘ f) := by
+lemma iSup_filtered {ι : Type*} : ∀ (f : ι → Open E), increasingly_filtered (Set.range f) → m.toFun (iSup f) = iSup (m.toFun ∘ f) := by
   intro f h
   repeat rw [iSup]
   rw [m.filtered (Set.range f) h]
@@ -208,7 +186,7 @@ def Rpos := {r : NNReal // 0 < r}
 Leroy Lemme 1
 -> Magie
 -/
-lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : increasing' X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
+lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Sublocale X) (h : Monotone X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   apply le_antisymm
   .
     have h0 : ∀ ε > 0, m.caratheodory (iSup X_n) ≤ iSup (m.caratheodory ∘ X_n) + ε := by
@@ -342,7 +320,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
                 . let h2 := V_n_le_W_n n
                   rw [Open.le_iff] at h2
                   apply le_trans' h2 (X_n_le_V_n n)
-                . apply le_trans (h (n)) -- Hier wird increasing benutzt
+                . apply le_trans (h (show n ≤ n + 1 by norm_num)) -- Hier wird Monotone benutzt
                   exact X_n_le_V_n (n + 1)
 
             apply_fun NNReal.toReal at h2
@@ -412,18 +390,17 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
         conv =>
           enter [2, 1, i]
           rw [Measure.caratheodory.open_eq_toFun]
-        have h_filtered : increasingly_filtered (Set.range W_n) := by -- geht das auch anders??
+        have h_filtered : increasingly_filtered (Set.range W_n) := by
           simp [increasingly_filtered]
           intro i j
           use i + j
-          refine ⟨?_, ?_⟩
-          <;>have h_increasing' : increasing' W_n := by
-            simp only [increasing', Set.mem_setOf_eq, le_iSup_iff, iSup_le_iff, W_n, V_n, ε_n]
+          have h_mono : Monotone W_n := by
+            simp only [Monotone, Set.mem_setOf_eq, le_iSup_iff, iSup_le_iff, W_n, V_n, ε_n]
             intro n b h
             intro m h2
-            apply h m (by exact Nat.le_add_right_of_le h2)
-          . apply increasing'' W_n i (i + j) h_increasing' (by simp)
-          . apply increasing'' W_n j (i + j) h_increasing' (by simp)
+            intro i hn
+            apply h2 i (le_trans hn h)
+          refine ⟨?_, ?_⟩ <;> exact h_mono (by norm_num)
 
         let h := m.iSup_filtered W_n h_filtered
         rw [Function.comp_def] at h
