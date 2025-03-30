@@ -1,11 +1,6 @@
-import Mathlib.Data.Real.Basic
-import Leroy.Further_Topology
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Leroy.Measure.Aux
 import Mathlib.Algebra.Order.Group.CompleteLattice
-import Mathlib.Algebra.GeomSum
-import Mathlib.Data.Complex.Exponential
+
 -----
 variable {X Y E ι : Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E] [PartialOrder ι] [Nonempty ι]
 
