@@ -1,20 +1,15 @@
 import Leroy.Measure.Regular
 import Leroy.Measure.Restrict
 
-variable {E : Type*} [e_frm : Order.Frame E] [e_regular : Fact (regular E)]
-
-section
-variable {E' : Type*} [Order.Frame E']
-
-variable {m : @Measure E' _}
-
 open Sublocale
 
+section
+variable {E : Type*} [Order.Frame E] {m : @Measure E _}
 
-def e_μ (m : @Measure E' _) (u : E') : E' :=
-  (sSup {w : Open E' | u ≤ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
+def e_μ (m : @Measure E _) (u : E) : E :=
+  (sSup {w : Open E | u ≤ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
 
-lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
+lemma e_μ_Measure_eq (m : @Measure E _) (u : E) : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
   simp [e_μ, Open.sSup_def]
   rw [← Open.sSup_def]
   rw [Measure.filtered]
@@ -73,7 +68,7 @@ lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.
         . simp [Open.le_def]
 
 
-lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ e_μ m x := by
+lemma e_μ_idempotent (m : @Measure E _) : ∀ (x : E), e_μ m (e_μ m x) ≤ e_μ m x := by
   intro x
   simp only [e_μ, Open.sSup_def, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
     and_imp]
@@ -92,19 +87,19 @@ lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ 
     · simp_all only [le_refl]
     · simp_all only
   rw [d]
-  let h := @e_μ_Measure_eq E' _ m x
+  let h := @e_μ_Measure_eq E _ m x
   simp [e_μ] at h
   exact h
 
 
-lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
+lemma e_μ_le_apply (m : @Measure E _) : ∀ (x : E), x ≤ e_μ m x := by
   intro x
   simp [e_μ, Open.sSup_def]
   apply le_sSup
   simp
   use ⟨x⟩
 
-lemma e_μ_mono (m : @Measure E' _) (x y : E') : x ≤ y → e_μ m x ≤ e_μ m y := by
+lemma e_μ_mono (m : @Measure E _) (x y : E) : x ≤ y → e_μ m x ≤ e_μ m y := by
   intro h
   conv =>
     enter [2]
@@ -141,11 +136,7 @@ lemma e_μ_mono (m : @Measure E' _) (x y : E') : x ≤ y → e_μ m x ≤ e_μ m
   . simp
 
 
-
-
-
-
-lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ m x ⊓ e_μ m y := by
+lemma e_μ_map_inf (m : @Measure E _) : ∀ (x y : E), e_μ m (x ⊓ y) = e_μ m x ⊓ e_μ m y := by
   intro x y
 
   apply le_antisymm
@@ -206,14 +197,14 @@ lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ
         . exact h5
 
 
-def μ_Reduction (m : @Measure E' _) : Sublocale E' where
+def μ_Reduction (m : @Measure E _) : Sublocale E where
   toFun := e_μ m
   idempotent' x := e_μ_idempotent m x
   le_apply' x := e_μ_le_apply m x
   map_inf' x y := e_μ_map_inf m x y
 
 
-lemma Measure.μ_Reduction_le_if (m : @Measure E' _) (U : Sublocale E') : (∀ i, m.toFun ⟨U i⟩ = m.toFun ⟨i⟩) → μ_Reduction m ≤ U := by
+lemma Measure.μ_Reduction_le_if (m : @Measure E _) (U : Sublocale E) : (∀ i, m.toFun ⟨U i⟩ = m.toFun ⟨i⟩) → μ_Reduction m ≤ U := by
   intro h i
   simp [μ_Reduction, e_μ, Open.sSup_def]
   apply le_sSup
@@ -222,11 +213,11 @@ lemma Measure.μ_Reduction_le_if (m : @Measure E' _) (U : Sublocale E') : (∀ i
   simp_all [U.le_apply, h]
 
 
-lemma Measure_Neighbourhood_μ_eq_top (m : @Measure E' _) : ∀ V ∈ Open_Neighbourhood (μ_Reduction m), m.toFun V = m.toFun ⊤ := by
+lemma Measure_Neighbourhood_μ_eq_top (m : @Measure E _) : ∀ V ∈ Open_Neighbourhood (μ_Reduction m), m.toFun V = m.toFun ⊤ := by
   intro V h
   apply le_antisymm
   . simp [Measure.mono]
-  have h : ∀ W : E', V.toSublocale W ≤ μ_Reduction m W := by
+  have h : ∀ W : E, V.toSublocale W ≤ μ_Reduction m W := by
     simp [Open_Neighbourhood, Sublocale.le_iff, μ_Reduction] at h
     rw [Nucleus.coe_mk, InfHom.coe_mk] at h
     simp
@@ -240,11 +231,7 @@ lemma Measure_Neighbourhood_μ_eq_top (m : @Measure E' _) : ∀ V ∈ Open_Neigh
   rw [← h2]
   rw [← Open.top_element]
 
-
-
-
-
-lemma Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reduction m) = m.toFun ⊤ := by
+lemma Measure_μ_Reduction_eq_top (m : @Measure E _) : m.caratheodory (μ_Reduction m) = m.toFun ⊤ := by
   apply le_antisymm
   . apply Measure.caratheodory.le_top_toFun
   simp [Measure.caratheodory]
@@ -257,8 +244,7 @@ lemma Measure_μ_Reduction_eq_top (m : @Measure E' _) : m.caratheodory (μ_Reduc
   intro a h
   apply le_of_eq (Measure_Neighbourhood_μ_eq_top m a h).symm
 
-
-lemma μ_Reduction_eq_sInf [Fact (regular E')] (m : @Measure E' _) : μ_Reduction m = sInf (Open.toSublocale '' {w : Open E' | m.toFun w = m.toFun ⊤}) := by
+lemma μ_Reduction_eq_sInf [Fact (regular E)] (m : @Measure E _) : μ_Reduction m = sInf (Open.toSublocale '' {w : Open E | m.toFun w = m.toFun ⊤}) := by
   rw [Sublocale.intersection_Open_Neighbourhhood (μ_Reduction _)]
   apply le_antisymm
   . simp only [le_sInf_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index, and_imp,
@@ -270,7 +256,7 @@ lemma μ_Reduction_eq_sInf [Fact (regular E')] (m : @Measure E' _) : μ_Reductio
     use a
     simp only [Open_Neighbourhood, Set.mem_setOf_eq, and_true]
     ---
-    have h1 : ∀ H : Open E', m.toFun (a ⊓ H) = m.toFun H := by
+    have h1 : ∀ H : Open E, m.toFun (a ⊓ H) = m.toFun H := by
       intro H
       have h2 : m.toFun (a ⊓ H) = m.toFun a + m.toFun H - m.toFun (a ⊔ H) := by
         exact Measure.strictly_additive' a H
@@ -307,7 +293,7 @@ lemma μ_Reduction_eq_sInf [Fact (regular E')] (m : @Measure E' _) : μ_Reductio
     simp only [and_true]
     exact Measure_Neighbourhood_μ_eq_top m a h
 
-lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E')] (m : @Measure E' _) : μ_Reduction m = sInf ({w : Sublocale E' | m.caratheodory w = m.toFun ⊤}) := by
+lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E)] (m : @Measure E _) : μ_Reduction m = sInf ({w : Sublocale E | m.caratheodory w = m.toFun ⊤}) := by
   apply le_antisymm
   . rw [μ_Reduction_eq_sInf]
 
@@ -336,15 +322,13 @@ lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E')] (m : @Measure E' _) : �
       · apply And.intro
         · rfl
         · simp_all only [Open.top_toSublocale]
-
-
   . apply csInf_le
     . exact OrderBot.bddBelow {w | Measure.caratheodory w = m.toFun ⊤}
     . simp
       apply Measure_μ_Reduction_eq_top
 
 
-lemma μ_Reduction_le_of_top [Fact (regular E')] (m : @Measure E' _) (A : Sublocale E') (h : m.caratheodory A = m.toFun ⊤) :
+lemma μ_Reduction_le_of_top [Fact (regular E)] (m : @Measure E _) (A : Sublocale E) (h : m.caratheodory A = m.toFun ⊤) :
     μ_Reduction m ≤ A := by
   rw [μ_Reduction_eq_sInf_Sublocale]
   apply sInf_le
@@ -352,13 +336,12 @@ lemma μ_Reduction_le_of_top [Fact (regular E')] (m : @Measure E' _) (A : Subloc
 
 
 
-
-variable [Fact (regular E')]
-lemma embed_measure_open (A : Sublocale E') (b : Open (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).toFun b := by
+variable [Fact (regular E)]
+lemma embed_measure_open (A : Sublocale E) (b : Open (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).toFun b := by
   simp [Measure.restrict_sublocale_measure,Measure.restrict_sublocale]
 
 
-lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
+lemma embed_measure (A : Sublocale E) (b : Sublocale (Image A)) : m.caratheodory (A.embed b) = (m.restrict_sublocale_measure A).caratheodory b := by
   apply le_antisymm
   . simp [Measure.restrict_sublocale_measure, Measure.caratheodory, Measure.restrict_sublocale]
 
@@ -428,9 +411,9 @@ lemma embed_measure (A : Sublocale E') (b : Sublocale (Image A)) : m.caratheodor
       . simp
 
 
-noncomputable def R_μ (A : Sublocale E') : Sublocale E' := A.embed (μ_Reduction (m.restrict_sublocale_measure A))
+noncomputable def R_μ (A : Sublocale E) : Sublocale E := A.embed (μ_Reduction (m.restrict_sublocale_measure A))
 
-lemma μ_R_μ_eq (A : Sublocale E') : m.caratheodory A = m.caratheodory (@R_μ _ _ m _ A) := by
+lemma μ_R_μ_eq (A : Sublocale E) : m.caratheodory A = m.caratheodory (@R_μ _ _ m _ A) := by
   rw [R_μ]
   rw [embed_measure]
   rw [Measure_μ_Reduction_eq_top]
@@ -439,32 +422,15 @@ lemma μ_R_μ_eq (A : Sublocale E') : m.caratheodory A = m.caratheodory (@R_μ _
   rw [Open.top_toSublocale]
   rw [embed_top]
 
-
 end
 
 variable {ι : Type*} [PartialOrder ι] [Nonempty ι]
-
-
-def decroissante' (V : ι → Open E) : Prop :=
-  ∀ i j : ι, i ≤ j → V j ≤ V i
-
-def decroissante (V : Set (Open E)) : Prop :=
-  decroissante' (fun (x : V) ↦ x.val)
-
-
-def filtrante_decroissante (V : ι → Sublocale E) : Prop :=
-  ∀ n m : ι, ∃ l, V l ≤ V n ∧ V l ≤ V m
-
-def filtrante_decroissante' (s : Set (Sublocale E)) : Prop :=
-  ∀ n ∈ s, ∀ m ∈ s, ∃ l ∈ s, l ≤ n ∧ l ≤ m
-
-open Sublocale
-variable {m : @Measure E _}
+variable {E : Type*} [Order.Frame E] [Fact (regular E)] {m : @Measure E _}
 
 /--
 Leroy Lemma 6
 -/
-lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
+lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : Antitone V_n) :
     m.caratheodory (iInf (Open.toSublocale ∘ V_n)) = iInf (m.toFun ∘ V_n) := by
   let I :=  (iInf (Open.toSublocale ∘ V_n))
 
@@ -525,14 +491,15 @@ lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : decroissante' V_n) :
       rw [le_csSup_iff]
       . simp [upperBounds]
         intro b h2
-        have h : increasing' F_n := by
-          simp [increasing, F_n]
-          intro a
-          simp [decroissante'] at h
+        have h : Monotone F_n := by
+          simp [Monotone, F_n]
+          intro a b h1
+          simp [Antitone] at h
           rw [← Closed.le_iff]
           rw [Closed.le_def]
-          simp
-          exact h _ _ (Nat.le_add_right _ _)
+          simp [← Open.le_def]
+          exact h h1
+
         rw [sSup_range]
         rw [Measure.caratheodory.preserves_sup']
         apply ciSup_le
@@ -622,7 +589,7 @@ def rec' (seq : ℕ → Open E)
   | Nat.succ n => seq (n + 1) ⊓ (rec' seq n)
 
 /-- Leroy lemme 7-/
-lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι → Sublocale E)  (h : filtrante_decroissante A_i) :
+lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι → Sublocale E)  (h : decreasingly_filtered A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
 
   apply le_antisymm
@@ -711,10 +678,8 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
   simp at hu3
   let V_n' (n : ℕ) := Classical.choose (hu3 n)
   let V_n := rec' (fun n ↦ Classical.choose (hu3 n))
-
-
-  have V_n_decroissante : decroissante' V_n := by
-    simp [decroissante']
+  have V_n_decroissante : Antitone V_n := by
+    simp [Antitone]
     intro i j hij
     induction j with
     | zero =>
@@ -858,8 +823,8 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       conv =>
         enter [2, 1, 1, x]
         rw [← Open.preserves_inf]
-      have h_decroissante : decroissante' fun x => a ⊓ V_n x := by
-          simp [decroissante']
+      have h_decroissante : Antitone fun x => a ⊓ V_n x := by
+          simp [Antitone]
           intro i j h
           apply le_trans inf_le_right
           apply V_n_decroissante
@@ -904,7 +869,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
         rcases ha with ⟨i, ha⟩
         rcases h_v_n with ⟨j, h_v_n⟩
         rw [Open.preserves_inf]
-        rw [filtrante_decroissante] at h
+        rw [decreasingly_filtered] at h
         obtain ⟨l, ⟨h1, h2⟩⟩ := h i j
         use l
         apply le_inf
@@ -1021,7 +986,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             simp [Open.preserves_inf]
             exact ⟨(by exact inf_le_of_left_le ha2),(by exact inf_le_of_right_le hb2)⟩
 
-      . simp only [filtrante_decroissante, le_inf_iff, Prod.exists, Subtype.exists, exists_and_left,
+      . simp only [decreasingly_filtered, le_inf_iff, Prod.exists, Subtype.exists, exists_and_left,
         exists_prop, OrderDual.exists, Prod.forall, Subtype.forall, OrderDual.forall]
         intro a1 h1 a2 h2 a3 h3 a4 h4
         use a1 ⊔ a3
