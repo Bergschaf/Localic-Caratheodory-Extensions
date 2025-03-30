@@ -711,7 +711,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       intro e he he1
       ----
       rw [@Metric.tendsto_atTop] at hu2
-      obtain ⟨n ,hn ⟩ := hu2 e.toReal (by rw [ENNReal.toReal, ENNReal.toNNReal, WithTop.untop', WithTop.recTopCoe.eq_def];simp; cases e; simp; contradiction; simp; exact ENNReal.coe_pos.mp he)
+      obtain ⟨n ,hn ⟩ := hu2 e.toReal (by rw [ENNReal.toReal, ENNReal.toNNReal, WithTop.untopD, WithTop.recTopCoe.eq_def];simp; cases e; simp; contradiction; simp; exact ENNReal.coe_pos.mp he)
       use n
       intro n1 hn1
       let hn := hn n1 hn1
