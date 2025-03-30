@@ -121,9 +121,19 @@ lemma e_μ_mono (m : @Measure E' _) (x y : E') : x ≤ y → e_μ m x ≤ e_μ m
     rw [Measure.strictly_additive]
     rw [e_μ_Measure_eq]
     have h5 : m.toFun ({ element := y } ⊓ { element := e_μ m x }) = m.toFun ⟨x⟩ := by
-      sorry
-
-
+      apply le_antisymm
+      . rw [Measure.strictly_additive']
+        rw [← e_μ_Measure_eq m x]
+        simp only [tsub_le_iff_right]
+        rw [add_comm]
+        simp only [add_le_add_iff_left]
+        apply Measure.mono
+        . simp
+      . apply Measure.mono
+        simp
+        apply And.intro
+        . exact h
+        . apply e_μ_le_apply
 
     rw [h5]
     simp
@@ -1135,5 +1145,6 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
 lemma Beispiel : False := by sorry
 
 #print axioms Beispiel
+
 
 #print axioms Measure.caratheodory.strictly_additive
