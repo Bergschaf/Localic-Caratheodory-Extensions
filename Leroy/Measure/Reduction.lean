@@ -113,6 +113,22 @@ lemma e_μ_mono (m : @Measure E' _) (x y : E') : x ≤ y → e_μ m x ≤ e_μ m
     forall_exists_index, and_imp]
   intro c h3
   let h4 := @h3 (y ⊔ (e_μ m x)) ⟨(y ⊔ (e_μ m x))⟩
+  apply le_trans (@le_sup_left  _ _ _ y)
+  rw [sup_comm]
+  apply h4
+  . simp
+  . rw [← Open.sup_def]
+    rw [Measure.strictly_additive]
+    rw [e_μ_Measure_eq]
+    have h5 : m.toFun ({ element := y } ⊓ { element := e_μ m x }) = m.toFun ⟨x⟩ := by
+      sorry
+
+
+
+    rw [h5]
+    simp
+
+  . simp
 
 
 
