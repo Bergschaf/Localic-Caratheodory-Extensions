@@ -104,15 +104,32 @@ lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
   simp
   use ⟨x⟩
 
+lemma e_μ_mono (m : @Measure E' _) (x y : E') : x ≤ y → e_μ m x ≤ e_μ m y := by
+  intro h
+  conv =>
+    enter [2]
+    simp [e_μ]
+  simp only [Open.sSup_def, le_sSup_iff, upperBounds, Set.mem_image, Set.mem_setOf_eq,
+    forall_exists_index, and_imp]
+  intro c h3
+  let h4 := @h3 (y ⊔ (e_μ m x)) ⟨(y ⊔ (e_μ m x))⟩
+
+
+
+
+
+
 lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ m x ⊓ e_μ m y := by
   intro x y
 
   apply le_antisymm
-  . simp [-le_inf_iff, e_μ, Open.sSup_def,-sSup_le_iff]
-    rw [sSup_inf_sSup]
-    sorry
-
-
+  .
+    refine le_inf_iff.mpr ?_
+    apply And.intro
+    . apply e_μ_mono
+      simp
+    . apply e_μ_mono
+      simp
 
   . simp only [e_μ, ge_iff_le, Open.sSup_def, le_inf_iff]
     rw [sSup_inf_sSup]
