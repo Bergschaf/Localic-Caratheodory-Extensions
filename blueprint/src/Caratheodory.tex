@@ -100,7 +100,7 @@
 \begin{lemma}[Caratheodory Extensions are monotonic]
     \label{lem:monotonic}
     \uses{def:measure_on_locals,def:caratheodory}
-    \lean{Measure.caratheodory.monotonic}
+    \lean{Measure.caratheodory.mono}
     \leanok
     The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
 \end{lemma}
@@ -172,7 +172,7 @@
     The Restriction of a Measure to any open Sublocal is a Measure.
     \label{lem:restriction}
     \uses{def:measure_on_locals}
-    \lean{Measure.restrict_measure}
+    \lean{Measure.restrict_sublocale_measure}
     \leanok
 \end{lemma}
 \begin{proof}
@@ -256,7 +256,7 @@
 \begin{proposition}[reductive]
     \leanok
     \label{prop:reductive}  (Proposition 3.3.1)
-    \uses{def:sublocal, prop:elementary_properties_of_caratheodory_extensions,lem:regularity_of_sublocals,lem:restriction_to_sublocale}
+    \uses{def:sublocal,lem:regularity_of_sublocals,lem:restriction_to_sublocale}
     For any measure on a local $X$, the caratheodory extension is
     reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
 \end{proposition}
@@ -270,7 +270,7 @@
 (Leroy Lemme 3.6)
     \label{lem:commutes_with_inf_opens}
     \uses{lem:measure_add_compl_eq_top,lem:nucleus_frame}
-    \lean{Measure.caratheodory.preserves_sInf}
+    \lean{Measure.caratheodordy.preserves_iInf}
     \leanok
     For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
 \end{lemma}
@@ -282,7 +282,7 @@
 (Leroy lemme 3.7 et principal)
     \leanok
     \label{prop:commutes_with_inf}
-    \uses{prop:reductive,lem:commutes_with_inf_opens,lem:regularity_of_sublocals,prop:elementary_properties_of_caratheodory_extensions}
+    \uses{prop:reductive,lem:commutes_with_inf_opens,lem:regularity_of_sublocals}
     For any measure on a local $X$, the caratheodory extension is
     regular $\mu (\inf A_i) = \inf \mu(A_i)$. For decreasing families $A_i$
 \end{proposition}
