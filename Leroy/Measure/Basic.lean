@@ -51,12 +51,17 @@ namespace Measure
 
 lemma strictly_additive'' (U V : Open E) : m.toFun U + m.toFun V = m.toFun (U ⊓ V) + m.toFun (U ⊔ V) := by
   rw [m.strictly_additive]
-  have h1 : (m.toFun U + m.toFun V - m.toFun (U ⊓ V)) = (m.toFun U + (m.toFun V - m.toFun (U ⊓ V))) := by
-    sorry
-  rw [h1]
-  rw [← add_assoc]
-  ring
-  sorry
+  rw [NNReal.sub_def]
+  rw [Subtype.ext_iff]
+  simp
+  apply_fun (. - ↑(m.toFun (U ⊓ V)))
+  simp only [add_sub_cancel_left, left_eq_sup, sub_nonneg]
+  . have h1 : ↑(m.toFun U) ≤   ↑(m.toFun U) + ↑(m.toFun V) := by
+      simp
+    apply le_trans' h1
+    apply Measure.mono
+    simp
+  . exact sub_left_injective
 
 
 

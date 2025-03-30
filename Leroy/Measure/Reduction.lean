@@ -14,7 +14,7 @@ open Sublocale
 def e_μ (m : @Measure E' _) (u : E') : E' :=
   (sSup {w : Open E' | u ≤ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
 
-/--lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
+lemma e_μ_Measure_eq (m : @Measure E' _) (u : E') : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
   simp [e_μ, Open.sSup_def]
   rw [← Open.sSup_def]
   rw [Measure.filtered]
@@ -43,24 +43,35 @@ def e_μ (m : @Measure E' _) (u : E') : E' :=
     simp [Set.Nonempty]
     use m.toFun ⟨u⟩
     use ⟨u⟩
-  . simp only [increasingly_filtered, Set.mem_setOf_eq, and_imp]
-    intro v h1 h2 w h4 h5
+  . rw [increasingly_filtered]
+    simp_all only [Set.mem_setOf_eq, and_imp]
+    intro a h1 h2 b h3 h4
+    use a ⊔ b
+    . simp [Open.sup_def]
+      apply And.intro
+      apply And.intro
+      · apply le_trans h1 le_sup_left
+      . apply le_antisymm
+        . rw [← Open.sup_def]
+          rw [Measure.strictly_additive]
+          rw [h2, h4]
+          have h5 : m.toFun ⟨u⟩ ≤ m.toFun (a ⊓ b) := by
+            apply Measure.mono
+            simp [Open.le_def, h1, h3]
+          simp [NNReal.sub_def, Real.toNNReal]
 
-    use w ⊔ v
-    simp [le_refl, and_self, true_and]
-    simp_all [Open.sup_def]
-    sorry
-    apply And.intro
-    · simp_all [Open.sup_def]
-    · apply le_antisymm
-      . apply Measure.mono
-        simp_all only [sup_le_iff]
-        apply And.intro
-        · exact h4
-        · exact h1
-      . rw [← h5]
-        apply Measure.mono
-        exact le_sup_left-/
+          rw [← Subtype.coe_le_coe]
+          simp only [NNReal.val_eq_coe, sup_le_iff, tsub_le_iff_right, add_le_add_iff_left,
+            NNReal.coe_le_coe, NNReal.zero_le_coe, and_true]
+          exact h5
+
+        . apply Measure.mono
+          simp [Open.le_def]
+          apply le_trans h1 le_sup_left
+      . apply And.intro
+        . simp [Open.le_def]
+        . simp [Open.le_def]
+
 
 lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ e_μ m x := by
   intro x
@@ -81,8 +92,9 @@ lemma e_μ_idempotent (m : @Measure E' _) : ∀ (x : E'), e_μ m (e_μ m x) ≤ 
     · simp_all only [le_refl]
     · simp_all only
   rw [d]
-  rw [← Open.sSup_def]
-  sorry
+  let h := @e_μ_Measure_eq E' _ m x
+  simp [e_μ] at h
+  exact h
 
 
 lemma e_μ_le_apply (m : @Measure E' _) : ∀ (x : E'), x ≤ e_μ m x := by
@@ -96,8 +108,16 @@ lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ
   intro x y
 
   apply le_antisymm
-  . sorry
-
+  . simp only [e_μ, Open.sSup_def, le_inf_iff, sSup_le_iff, Set.mem_image, Set.mem_setOf_eq,
+    forall_exists_index, and_imp]
+    apply And.intro
+    . intro b c h1 h2 h3
+      subst h3
+      simp only [le_sSup_iff, upperBounds, Set.mem_image, Set.mem_setOf_eq, forall_exists_index,
+        and_imp]
+      intro b h3
+      sorry
+    . sorry
   . simp only [e_μ, ge_iff_le, Open.sSup_def, le_inf_iff]
     rw [sSup_inf_sSup]
     simp only [Set.mem_prod, Set.mem_image, Set.mem_setOf_eq, le_sSup_iff, upperBounds,
@@ -111,7 +131,8 @@ lemma e_μ_map_inf (m : @Measure E' _) : ∀ (x y : E'), e_μ m (x ⊓ y) = e_μ
     . exact inf_le_of_right_le h5
     . rw [← Open.inf_def]
       apply le_antisymm
-      . sorry
+      . rw [Measure.strictly_additive']
+        sorry -- stimmt
       . apply Measure.mono
         simp [← Open.inf_def]
         sorry -- stimmt
@@ -773,7 +794,8 @@ lemma Measure.caratheodordy.preserves_iInf (A_i : ι → Sublocale E)  (h : filt
     simp_rw [R_μ]
     rw [Sublocale.restrict_embed]
     have h : Fact (regular (Image I)) := by
-      sorry -- Sublocale.Image_regular
+      refine { out := ?_ }
+      exact Image_regular' I
 
     apply μ_Reduction_le_of_top
     rw [← test]
