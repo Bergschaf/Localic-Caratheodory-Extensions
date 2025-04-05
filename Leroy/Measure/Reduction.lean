@@ -1103,7 +1103,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
 
   . exact add_left_injective (caratheodory (A ⊓ B))
 
-/-
+
 theorem Beispiel (A B : Sublocale E) :
     m.caratheodory (A ⊔ B) = m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B) := by
   sorry
@@ -1111,4 +1111,5 @@ theorem Beispiel (A B : Sublocale E) :
 #print axioms Beispiel
 
 
-#print axioms Measure.caratheodory.strictly_additive-/
+
+#print axioms Measure.caratheodory.strictly_additive
