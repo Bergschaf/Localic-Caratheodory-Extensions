@@ -81,8 +81,8 @@
     \leanok
     \label{def:caratheodory}
     \uses{def:measure_on_locals}
-    For any measure on a local $X$, the caratheodory extension is:
-    \[\mu(A) = \inf \{\mu(U) | A \subset U \in O(X)\}\]
+    For any measure $\mu$ on a local $X$, the caratheodory extension is:
+    \[\mu(A) = \inf \{\mu(U) | A \subset U \in O(X)\},~A\in X\]
 \end{definition}
 
 \begin{lemma}[Proptery 0 (Commutes with sup)]
@@ -102,7 +102,7 @@
     \uses{def:measure_on_locals,def:caratheodory}
     \lean{Measure.caratheodory.mono}
     \leanok
-    The caratheodory extension is monotonic i.e. \[A \le B \implies \mu (A) \le \mu (B)\]
+    The caratheodory extension is monotonic i.e. \[A \le B \implies \mu(A) \le \mu(B)\]
 \end{lemma}
 \begin{proof}
     \leanok
@@ -114,7 +114,7 @@
     \uses{def:measure_on_locals,lem:monotonic}
     \lean{Measure.caratheodory.subadditive}
     The Caratheodory extension is subaddtive:
-    $$\mu(A \cup B) \le \mu(A) + \mu(b)$$
+    $$\mu(A \cup B) \le \mu(A) + \mu(B)$$
     \leanok
 \end{lemma}
 \begin{proof}
@@ -246,7 +246,7 @@
     \leanok
     \lean{Measure.caratheodory.strictly_additive}
     For any measure on a local $X$, the caratheodory extension is
-    strictly additive i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$
+    strictly additive, i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$.
 \end{proposition}
 \begin{proof}
     \leanok
@@ -258,7 +258,7 @@
     \label{prop:reductive}  (Proposition 3.3.1)
     \uses{def:sublocal,lem:regularity_of_sublocals,lem:restriction_to_sublocale}
     For any measure on a local $X$, the caratheodory extension is
-    reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
+    reductive, i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element.
 \end{proposition}
 \begin{proof}
     \leanok
@@ -272,7 +272,7 @@
     \uses{lem:measure_add_compl_eq_top,lem:nucleus_frame}
     \lean{Measure.caratheodordy.preserves_iInf}
     \leanok
-    For any measure on a local $X$ and a decreasing family $V_i$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf V_i) = \inf \mu(V_i)$.
+For any measure on a local $X$ and a decreasing family $(V_i)_{i\in I}$ of open sublocals, the caratheodory extension fulfills: $\mu (\inf_{i\in I} V_i) = \inf_{i\in I} \mu(V_i)$.
 \end{lemma}
 \begin{proof}
     \leanok
@@ -284,7 +284,7 @@
     \label{prop:commutes_with_inf}
     \uses{prop:reductive,lem:commutes_with_inf_opens,lem:regularity_of_sublocals}
     For any measure on a local $X$, the caratheodory extension is
-    regular $\mu (\inf A_i) = \inf \mu(A_i)$. For decreasing families $A_i$
+    regular $\mu (\inf_{i\in I} A_i) = \inf{i\in I} \mu(A_i)$. For decreasing families $(A_i)_{i\in I}$
 \end{proposition}
 \begin{proof}
     \leanok
@@ -296,9 +296,9 @@
     \uses{prop:strictly_additive,prop:commutes_with_inf,prop:reductive}
     For any measure on a local $X$, the caratheodory extension is
     \begin{enumerate}
-        \item strictly additive i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$
-        \item commutes with inf $\mu (\inf A_i) = \inf \mu(A_i)$
-        \item reductive i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element
+        \item strictly additiv, i.e. $\mu (A \cup B) = \mu(A) + \mu(B) - \mu(A \cap B)$ for all $A,B\in X$,
+        \item commutes with inf $\mu (\inf_{i\in\mathbb{N}} A_i) = \inf_{i\in\mathbb{N}} \mu(A_i)$ for a familiy $(A_i)_{i\in\mathbb{N}}$ of elements $A_i\in X$,
+        \item reductive, i.e. for all $A \le X$ the set $\{A' \subset A, \mu(A') = \mu(A)\}$ has a minimal element.
     \end{enumerate}
 \end{theorem}
 \begin{proof}
