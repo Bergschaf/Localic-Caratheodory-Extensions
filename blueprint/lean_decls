@@ -3,6 +3,7 @@ Nucleus
 Nucleus.frameHom
 Nucleus.instPartialOrder
 Nucleus.instCompleteSemilatticeInf
+image_frame
 Sublocale.le_iff
 Sublocale.sSup_apply
 Sublocale.inf_apply
