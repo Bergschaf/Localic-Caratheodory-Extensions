@@ -464,31 +464,9 @@ lemma f_untenstern_eq_val (n : Nucleus E) : (f_untenstern n.frameHom) = Subtype.
   exact GaloisConnection.u_unique n.gc n.gc' (by simp)
 
 
-/-
-def Nucleus.eq_f_obenstern_f_untenstern (n : Nucleus E) : n = ((f_obenstern n.frameHom) ⋙ (f_untenstern n.frameHom)).obj := by
-  ext x
-  simp only [f_obenstern, frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk, f_untenstern,
-    Functor.comp_obj]
-  apply le_antisymm
-  . apply le_sSup
-    simp only [Set.mem_setOf_eq]
-    have h : ∀ a b : (Image n), (a : E) ≤ (b : E) → a ≤ b := by
-      simp only [Subtype.coe_le_coe, imp_self, implies_true]
-    apply h
-    simp only [Set.val_codRestrict_apply]
-    rw [Nucleus.idempotent]
 
-  . apply sSup_le
-    simp
-    intro b h
-    apply_fun (fun (x : Image n) ↦ (x : E)) at h
-    simp at h
-    have h1: b ≤ n b := by
-      exact n.le_apply
-    exact Preorder.le_trans b (n b) (n x) h1 h
-    exact fun ⦃a b⦄ a => a
 
-def Nucleus.frameHom_Leroy_Embedding (n : Nucleus E) : Leroy_Embedding n.frameHom := by
+/-def Nucleus.frameHom_Leroy_Embedding (n : Nucleus E) : Leroy_Embedding n.frameHom := by
   have h : Function.Surjective (f_obenstern n.frameHom).obj := by
     simp [Function.Surjective, frameHom]
     intro a h
