@@ -1,6 +1,7 @@
-import Leroy.Nucleus
 import Mathlib.Tactic.Widget.Conv
 import Mathlib.Tactic.ApplyFun
+import Leroy.Nucleus
+
 variable {E : Type*} [Order.Frame E]
 
 
