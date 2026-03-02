@@ -1,13 +1,8 @@
-import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Order.CompleteBooleanAlgebra
-import Mathlib.CategoryTheory.Functor.Basic
-import Mathlib.CategoryTheory.Category.Preorder
-import Mathlib.Topology.Sets.Opens
-import Mathlib.Order.CompleteBooleanAlgebra
-import Mathlib.Topology.ContinuousMap.Defs
 import Mathlib.CategoryTheory.Adjunction.Basic
-import Mathlib.Topology.MetricSpace.Pseudo.Defs
-import Mathlib.Data.Real.Basic
+import Mathlib.CategoryTheory.Category.Preorder
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
+import Mathlib.Order.Hom.CompleteLattice
+import Mathlib.Tactic.ApplyFun
 
 open CategoryTheory
 
@@ -19,7 +14,7 @@ def frameHom_monotone (f : FrameHom Y X) : {X_1 Y_1 : Y} → (X_1 ⟶ Y_1) → (
   simp
   apply homOfLE
   have h1 := leOfHom h
-  exact OrderHomClass.GCongr.mono f h1
+  gcongr
 
 def f_obenstern (f : FrameHom Y X) : Y ⥤ X where
   obj x := f x

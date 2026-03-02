@@ -74,9 +74,7 @@ lemma sup_eq_top_iff_compl_le (V : Open E) (x : Sublocale E) : V.toSublocale ⊔
     intro i
     ----
     let h3 := h (i ⊔ V.element)
-    simp at h3
-    rw [sup_comm]
-    rw [← h3]
+    rw [sup_comm,← h3]
     simp only [le_inf_iff, le_himp_iff]
     apply And.intro
     . exact inf_le_of_right_le le_sup_right
@@ -447,9 +445,9 @@ lemma Sublocale.eq_intersection_open_closed (j : Sublocale E) : j = ⨅ a : E, (
       intro a h
       intro i
       let h1 := h i i
-      rw [Sublocale.sup_apply] at h1
+      simp [Sublocale.sup_apply] at h1
       repeat rw [Nucleus.coe_mk, InfHom.coe_mk] at h1
-      simp at h1
+
       exact h1.left
 
 

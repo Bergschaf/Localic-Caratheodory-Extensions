@@ -105,9 +105,7 @@ instance instBoundedOrder : BoundedOrder (Open E) where
 
 instance instCompleteSemilatticeSup : CompleteSemilatticeSup (Open E) where
   sSup s := ⟨sSup (Open.element '' s)⟩
-  le_sSup s x h := by
-    simp [LE.le]
-    apply le_sSup (Set.mem_image_of_mem element h)
+  le_sSup s x h := le_sSup (Set.mem_image_of_mem element h)
   sSup_le s x h := by simpa [LE.le] using h
 
 lemma sSup_def (s : Set (Open E)) : sSup s = ⟨sSup (Open.element '' s)⟩ := rfl
@@ -239,7 +237,7 @@ end Open
 
 def complement (U : Open E) : Sublocale E where
   toFun x := U ⊔ x
-  map_inf' x y := by simp; exact sup_inf_left U.element x y
+  map_inf' x y := sup_inf_left U.element x y
   idempotent' x := by simp
   le_apply' x := by simp
 
@@ -248,6 +246,7 @@ structure Closed (E : Type*) [Order.Frame E] where
   element : E
 
 namespace Closed
+
 
 protected def toSublocale (c : Closed E) : Sublocale E := complement ⟨c.element⟩
 
@@ -262,10 +261,10 @@ instance : LE (Closed E) where
 lemma le_def (x y : Closed E) : x ≤ y ↔ y.element ≤ x.element := by rfl
 
 lemma le_iff (x y : Closed E) : x ≤ y ↔ x.toSublocale ≤ y.toSublocale := by
-  simp [le_def, Closed.toSublocale, complement, LE.le]
-  apply Iff.intro
-  . exact fun h i => le_sup_of_le_left h
-  . intro h
+  simp only [LE.le, Closed.toSublocale, complement, coe_mk, InfHom.coe_mk, sup_le_iff, le_sup_right,
+    and_true]
+  refine Iff.intro (fun h i => le_sup_of_le_left h) ?_
+  · intro h
     let h1 := h ⊥
     simp only [bot_le, sup_of_le_left] at h1
     exact h1
