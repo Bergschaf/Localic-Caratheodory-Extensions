@@ -1,5 +1,5 @@
 import Leroy.Measure.Basic
-import Leroy.Nucleus_Image
+--import Leroy.Nucleus_Image
 import Mathlib.Algebra.Order.Group.CompleteLattice
 
 variable {X Y E: Type*} [h : Order.Frame X] [Order.Frame Y] [e_frm : Order.Frame E]
@@ -341,10 +341,9 @@ lemma Measure.add_complement (U : Open E) : m.toFun U + m.caratheodory (U.compl)
       . rw [← Measure.caratheodory.top_eq_toFun]
         exact caratheodory.le_top m U.compl.toSublocale
       . apply csSup_le
-        . simp [Set.Nonempty, W_a, V_a]
-          use m.toFun (⊤ : Open E).exterior
+        . simp only [Set.Nonempty, Set.mem_image, exists_exists_and_eq_and, ↓existsAndEq, and_true,
+          W_a, V_a]
           use ⊤
-          simp only [and_true]
           exact Sublocale.Open_Neighbourhood.top_mem
         . simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
           intro a wa
@@ -840,10 +839,6 @@ lemma Measure.inf_commutes_sSup (A : Sublocale E) (s : Set (Open E)) (h : increa
     rw [hC, iSup_subtype', iSup_of_empty]
     rw [sSup_empty, Open.bot_toSublocale]
     simp
-    apply congrArg
-    apply le_antisymm
-    . exact OrderBot.bot_le _
-    . exact CompleteLattice.bot_le ⊥
   .
     apply le_antisymm
     .

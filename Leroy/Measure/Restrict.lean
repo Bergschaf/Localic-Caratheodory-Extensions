@@ -1,5 +1,5 @@
 import Leroy.Measure.Regular
-
+import Leroy.Nucleus_Image
 
 variable {E' : Type*} [Order.Frame E']
 
@@ -65,7 +65,8 @@ lemma Sublocale.embed_open_eq_inf (A : Sublocale E') (u : Open (Image A)) : A.em
       rw [Nucleus.coe_mk, InfHom.coe_mk]
       intro b h
       apply h
-      simp [← Subtype.coe_le_coe, Nucleus.frameHom]
+      simp only [Nucleus.frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk, le_himp_iff,
+        ← Subtype.coe_le_coe, Set.val_codRestrict_apply]
       simp_rw [min, SemilatticeInf.inf, Lattice.inf]
       simp only [Set.val_codRestrict_apply, map_inf]
       rw [A.idempotent, A.idempotent, ← A.map_inf]
@@ -78,13 +79,13 @@ lemma Sublocale.embed_open_eq_inf (A : Sublocale E') (u : Open (Image A)) : A.em
       rw [Nucleus.coe_mk, InfHom.coe_mk]
       intro b h
       apply h
-      simp [Nucleus.frameHom]
+      simp only [Nucleus.frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk, le_himp_iff]
       rw [← Subtype.coe_le_coe]
       simp only [min, Set.val_codRestrict_apply]
       rw [SemilatticeInf.inf, Lattice.toSemilatticeInf]
-      simp [Lattice.inf]
+      simp only [Lattice.inf, Set.val_codRestrict_apply, map_inf, Nucleus.idempotent]
       --
-      rw [A.idempotent, ← A.map_inf]
+      rw [← A.map_inf]
       apply A.monotone
       simp only [himp_inf_self, inf_le_left]
   . simp only [Open.toSublocale, Sublocale.embed]
@@ -212,8 +213,8 @@ lemma Image_himp_closed (A : Sublocale E') (a b : E') (h1 : a ∈ Image A) (h2 :
 
 @[simp] -- Wichtig, TODO woanders
 lemma Nucleus.frameHom.of_coe (A : Sublocale E') (i : Image A) : A.frameHom i = i := by
-  simp [Nucleus.frameHom]
-  rw [@Subtype.ext_iff_val]
+  simp only [frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk]
+  rw [@Subtype.ext_iff]
   simp only [Set.val_codRestrict_apply]
   let test := i.prop
   simp only [Image, Set.mem_setOf_eq] at test
@@ -222,12 +223,10 @@ lemma Nucleus.frameHom.of_coe (A : Sublocale E') (i : Image A) : A.frameHom i = 
 
 def Sublocale.restrict (A : Sublocale E') (b : Sublocale E') (h : b ≤ A): Sublocale (Image A) where
   toFun x := A.frameHom (b x)
-  map_inf' x y := by
-    simp
-    rw [GaloisConnection.u_inf A.gc', b.map_inf,map_inf]
+  map_inf' x y := by rw [GaloisConnection.u_inf A.gc', b.map_inf,map_inf]
   idempotent' x := by
-    simp
-    simp [Nucleus.frameHom]
+    simp only [Nucleus.frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk,
+      Set.val_codRestrict_apply]
     rw [← Subtype.coe_le_coe]
     simp only [Set.val_codRestrict_apply]
     conv =>
@@ -237,16 +236,14 @@ def Sublocale.restrict (A : Sublocale E') (b : Sublocale E') (h : b ≤ A): Subl
 
     apply A.monotone
     apply b.monotone
-    simp [Sublocale.le_iff] at h
+    simp only [le_iff] at h
     apply h
 
   le_apply' x := by
-    simp [Nucleus.frameHom]
+    simp only [Nucleus.frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk]
     rw [← Subtype.coe_le_coe]
     simp only [Set.val_codRestrict_apply]
-    apply le_trans b.le_apply
-    apply le_trans A.le_apply
-    rfl
+    exact le_trans b.le_apply A.le_apply
 
 -- TODO woanders
 lemma Sublocale.embed_le (A : Sublocale E') (b : Sublocale (Image A)) : A.embed b ≤ A := by
@@ -301,6 +298,7 @@ lemma Sublocale.embed_restrict_open (A : Sublocale E') (u : Open E') : A.embed (
   apply le_antisymm
   . simp only [le_inf_iff, inf_le_left, true_and]
     intro i
+    simp only
     rw [Sublocale.inf_apply]
     simp [Open.toSublocale, Sublocale.le_iff, Sublocale.restrict_open]
     rw [Nucleus.coe_mk, InfHom.coe_mk]
@@ -325,6 +323,7 @@ lemma Sublocale.embed_restrict_open (A : Sublocale E') (u : Open E') : A.embed (
 
   . simp only [le_inf_iff, inf_le_left, true_and]
     intro i
+    simp only
     rw [Sublocale.inf_apply]
     simp [Open.toSublocale, Sublocale.le_iff, Sublocale.restrict_open]
     rw [Nucleus.coe_mk, InfHom.coe_mk]

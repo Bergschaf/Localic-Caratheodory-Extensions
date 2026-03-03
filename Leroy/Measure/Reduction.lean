@@ -10,7 +10,7 @@ def e_μ (m : @Measure E _) (u : E) : E :=
   (sSup {w : Open E | u ≤ w ∧ m.toFun w = m.toFun ⟨u⟩}).element
 
 lemma e_μ_Measure_eq (m : @Measure E _) (u : E) : m.toFun ⟨e_μ m u⟩ = m.toFun ⟨u⟩ := by
-  simp [e_μ, Open.sSup_def]
+  simp only [e_μ, Open.sSup_def]
   rw [← Open.sSup_def]
   rw [Measure.filtered]
   apply le_antisymm
@@ -18,14 +18,15 @@ lemma e_μ_Measure_eq (m : @Measure E _) (u : E) : m.toFun ⟨e_μ m u⟩ = m.to
     simp
     intro b x h1 h2 h3
     rw [← h3, h2]
-    . simp [BddAbove, upperBounds, Set.Nonempty]
+    . simp only [BddAbove, Set.Nonempty, upperBounds, Set.mem_image, Set.mem_setOf_eq,
+      forall_exists_index, and_imp]
       use m.toFun ⊤
       intro a x h1 h2 h3
       rw [← h3]
       exact Measure.all_le_top x
     . simp [Set.Nonempty]
-      use m.toFun ⟨u⟩
       use ⟨u⟩
+
   . rw [le_csSup_iff]
     simp [upperBounds]
     intro b h
@@ -35,8 +36,7 @@ lemma e_μ_Measure_eq (m : @Measure E _) (u : E) : m.toFun ⟨e_μ m u⟩ = m.to
     intro a x h1 h2 h3
     rw [← h3, h2]
     --
-    simp [Set.Nonempty]
-    use m.toFun ⟨u⟩
+    simp only [Set.Nonempty, Set.mem_image, Set.mem_setOf_eq, ↓existsAndEq, and_true]
     use ⟨u⟩
   . rw [increasingly_filtered]
     simp_all only [Set.mem_setOf_eq, and_imp]
@@ -94,9 +94,9 @@ lemma e_μ_idempotent (m : @Measure E _) : ∀ (x : E), e_μ m (e_μ m x) ≤ e_
 
 lemma e_μ_le_apply (m : @Measure E _) : ∀ (x : E), x ≤ e_μ m x := by
   intro x
-  simp [e_μ, Open.sSup_def]
+  simp only [e_μ, Open.sSup_def]
   apply le_sSup
-  simp
+  simp only [Set.mem_image, Set.mem_setOf_eq]
   use ⟨x⟩
 
 lemma e_μ_mono (m : @Measure E _) (x y : E) : x ≤ y → e_μ m x ≤ e_μ m y := by
