@@ -21,8 +21,7 @@ variable {n : Nucleus E}
 instance image_frame (n : Nucleus E) : Order.Frame (Image n) := by
   let img := Image n
 
-  let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; exact
-    Nucleus.idempotent)
+  let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image])
 
   let embedding : img → E := fun x ↦ x
 
@@ -49,7 +48,8 @@ instance image_frame (n : Nucleus E) : Order.Frame (Image n) := by
 
   have e_schlange_monotone : Monotone e_schlange := by
       simp only [Monotone, Set.codRestrict, Subtype.mk_le_mk, e_schlange]
-      exact fun ⦃a b⦄ a_1 => OrderHomClass.GCongr.mono n a_1
+      intro _ _ _
+      gcongr
 
   have aux1 : ∀ (a b : ↑img), a ≤ a ⊔ b := by
     intro a b
@@ -220,7 +220,10 @@ instance image_frame (n : Nucleus E) : Order.Frame (Image n) := by
 
   let semilatticesup : SemilatticeSup img := ⟨sup.max, aux1, aux2, aux3⟩
   let lattice : Lattice img := ⟨inf.min, aux4, aux5, aux6⟩
-  let completelattice : CompleteLattice img := ⟨aux7, aux8, aux9, aux10, aux11, aux12⟩
+  let orderTop : OrderTop img := ⟨aux11⟩
+  let orderBot : OrderBot img := ⟨aux12⟩
+  let boundedOrder : BoundedOrder img := by exact { toOrderTop := orderTop, toOrderBot := orderBot }
+  let completelattice : CompleteLattice img := ⟨aux7, aux8, aux9, aux10⟩
 
 
   have e_schlange_preserves_inf : ∀ (a b : E), e_schlange (a ⊓ b) = e_schlange a ⊓ e_schlange b := by
@@ -318,12 +321,12 @@ instance image_frame (n : Nucleus E) : Order.Frame (Image n) := by
   let frame : Order.Frame ↑(Image n) := Order.Frame.ofMinimalAxioms ⟨aux13⟩
   exact frame
 
-instance inst_frame (n : Nucleus E): Order.Frame (Image n) := image_frame n
+instance inst_frame (n : Nucleus E) : Order.Frame (Image n) := image_frame n
 
 def Nucleus.frameHom (n : Nucleus E) : FrameHom E (Image n) := by
   let img := Image n
 
-  let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image]; apply n.idempotent)
+  let e_schlange : E → img := Set.codRestrict n img (by intro x; simp [img, Image])
 
   let embedding : img → E := fun x ↦ x
 
@@ -350,7 +353,8 @@ def Nucleus.frameHom (n : Nucleus E) : FrameHom E (Image n) := by
 
   have e_schlange_monotone : Monotone e_schlange := by
       simp only [Monotone, Set.codRestrict, Subtype.mk_le_mk, e_schlange]
-      exact fun ⦃a b⦄ a_1 => OrderHomClass.GCongr.mono n a_1
+      intro _ _ _
+      gcongr
   have h1 (a b : ↑img) : (a : E) ⊓ (b : E) = a ⊓ b:= by
     have h2 : (a : E) ⊓ (b : E) ∈ img := by
       simp only [Image, Set.mem_setOf_eq, img]
@@ -467,6 +471,9 @@ lemma f_untenstern_eq_val (n : Nucleus E) : (f_untenstern n.frameHom) = Subtype.
 /-
 def Nucleus.eq_f_obenstern_f_untenstern (n : Nucleus E) : n = ((f_obenstern n.frameHom) ⋙ (f_untenstern n.frameHom)).obj := by
   ext x
+  let embedding : img → E := fun x ↦ x
+
+  let sup : Max img := ⟨fun x y ↦ e_s
   simp only [f_obenstern, frameHom, FrameHom.coe_mk, InfTopHom.coe_mk, InfHom.coe_mk, f_untenstern,
     Functor.comp_obj]
   apply le_antisymm
