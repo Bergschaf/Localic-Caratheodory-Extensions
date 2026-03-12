@@ -1,6 +1,7 @@
 /.vscode
 /.idea
 /.lake
+docbuild/.lake
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
