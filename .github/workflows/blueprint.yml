@@ -50,7 +50,7 @@ jobs:
       - name: Build project API documentation
         run: |
           cd docbuild
-          ~/.elan/bin/lake Leroy:docs
+          ~/.elan/bin/lake build Leroy:docs
       
       - name: Check for `home_page` folder # this is meant to detect a Jekyll-based website
         id: check_home_page
