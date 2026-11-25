@@ -7,6 +7,32 @@ This repository contains a formalization of localic measure theory – specifica
 
 The key achievement of this project is the formal proof that the Carathéodory extension of measure on locales is both **strictly additive** and **μ-reducible**.
 
+## Development
+
+The repository is pinned to Lean 4.36.0 and Mathlib v4.36.0. Build it with
+`lake build`. Agent-specific formalization guidance is in [`AGENTS.md`](AGENTS.md).
+
+To inspect the current tactic goals at a source location, run:
+
+```sh
+python3 scripts/lean_goal.py Leroy/Sublocale.lean --line 202 --column 5
+```
+
+The helper uses Lean's language server, waits until the document has been
+elaborated, and then queries the goal state at the given one-based line and
+column.
+
+The sublocale layer uses Mathlib's native set-like `Sublocale` and
+`nucleusIsoSublocale`, with a small pointwise compatibility bridge for the
+existing proofs. Open and closed sublocales now use the current nucleus
+embedding API. Complement characterizations are proved through pointwise
+nucleus evaluation, and preservation of closed arbitrary infima uses a direct
+lower-bound argument rather than unfolding the old dual-nucleus representation.
+The measure reduction is now built from its native nucleus, and neighborhood
+arguments use the existing infimum-closure lemmas. Restricted strict
+additivity reuses subadditivity, and the example proof delegates to the main
+strict-additivity theorem instead of duplicating it.
+
 ---
 
 ## Overview
