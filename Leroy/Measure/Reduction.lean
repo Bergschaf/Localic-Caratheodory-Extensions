@@ -282,7 +282,7 @@ lemma Measure_μ_Reduction_eq_top (m : @Measure E _) :
 sublocales of all full-measure opens `w`, i.e. those with `m.toFun w = m.toFun ⊤`. -/
 lemma μ_Reduction_eq_sInf [Fact (regular E)] (m : @Measure E _) :
     μ_Reduction m = sInf (Open.toSublocale '' {w : Open E | m.toFun w = m.toFun ⊤}) := by
-  rw [Sublocale.intersection_Open_Neighbourhhood (μ_Reduction _)]
+  rw [Sublocale.eq_sInf_openNhds (μ_Reduction _)]
   apply le_antisymm
   · simp only [le_sInf_iff, Set.mem_image, Set.mem_ofPred_eq, forall_exists_index, and_imp,
     forall_apply_eq_imp_iff₂]
@@ -341,7 +341,7 @@ lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E)] (m : @Measure E _) :
     · simp only [lowerBounds, Set.mem_image, Set.mem_ofPred_eq, forall_exists_index, and_imp,
         forall_apply_eq_imp_iff₂]
       intro b h1
-      rw [Sublocale.intersection_Open_Neighbourhhood a]
+      rw [Sublocale.eq_sInf_openNhds a]
       simp only [
                  openNhds,
                  le_sInf_iff,
@@ -618,11 +618,11 @@ lemma Measure.preserves_iInf (V_n : ℕ → (Open E)) (h : Antitone V_n) :
       apply And.intro
       · intro n
         use n
-        rw [← Measure.add_complement (V_n n)]
+        rw [← Measure.add_compl_top (V_n n)]
         simp only [add_tsub_cancel_right]
       · intro n
         use n
-        rw [← Measure.add_complement (V_n n)]
+        rw [← Measure.add_compl_top (V_n n)]
         simp only [add_tsub_cancel_right]
     rw [h5]
   simp_rw [h4, I] at h3
@@ -659,8 +659,15 @@ def rec' (seq : ℕ → Open E)
   | 0 => seq 0
   | Nat.succ n => seq (n + 1) ⊓ (rec' seq n)
 
-/-- Leroy lemme 7 -/
-lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι → Sublocale E)
+/-- **Leroy, Lemme 7 (principal)** (Ch. IV): the Carathéodory measure sends
+decreasingly filtered infima of sublocales to infima of values,
+`μ(∩ Ai) = inf μ(Ai)`.  This is the principal continuity property of the extension
+and the main ingredient of strict additivity.
+
+Note: the lemma lives in its own namespace because nesting it under
+`Measure.caratheodory` (the definition) changes identifier resolution inside the
+proof and breaks it. -/
+lemma Measure.caratheodoryPreserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι → Sublocale E)
     (h : decreasingly_filtered A_i) :
   m.caratheodory (iInf A_i) = iInf (m.caratheodory ∘ A_i) := by
   apply le_antisymm
@@ -697,11 +704,10 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       refine Set.subset_ofPred.mpr ?_
       exact fun x a => Exists.intro i a
     apply le_trans h1
-    rw [← @intersection_Open_Neighbourhhood]
+    rw [← @eq_sInf_openNhds]
   have V_n_nonempty : Nonempty V_a := by
-    use ⊤
-    simp only [openNhds, Set.mem_ofPred_eq, Open.top_toSublocale, le_top, exists_const,
-      V_a]
+    obtain ⟨w, hw⟩ := Sublocale.openNhds_nonempty (A_i (Classical.arbitrary ι))
+    exact ⟨w, ⟨Classical.arbitrary ι, hw⟩⟩
   have hvn_2 : ⨅ i, m.caratheodory (A_i i) = ⨅ w : V_a, m.toFun w := by
     apply le_antisymm
     · apply le_ciInf
@@ -726,7 +732,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       simp
     simp only [gt_iff_lt, Set.mem_ofPred_eq, tsub_le_iff_right, V_a]
     intro b hb
-    obtain ⟨w, ⟨hw1, hw2⟩⟩ := (@Exists_Neighbourhood_epsilon _ _ m (A_i i) b (by exact hb))
+    obtain ⟨w, ⟨hw1, hw2⟩⟩ := (@Measure.exists_mem_openNhds_le _ _ m (A_i i) b (by exact hb))
     refine ciInf_le_of_le ?_ ⟨w, (by use i)⟩ ?_
     · use 0
       simp [lowerBounds]
@@ -997,8 +1003,8 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       rw [iInf_prod']
       · rw [← ENNReal.coe_iInf]
         simp only [ENNReal.coe_inj]
-        rw [Sublocale.intersection_Neighbourhood A]
-        rw [Sublocale.intersection_Neighbourhood B]
+        rw [Sublocale.eq_sInf_nhds A]
+        rw [Sublocale.eq_sInf_nhds B]
         repeat rw [sInf_eq_iInf]
         repeat rw [iInf_subtype']
         have h_n : Nonempty (Subtype (Membership.mem A.nhds)) := by
@@ -1010,10 +1016,10 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
           enter [1, 1, 1, x]
           rw [inf_iInf]
         rw [iInf_prod']
-        rw [Measure.caratheodordy.preserves_iInf]
+        rw [Measure.caratheodoryPreserves_iInf]
         · rw [Function.comp_def]
           apply le_antisymm
-          · repeat rw [← @sInf_eq_iInf', ← @intersection_Neighbourhood]
+          · repeat rw [← @sInf_eq_iInf', ← @Sublocale.eq_sInf_nhds]
             rw [@le_ciInf_iff']
             simp only [Prod.forall, Subtype.forall]
             intro a ha b hb
@@ -1034,9 +1040,9 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             rcases ha with ⟨a', ⟨ha1, ha2⟩⟩
             rcases hb with ⟨b', ⟨hb1, hb2⟩⟩
             refine ciInf_le_of_le ?_ ⟨⟨a', (by
-              rw [← @sInf_eq_iInf', ← Sublocale.intersection_Neighbourhood]
+              rw [← @sInf_eq_iInf', ← Sublocale.eq_sInf_nhds]
               exact ha1)⟩, ⟨b', (by
-              rw [← @sInf_eq_iInf', ← Sublocale.intersection_Neighbourhood]
+              rw [← @sInf_eq_iInf', ← Sublocale.eq_sInf_nhds]
               exact hb1)⟩⟩ ?_
             · use 0
               simp [lowerBounds]

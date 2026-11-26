@@ -188,7 +188,6 @@ lemma Sublocale.embed_open_sup (A : Sublocale E') (u v : Open (Image A.toNucleus
     lowerStar_eq_val A.toNucleus]
 
 
--- sSup analaog
 
 /-- The embedding of sublocales is order preserving: `b ≤ c` in the image implies
 `A.embed b ≤ A.embed c` in `E'`. -/
@@ -434,7 +433,7 @@ the sublocale `A ⊓ u`: both routes embed back to `A ⊓ u`, and the embedding 
 injective. -/
 lemma Sublocale.restrict_open_eq_restrict (A : Sublocale E') (u : Open E') :
     (A.restrict_open u).toSublocale = A.restrictSublocale (A ⊓ u) (by simp) := by
-  --- TODO eleganter damit, dass embed injective ist
+  -- TODO: prove this more elegantly using that `embed` is injective
   apply le_antisymm
   · apply  Sublocale.embed_orderiso
     rw [Sublocale.embed_restrict_open]
@@ -443,11 +442,12 @@ lemma Sublocale.restrict_open_eq_restrict (A : Sublocale E') (u : Open E') :
     rw [Sublocale.embed_restrict_open]
     rw [Sublocale.embed_restrict]
 
-/-- TODO woanders
-If `E'` is a regular frame then so is the image of the nucleus of any sublocale `A`:
-regularity, formulated via the way-below relation on well-inside opens, restricts
-along the embedding of opens of the image, which preserves the witness decompositions
-given by regularity in `E'`. -/
+/-- Regularity is inherited by nucleus images: if `E'` is a regular frame then so is
+the image of the nucleus of any sublocale `A`.  Regularity, formulated via the
+way-below relation on well-inside opens, restricts along the embedding of opens of the
+image, which preserves the witness decompositions given by regularity in `E'`.
+(Cf. Leroy, Ch. V, Corollaire to Proposition 5: the locale associated to a regular
+space is regular.) -/
 lemma Sublocale.Image_regular' [e_regular : Fact (regular E')] (A : Sublocale E') :
     regular (Image A.toNucleus) := by
   simp only [regular]
@@ -506,11 +506,11 @@ lemma Sublocale.Image_regular' [e_regular : Fact (regular E')] (A : Sublocale E'
 
 variable (A : Sublocale E') (m : @Measure E' _) [Fact (regular E')]
 
-/-- The valuation underlying the restriction of the measure `m` to the sublocale `A`,
-defined on an open of the image of `A.toNucleus` as the Caratheodory valuation of the
-embedded open in `E'`. -/
+/-- The valuation underlying the restriction of the measure `m` to the sublocale `A`
+(Leroy, Ch. IV, Corollaire "Restriction d'une mesure"): defined on an open of the image
+of `A.toNucleus` as the Carathéodory valuation of the embedded open in `E'`. -/
 noncomputable def Measure.restrict_sublocale : Open (Image A.toNucleus) → NNReal :=
-  fun x ↦ m.caratheodory (A.embed x) -- ist das richtig?
+  fun x ↦ m.caratheodory (A.embed x)
 
 /-- The restriction of the measure `m` on `E'` to the sublocale `A`, realized as a
 measure on the frame of the image of `A.toNucleus`. It is the measure-theoretic
@@ -521,7 +521,6 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A.toNucle
 
   empty := by
     rw [Measure.restrict_sublocale, Open.bot_toSublocale, Sublocale.embed_bot]
-    --todo lemma
     rw [Measure.caratheodory.bot_eq_0]
 
 
@@ -656,7 +655,6 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A.toNucle
               intro _
               apply caratheodory.le_top
         rw [h_help]
-        ---
         rw [← Measure.inf_filtered]
         swap
         · rw [increasingly_filtered] at *
@@ -669,9 +667,7 @@ noncomputable def Measure.restrict_sublocale_measure : @Measure (Image A.toNucle
           apply And.intro
           · exact h2
           · exact h3
-        ----
         rw [Sublocale.embed_open_sSup]
-        ---
         conv =>
           enter [1, 1, 1, a, 1]
           rw [Sublocale.embed_open_eq_inf]

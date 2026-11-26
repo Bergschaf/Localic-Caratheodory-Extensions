@@ -77,7 +77,7 @@ lemma iSup_filtered {ι : Type*} :
 
 /-- `m.toFun` respects propositional equality of opens; a trivial reformulation of
 congruence. -/
-lemma monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
+lemma toFun_congr (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
   exact congrArg m.toFun h
 
 /-- Every open has measure bounded by the measure of the top open. -/
@@ -167,10 +167,10 @@ lemma bot_eq_0 (m : @Measure E _) : m.caratheodory ⊥ = 0 := by
 end caratheodory
 end Measure
 
-/-- For every `ε > 0` the sublocale `a` admits an open neighbourhood whose measure is
-at most `m.caratheodory a + ε`, i.e. the infimum in the definition of the Caratheodory
-measure is attained up to `ε`. -/
-lemma Exists_Neighbourhood_epsilon (a : Sublocale E) :
+/-- Auxiliary lemma for Leroy's Lemme 1: for every `ε > 0` the sublocale `a` admits an
+open neighbourhood whose measure is at most `m.caratheodory a + ε`, i.e. the infimum in
+the definition of the Carathéodory measure is attained up to `ε`. -/
+lemma Measure.exists_mem_openNhds_le (a : Sublocale E) :
   ∀ ε > 0,  ∃ w ∈ openNhds a, m.toFun w ≤ m.caratheodory a + ε := by
     have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty) :
         ∃ W ∈ s, W < sInf s + ε := by
@@ -203,29 +203,22 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) :
     rw [h2]
     exact le_of_lt h3
 
-/-- A sharper form of `Exists_Neighbourhood_epsilon` with a strict inequality: for
-every `ε > 0` there is an open neighbourhood of `a` whose measure is strictly smaller
-than `m.caratheodory a + ε`. -/
-lemma Exists_Neighbourhood_epsilon_lt (a : Sublocale E) :
+/-- Auxiliary lemma, sharper form of `Measure.exists_mem_openNhds_le` with a strict
+inequality: for every `ε > 0` there is an open neighbourhood of `a` whose measure is
+strictly smaller than `m.caratheodory a + ε`. -/
+lemma Measure.exists_mem_openNhds_lt (a : Sublocale E) :
     ∀ ε > 0,  ∃ w ∈ openNhds a, m.toFun w < m.caratheodory a + ε := by
   intro ε h_ε
-  obtain ⟨w, ⟨h1, h2⟩⟩ := @Exists_Neighbourhood_epsilon _ _ m a (ε / 2) (by exact half_pos h_ε)
+  obtain ⟨w, ⟨h1, h2⟩⟩ := @Measure.exists_mem_openNhds_le _ _ m a (ε / 2) (by exact half_pos h_ε)
   use w
   use h1
   apply LE.le.trans_lt h2
   simp only [add_lt_add_iff_left, half_lt_self_iff]
   exact h_ε
 
-/-- The strictly positive natural numbers. -/
-def ℕpos := {n : ℕ // 0 < n}
-
-/-- The strictly positive nonnegative reals. -/
-def Rpos := {r : NNReal // 0 < r}
-
-/--
-Leroy Lemme 1
--> Magie
--/
+/-- **Leroy, Lemme 1** (Ch. IV): for an increasing sequence of sublocales, the
+Carathéodory measure of the supremum is the supremum of the measures,
+`μ(⋃ Xn) = sup μ(Xn)`. -/
 lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Sublocale X)
     (h : Monotone X_n) : m.caratheodory (iSup X_n) = iSup (m.caratheodory ∘ X_n) := by
   apply le_antisymm
@@ -235,7 +228,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
       have h_ε_n (n : ℕ) : ε_n n > 0 := by
         simp [ε_n, h_ε]
       have h_sum (n : ℕ) : ∑ m ∈ Finset.range (n), ε_n m ≤ ε := by
-        --- v TODO vlt Mathlib
+        -- TODO: the geometric-series estimate might be available in Mathlib
         have h_geometric_sum (n : ℕ) :
             ∑ m ∈ Finset.range (n), ε_n m = ε - ε * 2 ^ (- ↑(n : ℤ)) := by
           induction n with
@@ -280,12 +273,12 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
         rw [h_geometric_sum]
         simp
       let V_n (n : ℕ) :=
-        Classical.choose (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n),
+        Classical.choose (@Measure.exists_mem_openNhds_lt _ _ m (X_n n) ⟨(ε_n n),
           (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
       have h_V_n (n : ℕ) :
           m.caratheodory (V_n n) - m.caratheodory (X_n n) < ε_n n := by
         obtain ⟨h1, h2⟩ := Classical.choose_spec
-          (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n),
+          (@Measure.exists_mem_openNhds_lt _ _ m (X_n n) ⟨(ε_n n),
             (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
         simp only [V_n]
         rw [Measure.caratheodory.open_eq_toFun]
@@ -298,7 +291,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
         exact lt_add_of_tsub_lt_left (h_V_n n)
       have X_n_le_V_n (n : ℕ) : X_n n ≤ V_n n := by
         obtain ⟨h1, h2⟩ := Classical.choose_spec
-          (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n),
+          (@Measure.exists_mem_openNhds_lt _ _ m (X_n n) ⟨(ε_n n),
             (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
         simp only [V_n]
         simp only [openNhds, Set.mem_ofPred_eq] at h1
@@ -507,9 +500,9 @@ lemma Measure.caratheodory.subadditive (a b : Sublocale E) :
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
     intro ε h
     have h_a : ∃ w ∈ openNhds a, m.toFun w ≤ m.caratheodory a + ε := by
-      exact Exists_Neighbourhood_epsilon a ε h
+      exact Measure.exists_mem_openNhds_le a ε h
     have h_b : ∃ w ∈ openNhds b, m.toFun w ≤ m.caratheodory b + ε := by
-      exact Exists_Neighbourhood_epsilon b ε h
+      exact Measure.exists_mem_openNhds_le b ε h
     rcases h_a with ⟨w_a, ⟨ha1, ha2⟩⟩
     rcases h_b with ⟨w_b, ⟨hb1, hb2⟩⟩
     simp only [openNhds, Set.mem_ofPred_eq] at ha1 hb1
