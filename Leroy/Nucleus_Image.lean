@@ -75,7 +75,7 @@ lemma frameHom_map_himp (n : Nucleus E) (a b : Image n) :
 end Nucleus
 
 /-- The right adjoint associated to a frame hom. -/
-def f_untenstern (f : FrameHom X Y) : Y → X :=
+def lowerStar (f : FrameHom X Y) : Y → X :=
   fun y ↦ sSup {x | f x ≤ y}
 
 /-- The canonical frame homomorphism of a nucleus is a Galois connection with the coercion
@@ -87,8 +87,8 @@ lemma Nucleus.gc' (n : Nucleus E) :
 
 /-- For a nucleus closure, the right adjoint of the canonical homomorphism is just coercion
 out of the image. -/
-lemma f_untenstern_eq_val (n : Nucleus E) :
-    f_untenstern n.frameHom = Subtype.val := by
+lemma lowerStar_eq_val (n : Nucleus E) :
+    lowerStar n.frameHom = Subtype.val := by
   funext y
   change sSup {x : E | n.toSublocale.restrict x ≤ y} = (y : E)
   apply le_antisymm
@@ -101,6 +101,6 @@ lemma f_untenstern_eq_val (n : Nucleus E) :
 /-- The canonical homomorphism into a nucleus image forms a Galois connection with the induced
 lower-star map: the embedding is a Galois insertion. -/
 lemma Nucleus.gc (n : Nucleus E) :
-    GaloisConnection n.frameHom (f_untenstern n.frameHom) := by
-  rw [f_untenstern_eq_val]
+    GaloisConnection n.frameHom (lowerStar n.frameHom) := by
+  rw [lowerStar_eq_val]
   exact n.gc'

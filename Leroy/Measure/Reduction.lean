@@ -249,10 +249,10 @@ lemma Measure.μ_Reduction_le_if (m : @Measure E _) (U : Sublocale E) :
 /-- Every open (element of the open neighbourhood filter) of the reduction sublocale
 has full measure: `m.toFun V = m.toFun ⊤`. -/
 lemma Measure_Neighbourhood_μ_eq_top (m : @Measure E _) :
-    ∀ V ∈ Open_Neighbourhood (μ_Reduction m), m.toFun V = m.toFun ⊤ := by
+    ∀ V ∈ openNhds (μ_Reduction m), m.toFun V = m.toFun ⊤ := by
   intro V h
   have h : ∀ W : E, V.toSublocale W ≤ μ_Reduction m W := by
-    simpa [Open_Neighbourhood, Sublocale.le_iff] using h
+    simpa [openNhds, Sublocale.le_iff] using h
   have hV := h V.element
   have htop : ⊤ ≤ e_μ m V.element := by
     simpa only [Open.toSublocale_apply, himp_self, μ_Reduction_apply] using hV
@@ -273,7 +273,7 @@ lemma Measure_μ_Reduction_eq_top (m : @Measure E _) :
   · use m.toFun ⊤
     use ⊤
     simp only [and_true]
-    exact Open_Neighbourhood.top_mem
+    exact openNhds_top_mem
   simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
   intro a h
   apply le_of_eq (Measure_Neighbourhood_μ_eq_top m a h).symm
@@ -291,7 +291,7 @@ lemma μ_Reduction_eq_sInf [Fact (regular E)] (m : @Measure E _) :
     apply sInf_le
     simp only [Set.mem_image]
     use a
-    simp only [Open_Neighbourhood, Set.mem_ofPred_eq, and_true]
+    simp only [openNhds, Set.mem_ofPred_eq, and_true]
     ---
     have h1 : ∀ H : Open E, m.toFun (a ⊓ H) = m.toFun H := by
       intro H
@@ -343,7 +343,7 @@ lemma μ_Reduction_eq_sInf_Sublocale [Fact (regular E)] (m : @Measure E _) :
       intro b h1
       rw [Sublocale.intersection_Open_Neighbourhhood a]
       simp only [
-                 Open_Neighbourhood,
+                 openNhds,
                  le_sInf_iff,
                  Set.mem_image,
                  Set.mem_ofPred_eq,
@@ -405,12 +405,12 @@ lemma embed_measure (A : Sublocale E) (b : Sublocale (Image A.toNucleus)) :
     · simp
     · simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
       intro c h1
-      simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at h h1
+      simp only [openNhds, Set.mem_ofPred_eq] at h h1
       rw [csInf_le_iff]
       · simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp,
         forall_apply_eq_imp_iff₂, Set.mem_ofPred_eq]
         intro d h2
-        simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at h2
+        simp only [openNhds, Set.mem_ofPred_eq] at h2
         apply h2
         apply le_trans' h1
         apply_fun A.embed at h
@@ -429,8 +429,8 @@ lemma embed_measure (A : Sublocale E) (b : Sublocale (Image A.toNucleus)) :
           forall_apply_eq_imp_iff₂, Set.mem_ofPred_eq]
         intro c h1
         ---- Man braucht die restriction für offene
-        have h2 : A.restrict_open a ∈ b.Open_Neighbourhood := by
-          simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at h ⊢
+        have h2 : A.restrict_open a ∈ b.openNhds := by
+          simp only [openNhds, Set.mem_ofPred_eq] at h ⊢
           apply_fun (· ⊓ A) at h
           · simp only at h
             have h_help : A.embed b ⊓ A = A.embed b := by
@@ -668,9 +668,9 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
     intro i
     apply Measure.caratheodory.mono
     exact iInf_le A_i i
-  let V_a := {w : Open E | ∃ i, w ∈ (A_i i).Open_Neighbourhood}
+  let V_a := {w : Open E | ∃ i, w ∈ (A_i i).openNhds}
   have h_V_A_inf_closed (u v : Open E) (h1 : u ∈ V_a) (h2 : v ∈ V_a) : u ⊓ v ∈ V_a := by
-    simp only [Open_Neighbourhood, Set.mem_ofPred_eq, V_a] at h1 h2 ⊢
+    simp only [openNhds, Set.mem_ofPred_eq, V_a] at h1 h2 ⊢
     rcases h1 with ⟨i, h1⟩
     rcases h2 with ⟨j, h2⟩
     rcases h i j with ⟨k, ⟨h3, h4⟩⟩
@@ -685,12 +685,12 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       intro a h
       simp only [Set.mem_ofPred_eq, V_a] at h
       rcases h with ⟨i, h⟩
-      simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at h
+      simp only [openNhds, Set.mem_ofPred_eq] at h
       exact iInf_le_of_le i h
     simp only [le_iInf_iff]
     intro i
     have h1 : sInf (Open.toSublocale '' V_a) ≤
-        sInf (Open.toSublocale '' ((A_i i ).Open_Neighbourhood)) := by
+        sInf (Open.toSublocale '' ((A_i i ).openNhds)) := by
       apply sInf_le_sInf
       refine Set.image_mono ?_
       simp only [V_a]
@@ -700,7 +700,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
     rw [← @intersection_Open_Neighbourhhood]
   have V_n_nonempty : Nonempty V_a := by
     use ⊤
-    simp only [Open_Neighbourhood, Set.mem_ofPred_eq, Open.top_toSublocale, le_top, exists_const,
+    simp only [openNhds, Set.mem_ofPred_eq, Open.top_toSublocale, le_top, exists_const,
       V_a]
   have hvn_2 : ⨅ i, m.caratheodory (A_i i) = ⨅ w : V_a, m.toFun w := by
     apply le_antisymm
@@ -709,7 +709,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       rcases x with ⟨x, hxV⟩
       change x ∈ V_a at hxV
       rcases hxV with ⟨y, hx⟩
-      simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at hx
+      simp only [openNhds, Set.mem_ofPred_eq] at hx
       refine ciInf_le_of_le ?_ y ?_
       · use 0
         simp [lowerBounds]
@@ -818,7 +818,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
       · simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp, Set.mem_ofPred_eq,
           Function.comp_apply, V_a]
         intro b hb
-        obtain ⟨i, hi⟩ : ∃ i, V_n n ∈ (A_i i).Open_Neighbourhood := by
+        obtain ⟨i, hi⟩ : ∃ i, V_n n ∈ (A_i i).openNhds := by
           simp only [V_n]
           induction n with
           | zero =>
@@ -827,10 +827,10 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
             simp only [Set.mem_ofPred_eq, V_a] at spec
             exact spec
           | succ n hn =>
-            simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at hn
+            simp only [openNhds, Set.mem_ofPred_eq] at hn
             rcases hn with ⟨i,hn⟩
             simp only [
-                       Open_Neighbourhood,
+                       openNhds,
                        rec',
                        Set.mem_ofPred_eq,
                        Open.preserves_inf,
@@ -841,14 +841,14 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
             obtain ⟨j, spec2⟩ := spec2
             obtain ⟨k, hk⟩ := (h i j)
             use k
-            simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at spec2
+            simp only [openNhds, Set.mem_ofPred_eq] at spec2
             exact And.intro (le_trans hk.right spec2) (le_trans hk.left hn)
         exact hb (V_n n) i hi rfl
       · use 0
         simp [lowerBounds]
       · simp only [Set.image_nonempty]
         use ⊤
-        simp [V_a, Sublocale.Open_Neighbourhood]
+        simp [V_a, Sublocale.openNhds]
     · apply le_ciInf
       intro n
       refine ciInf_le_of_le ?_ n ?_
@@ -918,7 +918,7 @@ lemma Measure.caratheodordy.preserves_iInf {ι : Type*} [Nonempty ι] (A_i : ι 
               apply h_V_A_inf_closed
               · exact spec (n + 1)
               · exact hn
-          simp only [Open_Neighbourhood, Set.mem_ofPred_eq, V_a] at ha h_v_n ⊢
+          simp only [openNhds, Set.mem_ofPred_eq, V_a] at ha h_v_n ⊢
           rcases ha with ⟨i, ha⟩
           rcases h_v_n with ⟨j, h_v_n⟩
           rw [Open.preserves_inf]
@@ -952,13 +952,13 @@ binary sup `A ⊔ B` equals the sum of the measures of `A` and `B`, minus the me
 of their intersection `A ⊓ B`. -/
 theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
     m.caratheodory (A ⊔ B) = m.caratheodory A + m.caratheodory B - m.caratheodory (A ⊓ B) := by
-  have h_n_1 : Nonempty ↑A.Open_Neighbourhood := Nonempty_Open_Neighbourhood A
-  have h_n_2 : Nonempty ↑B.Open_Neighbourhood := Nonempty_Open_Neighbourhood B
-  have h_n_3 : Nonempty ↑(A ⊔ B).Open_Neighbourhood := Nonempty_Open_Neighbourhood (A ⊔ B)
-  have h_n_4 : Nonempty ↑(A ⊓ B).Open_Neighbourhood := Nonempty_Open_Neighbourhood (A ⊓ B)
-  have h_n_5 : Nonempty ↑(A ⊓ B).Neighbourhood := Nonempty_Neighbourhood (A ⊓ B)
+  have h_n_1 : Nonempty ↑A.openNhds := nonempty_openNhds A
+  have h_n_2 : Nonempty ↑B.openNhds := nonempty_openNhds B
+  have h_n_3 : Nonempty ↑(A ⊔ B).openNhds := nonempty_openNhds (A ⊔ B)
+  have h_n_4 : Nonempty ↑(A ⊓ B).openNhds := nonempty_openNhds (A ⊓ B)
+  have h_n_5 : Nonempty ↑(A ⊓ B).nhds := nonempty_nhds (A ⊓ B)
   have h1 : m.caratheodory (A ⊔ B) =
-      ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊔ w_b) := by
+      ⨅ v_a : openNhds A, ⨅ w_b : openNhds B, m.toFun (v_a ⊔ w_b) := by
     apply le_antisymm
     · simp only [OrderBot.bddBelow, le_ciInf_iff, Subtype.forall]
       intro a ha b hb
@@ -972,14 +972,14 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       intro a ha
       --
       refine ciInf_le_of_le ?_ ⟨a, (by
-        simp only [Open_Neighbourhood, Set.mem_ofPred_eq]
+        simp only [openNhds, Set.mem_ofPred_eq]
         apply le_trans' ha
         exact le_sup_left)⟩ ?_
       · use 0
         simp only [lowerBounds, Set.mem_range, Subtype.exists, exists_prop, forall_exists_index,
           and_imp, forall_apply_eq_imp_iff₂, Set.mem_ofPred_eq, zero_le, implies_true]
       refine ciInf_le_of_le ?_ ⟨a, (by
-        simp only [Open_Neighbourhood, Set.mem_ofPred_eq]
+        simp only [openNhds, Set.mem_ofPred_eq]
         apply le_trans' ha
         exact le_sup_right)⟩ ?_
       · use 0
@@ -988,7 +988,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
       apply Measure.mono
       simp only [le_refl, sup_of_le_left]
   have h2 : m.caratheodory (A ⊓ B) =
-      ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B, m.toFun (v_a ⊓ w_b) := by
+      ⨅ v_a : openNhds A, ⨅ w_b : openNhds B, m.toFun (v_a ⊓ w_b) := by
     apply_fun ENNReal.ofNNReal
     · rw [ENNReal.coe_iInf]
       conv =>
@@ -1001,10 +1001,10 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
         rw [Sublocale.intersection_Neighbourhood B]
         repeat rw [sInf_eq_iInf]
         repeat rw [iInf_subtype']
-        have h_n : Nonempty (Subtype (Membership.mem A.Neighbourhood)) := by
-          exact Nonempty_Neighbourhood A
-        have h_n' : Nonempty (Subtype (Membership.mem B.Neighbourhood)) := by
-          exact Nonempty_Neighbourhood B
+        have h_n : Nonempty (Subtype (Membership.mem A.nhds)) := by
+          exact nonempty_nhds A
+        have h_n' : Nonempty (Subtype (Membership.mem B.nhds)) := by
+          exact nonempty_nhds B
         rw [iInf_inf]
         conv =>
           enter [1, 1, 1, x]
@@ -1018,9 +1018,9 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             simp only [Prod.forall, Subtype.forall]
             intro a ha b hb
             refine ciInf_le_of_le ?_ ⟨⟨a, (by
-              simp only [Neighbourhood, Set.mem_ofPred_eq]
+              simp only [Sublocale.nhds, Set.mem_ofPred_eq]
               use a)⟩, ⟨b, (by
-              simp only [Neighbourhood, Set.mem_ofPred_eq]
+              simp only [Sublocale.nhds, Set.mem_ofPred_eq]
               use b)⟩⟩ ?_
             · use 0
               simp [lowerBounds]
@@ -1030,7 +1030,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             rw [Open.preserves_inf]
           · simp only [OrderBot.bddBelow, le_ciInf_iff, Prod.forall, Subtype.forall]
             intro a ha b hb
-            simp only [Neighbourhood, Set.mem_ofPred_eq] at ha hb
+            simp only [Sublocale.nhds, Set.mem_ofPred_eq] at ha hb
             rcases ha with ⟨a', ⟨ha1, ha2⟩⟩
             rcases hb with ⟨b', ⟨hb1, hb2⟩⟩
             refine ciInf_le_of_le ?_ ⟨⟨a', (by
@@ -1049,9 +1049,9 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
             exists_and_left, exists_prop, Prod.forall, Subtype.forall]
           intro a1 h1 a2 h2 a3 h3 a4 h4
           use a1 ⊓ a3
-          refine ⟨Neighbourhood.inf_closed A a1 h1 a3 h3, ?_⟩
+          refine ⟨nhds_inf_closed A a1 h1 a3 h3, ?_⟩
           use a2 ⊓ a4
-          refine ⟨⟨?_, ?_⟩, ?_, Neighbourhood.inf_closed B a2 h2 a4 h4, ?_⟩
+          refine ⟨⟨?_, ?_⟩, ?_, nhds_inf_closed B a2 h2 a4 h4, ?_⟩
           · exact (inf_le_left : (a1 ⊓ a3) ⊓ (a2 ⊓ a4) ≤ a1 ⊓ a3).trans inf_le_left
           · exact (inf_le_right : (a1 ⊓ a3) ⊓ (a2 ⊓ a4) ≤ a2 ⊓ a4).trans inf_le_left
           · exact (inf_le_left : (a1 ⊓ a3) ⊓ (a2 ⊓ a4) ≤ a1 ⊓ a3).trans inf_le_right
@@ -1060,7 +1060,7 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
   apply_fun (· + m.caratheodory (A ⊓ B))
   · ring_nf
     have h3 : m.caratheodory (A ⊔ B) + m.caratheodory (A ⊓ B) =
-        ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B,
+        ⨅ v_a : openNhds A, ⨅ w_b : openNhds B,
           m.toFun (v_a ⊔ w_b) +  m.toFun (v_a ⊓ w_b) := by
       conv =>
         enter [1]
@@ -1097,8 +1097,8 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
           obtain ⟨w_1, h_1⟩ := h_n_2
           let h1 := a_4 a b a_1 b_1
           let h2 := a_4 a_2 b_2 a_3 b_3
-          let h3 := a_4 (a ⊓ a_2) (by exact Open_Neighbourhood.inf_closed a b a_2 b_2)
-            (a_1 ⊓ a_3) (by exact Open_Neighbourhood.inf_closed a_1 b_1 a_3 b_3)
+          let h3 := a_4 (a ⊓ a_2) (by exact openNhds_inf_closed a b a_2 b_2)
+            (a_1 ⊓ a_3) (by exact openNhds_inf_closed a_1 b_1 a_3 b_3)
           apply le_trans h3
           apply add_le_add
           · norm_cast
@@ -1122,10 +1122,10 @@ theorem Measure.caratheodory.strictly_additive (A B : Sublocale E) :
     conv =>
       enter [1, 1, v_a, 1, w_b]
       rw [h5]
-    have h6 : ⨅ v_a : Open_Neighbourhood A, ⨅ w_b : Open_Neighbourhood B,
+    have h6 : ⨅ v_a : openNhds A, ⨅ w_b : openNhds B,
         m.toFun ↑v_a + m.toFun ↑w_b  =
-        (⨅ v_a : Open_Neighbourhood A, m.toFun ↑v_a) +
-          ⨅ w_b : Open_Neighbourhood B, m.toFun ↑w_b := by
+        (⨅ v_a : openNhds A, m.toFun ↑v_a) +
+          ⨅ w_b : openNhds B, m.toFun ↑w_b := by
       rw [@NNReal.eq_iff]
       simp only [NNReal.coe_iInf, NNReal.coe_add]
       rw [ciInf_add]

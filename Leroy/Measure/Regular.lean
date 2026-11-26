@@ -47,7 +47,7 @@ theorem well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c 
     use U.exterior
     apply And.intro
     · rw [inf_comm]
-      exact Open.inf_Exterior_eq_bot U
+      exact Open.inf_exterior_eq_bot U
     · -- TODO vlt als extra lemma
       have h_nonempty : Nonempty { x // x ⊓ U = ⊥ } := by use ⊥; simp
       simp only [Open.exterior, sSup_eq_iSup', Set.mem_ofPred_eq]
@@ -56,20 +56,20 @@ theorem well_inside_iff (U V : Open E) : U ≪ V ↔ ∃ c, c ⊓ U = ⊥ ∧ c 
       intro b h1
       have h2 : U.exterior ⊔ V = ⊤ := by
         rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale]
-        rw [sup_comm, sup_eq_top_iff_compl_le]
+        rw [sup_comm, Open.sup_eq_top_iff_compl_le]
         have h_compl : V.compl.toSublocale ≤ U.closure.compl.toSublocale :=
-          Open_compl_le_Closed_compl V U.closure h
-        rw [Closure_compl_eq_exterior U] at h_compl
+          Open.compl_le_Closed_compl V U.closure h
+        rw [Open.closure_compl_eq_exterior U] at h_compl
         exact h_compl
       rw [eq_top_iff, ← h2,sup_le_iff]
       apply h1
-      simpa [inf_comm] using Open.inf_Exterior_eq_bot U
+      simpa [inf_comm] using Open.inf_exterior_eq_bot U
   · intro h
     rcases h with ⟨c, ⟨h1, h2⟩⟩
     let h1' := h1
-    rw [Open.eq_iff, Open.preserves_inf, Open.bot_toSublocale, inf_eq_bot_iff_le_compl] at h1'
+    rw [Open.eq_iff, Open.preserves_inf, Open.bot_toSublocale, Open.inf_eq_bot_iff_le_compl] at h1'
     let h2' := h2
-    rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale, sup_eq_top_iff_compl_le] at h2'
+    rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale, Open.sup_eq_top_iff_compl_le] at h2'
     apply le_trans' h2'
     simp only [Open.closure, Closed.preserves_sInf, sInf_le_iff, lowerBounds, Set.mem_image,
       Set.mem_ofPred_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
@@ -110,7 +110,7 @@ lemma Closed.eq_intersection_opens (U : Open E) :
     rw [well_inside_iff] at h
     rw [Open.compl_element_eq_exterior] --- uuuuuu
     -- vlt woanders...
-    simp only [Closed.toSublocale, complement, Open.compl, Open.toSublocale, Open.exterior,
+    simp only [Closed.toSublocale, Open.complNucleus, Open.compl, Open.toSublocale, Open.exterior,
         Open.sSup_def, Sublocale.le_iff, Sublocale.apply_eq_toNucleus, Sublocale.toNucleus_apply,
         Nucleus.restrict_toSublocale, Nucleus.coe_mk, InfHom.coe_mk]
     repeat rw [Nucleus.coe_mk, InfHom.coe_mk]
@@ -137,12 +137,12 @@ lemma Closed.eq_intersection_opens (U : Open E) :
       ⨅ V, ⨅ (_ : V ≪ U), V.compl.toSublocale := by
       apply iInf₂_mono
       intro i h
-      exact compl_element_le_compl i
+      exact Open.compl_element_le i
     apply le_trans h1
     conv =>
       enter [2]
       rw [e_regular.elim U]
-    simp only [Closed.toSublocale, complement, Open.compl, Open.sSup_def, Sublocale.le_iff,
+    simp only [Closed.toSublocale, Open.complNucleus, Open.compl, Open.sSup_def, Sublocale.le_iff,
         Sublocale.apply_eq_toNucleus, Sublocale.toNucleus_apply, Nucleus.restrict_toSublocale,
         Nucleus.coe_mk, InfHom.coe_mk, sup_le_iff, sSup_le_iff, Set.mem_image, Set.mem_ofPred_eq,
         forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
@@ -215,7 +215,7 @@ Maybe depends on:
 Nucleus.eq_join_open_closed
 -/
 lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) :
-    a = sInf (Open.toSublocale '' Sublocale.Open_Neighbourhood a) := by
+    a = sInf (Open.toSublocale '' Sublocale.openNhds a) := by
   apply le_antisymm
   · simp only [le_sInf_iff, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     exact fun a_1 a => a
@@ -223,7 +223,7 @@ lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) :
     conv =>
       enter [2]
       rw [h1]
-    simp only [Open_Neighbourhood, le_sInf_iff, Set.mem_image, sInf_le_iff, lowerBounds,
+    simp only [openNhds, le_sInf_iff, Set.mem_image, sInf_le_iff, lowerBounds,
       Set.mem_ofPred_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     intro a1 ha1 a2 h2
     apply h2
@@ -233,18 +233,18 @@ lemma Sublocale.intersection_Open_Neighbourhhood (a : Sublocale E) :
 
 
 /-- A sublocale is the infimum of all its neighbourhoods: `a = sInf
-(Sublocale.Neighbourhood a)`.  This is the spatial characterisation of sublocales used to
+(Sublocale.nhds a)`.  This is the spatial characterisation of sublocales used to
 transfer statements about opens to sublocales. -/
 lemma Sublocale.intersection_Neighbourhood (a : Sublocale E) :
-    a = sInf (Sublocale.Neighbourhood a) := by
+    a = sInf (Sublocale.nhds a) := by
   apply le_antisymm
   · apply le_sInf
-    exact fun b a_1 => Sublocale.Neighourhood.le b a_1
+    exact fun b a_1 => Sublocale.le_of_mem_nhds b a_1
   · conv =>
       enter [2]
       rw [Sublocale.intersection_Open_Neighbourhhood a]
     refine sInf_le_sInf ?_
-    simp only [Open_Neighbourhood, Neighbourhood, Set.mem_ofPred_eq, Set.image_subset_iff,
+    simp only [openNhds, Sublocale.nhds, Set.mem_ofPred_eq, Set.image_subset_iff,
       Set.preimage_ofPred_eq, Set.ofPred_subset_ofPred]
     intro a_1 a_2
     apply Exists.intro
@@ -258,7 +258,7 @@ Leroy Lemme 3
 lemma Measure.add_complement (U : Open E) :
     m.toFun U + m.caratheodory (U.compl) = m.toFun (⊤ : Open E) := by
   apply le_antisymm
-  · let V_a := Sublocale.Open_Neighbourhood U.compl.toSublocale
+  · let V_a := Sublocale.openNhds U.compl.toSublocale
     let W_a := Open.exterior '' V_a
     have sSup_W_a_eq_U : sSup W_a = U := by
       rw [e_regular.elim U]
@@ -266,17 +266,17 @@ lemma Measure.add_complement (U : Open E) :
       · simp only [le_sSup_iff, upperBounds, Set.mem_ofPred_eq, sSup_le_iff, Set.mem_image,
           forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, W_a, V_a]
         intro b h a ha
-        simp only [Sublocale.Open_Neighbourhood, Set.mem_ofPred_eq] at ha
+        simp only [Sublocale.openNhds, Set.mem_ofPred_eq] at ha
         have h1 : a.exterior ≪ U := by
           refine (well_inside_iff a.exterior U).mpr ?_
           use a
-          refine ⟨(by exact Open.inf_Exterior_eq_bot a), ?_⟩
+          refine ⟨(by exact Open.inf_exterior_eq_bot a), ?_⟩
           rw [sup_comm]
           rw [Open.eq_iff, Open.preserves_sup, Open.top_toSublocale]
-          rw [@sup_eq_top_iff_compl_le]
+          rw [@Open.sup_eq_top_iff_compl_le]
           exact ha
         exact h h1
-      · simp only [Sublocale.Open_Neighbourhood, le_sSup_iff, upperBounds, Set.mem_image,
+      · simp only [Sublocale.openNhds, le_sSup_iff, upperBounds, Set.mem_image,
         Set.mem_ofPred_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, sSup_le_iff, W_a,
         V_a]
         intro b h b1 h2
@@ -287,8 +287,8 @@ lemma Measure.add_complement (U : Open E) :
         let h' := h b1.exterior
         apply le_trans (Open.le_exterior_exterior _)
         apply h'
-        rw [← Closure_compl_eq_exterior]
-        apply Open_compl_le_Closed_compl
+        rw [← Open.closure_compl_eq_exterior]
+        apply Open.compl_le_Closed_compl
         apply h2'
     apply_fun m.caratheodory at sSup_W_a_eq_U
     have W_a_filtered_croissant : increasingly_filtered W_a := by
@@ -299,7 +299,7 @@ lemma Measure.add_complement (U : Open E) :
       simp only [Set.mem_image, exists_exists_and_eq_and, W_a, V_a]
       use u1 ⊓ v1
       apply And.intro
-      · exact Sublocale.Open_Neighbourhood.inf_closed u1 hu1 v1 hv1
+      · exact Sublocale.openNhds_inf_closed u1 hu1 v1 hv1
       · apply And.intro
         · simp only [← hu2, ← Open.compl_element_eq_exterior, Open.inf_def, Open.le_def]
           apply le_trans' compl_sup_compl_le
@@ -315,7 +315,7 @@ lemma Measure.add_complement (U : Open E) :
           m.toFun v_a.exterior + m.toFun v_a - m.toFun (v_a.exterior ⊓ v_a) := by
         have h1 :  m.toFun (v_a.exterior ⊓ v_a) = 0 := by
           rw [inf_comm]
-          rw [@Open.inf_Exterior_eq_bot]
+          rw [@Open.inf_exterior_eq_bot]
           exact m.empty
         conv =>
           enter [1]
@@ -331,7 +331,7 @@ lemma Measure.add_complement (U : Open E) :
       apply Measure.mono
     have h2 : ∀ v_a ∈ V_a, m.caratheodory (U.compl) ≤ m.toFun v_a := by
       intro va hva
-      simp only [Sublocale.Open_Neighbourhood, Set.mem_ofPred_eq, V_a] at hva
+      simp only [Sublocale.openNhds, Set.mem_ofPred_eq, V_a] at hva
       apply_fun m.caratheodory at hva
       · rw [Measure.caratheodory.open_eq_toFun] at hva
         exact hva
@@ -350,7 +350,7 @@ lemma Measure.add_complement (U : Open E) :
         · simp only [Set.Nonempty, Set.mem_image, exists_exists_and_eq_and, ↓existsAndEq, and_true,
           W_a, V_a]
           use ⊤
-          exact Sublocale.Open_Neighbourhood.top_mem
+          exact Sublocale.openNhds_top_mem
         · simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
           intro a wa
           simp only [Set.mem_image, W_a] at wa
@@ -380,18 +380,18 @@ lemma Measure.add_complement (U : Open E) :
         apply LT.lt.trans_le h2
         simp only [add_le_add_iff_right]
         rw [← NNReal.coe_sInf]
-      have h1 : ∃ W ∈ Sublocale.Open_Neighbourhood U.compl,
+      have h1 : ∃ W ∈ Sublocale.openNhds U.compl,
           m.toFun W < m.caratheodory U.compl + ε := by
         rw [Measure.caratheodory]
         have h_nonempty :
-            (m.toFun '' Sublocale.Open_Neighbourhood U.compl.toSublocale).Nonempty := by
+            (m.toFun '' Sublocale.openNhds U.compl.toSublocale).Nonempty := by
           simp only [Set.Nonempty, Set.mem_image]
           use m.toFun ⊤
           use ⊤
           simp only [and_true]
-          exact Sublocale.Open_Neighbourhood.top_mem
+          exact Sublocale.openNhds_top_mem
         let h := h_aux' ε hε
-          (m.toFun '' Sublocale.Open_Neighbourhood U.compl.toSublocale) h_nonempty
+          (m.toFun '' Sublocale.openNhds U.compl.toSublocale) h_nonempty
         rcases h with ⟨V, h⟩
         simp only [Set.mem_image] at h
         rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
@@ -414,7 +414,7 @@ lemma Measure.add_complement (U : Open E) :
       apply le_trans' h3
       rw [← @strictly_additive]
       refine m.mono ⊤ (U ⊔ W) ?_
-      simp only [Sublocale.Open_Neighbourhood, Set.mem_ofPred_eq] at h1
+      simp only [Sublocale.openNhds, Set.mem_ofPred_eq] at h1
       refine Open.le_iff.mpr ?_
       rw [Open.preserves_sup]
       have h4 : U.toSublocale ⊔ U.compl.toSublocale ≤ U.toSublocale ⊔ W.toSublocale := by
@@ -543,17 +543,17 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) :
     apply_fun m.caratheodory at h
     apply le_trans' (Measure.caratheodory.subadditive _ _)
     rw [← h]
-  · have h : ∀ w ∈ Sublocale.Open_Neighbourhood a, (m.restrict_open_measure w).toFun ⊤  =
+  · have h : ∀ w ∈ Sublocale.openNhds a, (m.restrict_open_measure w).toFun ⊤  =
       (m.restrict_open_measure w).toFun (u) +
         (m.restrict_open_measure w).caratheodory (u.compl) := by
       intro w h
       exact Eq.symm (add_complement u)
     simp only [restrict_open_measure, restrict_open, le_top, inf_of_le_right] at h
-    have h1 :  ∀ w ∈ Sublocale.Open_Neighbourhood a,
+    have h1 :  ∀ w ∈ Sublocale.openNhds a,
         m.caratheodory (a ⊓ u) + m.caratheodory (a ⊓ u.compl) ≤
           m.toFun (u ⊓ w) + (m.restrict_open_measure w).caratheodory u.compl.toSublocale := by
         intro w h
-        simp only [Sublocale.Open_Neighbourhood, Set.mem_ofPred_eq] at h
+        simp only [Sublocale.openNhds, Set.mem_ofPred_eq] at h
         apply add_le_add
         · apply_fun (fun x ↦ x ⊓ u.toSublocale) at h
           · apply_fun (fun x ↦ m.caratheodory x) at h
@@ -572,15 +572,15 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) :
           · simp only [lowerBounds, Set.mem_image, forall_exists_index, and_imp,
               forall_apply_eq_imp_iff₂, Set.mem_ofPred_eq]
             intro b h1
-            simp only [Sublocale.Open_Neighbourhood, Set.mem_ofPred_eq] at h1
+            simp only [Sublocale.openNhds, Set.mem_ofPred_eq] at h1
             apply le_csInf
             · simp only [Set.image_nonempty]
               rw [Set.Nonempty]
               use ⊤
-              exact Sublocale.Open_Neighbourhood.top_mem
+              exact Sublocale.openNhds_top_mem
             · simp only [Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
               intro a1 h2
-              simp only [Sublocale.Open_Neighbourhood, Set.mem_ofPred_eq] at h2
+              simp only [Sublocale.openNhds, Set.mem_ofPred_eq] at h2
               have h_aux : a ⊓ u.compl.toSublocale ≤ (a1 ⊓ w).toSublocale := by
                 rw [inf_comm]
                 rw [Open.preserves_inf]
@@ -588,7 +588,7 @@ lemma Measure.add_complement_inf (u : Open E) (a : Sublocale E) :
               let h3 := h1 (a1 ⊓ w) h_aux
               exact h3
           · simp only [OrderBot.bddBelow]
-          · simp only [Set.image_nonempty, Sublocale.Open_Neighbourhood.Nonempty]
+          · simp only [Set.image_nonempty, Sublocale.openNhds_nonempty]
     conv =>
       enter [2]
       rw [Measure.caratheodory]
@@ -611,7 +611,7 @@ lemma Measure.restrict_subadditive {U V : Open E} {A : Sublocale E} : m.caratheo
       m.caratheodory A - m.caratheodory (A ⊓ (U ⊔ V).compl) := by
       apply eq_tsub_of_add_eq
       rw [← Measure.add_complement_inf]
-  rw [compl_sup_eq_inf_compl] at h
+  rw [Open.compl_sup_eq_inf_compl] at h
   rw [Closed.preserves_inf] at h
   have h2 : m.caratheodory A = m.caratheodory (A ⊓ U ⊓ V) +
       m.caratheodory (A ⊓ U ⊓ V.compl) + m.caratheodory (A ⊓ U.compl ⊓ V) +

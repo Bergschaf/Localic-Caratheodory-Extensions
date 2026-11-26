@@ -31,10 +31,10 @@ theorem Sublocale.gc' (A : Sublocale E') :
   Nucleus.gc' A.toNucleus
 
 /-- The nucleus underlying a sublocale is a Galois connection between the frame
-homomorphism `A.frameHom` and its meet-preserving upper adjoint `f_untenstern`.
+homomorphism `A.frameHom` and its meet-preserving upper adjoint `lowerStar`.
 This is the form of the adjunction used to compute the embedding of sublocales. -/
 theorem Sublocale.gc (A : Sublocale E') :
-    GaloisConnection A.frameHom (f_untenstern A.frameHom) :=
+    GaloisConnection A.frameHom (lowerStar A.frameHom) :=
   Nucleus.gc A.toNucleus
 
 /-- As a simp lemma: the frame homomorphism of a sublocale fixes every point of the
@@ -51,9 +51,9 @@ the result is the meet of `A` with the pullback of `b`, a sublocale of `E'` lyin
 below `A` as the lattice of sublocales of the image. -/
 def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A.toNucleus)) : Sublocale E' :=
   ({
-    toFun x := (f_untenstern A.frameHom) (b (A.frameHom x))
+    toFun x := (lowerStar A.frameHom) (b (A.frameHom x))
     idempotent' x := by
-      simp only [f_untenstern, map_sSup, sSup_le_iff, Set.mem_ofPred_eq]
+      simp only [lowerStar, map_sSup, sSup_le_iff, Set.mem_ofPred_eq]
       intro c h
       simp only [le_sSup_iff, upperBounds, Set.mem_ofPred_eq]
       intro d h1'
@@ -82,7 +82,7 @@ def Sublocale.embed {A : Sublocale E'} (b : Sublocale (Image A.toNucleus)) : Sub
 adjoint applied to `b` at the value of `A` on `x`. -/
 @[simp] lemma Sublocale.embed_apply (A : Sublocale E')
   (b : Sublocale (Image A.toNucleus)) (x : E') :
-  A.embed b x = f_untenstern A.frameHom (b (A.frameHom x)) := by
+  A.embed b x = lowerStar A.frameHom (b (A.frameHom x)) := by
   simp [Sublocale.embed]
 
 /-- The embedding of the largest sublocale of the image is `A` itself, showing that the
@@ -91,8 +91,8 @@ lemma Sublocale.embed_top (A : Sublocale E') : A.embed ⊤ = A := by
   ext x
   rw [Sublocale.embed_apply]
   rw [Sublocale.top_apply]
-  change f_untenstern A.toNucleus.frameHom (A.toNucleus.frameHom x) = A.toNucleus x
-  rw [f_untenstern_eq_val A.toNucleus]
+  change lowerStar A.toNucleus.frameHom (A.toNucleus.frameHom x) = A.toNucleus x
+  rw [lowerStar_eq_val A.toNucleus]
   exact Nucleus.frameHom_apply_val A.toNucleus x
 
 /-- The embedding of the smallest sublocale of the image is the smallest sublocale,
@@ -101,8 +101,8 @@ lemma Sublocale.embed_bot (A : Sublocale E') : A.embed ⊥ = ⊥ := by
   ext x
   rw [Sublocale.embed_apply]
   simp only [Sublocale.bot_apply]
-  change f_untenstern A.toNucleus.frameHom (⊤ : Image A.toNucleus) = ⊤
-  rw [f_untenstern_eq_val A.toNucleus]
+  change lowerStar A.toNucleus.frameHom (⊤ : Image A.toNucleus) = ⊤
+  rw [lowerStar_eq_val A.toNucleus]
   rfl
 
 /-- On opens the embedding has an explicit form: embedding the open `u` of the image
@@ -144,7 +144,7 @@ lemma Sublocale.embed_open_eq_inf (A : Sublocale E') (u : Open (Image A.toNucleu
     simp only [lowerBounds_insert, lowerBounds_singleton, Set.Iic_inter_Iic, Set.mem_Iic,
       le_inf_iff, le_iInf_iff, and_imp]
     intro b hbA hbV
-    rw [Sublocale.embed_apply, f_untenstern, sSup_le_iff]
+    rw [Sublocale.embed_apply, lowerStar, sSup_le_iff]
     intro y hy
     have hA : A x ≤ b x := (Sublocale.le_iff b A).mp hbA x
     have hU : (u.element : E') ⇨ A x ≤ b (A x) := by
@@ -181,11 +181,11 @@ lemma Sublocale.embed_open_sup (A : Sublocale E') (u v : Open (Image A.toNucleus
     A.embed (u ⊔ v) = A.embed u ⊔ A.embed v := by
   ext i
   simp_rw [Sublocale.embed_apply, Sublocale.frameHom,
-    f_untenstern_eq_val A.toNucleus]
+    lowerStar_eq_val A.toNucleus]
   rw [Sublocale.sup_apply]
   rw [GaloisConnection.u_inf A.gc']
   simp only [Sublocale.sup_apply, Sublocale.embed_apply, Sublocale.frameHom,
-    f_untenstern_eq_val A.toNucleus]
+    lowerStar_eq_val A.toNucleus]
 
 
 -- sSup analaog
@@ -268,7 +268,7 @@ lemma Sublocale.restrict_embed (A : Sublocale E') (b : Sublocale (Image A.toNucl
     A.restrictSublocale (A.embed b) (Sublocale.embed_le _ _) = b := by
   ext i
   rw [Sublocale.restrictSublocale_apply, Sublocale.embed_apply,
-    Sublocale.frameHom, f_untenstern_eq_val A.toNucleus]
+    Sublocale.frameHom, lowerStar_eq_val A.toNucleus]
   exact congrArg Subtype.val <|
     (Nucleus.frameHom.of_coe A (b (A.frameHom i))).trans
       (congrArg b (Nucleus.frameHom.of_coe A i))
@@ -279,7 +279,7 @@ injective and restriction surjective onto the sublocales below `A`. -/
 lemma Sublocale.embed_restrict (A : Sublocale E') (b : Sublocale E') (h : b ≤ A) :
     A.embed (A.restrictSublocale b h) = b := by
   ext i
-  rw [Sublocale.embed_apply, Sublocale.frameHom, f_untenstern_eq_val A.toNucleus,
+  rw [Sublocale.embed_apply, Sublocale.frameHom, lowerStar_eq_val A.toNucleus,
     Sublocale.restrictSublocale_apply]
   simp only [Sublocale.frameHom, Nucleus.frameHom_apply_val]
   have h' := (Sublocale.le_iff b A).mp h
@@ -442,98 +442,6 @@ lemma Sublocale.restrict_open_eq_restrict (A : Sublocale E') (u : Open E') :
   · apply  Sublocale.embed_orderiso
     rw [Sublocale.embed_restrict_open]
     rw [Sublocale.embed_restrict]
-
-/-lemma commutes leider nicht [e_regular : Fact (regular E')] (A : Sublocale E')
-    (s : Set (Open E')) : A ⊓ (sSup s).toSublocale = ⨆ b : (Open.toSublocale '' s), A ⊓ b := by
-  apply le_antisymm
-
-
-
-
-    rw [← Sublocale.restrict_open_eq_inf]
-
-
-    rw [← Sublocale.embed_open_sSup]
-    apply Sublocale.embed.mono
-    rw [← Open.le_iff]
-    simp only [sSup_le_iff, Set.mem_image, Set.mem_ofPred_eq, forall_exists_index, and_imp,
-      forall_apply_eq_imp_iff₂]
-    intro a h2
-    rw [Sublocale.restrict_open]
-    apply le_sSup
-    simp only [Set.mem_ofPred_eq]
-    rw [well_inside_iff] at h2 ⊢
-    rcases h2 with ⟨c, ⟨h2, h3⟩⟩
-    use A.restrict_open c
-    simp [Sublocale.restrict_open]
-    apply And.intro
-    · simp [Open.inf_def, Open.ext_iff]
-      rw [eq_bot_iff] at h2 ⊢
-      sorry
-    · rw [eq_top_iff] at h3 ⊢
-      apply_fun A.frameHom.toFun at h3
-      simp  [Open.top_element, InfHom.toFun_eq_coe, InfTopHom.coe_toInfHom, map_top,
-        FrameHom.coe_toInfTopHom, top_le_iff] at h3
-      rw [Open.le_def]
-      simp
-      rw [← h3]
-      simp [Open.sup_def]
-      simp only [Monotone, Nucleus.frameHom, InfHom.toFun_eq_coe, InfHom.coe_mk]
-      intro a b h
-      rw [← Subtype.coe_le_coe]
-      simp only [Set.val_codRestrict_apply]
-      apply A.monotone h
-
-  ·
-    conv =>
-      enter [1, 1]
-      rw [Sublocale.intersection_Open_Neighbourhhood A]
-    rw [sInf_image]
-    rw [biInf_inf]
-    conv =>
-      enter [1, 1, i, 1, h]
-      rw [← Open.preserves_inf]
-    have h1 (i : Open E') : i ⊓ sSup s = ⨆ a : s, i ⊓ a := by
-      ext
-      simp [Open.inf_def, Open.sSup_def]
-      rw [inf_sSup_eq]
-      simp
-      conv =>
-        enter [2, 1]
-        rw [iSup]
-      simp [Open.sSup_def, sSup_image]
-      apply le_antisymm
-      · simp_all only [le_iSup_iff, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂, implies_true]
-      · simp_all only [le_iSup_iff, iSup_le_iff, and_imp, forall_apply_eq_imp_iff₂, implies_true]
-    conv =>
-      enter [1, 1, i, 1, h, 1]
-      rw [h1]
-    rw [Sublocale.intersection_Open_Neighbourhhood (iSup _)]
-    simp only [le_sInf_iff, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
-    intro a h2
-    simp only [iInf_le_iff, le_iInf_iff, OrderDual.forall]
-    intro b h3
-
-
-    have h4 : a ∈ A.Open_Neighbourhood := by
-      simp [Sublocale.Open_Neighbourhood] at h2 ⊢
-
-
-
-
-
-
-
-
-
-
-  · simp only [Open.preserves_sSup, le_inf_iff, iSup_le_iff, inf_le_left, implies_true,
-    Subtype.forall, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, true_and]
-    intro a ha
-    apply le_trans inf_le_right
-    apply le_sSup
-    simp
-    use a -/
 
 /-- TODO woanders
 If `E'` is a regular frame then so is the image of the nucleus of any sublocale `A`:

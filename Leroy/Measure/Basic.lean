@@ -87,7 +87,7 @@ lemma monotone (u v : Open E) (h : u = v) : m.toFun u = m.toFun v := by
 /-- The Caratheodory outer measure of a sublocale `a`: the infimum of the measures of
 the open neighbourhoods of `a`. -/
 noncomputable def caratheodory {m : @Measure X h} (a : Sublocale X) : NNReal :=
-  sInf (m.toFun '' Open_Neighbourhood a)
+  sInf (m.toFun '' openNhds a)
 
 namespace caratheodory
 
@@ -95,7 +95,7 @@ namespace caratheodory
 `m`; this says the extension does not change values on opens. -/
 lemma open_eq_toFun {m : @Measure X h} (x : Open X) :
     m.caratheodory x = m.toFun x := by
-  simp only [caratheodory, Open_Neighbourhood]
+  simp only [caratheodory, openNhds]
   apply le_antisymm
   · apply csInf_le'
     simp only [Set.mem_image, Set.mem_ofPred_eq]
@@ -111,7 +111,7 @@ lemma open_eq_toFun {m : @Measure X h} (x : Open X) :
 
 /-- The Caratheodory measure of the top sublocale equals the measure of the top open. -/
 lemma top_eq_toFun {m : @Measure X h} : m.caratheodory ⊤ = m.toFun ⊤ := by
-  simp only [Measure.caratheodory, Open_Neighbourhood, top_le_iff]
+  simp only [Measure.caratheodory, openNhds, top_le_iff]
   have h : {v : Open X |  v.toSublocale = ⊤} = {⊤} := by
     ext x
     simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
@@ -133,11 +133,11 @@ lemma mono {A B : Sublocale E} : A ≤ B → m.caratheodory A ≤ m.caratheodory
     use 0
     intro a ha
     simp only [zero_le]
-  · simp only [Set.Nonempty, Open_Neighbourhood, Set.mem_image, Set.mem_ofPred_eq, ↓existsAndEq,
+  · simp only [Set.Nonempty, openNhds, Set.mem_image, Set.mem_ofPred_eq, ↓existsAndEq,
     and_true]
     use ⊤
     simp
-  · simp only [Open_Neighbourhood, Set.image_subset_iff]
+  · simp only [openNhds, Set.image_subset_iff]
     rw [@Set.ofPred_subset]
     intro x h1
     simp only [Set.mem_preimage, Set.mem_image, Set.mem_ofPred_eq]
@@ -171,7 +171,7 @@ end Measure
 at most `m.caratheodory a + ε`, i.e. the infimum in the definition of the Caratheodory
 measure is attained up to `ε`. -/
 lemma Exists_Neighbourhood_epsilon (a : Sublocale E) :
-  ∀ ε > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
+  ∀ ε > 0,  ∃ w ∈ openNhds a, m.toFun w ≤ m.caratheodory a + ε := by
     have h_aux (ε : Real) (hε : ε > 0) (s : Set Real) (h : s.Nonempty) :
         ∃ W ∈ s, W < sInf s + ε := by
       refine Real.lt_sInf_add_pos ?_ hε
@@ -187,14 +187,14 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) :
       simp only [add_le_add_iff_right]
       rw [← NNReal.coe_sInf]
     rw [Measure.caratheodory]
-    have h_nonempty : (m.toFun '' Open_Neighbourhood  a).Nonempty := by
+    have h_nonempty : (m.toFun '' openNhds  a).Nonempty := by
       simp only [Set.Nonempty, Set.mem_image]
       use m.toFun ⊤
       use ⊤
       simp only [and_true]
-      exact Open_Neighbourhood.top_mem
+      exact openNhds_top_mem
     intro ε hε
-    let h := h_aux' ε hε (m.toFun '' Open_Neighbourhood a) h_nonempty
+    let h := h_aux' ε hε (m.toFun '' openNhds a) h_nonempty
     rcases h with ⟨V, h⟩
     simp only [Set.mem_image] at h
     rcases h with ⟨⟨x, ⟨h1, h2⟩⟩, h3⟩
@@ -207,7 +207,7 @@ lemma Exists_Neighbourhood_epsilon (a : Sublocale E) :
 every `ε > 0` there is an open neighbourhood of `a` whose measure is strictly smaller
 than `m.caratheodory a + ε`. -/
 lemma Exists_Neighbourhood_epsilon_lt (a : Sublocale E) :
-    ∀ ε > 0,  ∃ w ∈ Open_Neighbourhood a, m.toFun w < m.caratheodory a + ε := by
+    ∀ ε > 0,  ∃ w ∈ openNhds a, m.toFun w < m.caratheodory a + ε := by
   intro ε h_ε
   obtain ⟨w, ⟨h1, h2⟩⟩ := @Exists_Neighbourhood_epsilon _ _ m a (ε / 2) (by exact half_pos h_ε)
   use w
@@ -301,7 +301,7 @@ lemma Measure.caratheodory.preserves_sup' (m : @Measure X h) (X_n : ℕ → Subl
           (@Exists_Neighbourhood_epsilon_lt _ _ m (X_n n) ⟨(ε_n n),
             (by exact le_of_lt (h_ε_n n))⟩ (h_ε_n n))
         simp only [V_n]
-        simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at h1
+        simp only [openNhds, Set.mem_ofPred_eq] at h1
         exact h1
       let W_n (n : ℕ) := ⨆ m ∈ {i : ℕ | i ≤ n}, V_n m
       have V_n_le_W_n (n : ℕ) : V_n n ≤ W_n n := by
@@ -506,13 +506,13 @@ lemma Measure.caratheodory.subadditive (a b : Sublocale E) :
     m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b := by
   have h : ∀ ε > 0, m.caratheodory (a ⊔ b) ≤ m.caratheodory a + m.caratheodory b + 2 * ε := by
     intro ε h
-    have h_a : ∃ w ∈ Open_Neighbourhood a, m.toFun w ≤ m.caratheodory a + ε := by
+    have h_a : ∃ w ∈ openNhds a, m.toFun w ≤ m.caratheodory a + ε := by
       exact Exists_Neighbourhood_epsilon a ε h
-    have h_b : ∃ w ∈ Open_Neighbourhood b, m.toFun w ≤ m.caratheodory b + ε := by
+    have h_b : ∃ w ∈ openNhds b, m.toFun w ≤ m.caratheodory b + ε := by
       exact Exists_Neighbourhood_epsilon b ε h
     rcases h_a with ⟨w_a, ⟨ha1, ha2⟩⟩
     rcases h_b with ⟨w_b, ⟨hb1, hb2⟩⟩
-    simp only [Open_Neighbourhood, Set.mem_ofPred_eq] at ha1 hb1
+    simp only [openNhds, Set.mem_ofPred_eq] at ha1 hb1
     have h1 : m.caratheodory (a ⊔ b) ≤ m.caratheodory ((w_a ⊔ w_b).toSublocale) := by
       apply Measure.caratheodory.mono
       rw [Open.preserves_sup]

@@ -22,28 +22,27 @@ variable {X Y E : Type*} [Order.Frame X] [Order.Frame Y] [Order.Frame E]
 /-- Factorisation theorem: for a Leroy embedding `i`, pointwise domination of `f` by `i`
 in the lower-star ordering is equivalent to `f` factoring as `g ∘ i` for a frame homomorphism `g`,
 which is automatically unique. -/
-
 lemma factorisation (i : FrameHom E X) (f : FrameHom E Y) [inst : Leroy_Embedding i] :
-    (∀ v : E, (f_untenstern i).obj ((f_obenstern i).obj v) ≤
-      (f_untenstern f).obj ((f_obenstern f).obj v)) ↔
+    (∀ v : E, (lowerStar i).obj ((upperStar i).obj v) ≤
+      (lowerStar f).obj ((upperStar f).obj v)) ↔
   (∃ (g : FrameHom X Y), f = FrameHom.comp g i) := by
   apply Iff.intro
   · intro h
-    have h1 (v : E) : (f_obenstern f).obj v =
-        ((f_obenstern f).obj ∘ (f_untenstern i).obj ∘ (f_obenstern i).obj) v := by
+    have h1 (v : E) : (upperStar f).obj v =
+        ((upperStar f).obj ∘ (lowerStar i).obj ∘ (upperStar i).obj) v := by
       apply le_antisymm_iff.mpr
       apply And.intro
-      · simp only [f_untenstern, f_obenstern, Function.comp_apply]
+      · simp only [lowerStar, upperStar, Function.comp_apply]
         exact CategoryTheory.leOfHom (frameHom_monotone f (CategoryTheory.homOfLE (le_sSup le_rfl)))
       · let h2 := h v
         let h2 := CategoryTheory.homOfLE h2
-        let h3 := CategoryTheory.leOfHom ((f_obenstern f).map h2)
+        let h3 := CategoryTheory.leOfHom ((upperStar f).map h2)
         let tr_1 := triangle_one f
         apply_fun (fun x ↦ x.obj v) at tr_1
         simp at tr_1
         simp only [tr_1] at h3
         exact h3
-    let g := fun x ↦ f ((f_untenstern i).obj x)
+    let g := fun x ↦ f ((lowerStar i).obj x)
     have i_surjective : Function.Surjective i:= by
         apply f_one_surjective i
         use (inst.comp_id)
@@ -102,27 +101,27 @@ lemma factorisation (i : FrameHom E X) (f : FrameHom E Y) [inst : Leroy_Embeddin
   · intro h
     rcases h with ⟨g,h⟩
     intro v
-    let h0 := ig_untenstern i g
+    let h0 := comp_lowerStar i g
     rw [←h] at h0
-    let h_minuseins := ig_obenstern i g
+    let h_minuseins := comp_upperStar i g
     rw [← h] at h_minuseins
-    have h_minus2 : (f_untenstern f).obj ∘ (f_obenstern f).obj =
-        ((f_untenstern i).obj ∘ (f_untenstern g).obj ∘ (f_obenstern g).obj ∘
-          (f_obenstern i).obj) := by
+    have h_minus2 : (lowerStar f).obj ∘ (upperStar f).obj =
+        ((lowerStar i).obj ∘ (lowerStar g).obj ∘ (upperStar g).obj ∘
+          (upperStar i).obj) := by
       rw [← h0]
       rw [← h_minuseins]
       rfl
-    have h2 : v ≤ ((f_untenstern i).obj ∘ (f_untenstern g).obj ∘ (f_obenstern g).obj ∘
-        (f_obenstern i).obj) v := by
+    have h2 : v ≤ ((lowerStar i).obj ∘ (lowerStar g).obj ∘ (upperStar g).obj ∘
+        (upperStar i).obj) v := by
       rw [← h_minus2]
-      simp only [f_untenstern, f_obenstern, Function.comp_apply]
+      simp only [lowerStar, upperStar, Function.comp_apply]
       apply le_sSup
       simp
     let h3 := CategoryTheory.homOfLE h2
-    let h4 := (f_adj i).homEquiv v (((f_untenstern g).obj ∘ (f_obenstern g).obj ∘
-        (f_obenstern i).obj) v)
+    let h4 := (f_adj i).homEquiv v (((lowerStar g).obj ∘ (upperStar g).obj ∘
+        (upperStar i).obj) v)
     let h5 := h4.invFun h3
-    let h6 := (f_untenstern i).map h5
+    let h6 := (lowerStar i).map h5
     let h7 := CategoryTheory.leOfHom h6
     let h_minus3 := h_minus2
     apply_fun (fun x ↦ x v) at h_minus3

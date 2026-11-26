@@ -46,6 +46,13 @@ instance : FunLike (Sublocale E) E E where
   change S.toNucleus x = S.toNucleus x
   rfl
 
+/-- Taking the nucleus of the sublocale of a nucleus reproduces the nucleus: the
+nucleus–sublocale correspondence is a two-sided iso on nuclei. -/
+@[simp] lemma Sublocale.toNucleus_toSublocale (S : Sublocale E) :
+    S.toNucleus.toSublocale = S := by
+  change nucleusIsoSublocale (OrderDual.toDual S.toNucleus) = S
+  exact nucleusIsoSublocale.right_inv S
+
 /-- The nucleus of the sublocale dual to a nucleus is the nucleus itself. -/
 @[simp] lemma Sublocale.symm_toNucleus (S : Sublocale E) :
     OrderDual.ofDual (nucleusIsoSublocale.symm S) = S.toNucleus := by
@@ -139,6 +146,37 @@ lemma Sublocale.inf_apply (u v : Sublocale E) (x : E) :
     (u ⊓ v) x = ⨅ j ∈ lowerBounds {u, v}, j x := by
   rw [← sInf_pair, Sublocale.sInf_apply]
 
+/-- The intersection of the carriers of two sublocales is again the carrier of a sublocale:
+`x` in both `u` and `v` implies `x` in their meet. -/
+lemma Sublocale.mem_inf_of_mem {u v : Sublocale E} {x : E} (hu : x ∈ u) (hv : x ∈ v) :
+    x ∈ u ⊓ v := by
+  let C : Sublocale E := {
+    carrier := (u : Set E) ∩ v
+    sInf_mem' := by
+      intro s hs
+      exact ⟨u.sInf_mem (by
+        intro y hy
+        exact (hs hy).1), v.sInf_mem (by
+        intro y hy
+        exact (hs hy).2)⟩
+    himp_mem' := by
+      intro a b hb
+      exact ⟨u.himp_mem hb.1, v.himp_mem hb.2⟩
+  }
+  have hCu : C ≤ u := SetLike.coe_subset_coe.mp (by
+    intro y hy
+    change y ∈ (u : Set E) ∩ v at hy
+    exact hy.1)
+  have hCv : C ≤ v := SetLike.coe_subset_coe.mp (by
+    intro y hy
+    change y ∈ (u : Set E) ∩ v at hy
+    exact hy.2)
+  have hC : C ≤ u ⊓ v := le_inf hCu hCv
+  have hxC : x ∈ C := by
+    change x ∈ (u : Set E) ∩ v
+    exact Set.mem_inter hu hv
+  exact (SetLike.coe_subset_coe.mpr hC) hxC
+
 /-- A point belongs to a meet of sublocales iff it belongs to both
 (via the intersection carrier). -/
 @[simp] lemma Sublocale.mem_inf (u v : Sublocale E) {x : E} :
@@ -148,36 +186,7 @@ lemma Sublocale.inf_apply (u v : Sublocale E) (x : E) :
     exact ⟨(SetLike.coe_subset_coe.mpr inf_le_left) hx,
       (SetLike.coe_subset_coe.mpr inf_le_right) hx⟩
   · rintro ⟨hu, hv⟩
-    let C : Sublocale E := {
-      carrier := (u : Set E) ∩ v
-      sInf_mem' := by
-        intro s hs
-        exact ⟨u.sInf_mem (by
-          intro x hx
-          exact (hs hx).1), v.sInf_mem (by
-          intro x hx
-          exact (hs hx).2)⟩
-      himp_mem' := by
-        intro a b hb
-        exact ⟨u.himp_mem hb.1, v.himp_mem hb.2⟩
-    }
-    have hCu : C ≤ u := SetLike.coe_subset_coe.mp (by
-      intro x hx
-      have hx' : x ∈ C := hx
-      change x ∈ (u : Set E) ∩ v at hx'
-      have hpair : x ∈ u ∧ x ∈ v := (Set.mem_inter_iff x _ _).mp hx'
-      exact hpair.1)
-    have hCv : C ≤ v := SetLike.coe_subset_coe.mp (by
-      intro x hx
-      have hx' : x ∈ C := hx
-      change x ∈ (u : Set E) ∩ v at hx'
-      have hpair : x ∈ u ∧ x ∈ v := (Set.mem_inter_iff x _ _).mp hx'
-      exact hpair.2)
-    have hC : C ≤ u ⊓ v := le_inf hCu hCv
-    have hxC : x ∈ C := by
-      change x ∈ (u : Set E) ∩ v
-      exact Set.mem_inter hu hv
-    exact (SetLike.coe_subset_coe.mpr hC) hxC
+    exact Sublocale.mem_inf_of_mem hu hv
 
 /-- Membership in a sublocale is captured by the nucleus fixing the point. -/
 lemma Sublocale.mem_iff_apply_eq (S : Sublocale E) (x : E) :
@@ -228,6 +237,14 @@ protected def toSublocale (U : Open E) : Sublocale E := U.toNucleus.toSublocale
 @[simp] lemma toSublocale_apply (U : Open E) (x : E) :
     U.toSublocale x = U.element ⇨ x := by
   simp [Open.toSublocale, Open.toNucleus]
+
+/-- The pointwise Heyting implication nucleus `a ↦ V ⇨ n a` lies below the open nucleus
+`a ↦ V ⇨ a`. -/
+lemma Nucleus.openHimp_le_open (V : E) (n : Nucleus E) :
+    (Nucleus.openHimp V n).toSublocale ≤ (⟨V⟩ : Open E).toNucleus.toSublocale := by
+  rw [Nucleus.toSublocale_le_toSublocale]
+  intro a
+  exact le_himp_iff.mpr ((himp_inf_le : (V ⇨ a) ⊓ V ≤ a).trans n.le_apply)
 
 /-- An open element is coerced to its underlying frame element. -/
 instance : Coe (Open E) E where
@@ -360,10 +377,17 @@ lemma eq_iff : U = V ↔ U.toSublocale = V.toSublocale := by
   · exact fun h => congrArg Open.toSublocale h
   · exact fun h => toSublocale_injective h
 
-/-- Coercing a literal sublocale back to its nucleus returns the nucleus. -/
-@[simp] lemma Sublocale.coe_mk (f h2 h3) : ↑(⟨f, h2, h3,⟩ : Sublocale E) = f := rfl
+/-- The carrier of a literally given sublocale is its defining set. -/
+@[simp] lemma Sublocale.coe_mk (f : Set E) (h2 : ∀ s ⊆ f, sInf s ∈ f)
+    (h3 : ∀ a b : E, b ∈ f → a ⇨ b ∈ f) :
+    (⟨f, h2, h3⟩ : Sublocale E) = f := rfl
 
-/-- Meets of opens are sent to meets of sublocales: the embedding is inf-preserving. -/
+/-- Meets of opens are sent to meets of sublocales: the embedding is inf-preserving.
+
+Both inclusions are proved pointwise after unfolding all four sublocale actions:
+`≤` uses that a lower bound of `U.toSublocale` and `V.toSublocale` fixes every point
+of the form `x ⊓ V.element` (then idempotence closes the chain), while `≥` evaluates
+the meet at the open `U.element ⊓ V.element` itself. -/
 lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V.toSublocale := by
   ext x
   simp only [inf_def, toSublocale_apply, Sublocale.inf_apply, lowerBounds_insert,
@@ -389,7 +413,11 @@ lemma preserves_inf (U V : Open E) : (U ⊓ V).toSublocale = U.toSublocale ⊓ V
     simpa only [Open.toSublocale_apply] using h1
       (Open.toSublocale.mono inf_le_left) (Open.toSublocale.mono inf_le_right)
 
-/-- Suprema of opens are sent to suprema of sublocales: the embedding preserves all joins. -/
+/-- Suprema of opens are sent to suprema of sublocales: the embedding preserves all joins.
+
+Pointwise, the statement reduces to the fact that Heyting implication exchanges
+suprema on the left for infima on the right:
+`(sSup (Open.element '' s)) ⇨ x = ⨅ U ∈ s, U.element ⇨ x`. -/
 lemma preserves_sSup (s : Set (Open E)) : (sSup s).toSublocale = sSup (Open.toSublocale '' s) := by
   ext x
   simp only [sSup_def, toSublocale_apply, Sublocale.sSup_apply, Set.mem_image, iInf_exists]
@@ -424,7 +452,7 @@ end Open
 
 /-- The closed nucleus `x ↦ U ⊔ x` associated with an open element `U`; its sublocale is the
 closed sublocale complementary to `U`. -/
-def complement (U : Open E) : Nucleus E where
+def Open.complNucleus (U : Open E) : Nucleus E where
   toFun x := U ⊔ x
   map_inf' x y := sup_inf_left U.element x y
   idempotent' x := by simp
@@ -439,11 +467,11 @@ namespace Closed
 
 /-- The closed sublocale of a closed element, via the complementary Heyting nucleus. -/
 protected def toSublocale (c : Closed E) : Sublocale E :=
-  (complement ⟨c.element⟩).toSublocale
+  (Open.complNucleus ⟨c.element⟩).toSublocale
 
 /-- Applying the sublocale of a closed element is the join with that element. -/
 lemma toSublocale_apply (c : Closed E) (x : E) : c.toSublocale x = c.element ⊔ x := by
-  simp [Closed.toSublocale, complement]
+  simp [Closed.toSublocale, Open.complNucleus]
 
 /-- A closed element is coerced to its closed sublocale. -/
 instance : Coe (Closed E) (Sublocale E) where
@@ -480,7 +508,11 @@ instance instInfSet : InfSet (Closed E) where
 /-- Infima of closed sublocales are elementwise suprema of the underlying elements. -/
 lemma sInf_def (s : Set (Closed E)) : sInf s = ⟨sSup (Closed.element '' s)⟩ := by rfl
 
-/-- Sending closed sublocales to their sublocales turns infima into infima. -/
+/-- Sending closed sublocales to their sublocales turns infima into infima.
+
+Since the order on closed elements is reversed, the infimum of a set of closed elements
+has underlying element the supremum of the underlying elements; the pointwise statement
+is that `sSup (Closed.element '' s) ⊔ x = ⨅ c ∈ s, (c.element ⊔ x)`. -/
 lemma preserves_sInf (s : Set (Closed E)) :
     (sInf s).toSublocale = sInf (Closed.toSublocale '' s) := by
   ext x
@@ -564,7 +596,7 @@ def Open.compl (U : Open E) : Closed E := ⟨U.element⟩
 lemma Open.inf_compl_eq_bot (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
   refine le_antisymm ?_ bot_le
   rw [Sublocale.le_iff]
-  simp only [Sublocale.bot_apply, Open.toSublocale, Closed.toSublocale, complement, compl,
+  simp only [Sublocale.bot_apply, Open.toSublocale, Closed.toSublocale, Open.complNucleus, compl,
     Sublocale.inf_apply, lowerBounds_insert, lowerBounds_singleton, Set.Iic_inter_Iic, Set.mem_Iic,
     le_inf_iff, Sublocale.le_iff, le_iInf_iff, top_le_iff, and_imp, Nucleus.toSublocale_apply,
     Open.toNucleus]
@@ -583,8 +615,8 @@ lemma Open.inf_compl_eq_bot (U : Open E) : U.toSublocale ⊓ U.compl = ⊥ := by
 lemma Open.sup_compl_eq_top (U : Open E) : U.toSublocale ⊔ U.compl = ⊤ := by
   refine le_antisymm le_top ?_
   rw [Sublocale.le_iff]
-  simp only [Open.toSublocale, Closed.toSublocale, complement, compl_element, Sublocale.sup_apply,
-    Sublocale.top_apply, Nucleus.toSublocale_apply, Open.toNucleus]
+  simp only [Open.toSublocale, Closed.toSublocale, Open.complNucleus, compl_element,
+    Sublocale.sup_apply, Sublocale.top_apply, Nucleus.toSublocale_apply, Open.toNucleus]
   intro i
   change (U.element ⇨ i) ⊓ (U.element ⊔ i) ≤ i
   rw [himp_eq_sSup, sSup_inf_eq]
@@ -604,7 +636,7 @@ lemma Closed.compl_le_compl (c d : Closed E) (h : c ≤ d) : d.compl ≤ c.compl
 
 /-- An open contained in a closed sublocale has its closed complement contained in the open's
 complement: complements reverse inclusions across open/closed types. -/
-lemma Closed_compl_le_Open_compl (U : Open E) (c : Closed E) (h : U.toSublocale ≤ c.toSublocale) :
+lemma Closed.compl_le_Open_compl (U : Open E) (c : Closed E) (h : U.toSublocale ≤ c.toSublocale) :
     c.compl.toSublocale ≤ U.compl.toSublocale := by
   rw [Sublocale.le_iff] at h ⊢
   simp only [Closed.compl, Open.compl, Closed.toSublocale_apply, Open.toSublocale_apply] at h ⊢
